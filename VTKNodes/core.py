@@ -4,6 +4,8 @@
 #---------------------------------------------------------------------------------
 import bpy
 from   bpy.types import NodeTree, Node, NodeSocket
+import nodeitems_utils
+from   nodeitems_utils import NodeCategory, NodeItem
 import vtk
     
 #---------------------------------------------------------------------------------
@@ -156,18 +158,30 @@ class VTKTree(NodeTree):
     bl_icon   = 'COLOR_RED'     # icon
 
 #---------------------------------------------------------------------------------
-# Custom socket type ### does nothing yet
+# Custom socket type
 #---------------------------------------------------------------------------------
 class VTKPolyDataSocket(NodeSocket):
-    '''VTKPolyDataSocket'''             # description string - used for tooltip
-    bl_idname = 'VTKPolyDataSocketType' # typename string - defaults to class name
-    bl_label  = 'vtkPolyData Socket'    # labe
+    '''VTKPolyDataSocket'''             # description / tooltip
+    bl_idname = 'VTKPolyDataSocketType' # typename 
+    bl_label  = 'vtkPolyData Socket'    # label
     
     def draw(self, context, layout, node, text):
         layout.label(text)
 
     def draw_color(self, context, node):
         return (1.0, 0.4, 0.216, 0.5)
+
+
+class VTKImageDataSocket(NodeSocket):
+    '''VTKImageDataSocket'''             # description / tooltip
+    bl_idname = 'VTKImageDataSocketType' # typename 
+    bl_label  = 'vtkImageData Socket'    # label
+    
+    def draw(self, context, layout, node, text):
+        layout.label(text)
+
+    def draw_color(self, context, node):
+        return (0.4, 1.0, 0.216, 0.5)
 
 #---------------------------------------------------------------------------------
 # base class for all VTKNodes
@@ -249,16 +263,25 @@ def on_update( node ):
 #---------------------------------------------------------------------------------
 # Registering
 #---------------------------------------------------------------------------------
-TYPENAMES = []
-
-CLASSES = [
+CLASSES = [ 
     VTKTree,
     OperatorNodeUpdate,
     OperatorFileChoose,
     OperatorPrint,
     VTKPolyDataSocket,
+    VTKImageDataSocket,
     ]
-            
+
+#---------------------------------------------------------------------------------
+# VTKNodeCategory
+#---------------------------------------------------------------------------------
+class VTKNodeCategory(NodeCategory):
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.tree_type == 'VTKTreeType'
+
+CATEGORIES = []            
+
 #---------------------------------------------------------------------------------
 # vtkdata_to_blender
 #---------------------------------------------------------------------------------
