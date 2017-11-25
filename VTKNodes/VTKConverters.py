@@ -1,12 +1,14 @@
 from .core import *    
+TYPENAMES = []
 
+#----------------------------------------------------------------   
 class VTK2Blender(Node, VTKTreeNode):
 
     bl_idname = 'VTK2BlenderType' # type name
     bl_label  = 'ToBlender'       # label for nice name display 
     m_Name = bpy.props.StringProperty( name="Name", default="mesh")
 
-    def properties():
+    def properties(self):
         return ['m_Name']
 
     def init(self, context):
@@ -24,3 +26,7 @@ class VTK2Blender(Node, VTKTreeNode):
 
 CLASSES.append  (  VTK2Blender )        
 TYPENAMES.append( 'VTK2BlenderType' )
+
+#----------------------------------------------------------------   
+menu_items = [ NodeItem(x) for x in TYPENAMES ]
+CATEGORIES.append( VTKNodeCategory("converters", "converters", items=menu_items) )

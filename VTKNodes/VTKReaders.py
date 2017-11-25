@@ -1,4 +1,5 @@
-from .core import *    
+from .core import * 
+TYPENAMES = []   
 
 class VTKStructuredPointsReader(Node, VTKTreeNode):
 
@@ -8,12 +9,12 @@ class VTKStructuredPointsReader(Node, VTKTreeNode):
     m_FilePath = bpy.props.StringProperty(              default="" )
     m_FileName = bpy.props.StringProperty( name='File', default="" )
 
-    def properties():
+    def properties(self):
         return ['m_FilePath', 'm_FileName']
 
     def init(self, context):
         self.width = 200
-        self.outputs.new('VTKPolyDataSocketType', "out")
+        self.outputs.new('VTKImageDataSocketType', "out")
         node_created( self )
 
     def draw_buttons(self, context, layout):
@@ -30,3 +31,6 @@ class VTKStructuredPointsReader(Node, VTKTreeNode):
 
 CLASSES.append(    VTKStructuredPointsReader )
 TYPENAMES.append( 'VTKStructuredPointsReaderType' )
+#----------------------------------------------------------------   
+menu_items = [ NodeItem(x) for x in TYPENAMES ]
+CATEGORIES.append( VTKNodeCategory("readers", "readers", items=menu_items) )
