@@ -116,6 +116,21 @@ def find_properties( name ):
     if c is None: return None
     o = c()
 
+    # info about connectivity
+    if 'GetNumberOfInputPorts' in dir(o):
+        print( '   ', 'Inputs'.ljust(30), o.GetNumberOfInputPorts() )
+
+    if 'GetNumberOfOutputPorts' in dir(o):
+        print( '   ', 'Outputs'.ljust(30), o.GetNumberOfOutputPorts() )
+
+    got_port = 'GetOutputPort' in dir(o)
+    got_out  = 'GetOutput' in dir(o)
+    out_type = None
+    if got_out and got_port:
+        met = getattr( o, 'GetOutput' )
+        out_type = met.__doc__.split('\n')[0].split('>')[1].strip()
+    print( '   ', 'OutType'.ljust(30), out_type )
+
     # retrieve the interesting methods
     m = [ x for x in dir(o) if not x.startswith('__') and not x in HiddenMethods and not x[3:] in HiddenProp ]
     m.sort()
@@ -124,6 +139,7 @@ def find_properties( name ):
     props = {}
     props['NAME'  ] = name[3:]
     props['PROPS' ] = []
+    props['ENUM_ITEMS' ] = []
 
     # scan methods searching for properties
     for x in m:
@@ -149,23 +165,36 @@ def find_properties( name ):
             if setter_arg != getter_arg:
                 print( 'ko ', p.ljust(30), setter_doc.ljust(50), getter_doc.ljust(50), 'arg mismatch')
             else:
+                p_value = str( getter() ) # get the default value by calling the getter
+                
                 # if there are also the methods p+On and p+Off this property is a bool
                 if p+'On' in m and p+'Off' in m :
                     setter_arg = 'bool'
 
                 # if there are also methods Set+p+To+xxx this property is an Enum  (WIP)
-                #q = 'Set'+p+'To'
-                #p_items = [ y.replace(q,'') for y in m if y.startswith( q ) ]
-                #if len(p_items):
-                #    setter_arg = 'enum'
+                q = 'Set'+p+'To'
+                names = [ y.replace(q,'') for y in m if y.startswith( q ) ]
+                p_items = [] # enum-names ordered by their value --- or nothing
+                if len(names):
+                    setter_arg = 'enum'
+                    # retrieve the numerical value matching the enum-names
+                    for y in names:
+                        getattr(o,q+y)()                # call Set+p+To+y()
+                        p_items.append( (getter(), y) ) # retrieve its value calling Get+p()
+                    p_items.sort()
+                    p_value = "'"+(p_items[ int(p_value) ][1])+"'" # translate p_value to enum_name
+                    p_items = str([ y[1] for y in p_items ]) # drop values, keep the order, transform in string
 
+                # check if the type of the property is recognized
                 if not setter_arg in TypeMap:
                     print( 'KO ', p.ljust(30), 'unknow arg type:', setter_arg  )
                 else:
                     p_type, p_size = TypeMap[setter_arg]
-                    p_value = str( getter() ) # get the default value by calling the getter
-                    props['PROPS'].append( { 'name':p, 'type':p_type, 'value':p_value, 'size':p_size } )
-                    print( '   ', p.ljust(30), setter_arg, p_value )
+                    
+                    props['PROPS'].append( { 'name':p, 'type':p_type, 'value':p_value, 'size':p_size, 'items':p_items } )
+
+                    if not p_items: p_items='' # just for the printout
+                    print( '   ', p.ljust(30), setter_arg, p_value, p_items )
     return props
 
 
@@ -176,11 +205,13 @@ class VTK{{NAME}}(Node, VTKTreeNode):
     bl_idname = 'VTK{{NAME}}Type'
     bl_label  = 'vtk{{NAME}}'
     
+    {% for x in ENUM_ITEMS %}{{x}}
+    {% endfor %}
     {% for x in PROPS  %}{{x.decl}}
     {% endfor %}
     
     def properties( self ):
-        return [ {% for x in PROPS %}'m_{{x.name}}', {% endfor %}]
+        return [ {% for x in PROPS %}'{{x.prefix}}{{x.name}}', {% endfor %}]
 
     def init(self, context):
         self.width = 200
@@ -202,15 +233,29 @@ def generate( name ):
     wp = max( [ len(p['type']) for p in props['PROPS'] ])
     for p in props['PROPS']:
 
-        p_size  = ''
-        if p['size']>1: p_size = ', size='+ str(p['size'])
+        name,ptype,value,size,items = p['name'],p['type'],p['value'],p['size'],p['items']
 
-        p['decl'] = "m_{} = bpy.props.{}( name={} default={}{} )".format(
-            p['name'].ljust(wn),
-            p['type'].ljust(wp),
-            ( "'"+p['name']+"'," ).ljust(wn+3),
-            p['value'],
-            p_size
+        prefix = 'm_'
+        items_arg = ''
+        if items: # is an enum
+            prefix = 'e_'
+            items_arg =      ', items='+prefix+name+'_items'
+            props['ENUM_ITEMS'].append( prefix+name+'_items=[ (x,x,x) for x in '+items+']' )
+        p['prefix']=prefix
+
+        if size == 1:
+            size = ''
+        else:
+            size = ', size='+ str('size')
+        
+        p['decl'] = "{}{} = bpy.props.{}( name={} default={}{}{} )".format(
+            prefix,
+            name.ljust(wn),
+            ptype.ljust(wp),
+            ( "'"+name+"'," ).ljust(wn+3),
+            value,
+            size,
+            items_arg
         )
     
     text = template.render( props )
@@ -250,10 +295,14 @@ names = [
 #'vtkVolumeOutlineSource'        # property VolumeMapper, expecting a vtkVolumeMapper
 ]
 
+names = [ 
+'vtkProbeFilter',
+'vtkArrowSource',
+]
 
 for x in names:
-    #find_properties(x)
-    generate(x)
+    find_properties(x)
+    #generate(x)
 
 print('\ndone')
 
