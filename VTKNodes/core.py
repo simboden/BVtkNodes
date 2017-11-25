@@ -213,18 +213,28 @@ class VTKTreeNode:
         return get_vtkobj( self ) 
 
     def draw_buttons(self, context, layout):
-        for x in self.properties() :
+        for x in self.m_properties() :
             layout.prop(self, x )
         #layout.operator("node.print").node_id = self.node_id
 
     def copy(self, node):
-        for x in self.properties() :
+        for x in self.m_properties() :
             exec(  'self.'+x+'=node.'+x, globals(), locals() )
 
     def apply_properties(self,vtkobj):
-        for x in self.properties() :
-            cmd = 'vtkobj.Set'+x[2:]+'(self.'+x+')'
-            exec(  cmd, globals(), locals() )        
+        for x in self.m_properties() :
+            if x.startswith('e_'):
+                value = getattr( self, x )
+                cmd = 'vtkobj.Set'+x[2:]+'To'+value+'()'
+            else:
+                cmd = 'vtkobj.Set'+x[2:]+'(self.'+x+')'
+            exec(  cmd, globals(), locals() ) 
+
+    def init(self, context):
+        self.width = 200
+        for x in self.m_outputs():
+            self.outputs.new( x, "out")
+        node_created( self )       
                 
 #---------------------------------------------------------------------------------
 # on_update 

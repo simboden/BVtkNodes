@@ -107,6 +107,13 @@ TypeMap['float,float,float']                    = ('FloatVectorProperty',  3 )
 TypeMap['float,float,float,float,float,float']  = ('FloatVectorProperty',  6 )
 TypeMap['enum']                                 = ('EnumProperty',         1 )
 
+SocketMap = {}
+SocketMap['vtkPolyData' ]         = 'VTKPolyDataSocketType'
+SocketMap['vtkImageData']         = 'VTKImageDataSocketType'
+SocketMap['vtkStructuredPoints']  = 'VTKImageDataSocketType'
+SocketMap['vtkDataSet']           = 'VTKImageDataSocketType'
+
+
 def find_properties( name ):
     print()
     print(name)
@@ -115,6 +122,14 @@ def find_properties( name ):
     c = getattr( vtk, name )
     if c is None: return None
     o = c()
+
+    # init our output
+    props = {}
+    props['NAME'  ]      = name[3:]
+    props['PROPS' ]      = []
+    props['ENUM_ITEMS' ] = []
+    props['INPUTS' ]     = []
+    props['OUTPUTS' ]    = []
 
     # info about connectivity
     if 'GetNumberOfInputPorts' in dir(o):
@@ -129,17 +144,17 @@ def find_properties( name ):
     if got_out and got_port:
         met = getattr( o, 'GetOutput' )
         out_type = met.__doc__.split('\n')[0].split('>')[1].strip()
-    print( '   ', 'OutType'.ljust(30), out_type )
+
+    if out_type not in SocketMap:
+        print( 'KO ', 'OutType'.ljust(30), 'unknow socket type:', out_type  )
+    else:
+        print( '   ', 'OutType'.ljust(30), out_type )
+        props['OUTPUTS' ].append( SocketMap[out_type] )
 
     # retrieve the interesting methods
     m = [ x for x in dir(o) if not x.startswith('__') and not x in HiddenMethods and not x[3:] in HiddenProp ]
     m.sort()
 
-    # init our output
-    props = {}
-    props['NAME'  ] = name[3:]
-    props['PROPS' ] = []
-    props['ENUM_ITEMS' ] = []
 
     # scan methods searching for properties
     for x in m:
@@ -199,71 +214,82 @@ def find_properties( name ):
 
 
 node_template = '''from .core import *    
+TYPENAMES = []
+{% for C in CLASSES %}
+#--------------------------------------------------------------
+class VTK{{C.NAME}}(Node, VTKTreeNode):
 
-class VTK{{NAME}}(Node, VTKTreeNode):
+    bl_idname = 'VTK{{C.NAME}}Type'
+    bl_label  = 'vtk{{C.NAME}}'
 
-    bl_idname = 'VTK{{NAME}}Type'
-    bl_label  = 'vtk{{NAME}}'
-    
-    {% for x in ENUM_ITEMS %}{{x}}
+    {% for x in C.ENUM_ITEMS %}{{x}}
     {% endfor %}
-    {% for x in PROPS  %}{{x.decl}}
+    {% for x in C.PROPS  %}{{x.decl}}
     {% endfor %}
+    def m_properties( self ):
+        return [{% for x in C.PROPS %}'{{x.prefix}}{{x.name}}',{% endfor %}]
+        
+    def m_outputs(self):
+        return [ {% for x in C.OUTPUTS %}'{{x}}',{% endfor %}]
     
-    def properties( self ):
-        return [ {% for x in PROPS %}'{{x.prefix}}{{x.name}}', {% endfor %}]
-
-    def init(self, context):
-        self.width = 200
-        self.outputs.new('VTKPolyDataSocketType', "out")
-        node_created( self )
-    
-CLASSES.append( VTK{{NAME}} )        
-TYPENAMES.append( 'VTK{{NAME}}Type' )
+CLASSES.append  ( VTK{{C.NAME}} )        
+TYPENAMES.append('VTK{{C.NAME}}Type' )
+{% endfor %}
+#--------------------------------------------------------------
+menu_items = [ NodeItem(x) for x in TYPENAMES ]
+CATEGORIES.append( VTKNodeCategory( '{{MENU}}', '{{MENU}}', items=menu_items) )
 '''
 
 template = Template(node_template)
 
-def generate( name ):
-    props = find_properties(name)
+def generate( module, classes ):
 
-    # it is easier to format properties-decl in in python than in template
-
-    wn = max( [ len(p['name']) for p in props['PROPS'] ])
-    wp = max( [ len(p['type']) for p in props['PROPS'] ])
-    for p in props['PROPS']:
-
-        name,ptype,value,size,items = p['name'],p['type'],p['value'],p['size'],p['items']
-
-        prefix = 'm_'
-        items_arg = ''
-        if items: # is an enum
-            prefix = 'e_'
-            items_arg =      ', items='+prefix+name+'_items'
-            props['ENUM_ITEMS'].append( prefix+name+'_items=[ (x,x,x) for x in '+items+']' )
-        p['prefix']=prefix
-
-        if size == 1:
-            size = ''
-        else:
-            size = ', size='+ str('size')
-        
-        p['decl'] = "{}{} = bpy.props.{}( name={} default={}{}{} )".format(
-            prefix,
-            name.ljust(wn),
-            ptype.ljust(wp),
-            ( "'"+name+"'," ).ljust(wn+3),
-            value,
-            size,
-            items_arg
-        )
+    DIC = {}
+    DIC['MENU']    = module.lower().replace('vtk','')
+    DIC['CLASSES'] = []
     
-    text = template.render( props )
-    f = open('generated/VTK'+props['NAME']+'.py', 'w')
+    for name in classes:
+        props = find_properties(name)
+
+        wn = max( [ len(p['name']) for p in props['PROPS'] ])
+        wp = max( [ len(p['type']) for p in props['PROPS'] ])
+        for p in props['PROPS']:
+
+            # some formatting is easier in python then in jinja
+            name,ptype,value,size,items = p['name'],p['type'],p['value'],p['size'],p['items']
+
+            prefix = 'm_'
+            items_arg = ''
+            if items: # is an enum
+                prefix = 'e_'
+                items_arg =      ', items='+prefix+name+'_items'
+                props['ENUM_ITEMS'].append( prefix+name+'_items=[ (x,x,x) for x in '+items+']' )
+            p['prefix']=prefix
+
+            if size == 1:
+                size = ''
+            else:
+                size = ', size='+ str(size)
+            
+            p['decl'] = "{}{} = bpy.props.{}( name={} default={}{}{} )".format(
+                prefix,
+                name.ljust(wn),
+                ptype.ljust(wp),
+                ( "'"+name+"'," ).ljust(wn+3),
+                value,
+                size,
+                items_arg
+            )
+
+        DIC['CLASSES'].append(props)
+    
+    text = template.render( DIC )
+    f = open( '../'+module+'.py', 'w')
     f.write(text)
     f.close()
 
 # descendant of vtkPolyDataSource, with Source in their name --- 0 Input, 1 vtkPolyData Output
+
 names = [ 
 'vtkArcSource',
 'vtkArrowSource',
@@ -295,14 +321,7 @@ names = [
 #'vtkVolumeOutlineSource'        # property VolumeMapper, expecting a vtkVolumeMapper
 ]
 
-names = [ 
-'vtkProbeFilter',
-'vtkArrowSource',
-]
-
-for x in names:
-    find_properties(x)
-    #generate(x)
+generate('VTKSources', names )
 
 print('\ndone')
 

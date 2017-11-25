@@ -1,6 +1,7 @@
 from .core import * 
 TYPENAMES = []   
 
+#----------------------------------------------------------------   
 class VTKStructuredPointsReader(Node, VTKTreeNode):
 
     bl_idname = 'VTKStructuredPointsReaderType'
@@ -31,6 +32,7 @@ class VTKStructuredPointsReader(Node, VTKTreeNode):
 
 CLASSES.append(    VTKStructuredPointsReader )
 TYPENAMES.append( 'VTKStructuredPointsReaderType' )
+
 #----------------------------------------------------------------   
 menu_items = [ NodeItem(x) for x in TYPENAMES ]
 CATEGORIES.append( VTKNodeCategory("readers", "readers", items=menu_items) )

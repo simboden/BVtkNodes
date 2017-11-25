@@ -1,4 +1,4 @@
-from .core import *    
+from  .core import *
 TYPENAMES = []
 
 #----------------------------------------------------------------   
@@ -8,8 +8,11 @@ class VTK2Blender(Node, VTKTreeNode):
     bl_label  = 'ToBlender'       # label for nice name display 
     m_Name = bpy.props.StringProperty( name="Name", default="mesh")
 
-    def properties(self):
+    def m_properties(self):
         return ['m_Name']
+
+    def m_outputs(self):
+        return []
 
     def init(self, context):
         self.width = 150

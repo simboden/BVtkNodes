@@ -37,20 +37,21 @@ Reloading = "bpy" in locals()
 import bpy
 from   bpy.app.handlers import persistent
 import nodeitems_utils
+from   nodeitems_utils import NodeItem
 
 from . import core
 from . import VTKConverters
-from . import VTKFilters
+#from . import VTKFilters
 from . import VTKSources
-from . import VTKReaders
+#from . import VTKReaders
 
 if Reloading:
     import importlib
     importlib.reload(core)
     importlib.reload(VTKConverters)
-    importlib.reload(VTKFilters)
+    #importlib.reload(VTKFilters)
     importlib.reload(VTKSources)
-    importlib.reload(VTKReaders)
+    #importlib.reload(VTKReaders)
 
 #---------------------------------------------------------------------------------
 # on_file_loaded
@@ -62,6 +63,7 @@ def on_file_loaded(scene):
 
 #---------------------------------------------------------------------------------
 # Registering
+# CLASSES and CATEGORIES are defined in core and filled by all the VTKxxx files
 #---------------------------------------------------------------------------------
 def register():
     bpy.app.handlers.load_post.append(on_file_loaded)
