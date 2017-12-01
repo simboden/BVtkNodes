@@ -41,17 +41,21 @@ from   nodeitems_utils import NodeItem
 
 from . import core
 from . import VTKConverters
-#from . import VTKFilters
 from . import VTKSources
-#from . import VTKReaders
+from . import VTKReaders
+from . import VTKWriters
+from . import VTKFilters
+from . import VTKFilters1
 
 if Reloading:
     import importlib
     importlib.reload(core)
     importlib.reload(VTKConverters)
-    #importlib.reload(VTKFilters)
     importlib.reload(VTKSources)
-    #importlib.reload(VTKReaders)
+    importlib.reload(VTKReaders)
+    importlib.reload(VTKWriters)
+    importlib.reload(VTKFilters)
+    importlib.reload(VTKFilters1)
 
 #---------------------------------------------------------------------------------
 # on_file_loaded

@@ -232,10 +232,111 @@ class VTKTreeNode:
 
     def init(self, context):
         self.width = 200
-        for x in self.m_outputs():
-            self.outputs.new( x, "out")
-        node_created( self )       
+        self.outputs.new('VTKPolyDataSocketType', "out")
+        node_created( self )
+
+    def on_filename( self, filepath ):
+        self.m_FilePath = filepath
+        self.m_FileName = filepath.split('/')[-1]
+        
                 
+#---------------------------------------------------------------------------------
+class VTKReaderNode(VTKTreeNode):
+
+    m_FilePath = bpy.props.StringProperty(              default="" )
+    m_FileName = bpy.props.StringProperty( name='File', default="" )
+
+    def draw_buttons(self, context, layout):
+        for x in self.m_properties() :
+            if x == 'm_FileName':
+               layout.prop(self, "m_FileName") 
+               layout.operator("node.filechoose" ).node_id = self.node_id
+            else:
+                layout.prop(self, x )
+
+    def copy(self, node):
+        for x in self.m_properties() :
+            if x == 'm_FileName':
+                self.m_FilePath = node.m_FilePath
+                self.m_FileName = node.m_FileName
+            else:
+                exec(  'self.'+x+'=node.'+x, globals(), locals() )
+
+    def apply_properties(self,vtkobj):
+        for x in self.m_properties() :
+            if x == 'm_FileName':
+                vtkobj.SetFileName( self.m_FilePath )
+                continue
+            elif x.startswith('e_'):
+                value = getattr( self, x )
+                cmd = 'vtkobj.Set'+x[2:]+'To'+value+'()'
+            else:
+                cmd = 'vtkobj.Set'+x[2:]+'(self.'+x+')'
+            exec(  cmd, globals(), locals() ) 
+
+    def init(self, context):
+        self.width = 200
+        self.outputs.new('VTKPolyDataSocketType', "out")
+        node_created( self )
+
+    def on_filename( self, filepath ):
+        self.m_FilePath = filepath
+        self.m_FileName = filepath.split('/')[-1]
+        
+
+#---------------------------------------------------------------------------------
+class VTKWriterNode(VTKTreeNode):
+
+    m_FilePath = bpy.props.StringProperty(              default="" )
+    m_FileName = bpy.props.StringProperty( name='File', default="" )
+
+    def draw_buttons(self, context, layout):
+        for x in self.m_properties() :
+            if x == 'm_FileName':
+               layout.prop(self, "m_FileName") 
+               layout.operator("node.filechoose" ).node_id = self.node_id
+            else:
+                layout.prop(self, x )
+
+    def copy(self, node):
+        for x in self.m_properties() :
+            if x == 'm_FileName':
+                self.m_FilePath = node.m_FilePath
+                self.m_FileName = node.m_FileName
+            else:
+                exec(  'self.'+x+'=node.'+x, globals(), locals() )
+
+    def apply_properties(self,vtkobj):
+        for x in self.m_properties() :
+            if x == 'm_FileName':
+                vtkobj.SetFileName( self.m_FilePath )
+                continue
+            elif x.startswith('e_'):
+                value = getattr( self, x )
+                cmd = 'vtkobj.Set'+x[2:]+'To'+value+'()'
+            else:
+                cmd = 'vtkobj.Set'+x[2:]+'(self.'+x+')'
+            exec(  cmd, globals(), locals() ) 
+
+    def init(self, context):
+        self.width = 200
+        self.inputs.new('VTKPolyDataSocketType', "in")
+        node_created( self )
+
+    def on_filename( self, filepath ):
+        self.m_FilePath = filepath
+        self.m_FileName = filepath.split('/')[-1]
+
+#---------------------------------------------------------------------------------
+class VTKFilter1Node(VTKTreeNode):
+
+    def init(self, context):
+        self.width = 200
+        self.inputs.new( 'VTKPolyDataSocketType', "in")
+        self.outputs.new('VTKPolyDataSocketType', "out")
+        node_created( self )
+
+
 #---------------------------------------------------------------------------------
 # on_update 
 #---------------------------------------------------------------------------------
@@ -310,11 +411,11 @@ def vtkdata_to_blender( data, name ):
         bpy.context.scene.objects.link(ob)     
 
     if data:
+        err = 0
         bm = bmesh.new() # create an empty BMesh
         #bm.from_mesh(me) # fill it in from a Mesh
         data_p = data.GetPoints()
         verts = [ bm.verts.new( data_p.GetPoint(i) ) for i in range(data.GetNumberOfPoints())]    
-        err = 0
         for i in range( data.GetNumberOfCells() ):
             data_pi = data.GetCell(i).GetPointIds()
             try:
@@ -322,15 +423,13 @@ def vtkdata_to_blender( data, name ):
                 bm.faces.new( [ verts[data_pi.GetId(x)] for x in range(data_pi.GetNumberOfIds()) ] )
             except:
                 err += 1
+        if err:
+            print( 'num err', err )
+
+        bm.to_mesh(me) # store bmesh to mesh
+        print('vtkdata_to_blender -- ok!  -- num verts =', len(verts) )
     else:
         print('vtkdata_to_blender -- no data!')
-
-    if err:
-        print( 'num err', err )
-
-    bm.to_mesh(me) # store bmesh to mesh
-
-    print('vtkdata_to_blender -- ok!  -- num verts =', len(verts) )
     return ob
 
 #---------------------------------------------------------------------------------

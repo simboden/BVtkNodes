@@ -1,236 +1,83 @@
-import vtk
+#import vtk
+import sqlite3
+import os
+import os.path
 from jinja2 import Template
 
-def ls( lst ):
-    print( '\n'.join( sorted( lst ))) 
-
-HiddenMethods = (
-'AbortExecuteOff',
-'AbortExecuteOn',
-'AddObserver',
-'BreakOnError',
-'ComputeInputUpdateExtents',
-'DebugOff',
-'DebugOn',
-'Delete',
-'EnlargeOutputUpdateExtents',
-'GetAbortExecute',
-'GetAddressAsString',
-'GetClassName',
-'GetDebug',
-'GetErrorCode',
-'GetGlobalWarningDisplay',
-'GetMTime',
-'GetOutputIndex',
-'GetProgress',
-'GetProgressMaxValue',
-'GetProgressText',
-'GetReferenceCount',
-'GetReleaseDataFlag',
-'GlobalWarningDisplayOn',
-'GlobalWarningDisplayOff',
-'HasObserver',
-'InRegisterLoop',
-'InvokeEvent',
-'IsA',
-'IsTypeOf',
-'New',
-'NewInstance',
-'PrintRevisions',
-'PropagateUpdateExtent',
-'Register',
-'ReleaseDataFlagOff',
-'ReleaseDataFlagOn',
-'RemoveAllInputs',
-'RemoveObserver',
-'RemoveObservers',
-'SetAbortExecute',
-'SafeDownCast',
-'SetDebug',
-'SetEndMethod',
-'SetGlobalWarningDisplay',
-'SetProgress',
-'SetProgress',
-'SetProgressMethod',
-'SetProgressText',
-'SetReleaseDataFlag',
-'SetReferenceCount',
-'SetStartMethod',
-'SqueezeInputArray',
-'TriggerAsynchronousUpdate',
-'UnRegister',
-'UnRegisterAllOutputs',
-'UpdateData',
-'UpdateInformation',
-'UpdateProgress',
-'UpdateWholeExtent',
-
-'GetUserTransformMatrixMTime',
-'ReleaseGraphicsResources',
-'RenderOpaqueGeometry',
-'RenderTranslucentGeometry',
-
-'ApplyProperties',
-'ComputeMatrix',
-'ShallowCopy',
-)
-
-HiddenProp = (
-'ArrayComponent',
-'ComputeGradients',
-'ComputeNormals',
-'ComputeScalars',
-'Executive',
-'GenerateTriangles',
-'Information',
-'InputConnection',
-'InputDataObject',
-'Locator',
-'NumberOfContours',
-'Output', ###
-'OutputPointsPrecision',
-'ProgressObserver',
-'ScalarTree',
-'UpdateExtent',
-'UseScalarTree',
-)
-
 TypeMap = {}
-TypeMap['string']                               = ('StringProperty',       1 )
-TypeMap['bool']                                 = ('BoolProperty',         1 )
-TypeMap['int']                                  = ('IntProperty',          1 )
-TypeMap['int,int']                              = ('IntVectorProperty',    2 )
-TypeMap['int,int,int']                          = ('IntVectorProperty',    3 )
-TypeMap['float']                                = ('FloatProperty',        1 )
-TypeMap['float,float']                          = ('FloatVectorProperty',  2 )
-TypeMap['float,float,float']                    = ('FloatVectorProperty',  3 )
-TypeMap['float,float,float,float,float,float']  = ('FloatVectorProperty',  6 )
-TypeMap['enum']                                 = ('EnumProperty',         1 )
-
-SocketMap = {}
-SocketMap['vtkPolyData' ]         = 'VTKPolyDataSocketType'
-SocketMap['vtkImageData']         = 'VTKImageDataSocketType'
-SocketMap['vtkStructuredPoints']  = 'VTKImageDataSocketType'
-SocketMap['vtkDataSet']           = 'VTKImageDataSocketType'
+TypeMap['String']                               = 'StringProperty'
+TypeMap['Bool']                                 = 'BoolProperty'
+TypeMap['Enum']                                 = 'EnumProperty'
+TypeMap['Int']                                  = 'IntProperty'
+TypeMap['IntVector']                            = 'IntVectorProperty'
+TypeMap['Float']                                = 'FloatProperty'
+TypeMap['FloatVector']                          = 'FloatVectorProperty'
 
 
-def find_properties( name ):
-    print()
-    print(name)
+# Class:    id, banned, num_pi, name, num_in, num_out, ctype, grp, status, note, doc = c
+# Property: id, class, banned, editable, name, args, value, type, size, items, note
+def get_classes( group ):
 
-    # instantiate the class
-    c = getattr( vtk, name )
-    if c is None: return None
-    o = c()
+    c_list = []
+    conn = sqlite3.connect('vtkdb.sqlite')
+    cursor = conn.cursor()
+    cursor.execute( "SELECT id,name FROM Class WHERE num_pi = 0 AND grp = (SELECT id FROM CGroup WHERE name=? ) ORDER BY name ", (group,) )
+    classes = cursor.fetchall()
+    for c in classes:
+        dic = { 'name':c[1], 'props':[] }
+        cursor.execute( "SELECT name,(SELECT name FROM PType WHERE id=Property.type ),size,value,items FROM Property WHERE class = ? ORDER by type,name", (c[0],) )
+        props = cursor.fetchall()
+        for p in props:
 
-    # init our output
-    props = {}
-    props['NAME'  ]      = name[3:]
-    props['PROPS' ]      = []
-    props['ENUM_ITEMS' ] = []
-    props['INPUTS' ]     = []
-    props['OUTPUTS' ]    = []
+            
+            items = p[4] 
+            if items:
+                items = [ x[1] for x in eval(items) ]
 
-    # info about connectivity
-    if 'GetNumberOfInputPorts' in dir(o):
-        print( '   ', 'Inputs'.ljust(30), o.GetNumberOfInputPorts() )
+            ptype = p[1]
+            if not ptype in TypeMap:
+                #print( 'bad ptype', ptype )
+                continue
+            ptype = TypeMap[ ptype ]
 
-    if 'GetNumberOfOutputPorts' in dir(o):
-        print( '   ', 'Outputs'.ljust(30), o.GetNumberOfOutputPorts() )
+            value = p[3]
+            if ptype == 'StringProperty' or ptype == 'EnumProperty':
+                value = '"'+value+'"'
+                value = value.replace('""""', '""')
+                value = value.replace('"""', '""')
 
-    got_port = 'GetOutputPort' in dir(o)
-    got_out  = 'GetOutput' in dir(o)
-    out_type = None
-    if got_out and got_port:
-        met = getattr( o, 'GetOutput' )
-        out_type = met.__doc__.split('\n')[0].split('>')[1].strip()
+            if value.isdigit() and int(value) > 1e9:
+                print(value)
+                value = '0'
 
-    if out_type not in SocketMap:
-        print( 'KO ', 'OutType'.ljust(30), 'unknow socket type:', out_type  )
-    else:
-        print( '   ', 'OutType'.ljust(30), out_type )
-        props['OUTPUTS' ].append( SocketMap[out_type] )
-
-    # retrieve the interesting methods
-    m = [ x for x in dir(o) if not x.startswith('__') and not x in HiddenMethods and not x[3:] in HiddenProp ]
-    m.sort()
-
-
-    # scan methods searching for properties
-    for x in m:
-        if x.startswith('Set') and 'Get'+x[3:] in m : # if method is a Setter and there is a matching Getter
-            p = x[3:]
-            setter = getattr(o, 'Set'+p )
-            getter = getattr(o, 'Get'+p )
-
-            # the first line in the method doc is the python-function-signature --- example: SetXXX(int) -- GetXXX()->int
-            setter_doc = setter.__doc__.split('\n')[0]
-            getter_doc = getter.__doc__.split('\n')[0]
-
-            # extract the arguments.
-            # sometime getter have no '->' - meaning that they return the value in the arguments,
-            # in some case these properties are reduntant, so lets ignore them
-            setter_arg = setter_doc.split('(')[1].replace(')','').replace(' ','')                      
-            if '>' in getter_doc:
-                getter_arg = getter_doc.split('>')[1].replace(')','').replace('(','').replace(' ','')  
-            else:
-                getter_arg = "none"
-
-            # setter and getter args should match
-            if setter_arg != getter_arg:
-                print( 'ko ', p.ljust(30), setter_doc.ljust(50), getter_doc.ljust(50), 'arg mismatch')
-            else:
-                p_value = str( getter() ) # get the default value by calling the getter
+            if ptype == 'IntVectorProperty':
+                def filter(x):
+                    if x>1e9: return 0
+                    return x
+                value = str( [ filter(x) for x in eval(value) ] )
                 
-                # if there are also the methods p+On and p+Off this property is a bool
-                if p+'On' in m and p+'Off' in m :
-                    setter_arg = 'bool'
+            dic['props'].append( { 'name':p[0], 'type':ptype, 'size':p[2], 'value':value, 'items':items } )
+            
+        c_list.append(dic)
+    conn.close()
+    return c_list
 
-                # if there are also methods Set+p+To+xxx this property is an Enum  (WIP)
-                q = 'Set'+p+'To'
-                names = [ y.replace(q,'') for y in m if y.startswith( q ) ]
-                p_items = [] # enum-names ordered by their value --- or nothing
-                if len(names):
-                    setter_arg = 'enum'
-                    # retrieve the numerical value matching the enum-names
-                    for y in names:
-                        getattr(o,q+y)()                # call Set+p+To+y()
-                        p_items.append( (getter(), y) ) # retrieve its value calling Get+p()
-                    p_items.sort()
-                    p_value = "'"+(p_items[ int(p_value) ][1])+"'" # translate p_value to enum_name
-                    p_items = str([ y[1] for y in p_items ]) # drop values, keep the order, transform in string
-
-                # check if the type of the property is recognized
-                if not setter_arg in TypeMap:
-                    print( 'KO ', p.ljust(30), 'unknow arg type:', setter_arg  )
-                else:
-                    p_type, p_size = TypeMap[setter_arg]
-                    
-                    props['PROPS'].append( { 'name':p, 'type':p_type, 'value':p_value, 'size':p_size, 'items':p_items } )
-
-                    if not p_items: p_items='' # just for the printout
-                    print( '   ', p.ljust(30), setter_arg, p_value, p_items )
-    return props
 
 
 node_template = '''from .core import *    
 TYPENAMES = []
 {% for C in CLASSES %}
 #--------------------------------------------------------------
-class VTK{{C.NAME}}(Node, VTKTreeNode):
+class VTK{{C.NAME}}(Node, {{BASE}}):
 
     bl_idname = 'VTK{{C.NAME}}Type'
     bl_label  = 'vtk{{C.NAME}}'
-
     {% for x in C.ENUM_ITEMS %}{{x}}
     {% endfor %}
     {% for x in C.PROPS  %}{{x.decl}}
     {% endfor %}
     def m_properties( self ):
         return [{% for x in C.PROPS %}'{{x.prefix}}{{x.name}}',{% endfor %}]
-        
-    def m_outputs(self):
-        return [ {% for x in C.OUTPUTS %}'{{x}}',{% endfor %}]
     
 CLASSES.append  ( VTK{{C.NAME}} )        
 TYPENAMES.append('VTK{{C.NAME}}Type' )
@@ -239,39 +86,47 @@ TYPENAMES.append('VTK{{C.NAME}}Type' )
 menu_items = [ NodeItem(x) for x in TYPENAMES ]
 CATEGORIES.append( VTKNodeCategory( '{{MENU}}', '{{MENU}}', items=menu_items) )
 '''
-
 template = Template(node_template)
 
-def generate( module, classes ):
 
-    DIC = {}
-    DIC['MENU']    = module.lower().replace('vtk','')
-    DIC['CLASSES'] = []
+def generate( group ):
+
+    classes = get_classes(group)
     
-    for name in classes:
-        props = find_properties(name)
+    bases = { 'Source':'VTKTreeNode', 'Reader':'VTKReaderNode', 'Writer':'VTKReaderNode', 'Filter1':'VTKFilter1Node' }
 
-        wn = max( [ len(p['name']) for p in props['PROPS'] ])
-        wp = max( [ len(p['type']) for p in props['PROPS'] ])
-        for p in props['PROPS']:
+    DIC = { 'MENU':group.lower(), 'CLASSES':[], 'BASE':bases[group] }
+    
+    for c in classes:
+
+        C = { 'NAME':c['name'], 'PROPS':[], 'ENUM_ITEMS':[] }
+
+        wm,wp = 0,0
+        if len(c['props']):
+            wn = max( [ len(p['name']) for p in c['props'] ])
+            wp = max( [ len(p['type']) for p in c['props'] ])
+            
+        for p in c['props']:
 
             # some formatting is easier in python then in jinja
-            name,ptype,value,size,items = p['name'],p['type'],p['value'],p['size'],p['items']
+            name,ptype,value,size,items = p['name'], p['type'],p['value'],p['size'],p['items']
+            P = {'name':name }
 
             prefix = 'm_'
             items_arg = ''
             if items: # is an enum
                 prefix = 'e_'
                 items_arg =      ', items='+prefix+name+'_items'
-                props['ENUM_ITEMS'].append( prefix+name+'_items=[ (x,x,x) for x in '+items+']' )
-            p['prefix']=prefix
+                C['ENUM_ITEMS'].append( prefix+name+'_items=[ (x,x,x) for x in '+str(items)+']' )
+
+            P['prefix']=prefix
 
             if size == 1:
                 size = ''
             else:
                 size = ', size='+ str(size)
-            
-            p['decl'] = "{}{} = bpy.props.{}( name={} default={}{}{} )".format(
+
+            P['decl'] = "{}{} = bpy.props.{}( name={} default={}{}{} )".format(
                 prefix,
                 name.ljust(wn),
                 ptype.ljust(wp),
@@ -280,49 +135,25 @@ def generate( module, classes ):
                 size,
                 items_arg
             )
+            C['PROPS'].append(P)
 
-        DIC['CLASSES'].append(props)
+        DIC['CLASSES'].append(C)
+
+    filename = { 'Source':'VTKSources.py', 'Reader':'VTKReaders.py','Writer':'VTKWriters.py','Filter1':'VTKFilters1.py' }
     
     text = template.render( DIC )
-    f = open( '../'+module+'.py', 'w')
+    f = open( '/home/simboden/Desktop/BVTK/GIT/VTKNodes/'+filename[group], 'w')
     f.write(text)
     f.close()
 
-# descendant of vtkPolyDataSource, with Source in their name --- 0 Input, 1 vtkPolyData Output
 
-names = [ 
-'vtkArcSource',
-'vtkArrowSource',
-'vtkBoundedPointSource',
-'vtkConeSource',
-'vtkCubeSource',
-'vtkCylinderSource',
-'vtkDiskSource',
-'vtkEarthSource',
-'vtkEllipseArcSource',
-#'vtkFrustumSource',            # property Planes: unknow arg type: vtkPlanes
-'vtkGlobeSource',
-'vtkGlyphSource2D',
-'vtkLineSource',                # property Points non standard                               -- not needed, we have Point1 and Point2
-#'vtkOutlineCornerSource',      # property Corner has the signature-string on multiple line, accept a tuple of 24 float
-#'vtkOutlineSource',            # idem
-#'vtkParametricFunctionSource', # ParametricFunction unknow arg type: vtkParametricFunction  -- a Source with an Input! --- LATER
-'vtkPlaneSource',               # method GetResolution(x,y) -> None non standard -- no problem, we have GetResolutionX and GetResolutionY
-'vtkPlatonicSolidSource',       # Type is a Combo
-'vtkPointSource',               # property RendomSequence, expecting a vtkRandomSequence     -- not needed
-#'vtkPolyLineSource',           # property Points, expecting a vtkPoints  --- it is feasible ....
-'vtkRegularPolygonSource',
-'vtkSectorSource',
-'vtkSphereSource',
-'vtkSuperquadricSource',
-'vtkTessellatedBoxSource',
-'vtkTextSource',
-'vtkTexturedSphereSource',
-#'vtkVolumeOutlineSource'        # property VolumeMapper, expecting a vtkVolumeMapper
-]
+generate('Source')
+generate('Reader')
+generate('Writer')
+generate('Filter1')
 
-generate('VTKSources', names )
 
+            
 print('\ndone')
 
 
