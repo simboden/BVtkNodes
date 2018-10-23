@@ -1,0 +1,161 @@
+{
+    "links": [
+        {
+            "from_node_name": "vtkSphereSource",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkClipPolyData",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkPlane",
+            "from_socket_identifier": "self",
+            "to_node_name": "vtkClipPolyData",
+            "to_socket_identifier": "ClipFunction"
+        },
+        {
+            "from_node_name": "vtkClipPolyData",
+            "from_socket_identifier": "output 0",
+            "to_node_name": "ToBlender",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkClipPolyData",
+            "from_socket_identifier": "output 1",
+            "to_node_name": "ToBlender.001",
+            "to_socket_identifier": "input"
+        }
+    ],
+    "nodes": [
+        {
+            "bl_idname": "VTKClipPolyDataType",
+            "color": [
+                0.6079999804496765,
+                0.6079999804496765,
+                0.6079999804496765
+            ],
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -416.2118225097656,
+                215.05682373046875
+            ],
+            "m_GenerateClipScalars": true,
+            "m_GenerateClippedOutput": true,
+            "m_InsideOut": true,
+            "m_Value": 0.0,
+            "mute": false,
+            "name": "vtkClipPolyData",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTK2BlenderType",
+            "color": [
+                0.6079999804496765,
+                0.6079999804496765,
+                0.6079999804496765
+            ],
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -130.5877227783203,
+                218.90753173828125
+            ],
+            "m_Name": "mesh",
+            "mute": false,
+            "name": "ToBlender",
+            "show_options": true,
+            "show_preview": false,
+            "smooth": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTK2BlenderType",
+            "color": [
+                0.6079999804496765,
+                0.6079999804496765,
+                0.6079999804496765
+            ],
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -119.65516662597656,
+                43.75318908691406
+            ],
+            "m_Name": "mesh2",
+            "mute": false,
+            "name": "ToBlender.001",
+            "show_options": true,
+            "show_preview": false,
+            "smooth": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTKSphereSourceType",
+            "color": [
+                0.6079999804496765,
+                0.6079999804496765,
+                0.6079999804496765
+            ],
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -672.5538940429688,
+                199.5282440185547
+            ],
+            "m_Center": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "m_EndPhi": 180.0,
+            "m_EndTheta": 360.0,
+            "m_LatLongTessellation": true,
+            "m_PhiResolution": 20,
+            "m_Radius": 1.0,
+            "m_StartPhi": 0.0,
+            "m_StartTheta": 0.0,
+            "m_ThetaResolution": 20,
+            "mute": false,
+            "name": "vtkSphereSource",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTKPlaneType",
+            "color": [
+                0.6079999804496765,
+                0.6079999804496765,
+                0.6079999804496765
+            ],
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -748.314697265625,
+                24.507225036621094
+            ],
+            "m_Normal": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "m_Origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "mute": false,
+            "name": "vtkPlane",
+            "show_options": true,
+            "show_preview": false,
+            "width": 285.1534118652344
+        }
+    ]
+}
