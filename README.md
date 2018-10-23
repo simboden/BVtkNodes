@@ -7,7 +7,7 @@ Paraview ( https://www.kitware.com/platforms ), VolView, 3DSlicer are some of th
 In VTK the process of reading/transform/display data is accomplished by instantiating and connecting
 among them a series of reader/filters/actors so it naturally fit the metaphor provided by the Blender Node Editor, 
 
-### GOALS:
+### Goals:
 provide a tools to quickly learn VTK and prototiping VTK pipelines.
 
 Beside this, BVtkNodes shows that Blender and VTK can work togheter nicely :
@@ -21,5 +21,8 @@ Blender may provide VTK users with:
 - high quality rendering
 - mesh editing features of any kind
 
-### STATUS:
+### Status:
 Beta 
+
+### Download
+[BVtkNodes.zip]( BvtkNodes.zip)
