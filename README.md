@@ -1,28 +1,28 @@
 # BVtkNodes 
-BVtkNodes is a Blender Addon allowing to use VTK within Blender.
+The Visualization Toolkit (VTK https://www.vtk.org/ ) is an open source library for scientific visualization developed by Kitware. BVtkNodes is a Blender Addon allowing to use VTK within Blender.
+<p align="center">
+<img src="isosurfaces.jpg" width="800" >
+</p>
 
-The Visualization Toolkit (VTK https://www.vtk.org/ ) is an open source library for scientific visualization developed by Kitware.
-Paraview ( https://www.kitware.com/platforms ), VolView, 3DSlicer are some of the open source applications built on top of VTK.
-
-In VTK the process of reading/transform/display data is accomplished by instantiating and connecting
-among them a series of reader/filters/actors so it naturally fit the metaphor provided by the Blender Node Editor, 
+**addon for**: [Blender](http://blender.org)  (version *2.78* and above).  
+**current version**: beta 1.0   
+**license**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
+**prerequisites**: VTK (version 7 and above) and VTK python wrappers compatible with the python used in Blender 
+( for Blender 2.79 use python 3.5.3 )   
+**download**: [BVtkNodes.zip]( http://github.com/simboden/BVtkNodes/blob/master/BVtkNodes.zip )   
+**contributors**: Silvano Imboden (s.imboden@cineca.it) , Lorenzo Celli, Paul Mc Manus
 
 ### Goals:
-provide a tools to quickly learn VTK and prototiping VTK pipelines.
+- verify the feasibility of using VTK inside Blender
+- provide a tools to quickly learn VTK and prototiping VTK pipelines.
 
-Beside this, BVtkNodes shows that Blender and VTK can work togheter nicely :
+### Desiderable side effects:
+- provide Blender users with readers for many scientific data format, and techniques to convert them to blender mesh.
+- provide VTK users with hi-quality-rendering and many kind of mesh editing tools.
 
-BVTKNodes may provide Blender users with:
-- a wide number of importers for different data format commonly used in scientific research
-- features to process these data until they become surfaces that can be transformed in Blender meshes
-- bidirectional transfering of ( specific type of ) data between Blender and VTK
+### Installation:
+- verify the prerequisites
+- download [BVtkNodes.zip]( http://github.com/simboden/BVtkNodes/blob/master/BVtkNodes.zip )
+- Blender menu > User Preferences > Addons > install from file > choose the zip-archive > activate flag beside BVtkNodes
 
-Blender may provide VTK users with:
-- high quality rendering
-- mesh editing features of any kind
 
-### Status:
-Beta 
-
-### Download
-[BVtkNodes.zip]( http://github.com/simboden/BVtkNodes/blob/master/BVtkNodes.zip )
