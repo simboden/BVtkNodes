@@ -4,7 +4,7 @@ The Visualization Toolkit (VTK https://www.vtk.org/ ) is an open source library 
 <img src="isosurfaces.jpg" width="800" >
 </p>
 
-**addon for**: [Blender](http://blender.org)  (version *2.78* and above).  
+**addon for**: [Blender](http://blender.org) version *2.79*.  
 **current version**: beta 1.0   
 **license**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
 **prerequisites**: VTK (version 7 and above) and VTK python wrappers compatible with the python used in Blender 
