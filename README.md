@@ -7,9 +7,12 @@ The Visualization Toolkit (VTK https://www.vtk.org/ ) is an open source library 
 **addon for**: [Blender](http://blender.org) version *2.79*.  
 **current version**: beta 1.0   
 **license**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
-**prerequisites**: VTK (version 7 and above) and VTK python wrappers compatible with the python used in Blender 
-  For Blender 2.79 use python 3.5.3 ---- see details here: [build_vtk_for_blender]( ./build_vtk.md ).     
 **contributors**: Silvano Imboden (s.imboden@cineca.it) , Lorenzo Celli, Paul Mc Manus
+
+### Prerequisites: 
+__VTK (version 7 and above) and VTK python wrappers compatible with the python used in Blender.__   
+For Ubuntu 16.04 and above you may try the following binaries [BVtkBinaries.zip]( https://drive.google.com/file/d/1-t7bhygXidgwJE0Y_WLV9q0Tw198_XUe )(147MB).         
+To build VTK your own please look here: [build_vtk_for_blender]( ./build_vtk.md ).     
 
 ### Goals:
 - verify the feasibility of using VTK inside Blender
