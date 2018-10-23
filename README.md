@@ -25,4 +25,4 @@ Blender may provide VTK users with:
 Beta 
 
 ### Download
-[BVtkNodes.zip]( ./BvtkNodes.zip)
+[BVtkNodes.zip]( http://github.com/simboden/BVtkNodes/blob/master/BVtkNodes.zip )
