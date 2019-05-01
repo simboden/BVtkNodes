@@ -3,12 +3,21 @@ import vtk
 import bpy
 from .core import b_path
 
+# -----------------------------------------------------------------------------
+#  Functions and classes for running BVTKNodes internal function queue and
+#  other updates
+# -----------------------------------------------------------------------------
+
 
 def SetColor(node, color):
+    '''Set color of node to color'''
     node.color = color
 
 
 def UpdateObj(node, vtkobj):
+    '''Update node corresponding to vtkobj by applying properties, inputs
+    and call to VTK Update()
+    '''
     #time.sleep(1)
     node.apply_properties(vtkobj)
     node.apply_inputs(vtkobj)
@@ -17,23 +26,30 @@ def UpdateObj(node, vtkobj):
 
 
 def SetInputConnection(vtkobj, i, input_obj):
+    '''Set input connection i of vtkobj to input object'''
     #time.sleep(1)
     vtkobj.SetInputConnection(i, input_obj)
 
 
 def SetInputObj(vtkobj, name, input_obj):
+    '''Run a named Set function on vtkobj with argument input_obj'''
     #time.sleep(1)
     cmd = 'vtkobj.Set' + name + '( input_obj )'
     exec(cmd, globals(), locals())
 
 
 def Update(node, cb, x=True):
-    ''' updates all the pipeline entering node, then execute it '''
+    '''Update the input functions of this node using the function queue.
+    Sets color of node to reflect node run status. Finally updates this
+    node and queues argument function cb() if argument x is True.
+    '''
     #print('on_update')  # , node.name )
-    if x: queue.add(log_check)
-    ex_color = node.color.copy()
-    inputs_color = 0.84, 0.84, 0.73
-    execute_color = 0.85, 0.6, 0.2
+    if x:
+        queue.add(log_check)
+    ex_color = node.color.copy() # Current color
+    inputs_color = 0.84, 0.84, 0.73 # Input color
+    execute_color = 0.85, 0.6, 0.2 # Execution color
+
     vtkobj = node.get_vtkobj()
 
     queue.add(SetColor, node, inputs_color)
@@ -52,17 +68,41 @@ def Update(node, cb, x=True):
         bpy.ops.vtk.function_queue()
 
 
+def no_queue_update(node, cb, x=True):
+    '''Force the update of all the input connections of this node,
+    bypassing the functions queue. Does not update node colors.
+    Finally updates this node by calling argument cb() if argument x
+    is True, and VTK Update function otherwise.
+    '''
+    #print('on_update')  # , node.name )
+    vtkobj = node.get_vtkobj()
+    for input_node in node.input_nodes():
+        no_queue_update(input_node, None, False)
+    if x:
+        cb()
+    else:
+        if vtkobj:
+            node.apply_properties(vtkobj)
+            node.apply_inputs(vtkobj)
+            if hasattr(vtkobj, "Update"):
+                vtkobj.Update()
 
-# ---------------------------------------------------------------------------------
+
+
+
+# -----------------------------------------------------------------------------
 #  function queue
-# ---------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 
 class FunctionsQueue:
-    functions = []
-    executed = []
-    running = False
-    i = 0
+    '''Class for Functions Queue. Used for running a queue system for 
+    BVTKNodes functions.
+    '''
+    functions = [] # List of functions in queueus
+    executed = [] # List of executed functions
+    running = False # Queue running state
+    i = 0 # Index of function being run
 
     def add(self, f, *args):
         if not self.running:
@@ -90,14 +130,16 @@ class FunctionsQueue:
         self.running = False
         self.i = 0
 
-
+# Global functions queue
 queue = FunctionsQueue()
 
 
 class VTKFunctionQueue(bpy.types.Operator):
-    """Run functions separated in time by 1/100s"""
+    '''Operator to call a function in functions queue. 
+    Calls are spaced (separated in time) by 1/100 s.
+    '''
     bl_idname = "vtk.function_queue"
-    bl_label = "Run functions"
+    bl_label = "Run a VTK function in queue"
 
     _timer = None
 
@@ -127,30 +169,9 @@ class VTKFunctionQueue(bpy.types.Operator):
         wm.event_timer_remove(self._timer)
 
 
-# ---------------------------------------------------------------------------------
-#  update without queue
-# ---------------------------------------------------------------------------------
-
-
-def no_queue_update(node, cb, x=True):
-    ''' updates all the pipeline entering node, then execute it '''
-    #print('on_update')  # , node.name )
-    vtkobj = node.get_vtkobj()
-    for input_node in node.input_nodes():
-        no_queue_update(input_node, None, False)
-    if x:
-        cb()
-    else:
-        if vtkobj:
-            node.apply_properties(vtkobj)
-            node.apply_inputs(vtkobj)
-            if hasattr(vtkobj, "Update"):
-                vtkobj.Update()
-
-
-# ---------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Vtk logs
-# ---------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 
 out = vtk.vtkFileOutputWindow()
@@ -158,19 +179,22 @@ logfile = b_path.rsplit('/', 1)[0]+'/vtklog.txt'
 open(logfile, 'w').write('')
 out.SetFileName(logfile)
 vtk.vtkOutputWindow.SetInstance(out)
-last_log = ''
 
+last_log = '' # Current log file contents
 
 def log_check():
-    """ to call before executing code that could generate errors """
+    '''Saves current log file contents. This function is to be called
+    before executing more code that could generate errors, so that
+    only latest error messages can be shown to user
+    '''
     global last_log
     last_log = open(logfile, 'r').read()
 
 
 def log_show():
-    """ to call after log has been check and code has been executed """
+    '''Shows log text of only latest operation'''
     logs = open(logfile, 'r').read()
-    logs = logs.replace(last_log, '', 1)
+    logs = logs.replace(last_log, '', 1) # Remove old log text
     if logs:
         def draw(self, context):
             layout = self.layout
