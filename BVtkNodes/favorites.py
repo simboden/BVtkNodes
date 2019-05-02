@@ -1,15 +1,17 @@
 from .core import *
 from . import favorites_data
 
-favorites = favorites_data.favorites # must be an array of (node.bl_idname, node.bl_label) tuples
+# -----------------------------------------------------------------------------
+# Favorites panel
+# -----------------------------------------------------------------------------
+
+# Favorites must be an array of (node.bl_idname, node.bl_label) tuples
+favorites = favorites_data.favorites
 favorites_file = favorites_data.__file__
 
-# ---------------------------------------------------------------------------------
-# Favorites panel
-# ---------------------------------------------------------------------------------
 
 class VTKFavoritesPanel(bpy.types.Panel):
-    """Information about active node's vtk object"""
+    '''VTK Favorites Panel'''
     bl_label = 'Favorites'
     bl_idname = 'vtk_favorites'
     bl_space_type = 'NODE_EDITOR'
@@ -24,11 +26,13 @@ class VTKFavoritesPanel(bpy.types.Panel):
         global favorites
         active_node = context.active_node
         layout = self.layout
+        # Button to add active node to favorites
         if active_node:
             add = layout.operator('vtk.update_favorites', icon='ZOOMIN', text=active_node.bl_label)
             add.label = active_node.bl_label
             add.type = active_node.bl_idname
             layout.separator()
+        # Favotires buttons
         for f in favorites:
             row = layout.row(align=True)
             remove = row.operator('vtk.update_favorites', icon='PANEL_CLOSE', text='')
@@ -40,14 +44,8 @@ class VTKFavoritesPanel(bpy.types.Panel):
             op.use_transform = True
 
 
-add_ui_class(VTKFavoritesPanel)
-
-# ---------------------------------------------------------------------------------
-# Update favorite op
-# ---------------------------------------------------------------------------------
-
-
 class VTKUpdateFavorites(bpy.types.Operator):
+    '''Update favorites operator'''
     bl_idname = 'vtk.update_favorites'
     bl_label = 'add/remove favorites'
 
@@ -71,4 +69,5 @@ class VTKUpdateFavorites(bpy.types.Operator):
         return {'FINISHED'}
 
 
+add_ui_class(VTKFavoritesPanel)
 add_ui_class(VTKUpdateFavorites)
