@@ -1,10 +1,7 @@
 from  .core import *
-TYPENAMES = []
 
-
-# ----------------------------------------------------------------
 class VTKInfoNode(Node, VTKNode):
-
+    '''VTK Info Node'''
     bl_idname = 'VTKInfoNodeType'
     bl_label  = 'Info'
 
@@ -71,9 +68,9 @@ class VTKInfoNode(Node, VTKNode):
     def get_output(self, socketname):
         return self.get_input_node('input')[1]
 
+TYPENAMES = []
 add_class(VTKInfoNode)
 TYPENAMES.append('VTKInfoNodeType')
-# ----------------------------------------------------------------
-menu_items = [ NodeItem(x) for x in TYPENAMES ]
-CATEGORIES.append( VTKNodeCategory("debug", "debug", items=menu_items) )
-# ----------------------------------------------------------------
+
+menu_items = [NodeItem(x) for x in TYPENAMES]
+CATEGORIES.append(VTKNodeCategory("debug", "debug", items=menu_items))
