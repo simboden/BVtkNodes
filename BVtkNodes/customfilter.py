@@ -1,24 +1,20 @@
 from .core import *
-TYPENAMES = []
 
-# ----------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Custom filter
-# ----------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 
 class VTKCustomFilter(Node, VTKNode):
-    """# This file is used for vtk custom filter.
-    # On update all of this file will be executed.
-    # To the chosen function will be passed:
-    # - A list of objects, if custom filter node has multiple links in input.
-    # - A single object, if custom filter node has a single link in input.
-    # Your function must return a variable which can be set as input of the
-    # node following custom filter.
-    """
+    '''VTK Custom Filter, defined in Blender text data block. Supports one
+    or multiple inputs. Custom function must return a variable which
+    is set as input of the node following custom filter.
+    '''
     bl_idname = 'VTKCustomFilterType'
     bl_label = 'CustomFilter'
 
     def texts(self, context):
+        '''Generate list of text objects to choose'''
         t = []
         i = 0
         for text in bpy.data.texts:
@@ -30,6 +26,7 @@ class VTKCustomFilter(Node, VTKNode):
 
 
     def functions(self, context=None):
+        '''Generate list of functions to choose'''
         f = []
         if self.text in bpy.data.texts:
             t = bpy.data.texts[self.text].as_string()
@@ -66,10 +63,9 @@ class VTKCustomFilter(Node, VTKNode):
         pass
 
     def get_output(self, socketname):
-        """ execute user defined function.
-         If something goes wrong print the error and
-        return the input object.
-         """
+        '''Execute user defined function. If something goes wrong,
+        print the error and return the input object.
+        '''
         input_objects = [x[1] for x in self.get_input_nodes('input')]
         if len(input_objects) == 1:
             input_objects = input_objects[0]
@@ -95,7 +91,7 @@ class VTKCustomFilter(Node, VTKNode):
         self.inputs['input'].link_limit = 300
 
     def export_properties(self):
-        """ called on export """
+        '''Export node properties'''
         dict = {}
         if self.text in bpy.data.texts:
             t = bpy.data.texts[self.text].as_string()
@@ -104,18 +100,12 @@ class VTKCustomFilter(Node, VTKNode):
         return dict
 
     def import_properties(self, dict):
-        """ called on import """
+        '''Import node properties'''
         bpy.ops.vtk.new_text(body=dict['text_as_string'], name=dict['text_name'])
-
-add_class(VTKCustomFilter)
-TYPENAMES.append('VTKCustomFilterType')
-
-# ----------------------------------------------------------------
-# New text operator
-# ----------------------------------------------------------------
 
 
 class VTKNewText(bpy.types.Operator):
+    '''New text operator'''
     bl_idname = 'vtk.new_text'
     bl_label = 'Create a new text'
 
@@ -136,11 +126,14 @@ class VTKNewText(bpy.types.Operator):
                             space.top = 0
                             flag = False
         if flag:
-            self.report({'INFO'}, "See '"+text.name+"' in the text editor")
+            self.report({'INFO'}, "See '" + text.name + "' in the text editor")
         return {'FINISHED'}
 
+# Add classes and menu items
+TYPENAMES = []
+add_class(VTKCustomFilter)
+TYPENAMES.append('VTKCustomFilterType')
 add_ui_class(VTKNewText)
-# ----------------------------------------------------------------
+
 menu_items = [NodeItem(x) for x in TYPENAMES]
 CATEGORIES.append(VTKNodeCategory("custom", "custom", items=menu_items))
-# ----------------------------------------------------------------
