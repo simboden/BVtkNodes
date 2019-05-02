@@ -1,9 +1,12 @@
+# -----------------------------------------------------------------------------
+# Color map nodes and functions
+# -----------------------------------------------------------------------------
+
 from  .core import *
-TYPENAMES = []
 
 
 def default_texture(name):
-    """ create and return a new texture """
+    '''Create and return a new texture'''
     tex_name = name
     tex = bpy.data.textures.new(tex_name, 'BLEND')
     tex.use_color_ramp = True
@@ -20,16 +23,18 @@ def default_texture(name):
     e.color = (243 / 255, 148 / 255, 117 / 255, 1)
     return tex
 
-# ----------------------------------------------------------------
-class VTKColorMapper(Node, VTKNode):
 
+class VTKColorMapper(Node, VTKNode):
+    '''VTK Color Mapper Node'''
     bl_idname = 'VTKColorMapperType'
     bl_label  = 'ColorMapper'
 
     def array_change(self, context):
+        '''Determine coloring by either point or cell data'''
         vtkobj = self.get_input_node('input')[1]
         if self.color_by and vtkobj:
             vtkobj = resolve_algorithm_output(vtkobj)
+            # Color by point data or cell data
             if self.color_by[0] == 'P':
                 d = vtkobj.GetPointData()
             else:
@@ -40,6 +45,7 @@ class VTKColorMapper(Node, VTKNode):
                 self.min = range[0]
 
     def color_arrays(self, context):
+        '''Generate array items available for coloring'''
         items = []
         vtkobj = self.get_input_node('input')[1]
         if vtkobj:
@@ -59,14 +65,18 @@ class VTKColorMapper(Node, VTKNode):
             items.append(('', '', ''))
         return items
 
+    # Properties of ColorMapper
     color_by = bpy.props.EnumProperty(items=color_arrays, name="color by", update=array_change)
-    texture_type = bpy.props.EnumProperty(name="texture type",
-                                          items=[('BLEND','BLEND','BLEND','TEXTURE_DATA',0),('IMAGE','IMAGE','IMAGE','FILE_IMAGE',1)],
-                                          default='BLEND')
+    texture_type = bpy.props.EnumProperty(
+        name="texture type",
+        items=[('BLEND','BLEND','BLEND','TEXTURE_DATA',0),
+               ('IMAGE','IMAGE','IMAGE','FILE_IMAGE',1)],
+        default='BLEND'
+    )
     auto_range = bpy.props.BoolProperty(default=True, update=array_change)
     default_texture = bpy.props.StringProperty(default="")
     last_color_by = bpy.props.StringProperty(default='')
-    lut = bpy.props.BoolProperty(default=False)
+    lut = bpy.props.BoolProperty(default=False) # Lookup table
     height = bpy.props.FloatProperty(default=5.5)
     max = bpy.props.FloatProperty(default=0)
     min = bpy.props.FloatProperty(default=0)
@@ -127,17 +137,18 @@ class VTKColorMapper(Node, VTKNode):
                 layout.label('Input has no associated data (try updating)')
 
 
-add_class(VTKColorMapper)
-TYPENAMES.append('VTKColorMapperType')
-# ----------------------------------------------------------------
-class VTKColorMap(Node, VTKNode):
 
+class VTKColorMap(Node, VTKNode):
+    '''VTK Color Map'''
     bl_idname = 'VTKColorMapType' # type name
     bl_label  = 'ColorMap'       # label for nice name display
 
-    texture_type = bpy.props.EnumProperty(name="texture type",
-                                          items=[('BLEND','BLEND','BLEND','TEXTURE_DATA',0),('IMAGE','IMAGE','IMAGE','FILE_IMAGE',1)],
-                                          default='BLEND')
+    texture_type = bpy.props.EnumProperty(
+        name="texture type",
+        items=[('BLEND','BLEND','BLEND','TEXTURE_DATA',0),
+               ('IMAGE','IMAGE','IMAGE','FILE_IMAGE',1)],
+        default='BLEND'
+    )
     my_texture = bpy.props.StringProperty()
 
 
@@ -191,12 +202,11 @@ class VTKColorMap(Node, VTKNode):
         return lut
 
     def special_properties(self):
-        """ needed to make auto_update scanner notice
-         changes in the color ramp """
+        '''Make auto_update scanner notice changes in the color ramp'''
         return self.export_properties()['elements']
 
     def export_properties(self):
-        """ called by export operator """
+        '''Export colormap properties. Called by export operator'''
         t = self.get_texture()
         if t:
             elements = t.color_ramp.elements
@@ -206,7 +216,7 @@ class VTKColorMap(Node, VTKNode):
         return {'elements': e}
 
     def import_properties(self, dict):
-        """ called by import operator """
+        '''Import colormap properties. Called by import operator'''
         t = self.get_texture()
         new_elements = dict['elements']
         if t:
@@ -221,9 +231,13 @@ class VTKColorMap(Node, VTKNode):
                     e = elements.new(new_el[1])
                     e.color = new_el[0]
 
+
+# Add classes and menu items
+TYPENAMES = []
+add_class(VTKColorMapper)
+TYPENAMES.append('VTKColorMapperType')
 add_class(VTKColorMap)
 TYPENAMES.append('VTKColorMapType')
-# ----------------------------------------------------------------
-menu_items = [ NodeItem(x) for x in TYPENAMES ]
-CATEGORIES.append( VTKNodeCategory("color", "color", items=menu_items) )
-# ----------------------------------------------------------------
+
+menu_items = [NodeItem(x) for x in TYPENAMES]
+CATEGORIES.append(VTKNodeCategory("color", "color", items=menu_items))
