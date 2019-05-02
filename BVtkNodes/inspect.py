@@ -2,11 +2,12 @@ import bpy
 import bpy.utils.previews
 from .core import *
 
-# ---------------------------------------------------------------------------------
-# Dubug panel and node documentation panel (informations about active node's vtk object)
-# ---------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+# Dubug panel and node documentation panel (information about
+# active node's vtk object)
+# -----------------------------------------------------------------------------
 class VTKInspectPanel(bpy.types.Panel):
-    """Information about active node's vtk object"""
+    '''Print information about active node's vtk object'''
     bl_label = 'Inspect'
     bl_idname = 'vtk_utilities_debug'
     bl_space_type = 'NODE_EDITOR'
@@ -20,26 +21,28 @@ class VTKInspectPanel(bpy.types.Panel):
     def draw(self, context):
         active_node = context.active_node
         layout = self.layout
-        layout.label('Vtk version: ' + vtk.vtkVersion().GetVTKVersion())
+        layout.label('VTK version: ' + vtk.vtkVersion().GetVTKVersion())
         vtkobj = active_node.get_vtkobj()
-        layout.operator('vtk.update_obj', text='update')
+        layout.operator('vtk.update_obj', text='Update Object')
         if vtkobj:
             column = layout.column(align=True)
-            o = column.operator('vtk.set_text_editor', text='documentation')
+            o = column.operator('vtk.set_text_editor', text='Documentation')
             o.print = 0
-            o = column.operator('vtk.set_text_editor', text='node status')
+            o = column.operator('vtk.set_text_editor', text='Node Status')
             o.print = 1
-            o = column.operator('vtk.set_text_editor', text='output status')
+            o = column.operator('vtk.set_text_editor', text='Output Status')
             o.print = 2
-            o = column.operator('vtk.open_website', text='online doc', icon='WORLD')
-            o.href = 'https://www.vtk.org/doc/release/7.1/html/class{}.html'.format(active_node.bl_label)
+            o = column.operator(
+                'vtk.open_website', text=' Online Documentation', icon='WORLD')
+            o.href = 'https://www.vtk.org/doc/nightly/html/class{}.html'.format(active_node.bl_label)
         else:
-            layout.label('No vtk obj')
+            layout.label('Not a VTK node')
 
-# ---------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Add button to console header
-# ---------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 class VTKConsoleHeader(bpy.types.Header):
+    '''VTK Console Header Buttons'''
     bl_idname = 'vtk_console_header'
     bl_space_type = 'CONSOLE'
 
@@ -54,23 +57,24 @@ class VTKConsoleHeader(bpy.types.Header):
         if node_tree:
             self.layout.separator()
             row = self.layout.row(align=True)
-            o = row.operator("console.insert", text="node")
+            o = row.operator("console.insert", text="Node")
             o.text = "x=bpy.data.node_groups['" + node_tree + "'].nodes.active"
-            o = row.operator("console.insert", text="vtkobj")
+            o = row.operator("console.insert", text="VTK Object")
             o.text = "x=bpy.data.node_groups['" + node_tree + "'].nodes.active.get_vtkobj()"
-            o = row.operator("console.insert", text="output")
+            o = row.operator("console.insert", text="Node Output")
             o.text = "x=bpy.data.node_groups['" + node_tree + "'].nodes.active.get_vtkobj().GetOutput()"
 
 
-# ---------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Operators
-# ---------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 class VTKSetTextEditor(bpy.types.Operator):
-    """Add node info to the text editor"""
+    '''Add node info to the text editor'''
     bl_idname = "vtk.set_text_editor"
     bl_label = "Print info in the text editor"
 
-    print = bpy.props.IntProperty(default=0) # 0 to print doc, 1 to print node status, 2 to print outputs status
+    # 0 to print doc, 1 to print node status, 2 to print outputs status
+    print = bpy.props.IntProperty(default=0)
 
     def execute(self, context):
         active_node = context.active_node
@@ -106,6 +110,7 @@ class VTKSetTextEditor(bpy.types.Operator):
         return {'FINISHED'}
 
     def get_text(self, name, inner):
+        '''Get text object'''
         if name not in bpy.data.texts.keys():
             text = bpy.data.texts.new(name)
         else:
@@ -114,15 +119,15 @@ class VTKSetTextEditor(bpy.types.Operator):
         return text
 
     def text_block(self, title, content):
+        '''Pretty print text content with title'''
         s = '-'*50+'\n' + title + '\n' + '-'*50 + '\n' + content + '\n'
-        if content == 'None': s += '\n\n'
+        if content == 'None':
+            s += '\n\n'
         return s
 
 
-add_ui_class(VTKSetTextEditor)
-
-
 class VTKOpenWebsite(bpy.types.Operator):
+    '''Open web site in web browser'''
     bl_idname = 'vtk.open_website'
     bl_label = ''
 
@@ -134,10 +139,8 @@ class VTKOpenWebsite(bpy.types.Operator):
         return {'FINISHED'}
 
 
-add_ui_class(VTKOpenWebsite)
-
-
 class VTKUpdateObj(bpy.types.Operator):
+    '''Run update of this VTK Object'''
     bl_idname = "vtk.update_obj"
     bl_label = "call update()"
 
@@ -154,7 +157,9 @@ class VTKUpdateObj(bpy.types.Operator):
         log_show()
         return {'FINISHED'}
 
-
+# Register classes
+add_ui_class(VTKSetTextEditor)
+add_ui_class(VTKOpenWebsite)
 add_ui_class(VTKConsoleHeader)
 add_ui_class(VTKUpdateObj)
 add_ui_class(VTKInspectPanel)
