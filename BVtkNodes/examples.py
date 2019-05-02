@@ -6,16 +6,20 @@ from bpy_extras.io_utils import ExportHelper
 import json
 import os
 
+# -----------------------------------------------------------------------------
+# Node tree JSON import/export, node arranging operator and node tree examples
+# -----------------------------------------------------------------------------
+
 examples_dir = os.path.realpath(__file__).replace('examples.py', 'examples/')
 examples_data_dir = os.path.realpath(__file__).replace('examples.py', 'examples_data/')
 
-# ---------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Functions to save node state into a dictionary
-# ---------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 
 class IEPanel(bpy.types.Panel):
-    '''Import and export vtk node trees as jsons'''
+    '''Import and export VTK node tree as json'''
     bl_label = 'Import export'
     bl_idname = 'vtk_utilities_importexport'
     bl_space_type = 'NODE_EDITOR'
@@ -38,12 +42,11 @@ class IEPanel(bpy.types.Panel):
         row = layout.row()
         row.operator('vtk_node_tree.import', text='Import from json', icon='FILESEL')
 
-
 core.add_ui_class(IEPanel)
 
 
 class ArrangePanel(bpy.types.Panel):
-    """ Arrange node tree """
+    '''Arrange nodes in node tree'''
     bl_label = 'Arrange tree'
     bl_idname = 'vtk_utilities_arrangetree'
     bl_space_type = 'NODE_EDITOR'
@@ -70,11 +73,12 @@ def arrange(scene, context):
 
 bpy.types.Scene.vtk_arrange_x_spacing = bpy.props.IntProperty(default=10, update=arrange)
 bpy.types.Scene.vtk_arrange_y_spacing = bpy.props.IntProperty(default=10, update=arrange)
+
 core.add_ui_class(ArrangePanel)
 
 
 class ExamplesPanel(bpy.types.Panel):
-    '''Example pipelines'''
+    '''Examples Panel'''
     bl_label = 'Examples'
     bl_idname = 'vtk_utilities_examples'
     bl_space_type = 'NODE_EDITOR'
@@ -91,12 +95,11 @@ class ExamplesPanel(bpy.types.Panel):
         row = layout.row()
         layout.menu('ExamplesMenu')
 
-
-
 core.add_ui_class(ExamplesPanel)
 
 
 class ExamplesMenu(bpy.types.Menu):
+    '''Examples Menu'''
     bl_label = "Examples"
     bl_idname = 'ExamplesMenu'
 
@@ -109,18 +112,21 @@ class ExamplesMenu(bpy.types.Menu):
         for em in ExamplesMenus:
             layout.menu(em.bl_idname)
 
-
 core.add_ui_class(ExamplesMenu)
-ExamplesMenus = []
 
-for name in [name for name in os.listdir(examples_dir) if os.path.isdir(os.path.join(examples_dir, name))]:
+
+
+# Populate examples from example directory to Examples menu
+ExamplesMenus = []
+for name in [name for name in os.listdir(examples_dir) \
+             if os.path.isdir(os.path.join(examples_dir, name))]:
     def menu_draw(self, context):
         layout = self.layout
         for i in os.listdir(self.filepath):
             if i.endswith('.json'):
-                layout.operator('vtk_node_tree.import', text=i.replace('.json', '')).filepath = os.path.join(
-                    self.filepath, i)
-
+                layout.operator('vtk_node_tree.import', \
+                                text=i.replace('.json', '')).filepath = \
+                                os.path.join(self.filepath, i)
 
     menu_type = type("ExamplesCategory_" + name, (bpy.types.Menu,), {
         "bl_label": name,
@@ -133,10 +139,12 @@ for name in [name for name in os.listdir(examples_dir) if os.path.isdir(os.path.
     core.add_ui_class(menu_type)
 
 
-# ---------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Import export functions
-# ---------------------------------------------------------------------------------
-def gisbi(node, identifier):  # get input socket by identifier
+# -----------------------------------------------------------------------------
+
+def gisbi(node, identifier):
+    '''Get input socket by identifier'''
     inputs = node.inputs
     for input in inputs:
         if input.identifier == identifier:
@@ -144,7 +152,8 @@ def gisbi(node, identifier):  # get input socket by identifier
     return None
 
 
-def gosbi(node, identifier):  # get output socket by identifier
+def gosbi(node, identifier):
+    '''Get output socket by identifier'''
     outputs = node.outputs
     for output in outputs:
         if output.identifier == identifier:
@@ -152,7 +161,8 @@ def gosbi(node, identifier):  # get output socket by identifier
     return None
 
 
-def gnbn(nodes, name):  # get node by name
+def gnbn(nodes, name):
+    '''Get node by name'''
     for node in nodes:
         if node.name == name:
             return node
@@ -160,6 +170,7 @@ def gnbn(nodes, name):  # get node by name
 
 
 def node_tree_from_dict(context, node_tree_dict):
+    '''Create node tree from dictionary'''
     space = context.space_data
     nodes = space.node_tree.nodes
     links = space.node_tree.links
@@ -172,6 +183,7 @@ def node_tree_from_dict(context, node_tree_dict):
 
 
 def node_from_dict(nodes, node_dict):
+    '''Create a node using data from node dictionary'''
     idname = node_dict['bl_idname']
     if not hasattr(bpy.types, idname):
         print('Node type not found:', idname)
@@ -191,6 +203,7 @@ def node_from_dict(nodes, node_dict):
                     pass
 
 def link_from_dict(nodes, links, new_link_dict):
+    '''Create link between nodes using data from node dictionary'''
     to_node = gnbn(nodes, new_link_dict['to_node_name'])
     from_node = gnbn(nodes, new_link_dict['from_node_name'])
     if from_node and to_node:
@@ -201,6 +214,7 @@ def link_from_dict(nodes, links, new_link_dict):
 
 
 def node_tree_to_dict(node_tree):
+    '''Create node dictionary from node tree'''
     nodes = node_tree.nodes
     links = node_tree.links
     n = []
@@ -213,6 +227,7 @@ def node_tree_to_dict(node_tree):
 
 
 def link_to_dict(link):
+    '''Create a link dictionary entry from link'''
     dict = {}
     dict['from_node_name'] = link.from_node.name
     dict['to_node_name'] = link.to_node.name
@@ -221,6 +236,7 @@ def link_to_dict(link):
     return dict
 
 def node_to_dict(node):
+    '''Create a node dictionary entry from node'''
     dict = {}
     props = [k for k in node.m_properties()]
     props.extend(['bl_idname',
@@ -253,12 +269,13 @@ def node_to_dict(node):
     return dict
 
 
-# ---------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Import export operators
-# ---------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 
 class ImportVtkNodeTree(bpy.types.Operator):
+    '''Import VTK Node Tree'''
     bl_idname = "vtk_node_tree.import"
     bl_label = "choose file"
 
@@ -302,12 +319,11 @@ class ImportVtkNodeTree(bpy.types.Operator):
         self.filepath = ''
         return {'FINISHED'}
 
-
 core.add_ui_class(ImportVtkNodeTree)
 
 
 class ExportVtkNodeTree(bpy.types.Operator, ExportHelper):
-    '''Save vtk node tree into a json file'''
+    '''Save VTK node tree into a json file'''
     bl_idname = "vtk_node_tree.export"
     bl_label = "Export Vtk Node Tree"
     filename_ext = ".json"
@@ -324,11 +340,11 @@ class ExportVtkNodeTree(bpy.types.Operator, ExportHelper):
         f.close()
         return {'FINISHED'}
 
-
 core.add_ui_class(ExportVtkNodeTree)
 
 
 class ImportVtkNodeTreeFromPy(bpy.types.Operator):
+    '''Import VTK node tree from Python file'''
     bl_idname = "vtk_node_tree.import_py"
     bl_label = "choose file"
 
@@ -367,7 +383,7 @@ class ImportVtkNodeTreeFromPy(bpy.types.Operator):
         self.filepath = ''
         return {'FINISHED'}
 
-
+# TODO: Translate to english
 # Questo metodo al momento e' una merda ed e' preferibile non usarlo in attesa
 # che sia reso piu' versatile
 def node_tree_from_py(context, py):
@@ -441,12 +457,13 @@ def node_tree_from_py(context, py):
     tb.location = (len(linked) * 300, 0)
     links.new(tb.inputs[0], linked[len(linked) - 1].outputs[0])
 
-# ---------------------------------------------------------------------------------
-# Arrage tree operator
-# ---------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+# Arrange tree operator
+# -----------------------------------------------------------------------------
 
 
 def x_behind_nodes(node):
+    '''Get number of input nodes behind this node'''
     max_behind = 0
     for input in node.inputs:
         for link in input.links:
@@ -458,15 +475,15 @@ def x_behind_nodes(node):
 
 
 def arrange_height(node, x_spacing, y_spacing, initial_y=0, initial_x=0):
+    '''Calculate height of node'''
     total_height = 0
     for output in node.outputs:
         for link in output.links:
             out_node = link.to_node
-            out_block_height = arrange_height(out_node,
-                                              x_spacing,
-                                              y_spacing,
-                                              initial_y-total_height,
-                                              initial_x+node.width+x_spacing)
+            out_block_height = \
+                arrange_height(out_node, x_spacing, y_spacing, \
+                               initial_y - total_height, \
+                               initial_x + node.width + x_spacing)
             total_height += out_block_height
     k = node.dimensions[0] / node.width  # node.height doesnt work
     height = node.dimensions[1] / k  # node height
@@ -477,7 +494,7 @@ def arrange_height(node, x_spacing, y_spacing, initial_y=0, initial_x=0):
 
 
 class NodeBlock:
-
+    '''Node block used for arranging nodes'''
     def __init__(self, node_start):
         self.nodes = []
         self.start = node_start
@@ -496,11 +513,12 @@ class NodeBlock:
 
 
 class VTKArrangeTree(bpy.types.Operator):
+    '''VTK Arrange Tree operator'''
     bl_idname = "vtk.arrange_tree"
     bl_label = "arrange_tree"
 
     def has_input(self, node):
-        """ true if node has at least one input linked """
+        '''true if node has at least one input linked'''
         for input in node.inputs:
             if len(input.links) > 0:
                 return True
