@@ -1,3 +1,6 @@
+#------------------------------------------------------------------------------
+# generate.py - Generate gen_VTK*.py files from vtkdb.sqlite database
+#------------------------------------------------------------------------------
 import sqlite3
 import os
 import os.path

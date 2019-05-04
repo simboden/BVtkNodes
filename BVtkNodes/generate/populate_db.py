@@ -1,3 +1,8 @@
+#------------------------------------------------------------------------------
+# populate_db.py - Populate VTK aclass definition database
+# Run example: python3 generate/populate_db.py 2>&1 | tee populate_db.log
+#------------------------------------------------------------------------------
+
 #import vtk
 from vtk_info import infos
 from vtk_info import vtk
@@ -221,4 +226,4 @@ for info in infos:
 conn.commit()
 conn.close()
 
-print('db done')
+print(filename + " created!")

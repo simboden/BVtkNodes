@@ -1,7 +1,24 @@
+#------------------------------------------------------------------------------
+# vtk_info.py - Initialization data for parsing Python vtk classes
+#               Called from populate_db.py
+#------------------------------------------------------------------------------
 import sys
 
 import vtk
 #from .vtk_patch import vtk
+
+skip_count = 0
+def print_skip(name):
+    '''Prints class name that was not included in class database'''
+    global skip_count
+    print("Skipped " + name)
+    skip_count += 1
+
+# Print basic VTK information
+print("VTK base: " + vtk.__file__)
+print("VTK version: " + vtk.vtkVersion().GetVTKVersion())
+print("len(dir(vtk)): " + str(len(dir(vtk))))
+print("Begin to parse VTK Python classes")
 
 BannedNames = (
 'vtk', # not a class
@@ -324,19 +341,23 @@ counter = 0
 for name in sorted( dir(vtk)):
 
     if not name.startswith('vtk'):
+        print_skip(name)
         continue
 
     if name in BannedNames:
         #print( 'skipping', name )
+        print_skip(name)
         continue
 
     c = getattr( vtk, name, None )
     if c is None:
+        print_skip(name)
         continue
 
     try:
         o = c()
     except:
+        print_skip(name)
         continue
 
     interesting = issubclass( c, vtk.vtkAlgorithm )
@@ -345,6 +366,7 @@ for name in sorted( dir(vtk)):
     if not interesting : interesting = issubclass(c, vtk.vtkInitialValueProblemSolver)
     if not interesting : interesting = issubclass(c, vtk.vtkParametricFunction)
     if not interesting :
+        print_skip(name)
         continue
 
     counter +=1
@@ -456,9 +478,7 @@ for name in sorted( dir(vtk)):
 
 
     infos.append( {'name':name[3:], 'num_in':num_in, 'num_out':num_out, 'out_type':out_type, 'props':props, 'docs':c.__doc__ } )
-
+    print('Appended ' + name)
 
 print()
-print('info done')
-
-
+print("Generated info for " + str(counter) + " and skipped " + str(skip_count) + " classes")
