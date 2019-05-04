@@ -1,11 +1,14 @@
 #------------------------------------------------------------------------------
 # generate.py - Generate gen_VTK*.py files from vtkdb.sqlite database
+# Install jinja2: pip3 install jinja2 --user
+# Run example: python3 generate/generate.py
 #------------------------------------------------------------------------------
 import sqlite3
 import os
 import os.path
 from jinja2 import Template
 
+# Variable type map
 TypeMap = {}
 TypeMap['String']                               = 'StringProperty'
 TypeMap['Bool']                                 = 'BoolProperty'
@@ -15,23 +18,29 @@ TypeMap['IntVector']                            = 'IntVectorProperty'
 TypeMap['Float']                                = 'FloatProperty'
 TypeMap['FloatVector']                          = 'FloatVectorProperty'
 
-
 # Class:    id, banned, num_pi, name, num_in, num_out, ctype, grp, status, note, doc = c
 # Property: id, class, banned, editable, name, args, value, type, size, items, note
-def get_classes( group ):
 
+def get_classes(group):
+    '''Generate classes dictionary from vtkdb.sqlite'''
     c_list = []
     conn = sqlite3.connect('vtkdb.sqlite')
     cursor = conn.cursor()
     #cursor.execute( "SELECT id,name FROM Class WHERE num_pi = 0 AND grp = (SELECT id FROM CGroup WHERE name=? ) ORDER BY name ", (group,) )
     cursor.execute( "SELECT id,name,num_in,num_out FROM Class WHERE grp = (SELECT id FROM CGroup WHERE name=? ) ORDER BY name ", (group,) )
     classes = cursor.fetchall()
+
     for c in classes:
-        dic = { 'name':c[1], 'props':[], 'num_in':c[2], 'num_out':c[3], 'extra_connections':[] }
+        dic = { 'name':c[1],
+                'props':[],
+                'num_in':c[2],
+                'num_out':c[3],
+                'extra_connections':[]
+        }
         cursor.execute( "SELECT name,(SELECT name FROM PType WHERE id=Property.type ),size,value,items,banned FROM Property WHERE class = ? ORDER by type,name", (c[0],) )
         props = cursor.fetchall()
-        for p in props:
 
+        for p in props:
             pname  = p[0]
             ptype  = p[1]
             psize  = p[2]
@@ -39,18 +48,17 @@ def get_classes( group ):
             items  = p[4]
             banned = p[5]
 
-
             if banned == 1:
-                continue  # skip banned properties
+                continue # skip banned properties
             
             if items:
-                items = [ x[1] for x in eval(items) ]
+                items = [x[1] for x in eval(items)]
 
             if not ptype in TypeMap:
                 dic['extra_connections'].append(pname)
                 continue # not a property
 
-            ptype = TypeMap[ ptype ]
+            ptype = TypeMap[ptype]
 
             if ptype == 'StringProperty' or ptype == 'EnumProperty':
                 value = '"'+value+'"'
@@ -60,7 +68,7 @@ def get_classes( group ):
                     value = " "
 
             if ptype == 'BoolProperty' and value != "True" and value != "False":
-                if value[0]!=0:
+                if value[0] != 0:
                     value = "True"
                 else:
                     value = "False"
@@ -68,30 +76,34 @@ def get_classes( group ):
             if pname == 'ReadFromInputString':
                 value = 'False'
 
-            # clamp functions taking strings and returning numbers
-            def clamp_int( value ):
+            # Clamp functions taking strings and returning numbers
+            def clamp_int(value):
                 return  max(min( int(value), 1000000000), -1000000000)
-            def clamp_float( value ):
-                return  max(min( float(value), 1e30), -1e30)
-
+            def clamp_float(value):
+                return  max(min(float(value), 1e30), -1e30)
 
             if ptype == 'IntProperty':
-                value = str( clamp_int( value ) )
+                value = str(clamp_int(value))
             if ptype == 'FloatProperty':
-                value = str( clamp_float( value ) )
+                value = str(clamp_float(value))
             if ptype == 'IntVectorProperty':
                 list = eval(value)
-                value = str( [ clamp_int(x) for x in list ] )
+                value = str([clamp_int(x) for x in list])
             if ptype == 'FloatVectorProperty':
                 list = eval(value)
-                value = str( [ clamp_float(x) for x in list ] )
+                value = str([clamp_float(x) for x in list])
 
-            dic['props'].append( { 'name':pname, 'type':ptype, 'size':psize, 'value':value, 'items':items } )
+            dic['props'].append({ 'name':pname,
+                                  'type':ptype,
+                                  'size':psize,
+                                  'value':value,
+                                  'items':items
+            })
             
         c_list.append(dic)
+
     conn.close()
     return c_list
-
 
 
 node_template = '''from .core import *    
@@ -123,40 +135,48 @@ CATEGORIES.append( VTKNodeCategory( '{{MENU}}', '{{MENU}}', items=menu_items) )
 template = Template(node_template)
 
 
-def generate( group ):
-
+def generate(group):
+    '''Generate python class definition for group'''
     classes = get_classes(group)
-    
-    DIC = { 'MENU':group.lower(), 'CLASSES':[], 'BASE':bases[group] }
+
+    # Dictionary to hold final class data
+    DIC = { 'MENU':group.lower(),
+            'CLASSES':[],
+            'BASE':bases[group]
+    }
     
     for c in classes:
 
         C = { 'NAME':c['name'], 'PROPS':[], 'ENUM_ITEMS':[], 'CONNECTIONS':((),(),(),()) }
 
-        wm,wp = 0,0
+        # Find character field maximum widths
+        wn = 0 # name field character width
+        wp = 0 # type field character width
         if len(c['props']):
-            wn = max( [ len(p['name']) for p in c['props'] ])
-            wp = max( [ len(p['type']) for p in c['props'] ])
-            
+            wn = max([len(p['name']) for p in c['props']])
+            wp = max([len(p['type']) for p in c['props']])
+
+        # Process class properties
         for p in c['props']:
-
-            # some formatting is easier in python then in jinja
-            name,ptype,value,size,items = p['name'], p['type'],p['value'],p['size'],p['items']
-
+            name = p['name']
+            ptype = p['type']
+            value = p['value']
+            size = p['size']
+            items = p['items']
 
             if name == 'UTF8RecordDelimiters':
                 value = '"\\n"'
 
-            P = {'name':name }
+            P = {'name':name}
 
             prefix = 'm_'
             items_arg = ''
             if items: # is an enum
                 prefix = 'e_'
-                items_arg =      ', items='+prefix+name+'_items'
+                items_arg = ', items='+prefix+name+'_items'
                 C['ENUM_ITEMS'].append( prefix+name+'_items=[ (x,x,x) for x in '+str(items)+']' )
 
-            P['prefix']=prefix
+            P['prefix'] = prefix
 
             if size == 1:
                 size = ''
@@ -166,6 +186,7 @@ def generate( group ):
             if ptype == 'StringProperty' and 'FileName' in name :
                 items_arg = ", subtype='FILE_PATH'"
 
+            # Declaration row
             P['decl'] = "{}{} = bpy.props.{}( name={} default={}{}{} )".format(
                 prefix,
                 name.ljust(wn),
@@ -177,39 +198,45 @@ def generate( group ):
             )
             C['PROPS'].append(P)
 
+        # Input ports
         num_in  = c['num_in']
         if num_in == 1:
             input_ports = ['input']
         else:
             input_ports = ['input '+str(i) for i in range(num_in) ]
 
+        # Output ports
         num_out = c['num_out']
         if num_out == 1:
             output_ports = ['output']
         else:
             output_ports = ['output '+str(i) for i in range(num_out) ]
 
+        # Extras
         extra_inputs = c['extra_connections']
         extra_outputs = []
         if group not in ['Source','Reader','Writer','Filter','Filter1','Filter2']:
             extra_outputs = ['self']
-        C['CONNECTIONS'] = str( (input_ports, output_ports, extra_inputs, extra_outputs) )
 
+        C['CONNECTIONS'] = str( (input_ports, output_ports, extra_inputs, extra_outputs) )
 
         C['NP'] = max( 1, len(C['PROPS']) )
 
+        # Add class data to dictionary
         if C['NP'] > 32:  # blender BoolArray max size is 32
             print( C['NAME'], 'skipped: too many properties (', C['NP'], ')' )
         else:
             DIC['CLASSES'].append(C)
 
-
-    text = template.render( DIC )
-    f = open( filenames[group], 'w')
+    # Render the jinja2 template and write to file
+    text = template.render(DIC)
+    f = open(filenames[group], 'w')
     f.write(text)
     f.close()
+    print("Wrote " + filenames[group])
 
 
+# Base class names for groups
 bases = { 'Source':        'VTKNode',
           'Reader':        'VTKNode',
           'Writer':        'VTKNode',
@@ -220,8 +247,9 @@ bases = { 'Source':        'VTKNode',
           'ImplicitFunc':  'VTKNode',
           'ParametricFunc':'VTKNode',
           'Integrator':    'VTKNode',
-          }
+}
 
+# File names for generated python files
 filenames = { 'Source':         'gen_VTKSources.py',
               'Reader':         'gen_VTKReaders.py',
               'Writer':         'gen_VTKWriters.py',
@@ -234,6 +262,7 @@ filenames = { 'Source':         'gen_VTKSources.py',
               'Integrator':     'gen_VTKIntegrator.py',
 }
 
+# Call generation routine for each class
 generate('Source')
 generate('Reader')
 generate('Writer')
