@@ -2,21 +2,19 @@ from .gen_VTKFilters1 import *
 from .gen_VTKFilters2 import *
 from .gen_VTKFilters  import *
 
-# ---------------------------------------------------------------------------------
-# Contour classes
-# ---------------------------------------------------------------------------------
-
 
 class ValueSettings(bpy.types.PropertyGroup):
-    """ Actually a float array of variable size """
+    '''Property Group for float array of variable size'''
     value = bpy.props.FloatProperty(default = 0)
-
 
 add_ui_class(ValueSettings)
 
+# -----------------------------------------------------------------------------
 
 class VTKContourHelper:
-    """ Base class for filters similar to vtkCountourFilter  """
+    '''Base class for filters which use variable number of discrete
+    data values for input, similar to vtkCountourFilter.
+    '''
     m_ContourValues = bpy.props.CollectionProperty(type=ValueSettings)
 
     def draw_buttons(self, context, layout):
@@ -59,11 +57,11 @@ class VTKContourHelper:
         return [x.value for x in self.m_ContourValues]
 
     def export_properties(self):
-        """ called by export operator """
+        '''Export properties'''
         return {'m_ContourValues':[x.value for x in self.m_ContourValues]}
 
     def import_properties(self, dict):
-        """ called by import operator """
+        '''Import properties'''
         values = dict['m_ContourValues']
         for i, val in enumerate(values):
             if i < len(self.m_ContourValues):
@@ -72,10 +70,10 @@ class VTKContourHelper:
                 item = self.m_ContourValues.add()
                 item.value = val
 
-# --------------------------------------------------------------
-
+# -----------------------------------------------------------------------------
 
 class VTKContourFilter(VTKContourHelper, Node, VTKNode):
+    '''Manually modified version of VTK Contour Filter'''
     bl_idname = 'VTKContourFilterType'
     bl_label = 'vtkContourFilter'
 
@@ -95,12 +93,12 @@ class VTKContourFilter(VTKContourHelper, Node, VTKNode):
     def m_connections(self):
         return (['input'], ['output'], [], [])
 
-
 add_class(VTKContourFilter)
-# --------------------------------------------------------------
 
+# -----------------------------------------------------------------------------
 
 class VTKMarchingCubes(VTKContourHelper, Node, VTKNode):
+    '''Manually modified version of VTK Marching Cubes'''
     bl_idname = 'VTKMarchingCubesType'
     bl_label = 'vtkMarchingCubes'
 
@@ -118,12 +116,12 @@ class VTKMarchingCubes(VTKContourHelper, Node, VTKNode):
     def m_connections(self):
         return (['input'], ['output'], [], [])
 
-
 add_class(VTKMarchingCubes)
-# --------------------------------------------------------------
 
+# -----------------------------------------------------------------------------
 
 class UpdateCollection(bpy.types.Operator):
+    '''Operator to update collection'''
     bl_idname = "vtk.update_collection"
     bl_label = "update"
     index = bpy.props.IntProperty(default = 0)
@@ -141,10 +139,13 @@ class UpdateCollection(bpy.types.Operator):
         return {'FINISHED'}
 
 add_ui_class(UpdateCollection)
-# --------------------------------------------------------------
 
+# -----------------------------------------------------------------------------
 
 class VTKAppendFilter(Node, VTKNode):
+    '''Manually modified version of VTK Append Filter, to handle multiple
+    inputs correctly
+    '''
     bl_idname = 'VTKAppendFilterType'
     bl_label = 'vtkAppendFilter'
 
@@ -159,7 +160,7 @@ class VTKAppendFilter(Node, VTKNode):
         return (['input'], ['output'], [], [])
 
     def setup(self):
-        self.inputs['input'].link_limit = 300  # added
+        self.inputs['input'].link_limit = 300
 
     def apply_inputs(self, vtkobj):
         added = [vtkobj.GetInputConnection(0, i) for i in range(vtkobj.GetNumberOfInputConnections(0))]
@@ -176,6 +177,5 @@ class VTKAppendFilter(Node, VTKNode):
 
 add_class(VTKAppendFilter)
 TYPENAMES.append('VTKAppendFilterType')
-# --------------------------------------------------------------
 
 
