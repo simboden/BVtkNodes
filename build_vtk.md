@@ -11,7 +11,7 @@ Compilation steps are
 4. Start Blender
 
 In this example, it is assumed that Python and VTK are installed to following folders.
-You may replace ~/BVTKNodes with another installation folder if you want.
+You may replace ```~/BVTKNodes``` with another installation folder if you want.
 ```
 ~/BVTKNodes/Python-3.5.3
 ~/BVTKNodes/VTK-8.2.0
@@ -70,7 +70,7 @@ make install
 
 I create a script which configures environment variables and starts
 Blender. Another option is to add export commands to ```~/.bashrc```.
-Replace /path/to/start/blender with correct path to blender
+Replace ```/path/to/start/blender``` with correct path to blender
 binary.
 
 ```
@@ -91,6 +91,8 @@ You can test if VTK is found in Blender Python Console with commands
 
 ```
 import vtk
-dir(vtk)
+vtk.vtkVersion().GetVTKVersion()
 ```
+
+which should return VTK version number 8.2.0.
 
