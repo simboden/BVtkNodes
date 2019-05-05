@@ -337,6 +337,23 @@ add_class( VTKSphere )
 TYPENAMES.append('VTKSphereType' )
 
 #--------------------------------------------------------------
+class VTKSpheres(Node, VTKNode):
+
+    bl_idname = 'VTKSpheresType'
+    bl_label  = 'vtkSpheres'
+    
+    
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    
+    def m_properties( self ):
+        return []
+    def m_connections( self ):
+        return ([], [], ['Centers', 'Radii', 'Transform'], ['self']) 
+    
+add_class( VTKSpheres )        
+TYPENAMES.append('VTKSpheresType' )
+
+#--------------------------------------------------------------
 class VTKSuperquadric(Node, VTKNode):
 
     bl_idname = 'VTKSuperquadricType'
