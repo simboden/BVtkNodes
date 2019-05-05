@@ -1,30 +1,52 @@
-### Warning
-This repository is being updated, information below is partially out of date.
+# BVTKNodes 
 
-# BVtkNodes 
-The Visualization Toolkit (VTK https://www.vtk.org/ ) is an open source library for scientific visualization developed by Kitware. BVtkNodes is a Blender Addon allowing to use VTK in Blender by node system.
+[The Visualization Toolkit (VTK)](https://www.vtk.org/) is an open
+source library for scientific data visualization. BVTKNodes is a
+[Blender](http://blender.org) addon to create and execute VTK
+pipelines in Blender Node Editor. The add-on is based on automatic
+generation of Blender Node classes from VTK Python classes. A manually
+programmed node class can supercede automatically generated code where
+needed.
+
+BVTKNodes provides Blender users access to data readers for many
+scientific data formats, along with capability to convert VTK data
+into a Blender mesh. For VTK users, the add-on provides access to high
+quality rendering and many kind of mesh editing tools.
+[VTK Nodes presentation](https://www.youtube.com/watch?v=KcF4LBTTyvk)
+was given in Blender Conference 2018.
+
 <p align="center">
-<img src="isosurfaces.jpg" width="800" >
+<img src="isosurfaces.jpg">
 </p>
 
-**addon for**: [Blender](http://blender.org) version *2.79*.  
-**current version**: beta 1.0   
-**license**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
-**contributors**: Silvano Imboden (s.imboden@cineca.it) , Lorenzo Celli, Paul Mc Manus
+### Information
 
-### Prerequisites: 
-__VTK (version 7 and above) and VTK python wrappers compatible with the python used in Blender.__   
-To build VTK your own please look here: [build_vtk_for_blender]( ./build_vtk.md ).     
+**Note:** This repository is being updated, information may be partially out of date.
 
-### Goals:
-- verify the feasibility of using VTK inside Blender
-- provide a tools to quickly learn VTK and prototiping VTK pipelines.
+- **Tested version**: [Blender](http://blender.org) version 2.79b
+  and VTK library version 8.2.0.
+- **License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)
+- **Contributors**: Silvano Imboden (s.imboden@cineca.it), Lorenzo Celli,
+  Paul McManus, Tuomo Keskitalo
 
-### Desiderable side effects:
-- provide Blender users with readers for many scientific data format, and techniques to convert them to blender mesh.
-- provide VTK users with hi-quality-rendering and many kind of mesh editing tools.
+### Prerequisites
 
-### Installation:
+BVTKNodes add-on requires VTK version 8.2.0 and VTK python wrappers
+compatible with the python version used in Blender.
+Another VTK version (>7) may be alternatively used, if generated class
+definitions (gen_VTK*.py files) are also updated (by running
+populate_db.py and generate.py. Warning: Modifications may be
+required).
+See [VTK building instructions for Linux](./build_vtk.md).
 
-To be updated
+### Installation
+
+- Add-on code is available at
+  https://github.com/tkeskita/BVtkNodes. To download add-on from
+  Github, Select “Clone or download”, then “Download ZIP”.
+- Start Blender, go to “Edit” –> “Preferences” –> “Add-ons” –> “Install” –> open the add-on zip file.
+- Activate the “BVTKNodes” add-on in Preferences. Add-on is located in
+  Node category, Testing level of Blender add-ons.
+- Click “Save Preferences” to autoload add-on every time Blender is started
+
 
