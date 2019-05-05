@@ -1,3 +1,6 @@
+# Generated definitions for VTK class group: Transform
+# VTK version: 8.2.0
+
 from .core import *    
 TYPENAMES = []
 

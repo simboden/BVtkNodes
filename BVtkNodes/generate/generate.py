@@ -229,7 +229,11 @@ def generate(group):
             DIC['CLASSES'].append(C)
 
     # Render the jinja2 template and write to file
-    text = template.render(DIC)
+    from vtk import vtkVersion
+    text = "# Generated definitions for VTK class group: " + group + \
+           "\n# VTK version: " + \
+           vtkVersion().GetVTKVersion() + "\n\n" + \
+           template.render(DIC)
     f = open(filenames[group], 'w')
     f.write(text)
     f.close()
