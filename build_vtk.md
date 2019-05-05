@@ -1,81 +1,96 @@
-# Compile a VTK compatible with Blender 
+# BVTKNodes VTK compilation for Linux 
 
-These are the steps that worked for me with VTK8 and Blender 2.79 on Ubuntu 16.04 LTS.
-I wasnt't able to do the same thing on OSX, and I haven't tried yet on Windows (sorry)
-I'll update this page as soon as I have more results.    
+These instructions were tested with bash on Ubuntu 16.04, Blender
+2.79b and VTK 8.2.0. **Note:** You must know how to install prerequisites
+and basics of source code compiling to follow these instructions.
+Compilation steps are
 
-In short you have to compile Python that matches the one in Blender, 
-then compile VTK and its python bindings using the your version of Python, 
-lastly you need to configure the environment so that the various libraries can be found from Blender.
+1. Compile Python matching the Python version of Blender
+2. Compile VTK and with python bindings
+3. Configure environment variables to make Blender use self compiled Python and VTK
+4. Start Blender
 
-
-find out which version of python is blender using
+In this example, it is assumed that Python and VTK are installed to following folders.
+You may replace ~/BVTKNodes with another installation folder if you want.
 ```
-run blender, create a py-console, 
-> import sys 
-> sys.version
-'3.5.3 (default, May 18 2017, 14:40:48) \n[GCC 5.4.1 20161019]'
+~/BVTKNodes/Python-3.5.3
+~/BVTKNodes/VTK-8.2.0
 ```
 
-download and compile python
-```
-> wget https://www.python.org/ftp/python/3.5.3/Python-3.5.3.tgz
-> tar -xvzf Python-3.5.3.tgz
-> cd python-sources
-> ./configure --prefix=../install --with-computed-gotos --with-pymalloc [--enable-shared or --enable_framework on osx ]
-```
-the last three options should build python matching the way it is built for blender 
-```
-> make -j 4
-> make install
-> cd ../install/bin 
-> python
-Python 3.5.3 (default, Nov  3 2017, 17:31:29) 
-[GCC 5.4.0 20160609] on linux
-Type "help", "copyright", "credits" or "license" for more information.
-```
-download and compile vtk using the previous python.   
-prepare the following folders:
-```
-xxx/VTK8-py353/src -- explode the vtk source here
-xxx/VTK8-py353/build
-xxx/VTK8-py353/install
-```
-run cmake-gui, and set src and build dir,   
-press configure
-```
-set CMAKE_BUILD_TYPE = Release
-set INSTALL_PREFIX= xxx/VTK8-py353/install
-set module_vtkImagingOpenGL2 = on
-set module_vtkPython = on
-set module_vtkWrappingPythonCore= on
-```
-press configure
-```
-set PYTHON/PYTHON_INCLUDE_DIR = your_python_install_dir/include
-set PYTHON/PYTHON_LIB_DIR =  your_python_install_dir/lib
-set VTK/VTK_PYTHON_VERSION = 3
-set VTK/VTK_WRAP_PYTHON  = on
+Note: You can find out Blender's Python version by running following command
+in Blender Python Console
 
-> cp xxx/PY353/include/python3.5m/patchlevel.h  xxx/PY353/install/include/patchlevel.h
 ```
-press generate
+import sys 
+sys.version
 ```
-> export PYTHONPATH= xxx/PY353/install/lib/python3.5:$PYTHONPATH
-> export LD_LIBRARY_PATH= xxx/PY353/install/lib:$LD_LIBRARY_PATH
-> cd ../build
-> make 
-> make install
+
+Blender 2.79b uses Python version 3.5.3.
+
+# 1. Compile Python
+
+Download and compile Python
 ```
-configure the environment
+cd ~/BVTKNodes/Python-3.5.3
+wget https://www.python.org/ftp/python/3.5.3/Python-3.5.3.tgz
+tar xvzf Python-3.5.3.tgz
+mkdir install
+cd install
+MYPYTHON=$PWD
+cd ../Python-3.5.3
+./configure --prefix=$MYPYTHON --with-computed-gotos --with-pymalloc --enable-shared
+make -j 4
+make install
 ```
-> export PYTHONPATH= xxx/VTK/install/site-packages:$PYTHONPATH
-> export LD_LIBRARY_PATH= xxx/VTK/install/lib:$LD_LIBRARY_PATH
+
+# 2. Compile VTK
+
+Download and compile VTK
+
 ```
-test it:       
-Run Blender, open the python console 
+cd ~/BVTKNodes/VTK-8.2.0
+wget https://www.vtk.org/files/release/8.2/VTK-8.2.0.tar.gz
+tar xzvf VTK-8.2.0.tar.gz
+mkdir build
+cd build
+ccmake ../VTK-8.2.0 -DCMAKE_INSTALL_PREFIX:PATH=$MYPYTHON -DCMAKE_BUILD_TYPE:STRING=Release -DModule_vtkImagingOpenGL2:BOOL=ON -DModule_vtkPython:BOOL=ON -DModule_vtkWrappingPythonCore:BOOL=ON -DPYTHON_INCLUDE_DIR:PATH=$MYPYTHON/include/python3.5m -DPYTHON_LIBRARY:FILEPATH=$MYPYTHON/lib/libpython3.5m.so -DVTK_PYTHON_VERSION:STRING=3 -DVTK_WRAP_PYTHON:BOOL=ON
 ```
-> import vtk
-> dir(vtk)
-[ ‘DC’… ….. 'vtkZLibDataCompressor' ]
+
+In ccmake, press
+- **c** to configure
+- **c** to configure again
+- **g** to generate config files and exit
+
 ```
+make -j 4
+make install
+```
+
+# 3. Configure environment variables
+
+I create a script which configures environment variables and starts
+Blender. Another option is to add export commands to ```~/.bashrc```.
+Replace /path/to/start/blender with correct path to blender
+binary.
+
+```
+cat >~/start_bvtknodes <<EOF
+export PYTHONPATH=$MYPYTHON/lib/python3.5/site-packages:$PYTHONPATH
+export LD_LIBRARY_PATH=$MYPYTHON/lib:$LD_LIBRARY_PATH
+export PATH=$MYPYTHON/bin:$PATH
+/path/to/start/blender
+EOF
+chmod a+x ~/start_bvtknodes
+```
+
+# 4. Start Blender
+
+In terminal, give command ```~/start_bvtknodes```
+
+You can test if VTK is found in Blender Python Console with commands
+
+```
+import vtk
+dir(vtk)
+```
+
