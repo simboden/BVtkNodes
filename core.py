@@ -3,12 +3,11 @@
 # MODULES IMPORT 
 # -----------------------------------------------------------------------------
 import bpy
-from   bpy.types import NodeTree, Node, NodeSocket
-from   nodeitems_utils import NodeCategory, NodeItem
+from bpy.types import NodeTree, Node, NodeSocket
+from nodeitems_utils import NodeCategory, NodeItem
 import os
 
 import vtk
-# from .vtk_patch import vtk
    
 from . import b_properties # Boolean properties
 b_path = b_properties.__file__ # Boolean properties config file path
@@ -349,7 +348,7 @@ class VTKNodeWrite(bpy.types.Operator):
 # Registering
 # -----------------------------------------------------------------------------
 
-CLASSES = {}  # dictionary to allow class overriding
+CLASSES = {}  # dictionary of classes is used to allow class overriding
 UI_CLASSES = []
 
 def add_class(obj):
@@ -359,7 +358,9 @@ def add_ui_class(obj):
     UI_CLASSES.append(obj)
 
 def check_b_properties():
-    '''Sets boolean properties default to True'''
+    '''Sets all boolean properties to True, unless correct number of properties
+    is specified in b_properties
+    '''
     for obj in CLASSES.values():
         if hasattr(obj, 'm_properties') and hasattr(obj, 'b_properties'):
             np = len(obj.m_properties(obj))

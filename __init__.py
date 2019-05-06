@@ -11,17 +11,24 @@ bl_info = {
     "blender": (2, 79,  0),
     "location": "Node Editor > Use Nodes > VTK > New NodeTree",
     "description": "Create and execute VTK pipelines in Blender Node Editor",
-    "warning": "Experimental",
+    "warning": "Experimental. Requires custom installation of VTK library",
     "wiki_url": "https://github.com/tkeskita/BVtkNodes",
     "tracker_url": "https://github.com/tkeskita/BVtkNodes/issues",
     "support": 'COMMUNITY',
     "category": "Node",
     }
 
+# tkeskita OPEN ISSUES
+# - generate/vtk_info_modified.py is not used, can it be deleted?
+# - does b_properties.py need to be updated for VTK 8.2.0?
+
+# tkeskita TODO list:
+# - rename classes to conform to Blender 2.8 naming rules
+# - replace all prints with Python logging
+
 # Import VTK Python module
 try:
     import vtk
-    #from .vtk_patch import vtk
 except:
     pass
 
@@ -29,10 +36,12 @@ try:
     dir(vtk)
 except:
     message = '''
-    BVTKNodes addon failed to access the VTK library. You must
-    install Python library corresponding to the Python library version
-    used by Blender along with VTK, and then make VTK library available
-    to Blender. Please refer to BVTKNodes documentation for help.
+    BVTKNodes add-on failed to access the VTK library. You must
+    compile and install Python library corresponding to the Python
+    library version used by Blender, and then compile and install
+    VTK on top of it. Finally you must customize environment variables
+    to use the compiled Python library before starting Blender.
+    Please refer to BVTKNodes documentation for help.
     '''
     raise Exception(message)
 
@@ -67,7 +76,6 @@ from . import VTKOthers
 if need_reloading:
     import importlib
 
-    #importlib.reload(vtk_patch)
     importlib.reload(update)
     importlib.reload(core)
     importlib.reload(b_properties)
@@ -110,17 +118,21 @@ def on_file_loaded(scene):
 
 @persistent
 def on_frame_change(scene):
-    '''Update nodes after frame changes'''
+    '''Update nodes after frame changes by updating all VTK to Blender nodes'''
     for node_group in bpy.data.node_groups:
         for node in node_group.nodes:
             if node.bl_idname == 'VTK2BlenderType':
                 update.no_queue_update(node, node.update_cb)
 
 
-def custom_register_node_categories(identifier, cat_list):
+def custom_register_node_categories():
     '''Custom registering of node categories to prevent node categories to
     be shown on the tool-shelf
     '''
+
+    identifier = "VTK_NODES"
+    cat_list = core.CATEGORIES
+
     if identifier in nodeitems_utils._node_categories:
         raise KeyError("Node categories list '%s' already registered" % identifier)
         return
@@ -133,7 +145,6 @@ def custom_register_node_categories(identifier, cat_list):
 
     def draw_add_menu(self, context):
         layout = self.layout
-
         for cat in cat_list:
             if cat.poll(context):
                 layout.menu("NODE_MT_category_%s" % cat.identifier)
@@ -154,9 +165,6 @@ def custom_register_node_categories(identifier, cat_list):
     nodeitems_utils._node_categories[identifier] = \
         (cat_list, draw_add_menu, menu_types, []) # , panel_types)
 
-# Used for debugging. TODO: Replace all prints with Python logging.
-bpy.types.Scene.vtk_debug = bpy.props.IntProperty(default=50, subtype='PERCENTAGE', min=0, max=100)
-
 
 def register():
     '''Register function. CLASSES and CATEGORIES are defined in core.py and
@@ -164,7 +172,7 @@ def register():
     '''
     bpy.app.handlers.load_post.append(on_file_loaded)
     bpy.app.handlers.frame_change_post.append(on_frame_change)
-    core.check_b_properties() # delayed to deal with overloading
+    core.check_b_properties() # delayed to here to allow class overriding
     for c in core.UI_CLASSES:
         try:
             bpy.utils.register_class(c)
@@ -175,7 +183,7 @@ def register():
             bpy.utils.register_class(core.CLASSES[c])
         except:
             print('error registering ', c)
-    custom_register_node_categories("VTK_NODES", core.CATEGORIES)
+    custom_register_node_categories()
 
 def unregister():
     nodeitems_utils.unregister_node_categories("VTK_NODES")
