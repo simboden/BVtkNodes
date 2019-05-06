@@ -57,7 +57,7 @@ from   nodeitems_utils import NodeItem
 
 from . import core
 from . import b_properties
-from . import b_panel
+from . import showhide_properties
 from . import inspect
 from . import favorites
 from . import examples
@@ -79,7 +79,7 @@ if need_reloading:
     importlib.reload(update)
     importlib.reload(core)
     importlib.reload(b_properties)
-    importlib.reload(b_panel)
+    importlib.reload(showhide_properties)
     importlib.reload(examples)
     importlib.reload(inspect)
     importlib.reload(colormap)

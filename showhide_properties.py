@@ -1,11 +1,10 @@
 from . import core
 import bpy
 
-
-class VTKBPanel(bpy.types.Panel):
-    """Creates a Panel to enable/disable vtk node props"""
-    bl_label = 'Show/Hide properties'
-    bl_idname = 'vtk_utilities_development'
+class BVTK_PT_ShowHide_Properties_Panel(bpy.types.Panel):
+    '''BVTK Show/hide properties panel'''
+    bl_label = 'Show/Hide Properties'
+    bl_idname = 'BVTK_PT_Panel'
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = 'properties'
@@ -27,7 +26,7 @@ class VTKBPanel(bpy.types.Panel):
             if 'name' in prop_dict:  # collection properties don't have name
                 row.label(prop_dict['name'])
             elif 'attr' in prop_dict:
-                row.label(prop_dict['attr'][2:]) # removing first chars because they should be 'm_'
+                row.label(prop_dict['attr'][2:]) # removing first chars 'm_'
 
 
-core.add_ui_class(VTKBPanel)
+core.add_ui_class(BVTK_PT_ShowHide_Properties_Panel)
