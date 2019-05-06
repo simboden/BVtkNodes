@@ -4,7 +4,6 @@ import bpy
 class BVTK_PT_ShowHide_Properties_Panel(bpy.types.Panel):
     '''BVTK Show/hide properties panel'''
     bl_label = 'Show/Hide Properties'
-    bl_idname = 'BVTK_PT_Panel'
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = 'properties'
