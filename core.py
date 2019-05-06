@@ -40,7 +40,7 @@ def node_created(node):
     if node.bl_label.startswith('vtk'):
         vtk_class = getattr(vtk, node.bl_label, None)
         if vtk_class is None:
-            print("VTKNodeData: - bad classname", node.bl_label ) 
+            print("BVTK_NodeData: - bad classname", node.bl_label ) 
             return
         VTKCache[node.node_id] = vtk_class() # make an instance of node.vtk_class
 
@@ -167,10 +167,10 @@ class VTKSocket(NodeSocket):
 
 
 # -----------------------------------------------------------------------------
-# base class for all VTKNodes
+# base class for all BVTK_Nodes
 # -----------------------------------------------------------------------------
 
-class VTKNode:
+class BVTK_Node:
     
     node_id = bpy.props.IntProperty(default=0)
 
@@ -326,7 +326,7 @@ class VTKNode:
 # VTK Node Write
 # -----------------------------------------------------------------------------
 
-class VTKNodeWrite(bpy.types.Operator):
+class BVTK_NodeWrite(bpy.types.Operator):
     '''Operator to call VTK Write() for a node'''
     bl_idname = "vtk.node_write"
     bl_label = "write"
@@ -372,14 +372,14 @@ def check_b_properties():
 # Register classes
 add_class(VTKTree)
 add_class(VTKSocket)
-add_ui_class(VTKNodeWrite)
+add_ui_class(BVTK_NodeWrite)
 
 
 # -----------------------------------------------------------------------------
 # VTK Node Category
 # -----------------------------------------------------------------------------
 
-class VTKNodeCategory(NodeCategory):
+class BVTK_NodeCategory(NodeCategory):
     @classmethod
     def poll(cls, context):
         return context.space_data.tree_type == 'VTKTreeType'

@@ -5,7 +5,7 @@ from .core import *
 # -----------------------------------------------------------------------------
 
 
-class VTKCustomFilter(Node, VTKNode):
+class VTKCustomFilter(Node, BVTK_Node):
     '''VTK Custom Filter, defined in Blender text data block. Supports one
     or multiple inputs. Custom function must return a variable which
     is set as input of the node following custom filter.
@@ -136,4 +136,4 @@ TYPENAMES.append('VTKCustomFilterType')
 add_ui_class(VTKNewText)
 
 menu_items = [NodeItem(x) for x in TYPENAMES]
-CATEGORIES.append(VTKNodeCategory("custom", "custom", items=menu_items))
+CATEGORIES.append(BVTK_NodeCategory("custom", "custom", items=menu_items))

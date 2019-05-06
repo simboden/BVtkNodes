@@ -5,7 +5,7 @@ from .core import *
 TYPENAMES = []
 
 #--------------------------------------------------------------
-class VTKAMREnzoParticlesReader(Node, VTKNode):
+class VTKAMREnzoParticlesReader(Node, BVTK_Node):
 
     bl_idname = 'VTKAMREnzoParticlesReaderType'
     bl_label  = 'vtkAMREnzoParticlesReader'
@@ -15,7 +15,7 @@ class VTKAMREnzoParticlesReader(Node, VTKNode):
     m_Frequency      = bpy.props.IntProperty   ( name='Frequency',      default=1 )
     m_ParticleType   = bpy.props.IntProperty   ( name='ParticleType',   default=-1 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FilterLocation','m_FileName','m_Frequency','m_ParticleType',]
@@ -26,7 +26,7 @@ add_class( VTKAMREnzoParticlesReader )
 TYPENAMES.append('VTKAMREnzoParticlesReaderType' )
 
 #--------------------------------------------------------------
-class VTKAMREnzoReader(Node, VTKNode):
+class VTKAMREnzoReader(Node, BVTK_Node):
 
     bl_idname = 'VTKAMREnzoReaderType'
     bl_label  = 'vtkAMREnzoReader'
@@ -35,7 +35,7 @@ class VTKAMREnzoReader(Node, VTKNode):
     m_EnableCaching = bpy.props.BoolProperty  ( name='EnableCaching', default=True )
     m_FileName      = bpy.props.StringProperty( name='FileName',      default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ConvertToCGS','m_EnableCaching','m_FileName',]
@@ -46,7 +46,7 @@ add_class( VTKAMREnzoReader )
 TYPENAMES.append('VTKAMREnzoReaderType' )
 
 #--------------------------------------------------------------
-class VTKAMRFlashParticlesReader(Node, VTKNode):
+class VTKAMRFlashParticlesReader(Node, BVTK_Node):
 
     bl_idname = 'VTKAMRFlashParticlesReaderType'
     bl_label  = 'vtkAMRFlashParticlesReader'
@@ -55,7 +55,7 @@ class VTKAMRFlashParticlesReader(Node, VTKNode):
     m_FileName       = bpy.props.StringProperty( name='FileName',       default="", subtype='FILE_PATH' )
     m_Frequency      = bpy.props.IntProperty   ( name='Frequency',      default=1 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FilterLocation','m_FileName','m_Frequency',]
@@ -66,7 +66,7 @@ add_class( VTKAMRFlashParticlesReader )
 TYPENAMES.append('VTKAMRFlashParticlesReaderType' )
 
 #--------------------------------------------------------------
-class VTKAMRFlashReader(Node, VTKNode):
+class VTKAMRFlashReader(Node, BVTK_Node):
 
     bl_idname = 'VTKAMRFlashReaderType'
     bl_label  = 'vtkAMRFlashReader'
@@ -74,7 +74,7 @@ class VTKAMRFlashReader(Node, VTKNode):
     m_EnableCaching = bpy.props.BoolProperty  ( name='EnableCaching', default=True )
     m_FileName      = bpy.props.StringProperty( name='FileName',      default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_EnableCaching','m_FileName',]
@@ -85,7 +85,7 @@ add_class( VTKAMRFlashReader )
 TYPENAMES.append('VTKAMRFlashReaderType' )
 
 #--------------------------------------------------------------
-class VTKAMReXParticlesReader(Node, VTKNode):
+class VTKAMReXParticlesReader(Node, BVTK_Node):
 
     bl_idname = 'VTKAMReXParticlesReaderType'
     bl_label  = 'vtkAMReXParticlesReader'
@@ -93,7 +93,7 @@ class VTKAMReXParticlesReader(Node, VTKNode):
     m_ParticleType = bpy.props.StringProperty( name='ParticleType', default="particles" )
     m_PlotFileName = bpy.props.StringProperty( name='PlotFileName', default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ParticleType','m_PlotFileName',]
@@ -104,7 +104,7 @@ add_class( VTKAMReXParticlesReader )
 TYPENAMES.append('VTKAMReXParticlesReaderType' )
 
 #--------------------------------------------------------------
-class VTKAVSucdReader(Node, VTKNode):
+class VTKAVSucdReader(Node, BVTK_Node):
 
     bl_idname = 'VTKAVSucdReaderType'
     bl_label  = 'vtkAVSucdReader'
@@ -114,7 +114,7 @@ class VTKAVSucdReader(Node, VTKNode):
     m_FileName   = bpy.props.StringProperty( name='FileName',   default="", subtype='FILE_PATH' )
     e_ByteOrder  = bpy.props.EnumProperty  ( name='ByteOrder',  default="BigEndian", items=e_ByteOrder_items )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_BinaryFile','m_FileName','e_ByteOrder',]
@@ -125,7 +125,7 @@ add_class( VTKAVSucdReader )
 TYPENAMES.append('VTKAVSucdReaderType' )
 
 #--------------------------------------------------------------
-class VTKArrayDataReader(Node, VTKNode):
+class VTKArrayDataReader(Node, BVTK_Node):
 
     bl_idname = 'VTKArrayDataReaderType'
     bl_label  = 'vtkArrayDataReader'
@@ -134,7 +134,7 @@ class VTKArrayDataReader(Node, VTKNode):
     m_FileName            = bpy.props.StringProperty( name='FileName',            default="", subtype='FILE_PATH' )
     m_InputString         = bpy.props.StringProperty( name='InputString',         default="" )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_FileName','m_InputString',]
@@ -145,7 +145,7 @@ add_class( VTKArrayDataReader )
 TYPENAMES.append('VTKArrayDataReaderType' )
 
 #--------------------------------------------------------------
-class VTKArrayReader(Node, VTKNode):
+class VTKArrayReader(Node, BVTK_Node):
 
     bl_idname = 'VTKArrayReaderType'
     bl_label  = 'vtkArrayReader'
@@ -154,7 +154,7 @@ class VTKArrayReader(Node, VTKNode):
     m_FileName            = bpy.props.StringProperty( name='FileName',            default="", subtype='FILE_PATH' )
     m_InputString         = bpy.props.StringProperty( name='InputString',         default="" )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_FileName','m_InputString',]
@@ -165,7 +165,7 @@ add_class( VTKArrayReader )
 TYPENAMES.append('VTKArrayReaderType' )
 
 #--------------------------------------------------------------
-class VTKBMPReader(Node, VTKNode):
+class VTKBMPReader(Node, BVTK_Node):
 
     bl_idname = 'VTKBMPReaderType'
     bl_label  = 'vtkBMPReader'
@@ -192,7 +192,7 @@ class VTKBMPReader(Node, VTKNode):
     m_DataOrigin               = bpy.props.FloatVectorProperty( name='DataOrigin',               default=[0.0, 0.0, 0.0], size=3 )
     m_DataSpacing              = bpy.props.FloatVectorProperty( name='DataSpacing',              default=[1.0, 1.0, 1.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=19, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=19, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_Allow8BitBMP','m_FileLowerLeft','m_SwapBytes','m_FileName','m_FilePattern','m_FilePrefix','m_ScalarArrayName','m_DataMask','m_FileDimensionality','m_FileNameSliceOffset','m_FileNameSliceSpacing','m_HeaderSize','m_MemoryBufferLength','m_NumberOfScalarComponents','e_DataByteOrder','e_DataScalarType','m_DataVOI','m_DataOrigin','m_DataSpacing',]
@@ -203,7 +203,7 @@ add_class( VTKBMPReader )
 TYPENAMES.append('VTKBMPReaderType' )
 
 #--------------------------------------------------------------
-class VTKBYUReader(Node, VTKNode):
+class VTKBYUReader(Node, BVTK_Node):
 
     bl_idname = 'VTKBYUReaderType'
     bl_label  = 'vtkBYUReader'
@@ -218,7 +218,7 @@ class VTKBYUReader(Node, VTKNode):
     m_TextureFileName      = bpy.props.StringProperty( name='TextureFileName',      default="", subtype='FILE_PATH' )
     m_PartNumber           = bpy.props.IntProperty   ( name='PartNumber',           default=0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=9, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=9, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadDisplacement','m_ReadScalar','m_ReadTexture','m_DisplacementFileName','m_FileName','m_GeometryFileName','m_ScalarFileName','m_TextureFileName','m_PartNumber',]
@@ -229,7 +229,7 @@ add_class( VTKBYUReader )
 TYPENAMES.append('VTKBYUReaderType' )
 
 #--------------------------------------------------------------
-class VTKBiomTableReader(Node, VTKNode):
+class VTKBiomTableReader(Node, BVTK_Node):
 
     bl_idname = 'VTKBiomTableReaderType'
     bl_label  = 'vtkBiomTableReader'
@@ -251,7 +251,7 @@ class VTKBiomTableReader(Node, VTKNode):
     m_TensorsName         = bpy.props.StringProperty( name='TensorsName',         default="" )
     m_VectorsName         = bpy.props.StringProperty( name='VectorsName',         default="" )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadAllColorScalars','m_ReadAllFields','m_ReadAllNormals','m_ReadAllScalars','m_ReadAllTCoords','m_ReadAllTensors','m_ReadAllVectors','m_ReadFromInputString','m_FieldDataName','m_FileName','m_LookupTableName','m_NormalsName','m_ScalarsName','m_TCoordsName','m_TensorsName','m_VectorsName',]
@@ -262,14 +262,14 @@ add_class( VTKBiomTableReader )
 TYPENAMES.append('VTKBiomTableReaderType' )
 
 #--------------------------------------------------------------
-class VTKCMLMoleculeReader(Node, VTKNode):
+class VTKCMLMoleculeReader(Node, BVTK_Node):
 
     bl_idname = 'VTKCMLMoleculeReaderType'
     bl_label  = 'vtkCMLMoleculeReader'
     
     m_FileName = bpy.props.StringProperty( name='FileName', default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName',]
@@ -280,7 +280,7 @@ add_class( VTKCMLMoleculeReader )
 TYPENAMES.append('VTKCMLMoleculeReaderType' )
 
 #--------------------------------------------------------------
-class VTKCPExodusIIInSituReader(Node, VTKNode):
+class VTKCPExodusIIInSituReader(Node, BVTK_Node):
 
     bl_idname = 'VTKCPExodusIIInSituReaderType'
     bl_label  = 'vtkCPExodusIIInSituReader'
@@ -288,7 +288,7 @@ class VTKCPExodusIIInSituReader(Node, VTKNode):
     m_FileName        = bpy.props.StringProperty( name='FileName',        default="", subtype='FILE_PATH' )
     m_CurrentTimeStep = bpy.props.IntProperty   ( name='CurrentTimeStep', default=0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName','m_CurrentTimeStep',]
@@ -299,14 +299,14 @@ add_class( VTKCPExodusIIInSituReader )
 TYPENAMES.append('VTKCPExodusIIInSituReaderType' )
 
 #--------------------------------------------------------------
-class VTKChacoGraphReader(Node, VTKNode):
+class VTKChacoGraphReader(Node, BVTK_Node):
 
     bl_idname = 'VTKChacoGraphReaderType'
     bl_label  = 'vtkChacoGraphReader'
     
     m_FileName = bpy.props.StringProperty( name='FileName', default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName',]
@@ -317,7 +317,7 @@ add_class( VTKChacoGraphReader )
 TYPENAMES.append('VTKChacoGraphReaderType' )
 
 #--------------------------------------------------------------
-class VTKChacoReader(Node, VTKNode):
+class VTKChacoReader(Node, BVTK_Node):
 
     bl_idname = 'VTKChacoReaderType'
     bl_label  = 'vtkChacoReader'
@@ -328,7 +328,7 @@ class VTKChacoReader(Node, VTKNode):
     m_GenerateVertexWeightArrays   = bpy.props.BoolProperty  ( name='GenerateVertexWeightArrays',   default=True )
     m_BaseName                     = bpy.props.StringProperty( name='BaseName',                     default="" )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_GenerateEdgeWeightArrays','m_GenerateGlobalElementIdArray','m_GenerateGlobalNodeIdArray','m_GenerateVertexWeightArrays','m_BaseName',]
@@ -339,7 +339,7 @@ add_class( VTKChacoReader )
 TYPENAMES.append('VTKChacoReaderType' )
 
 #--------------------------------------------------------------
-class VTKCityGMLReader(Node, VTKNode):
+class VTKCityGMLReader(Node, BVTK_Node):
 
     bl_idname = 'VTKCityGMLReaderType'
     bl_label  = 'vtkCityGMLReader'
@@ -348,7 +348,7 @@ class VTKCityGMLReader(Node, VTKNode):
     m_FileName                 = bpy.props.StringProperty( name='FileName',                 default="", subtype='FILE_PATH' )
     m_LOD                      = bpy.props.IntProperty   ( name='LOD',                      default=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_UseTransparencyAsOpacity','m_FileName','m_LOD',]
@@ -359,7 +359,7 @@ add_class( VTKCityGMLReader )
 TYPENAMES.append('VTKCityGMLReaderType' )
 
 #--------------------------------------------------------------
-class VTKCompositeDataReader(Node, VTKNode):
+class VTKCompositeDataReader(Node, BVTK_Node):
 
     bl_idname = 'VTKCompositeDataReaderType'
     bl_label  = 'vtkCompositeDataReader'
@@ -381,7 +381,7 @@ class VTKCompositeDataReader(Node, VTKNode):
     m_TensorsName         = bpy.props.StringProperty( name='TensorsName',         default="" )
     m_VectorsName         = bpy.props.StringProperty( name='VectorsName',         default="" )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadAllColorScalars','m_ReadAllFields','m_ReadAllNormals','m_ReadAllScalars','m_ReadAllTCoords','m_ReadAllTensors','m_ReadAllVectors','m_ReadFromInputString','m_FieldDataName','m_FileName','m_LookupTableName','m_NormalsName','m_ScalarsName','m_TCoordsName','m_TensorsName','m_VectorsName',]
@@ -392,7 +392,7 @@ add_class( VTKCompositeDataReader )
 TYPENAMES.append('VTKCompositeDataReaderType' )
 
 #--------------------------------------------------------------
-class VTKDEMReader(Node, VTKNode):
+class VTKDEMReader(Node, BVTK_Node):
 
     bl_idname = 'VTKDEMReaderType'
     bl_label  = 'vtkDEMReader'
@@ -401,7 +401,7 @@ class VTKDEMReader(Node, VTKNode):
     m_FileName           = bpy.props.StringProperty( name='FileName',           default="", subtype='FILE_PATH' )
     e_ElevationReference = bpy.props.EnumProperty  ( name='ElevationReference', default="ElevationBounds", items=e_ElevationReference_items )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName','e_ElevationReference',]
@@ -412,7 +412,7 @@ add_class( VTKDEMReader )
 TYPENAMES.append('VTKDEMReaderType' )
 
 #--------------------------------------------------------------
-class VTKDICOMImageReader(Node, VTKNode):
+class VTKDICOMImageReader(Node, BVTK_Node):
 
     bl_idname = 'VTKDICOMImageReaderType'
     bl_label  = 'vtkDICOMImageReader'
@@ -436,7 +436,7 @@ class VTKDICOMImageReader(Node, VTKNode):
     m_DataOrigin               = bpy.props.FloatVectorProperty( name='DataOrigin',               default=[0.0, 0.0, 0.0], size=3 )
     m_DataSpacing              = bpy.props.FloatVectorProperty( name='DataSpacing',              default=[1.0, 1.0, 1.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileLowerLeft','m_SwapBytes','m_DirectoryName','m_FileName','m_FilePattern','m_FilePrefix','m_FileDimensionality','m_FileNameSliceOffset','m_FileNameSliceSpacing','m_HeaderSize','m_MemoryBufferLength','m_NumberOfScalarComponents','e_DataByteOrder','e_DataScalarType','m_DataOrigin','m_DataSpacing',]
@@ -447,7 +447,7 @@ add_class( VTKDICOMImageReader )
 TYPENAMES.append('VTKDICOMImageReaderType' )
 
 #--------------------------------------------------------------
-class VTKDIMACSGraphReader(Node, VTKNode):
+class VTKDIMACSGraphReader(Node, BVTK_Node):
 
     bl_idname = 'VTKDIMACSGraphReaderType'
     bl_label  = 'vtkDIMACSGraphReader'
@@ -456,7 +456,7 @@ class VTKDIMACSGraphReader(Node, VTKNode):
     m_FileName                 = bpy.props.StringProperty( name='FileName',                 default="", subtype='FILE_PATH' )
     m_VertexAttributeArrayName = bpy.props.StringProperty( name='VertexAttributeArrayName', default="" )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_EdgeAttributeArrayName','m_FileName','m_VertexAttributeArrayName',]
@@ -467,7 +467,7 @@ add_class( VTKDIMACSGraphReader )
 TYPENAMES.append('VTKDIMACSGraphReaderType' )
 
 #--------------------------------------------------------------
-class VTKDataObjectReader(Node, VTKNode):
+class VTKDataObjectReader(Node, BVTK_Node):
 
     bl_idname = 'VTKDataObjectReaderType'
     bl_label  = 'vtkDataObjectReader'
@@ -489,7 +489,7 @@ class VTKDataObjectReader(Node, VTKNode):
     m_TensorsName         = bpy.props.StringProperty( name='TensorsName',         default="" )
     m_VectorsName         = bpy.props.StringProperty( name='VectorsName',         default="" )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadAllColorScalars','m_ReadAllFields','m_ReadAllNormals','m_ReadAllScalars','m_ReadAllTCoords','m_ReadAllTensors','m_ReadAllVectors','m_ReadFromInputString','m_FieldDataName','m_FileName','m_LookupTableName','m_NormalsName','m_ScalarsName','m_TCoordsName','m_TensorsName','m_VectorsName',]
@@ -500,7 +500,7 @@ add_class( VTKDataObjectReader )
 TYPENAMES.append('VTKDataObjectReaderType' )
 
 #--------------------------------------------------------------
-class VTKDataReader(Node, VTKNode):
+class VTKDataReader(Node, BVTK_Node):
 
     bl_idname = 'VTKDataReaderType'
     bl_label  = 'vtkDataReader'
@@ -522,7 +522,7 @@ class VTKDataReader(Node, VTKNode):
     m_TensorsName         = bpy.props.StringProperty( name='TensorsName',         default="" )
     m_VectorsName         = bpy.props.StringProperty( name='VectorsName',         default="" )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadAllColorScalars','m_ReadAllFields','m_ReadAllNormals','m_ReadAllScalars','m_ReadAllTCoords','m_ReadAllTensors','m_ReadAllVectors','m_ReadFromInputString','m_FieldDataName','m_FileName','m_LookupTableName','m_NormalsName','m_ScalarsName','m_TCoordsName','m_TensorsName','m_VectorsName',]
@@ -533,7 +533,7 @@ add_class( VTKDataReader )
 TYPENAMES.append('VTKDataReaderType' )
 
 #--------------------------------------------------------------
-class VTKDataSetReader(Node, VTKNode):
+class VTKDataSetReader(Node, BVTK_Node):
 
     bl_idname = 'VTKDataSetReaderType'
     bl_label  = 'vtkDataSetReader'
@@ -555,7 +555,7 @@ class VTKDataSetReader(Node, VTKNode):
     m_TensorsName         = bpy.props.StringProperty( name='TensorsName',         default="" )
     m_VectorsName         = bpy.props.StringProperty( name='VectorsName',         default="" )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadAllColorScalars','m_ReadAllFields','m_ReadAllNormals','m_ReadAllScalars','m_ReadAllTCoords','m_ReadAllTensors','m_ReadAllVectors','m_ReadFromInputString','m_FieldDataName','m_FileName','m_LookupTableName','m_NormalsName','m_ScalarsName','m_TCoordsName','m_TensorsName','m_VectorsName',]
@@ -566,7 +566,7 @@ add_class( VTKDataSetReader )
 TYPENAMES.append('VTKDataSetReaderType' )
 
 #--------------------------------------------------------------
-class VTKDelimitedTextReader(Node, VTKNode):
+class VTKDelimitedTextReader(Node, BVTK_Node):
 
     bl_idname = 'VTKDelimitedTextReaderType'
     bl_label  = 'vtkDelimitedTextReader'
@@ -593,7 +593,7 @@ class VTKDelimitedTextReader(Node, VTKNode):
     m_ReplacementCharacter                   = bpy.props.IntProperty   ( name='ReplacementCharacter',                   default=120 )
     m_DefaultDoubleValue                     = bpy.props.FloatProperty ( name='DefaultDoubleValue',                     default=0.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=21, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=21, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_AddTabFieldDelimiter','m_DetectNumericColumns','m_ForceDouble','m_GeneratePedigreeIds','m_HaveHeaders','m_MergeConsecutiveDelimiters','m_OutputPedigreeIds','m_ReadFromInputString','m_TrimWhitespacePriorToNumericConversion','m_UseStringDelimiter','m_FieldDelimiterCharacters','m_FileName','m_PedigreeIdArrayName','m_UTF8FieldDelimiters','m_UTF8RecordDelimiters','m_UTF8StringDelimiters','m_UnicodeCharacterSet','m_DefaultIntegerValue','m_MaxRecords','m_ReplacementCharacter','m_DefaultDoubleValue',]
@@ -604,7 +604,7 @@ add_class( VTKDelimitedTextReader )
 TYPENAMES.append('VTKDelimitedTextReaderType' )
 
 #--------------------------------------------------------------
-class VTKEnSight6BinaryReader(Node, VTKNode):
+class VTKEnSight6BinaryReader(Node, BVTK_Node):
 
     bl_idname = 'VTKEnSight6BinaryReaderType'
     bl_label  = 'vtkEnSight6BinaryReader'
@@ -617,7 +617,7 @@ class VTKEnSight6BinaryReader(Node, VTKNode):
     m_TimeValue                  = bpy.props.FloatProperty ( name='TimeValue',                  default=0.0 )
     e_ByteOrder                  = bpy.props.EnumProperty  ( name='ByteOrder',                  default="BigEndian", items=e_ByteOrder_items )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=6, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ParticleCoordinatesByIndex','m_ReadAllVariables','m_CaseFileName','m_FilePath','m_TimeValue','e_ByteOrder',]
@@ -628,7 +628,7 @@ add_class( VTKEnSight6BinaryReader )
 TYPENAMES.append('VTKEnSight6BinaryReaderType' )
 
 #--------------------------------------------------------------
-class VTKEnSight6Reader(Node, VTKNode):
+class VTKEnSight6Reader(Node, BVTK_Node):
 
     bl_idname = 'VTKEnSight6ReaderType'
     bl_label  = 'vtkEnSight6Reader'
@@ -641,7 +641,7 @@ class VTKEnSight6Reader(Node, VTKNode):
     m_TimeValue                  = bpy.props.FloatProperty ( name='TimeValue',                  default=0.0 )
     e_ByteOrder                  = bpy.props.EnumProperty  ( name='ByteOrder',                  default="BigEndian", items=e_ByteOrder_items )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=6, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ParticleCoordinatesByIndex','m_ReadAllVariables','m_CaseFileName','m_FilePath','m_TimeValue','e_ByteOrder',]
@@ -652,7 +652,7 @@ add_class( VTKEnSight6Reader )
 TYPENAMES.append('VTKEnSight6ReaderType' )
 
 #--------------------------------------------------------------
-class VTKEnSightGoldBinaryReader(Node, VTKNode):
+class VTKEnSightGoldBinaryReader(Node, BVTK_Node):
 
     bl_idname = 'VTKEnSightGoldBinaryReaderType'
     bl_label  = 'vtkEnSightGoldBinaryReader'
@@ -665,7 +665,7 @@ class VTKEnSightGoldBinaryReader(Node, VTKNode):
     m_TimeValue                  = bpy.props.FloatProperty ( name='TimeValue',                  default=0.0 )
     e_ByteOrder                  = bpy.props.EnumProperty  ( name='ByteOrder',                  default="BigEndian", items=e_ByteOrder_items )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=6, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ParticleCoordinatesByIndex','m_ReadAllVariables','m_CaseFileName','m_FilePath','m_TimeValue','e_ByteOrder',]
@@ -676,7 +676,7 @@ add_class( VTKEnSightGoldBinaryReader )
 TYPENAMES.append('VTKEnSightGoldBinaryReaderType' )
 
 #--------------------------------------------------------------
-class VTKEnSightGoldReader(Node, VTKNode):
+class VTKEnSightGoldReader(Node, BVTK_Node):
 
     bl_idname = 'VTKEnSightGoldReaderType'
     bl_label  = 'vtkEnSightGoldReader'
@@ -689,7 +689,7 @@ class VTKEnSightGoldReader(Node, VTKNode):
     m_TimeValue                  = bpy.props.FloatProperty ( name='TimeValue',                  default=0.0 )
     e_ByteOrder                  = bpy.props.EnumProperty  ( name='ByteOrder',                  default="BigEndian", items=e_ByteOrder_items )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=6, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ParticleCoordinatesByIndex','m_ReadAllVariables','m_CaseFileName','m_FilePath','m_TimeValue','e_ByteOrder',]
@@ -700,7 +700,7 @@ add_class( VTKEnSightGoldReader )
 TYPENAMES.append('VTKEnSightGoldReaderType' )
 
 #--------------------------------------------------------------
-class VTKEnSightMasterServerReader(Node, VTKNode):
+class VTKEnSightMasterServerReader(Node, BVTK_Node):
 
     bl_idname = 'VTKEnSightMasterServerReaderType'
     bl_label  = 'vtkEnSightMasterServerReader'
@@ -714,7 +714,7 @@ class VTKEnSightMasterServerReader(Node, VTKNode):
     m_TimeValue                  = bpy.props.FloatProperty ( name='TimeValue',                  default=0.0 )
     e_ByteOrder                  = bpy.props.EnumProperty  ( name='ByteOrder',                  default="BigEndian", items=e_ByteOrder_items )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=7, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ParticleCoordinatesByIndex','m_ReadAllVariables','m_CaseFileName','m_FilePath','m_CurrentPiece','m_TimeValue','e_ByteOrder',]
@@ -725,7 +725,7 @@ add_class( VTKEnSightMasterServerReader )
 TYPENAMES.append('VTKEnSightMasterServerReaderType' )
 
 #--------------------------------------------------------------
-class VTKExodusIIReader(Node, VTKNode):
+class VTKExodusIIReader(Node, BVTK_Node):
 
     bl_idname = 'VTKExodusIIReaderType'
     bl_label  = 'vtkExodusIIReader'
@@ -750,7 +750,7 @@ class VTKExodusIIReader(Node, VTKNode):
     m_DisplacementMagnitude          = bpy.props.FloatProperty ( name='DisplacementMagnitude',          default=1.0 )
     m_ModeShapeTime                  = bpy.props.FloatProperty ( name='ModeShapeTime',                  default=-1.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=19, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=19, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_AnimateModeShapes','m_ApplyDisplacements','m_GenerateFileIdArray','m_GenerateGlobalElementIdArray','m_GenerateGlobalNodeIdArray','m_GenerateImplicitElementIdArray','m_GenerateImplicitNodeIdArray','m_GenerateObjectIdCellArray','m_HasModeShapes','m_IgnoreFileTime','m_SqueezePoints','m_FileName','m_XMLFileName','m_DisplayType','m_FileId','m_TimeStep','m_CacheSize','m_DisplacementMagnitude','m_ModeShapeTime',]
@@ -761,7 +761,7 @@ add_class( VTKExodusIIReader )
 TYPENAMES.append('VTKExodusIIReaderType' )
 
 #--------------------------------------------------------------
-class VTKFLUENTReader(Node, VTKNode):
+class VTKFLUENTReader(Node, BVTK_Node):
 
     bl_idname = 'VTKFLUENTReaderType'
     bl_label  = 'vtkFLUENTReader'
@@ -770,7 +770,7 @@ class VTKFLUENTReader(Node, VTKNode):
     m_FileName      = bpy.props.StringProperty( name='FileName',      default="", subtype='FILE_PATH' )
     e_DataByteOrder = bpy.props.EnumProperty  ( name='DataByteOrder', default="LittleEndian", items=e_DataByteOrder_items )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName','e_DataByteOrder',]
@@ -781,14 +781,14 @@ add_class( VTKFLUENTReader )
 TYPENAMES.append('VTKFLUENTReaderType' )
 
 #--------------------------------------------------------------
-class VTKFacetReader(Node, VTKNode):
+class VTKFacetReader(Node, BVTK_Node):
 
     bl_idname = 'VTKFacetReaderType'
     bl_label  = 'vtkFacetReader'
     
     m_FileName = bpy.props.StringProperty( name='FileName', default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName',]
@@ -799,7 +799,7 @@ add_class( VTKFacetReader )
 TYPENAMES.append('VTKFacetReaderType' )
 
 #--------------------------------------------------------------
-class VTKFixedWidthTextReader(Node, VTKNode):
+class VTKFixedWidthTextReader(Node, BVTK_Node):
 
     bl_idname = 'VTKFixedWidthTextReaderType'
     bl_label  = 'vtkFixedWidthTextReader'
@@ -809,7 +809,7 @@ class VTKFixedWidthTextReader(Node, VTKNode):
     m_FileName        = bpy.props.StringProperty( name='FileName',        default="", subtype='FILE_PATH' )
     m_FieldWidth      = bpy.props.IntProperty   ( name='FieldWidth',      default=10 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_HaveHeaders','m_StripWhiteSpace','m_FileName','m_FieldWidth',]
@@ -820,14 +820,14 @@ add_class( VTKFixedWidthTextReader )
 TYPENAMES.append('VTKFixedWidthTextReaderType' )
 
 #--------------------------------------------------------------
-class VTKGAMBITReader(Node, VTKNode):
+class VTKGAMBITReader(Node, BVTK_Node):
 
     bl_idname = 'VTKGAMBITReaderType'
     bl_label  = 'vtkGAMBITReader'
     
     m_FileName = bpy.props.StringProperty( name='FileName', default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName',]
@@ -838,7 +838,7 @@ add_class( VTKGAMBITReader )
 TYPENAMES.append('VTKGAMBITReaderType' )
 
 #--------------------------------------------------------------
-class VTKGESignaReader(Node, VTKNode):
+class VTKGESignaReader(Node, BVTK_Node):
 
     bl_idname = 'VTKGESignaReaderType'
     bl_label  = 'vtkGESignaReader'
@@ -868,7 +868,7 @@ class VTKGESignaReader(Node, VTKNode):
     m_DataOrigin               = bpy.props.FloatVectorProperty( name='DataOrigin',               default=[0.0, 0.0, 0.0], size=3 )
     m_DataSpacing              = bpy.props.FloatVectorProperty( name='DataSpacing',              default=[1.0, 1.0, 1.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=22, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=22, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileLowerLeft','m_SwapBytes','m_Date','m_FileName','m_FilePattern','m_FilePrefix','m_ImageNumber','m_Modality','m_PatientID','m_PatientName','m_Series','m_Study','m_FileDimensionality','m_FileNameSliceOffset','m_FileNameSliceSpacing','m_HeaderSize','m_MemoryBufferLength','m_NumberOfScalarComponents','e_DataByteOrder','e_DataScalarType','m_DataOrigin','m_DataSpacing',]
@@ -879,7 +879,7 @@ add_class( VTKGESignaReader )
 TYPENAMES.append('VTKGESignaReaderType' )
 
 #--------------------------------------------------------------
-class VTKGaussianCubeReader(Node, VTKNode):
+class VTKGaussianCubeReader(Node, BVTK_Node):
 
     bl_idname = 'VTKGaussianCubeReaderType'
     bl_label  = 'vtkGaussianCubeReader'
@@ -888,7 +888,7 @@ class VTKGaussianCubeReader(Node, VTKNode):
     m_BScale   = bpy.props.FloatProperty ( name='BScale',   default=1.0 )
     m_HBScale  = bpy.props.FloatProperty ( name='HBScale',  default=1.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName','m_BScale','m_HBScale',]
@@ -899,14 +899,14 @@ add_class( VTKGaussianCubeReader )
 TYPENAMES.append('VTKGaussianCubeReaderType' )
 
 #--------------------------------------------------------------
-class VTKGaussianCubeReader2(Node, VTKNode):
+class VTKGaussianCubeReader2(Node, BVTK_Node):
 
     bl_idname = 'VTKGaussianCubeReader2Type'
     bl_label  = 'vtkGaussianCubeReader2'
     
     m_FileName = bpy.props.StringProperty( name='FileName', default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName',]
@@ -917,7 +917,7 @@ add_class( VTKGaussianCubeReader2 )
 TYPENAMES.append('VTKGaussianCubeReader2Type' )
 
 #--------------------------------------------------------------
-class VTKGenericDataObjectReader(Node, VTKNode):
+class VTKGenericDataObjectReader(Node, BVTK_Node):
 
     bl_idname = 'VTKGenericDataObjectReaderType'
     bl_label  = 'vtkGenericDataObjectReader'
@@ -939,7 +939,7 @@ class VTKGenericDataObjectReader(Node, VTKNode):
     m_TensorsName         = bpy.props.StringProperty( name='TensorsName',         default="" )
     m_VectorsName         = bpy.props.StringProperty( name='VectorsName',         default="" )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadAllColorScalars','m_ReadAllFields','m_ReadAllNormals','m_ReadAllScalars','m_ReadAllTCoords','m_ReadAllTensors','m_ReadAllVectors','m_ReadFromInputString','m_FieldDataName','m_FileName','m_LookupTableName','m_NormalsName','m_ScalarsName','m_TCoordsName','m_TensorsName','m_VectorsName',]
@@ -950,7 +950,7 @@ add_class( VTKGenericDataObjectReader )
 TYPENAMES.append('VTKGenericDataObjectReaderType' )
 
 #--------------------------------------------------------------
-class VTKGenericEnSightReader(Node, VTKNode):
+class VTKGenericEnSightReader(Node, BVTK_Node):
 
     bl_idname = 'VTKGenericEnSightReaderType'
     bl_label  = 'vtkGenericEnSightReader'
@@ -963,7 +963,7 @@ class VTKGenericEnSightReader(Node, VTKNode):
     m_TimeValue                  = bpy.props.FloatProperty ( name='TimeValue',                  default=0.0 )
     e_ByteOrder                  = bpy.props.EnumProperty  ( name='ByteOrder',                  default="BigEndian", items=e_ByteOrder_items )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=6, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ParticleCoordinatesByIndex','m_ReadAllVariables','m_CaseFileName','m_FilePath','m_TimeValue','e_ByteOrder',]
@@ -974,7 +974,7 @@ add_class( VTKGenericEnSightReader )
 TYPENAMES.append('VTKGenericEnSightReaderType' )
 
 #--------------------------------------------------------------
-class VTKGraphReader(Node, VTKNode):
+class VTKGraphReader(Node, BVTK_Node):
 
     bl_idname = 'VTKGraphReaderType'
     bl_label  = 'vtkGraphReader'
@@ -996,7 +996,7 @@ class VTKGraphReader(Node, VTKNode):
     m_TensorsName         = bpy.props.StringProperty( name='TensorsName',         default="" )
     m_VectorsName         = bpy.props.StringProperty( name='VectorsName',         default="" )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadAllColorScalars','m_ReadAllFields','m_ReadAllNormals','m_ReadAllScalars','m_ReadAllTCoords','m_ReadAllTensors','m_ReadAllVectors','m_ReadFromInputString','m_FieldDataName','m_FileName','m_LookupTableName','m_NormalsName','m_ScalarsName','m_TCoordsName','m_TensorsName','m_VectorsName',]
@@ -1007,7 +1007,7 @@ add_class( VTKGraphReader )
 TYPENAMES.append('VTKGraphReaderType' )
 
 #--------------------------------------------------------------
-class VTKISIReader(Node, VTKNode):
+class VTKISIReader(Node, BVTK_Node):
 
     bl_idname = 'VTKISIReaderType'
     bl_label  = 'vtkISIReader'
@@ -1016,7 +1016,7 @@ class VTKISIReader(Node, VTKNode):
     m_FileName   = bpy.props.StringProperty( name='FileName',   default="", subtype='FILE_PATH' )
     m_MaxRecords = bpy.props.IntProperty   ( name='MaxRecords', default=0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_Delimiter','m_FileName','m_MaxRecords',]
@@ -1027,7 +1027,7 @@ add_class( VTKISIReader )
 TYPENAMES.append('VTKISIReaderType' )
 
 #--------------------------------------------------------------
-class VTKImageReader(Node, VTKNode):
+class VTKImageReader(Node, BVTK_Node):
 
     bl_idname = 'VTKImageReaderType'
     bl_label  = 'vtkImageReader'
@@ -1053,7 +1053,7 @@ class VTKImageReader(Node, VTKNode):
     m_DataOrigin               = bpy.props.FloatVectorProperty( name='DataOrigin',               default=[0.0, 0.0, 0.0], size=3 )
     m_DataSpacing              = bpy.props.FloatVectorProperty( name='DataSpacing',              default=[1.0, 1.0, 1.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=18, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=18, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileLowerLeft','m_SwapBytes','m_FileName','m_FilePattern','m_FilePrefix','m_ScalarArrayName','m_DataMask','m_FileDimensionality','m_FileNameSliceOffset','m_FileNameSliceSpacing','m_HeaderSize','m_MemoryBufferLength','m_NumberOfScalarComponents','e_DataByteOrder','e_DataScalarType','m_DataVOI','m_DataOrigin','m_DataSpacing',]
@@ -1064,7 +1064,7 @@ add_class( VTKImageReader )
 TYPENAMES.append('VTKImageReaderType' )
 
 #--------------------------------------------------------------
-class VTKImageReader2(Node, VTKNode):
+class VTKImageReader2(Node, BVTK_Node):
 
     bl_idname = 'VTKImageReader2Type'
     bl_label  = 'vtkImageReader2'
@@ -1087,7 +1087,7 @@ class VTKImageReader2(Node, VTKNode):
     m_DataOrigin               = bpy.props.FloatVectorProperty( name='DataOrigin',               default=[0.0, 0.0, 0.0], size=3 )
     m_DataSpacing              = bpy.props.FloatVectorProperty( name='DataSpacing',              default=[1.0, 1.0, 1.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=15, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=15, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileLowerLeft','m_SwapBytes','m_FileName','m_FilePattern','m_FilePrefix','m_FileDimensionality','m_FileNameSliceOffset','m_FileNameSliceSpacing','m_HeaderSize','m_MemoryBufferLength','m_NumberOfScalarComponents','e_DataByteOrder','e_DataScalarType','m_DataOrigin','m_DataSpacing',]
@@ -1098,7 +1098,7 @@ add_class( VTKImageReader2 )
 TYPENAMES.append('VTKImageReader2Type' )
 
 #--------------------------------------------------------------
-class VTKJPEGReader(Node, VTKNode):
+class VTKJPEGReader(Node, BVTK_Node):
 
     bl_idname = 'VTKJPEGReaderType'
     bl_label  = 'vtkJPEGReader'
@@ -1121,7 +1121,7 @@ class VTKJPEGReader(Node, VTKNode):
     m_DataOrigin               = bpy.props.FloatVectorProperty( name='DataOrigin',               default=[0.0, 0.0, 0.0], size=3 )
     m_DataSpacing              = bpy.props.FloatVectorProperty( name='DataSpacing',              default=[1.0, 1.0, 1.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=15, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=15, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileLowerLeft','m_SwapBytes','m_FileName','m_FilePattern','m_FilePrefix','m_FileDimensionality','m_FileNameSliceOffset','m_FileNameSliceSpacing','m_HeaderSize','m_MemoryBufferLength','m_NumberOfScalarComponents','e_DataByteOrder','e_DataScalarType','m_DataOrigin','m_DataSpacing',]
@@ -1132,7 +1132,7 @@ add_class( VTKJPEGReader )
 TYPENAMES.append('VTKJPEGReaderType' )
 
 #--------------------------------------------------------------
-class VTKLSDynaReader(Node, VTKNode):
+class VTKLSDynaReader(Node, BVTK_Node):
 
     bl_idname = 'VTKLSDynaReaderType'
     bl_label  = 'vtkLSDynaReader'
@@ -1146,7 +1146,7 @@ class VTKLSDynaReader(Node, VTKNode):
     m_TimeStep                 = bpy.props.IntProperty      ( name='TimeStep',                 default=0 )
     m_TimeStepRange            = bpy.props.IntVectorProperty( name='TimeStepRange',            default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=8, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=8, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_DeformedMesh','m_DeletedCellsAsGhostArray','m_RemoveDeletedCells','m_DatabaseDirectory','m_FileName','m_InputDeck','m_TimeStep','m_TimeStepRange',]
@@ -1157,7 +1157,7 @@ add_class( VTKLSDynaReader )
 TYPENAMES.append('VTKLSDynaReaderType' )
 
 #--------------------------------------------------------------
-class VTKMCubesReader(Node, VTKNode):
+class VTKMCubesReader(Node, BVTK_Node):
 
     bl_idname = 'VTKMCubesReaderType'
     bl_label  = 'vtkMCubesReader'
@@ -1171,7 +1171,7 @@ class VTKMCubesReader(Node, VTKNode):
     m_HeaderSize     = bpy.props.IntProperty   ( name='HeaderSize',     default=0 )
     e_DataByteOrder  = bpy.props.EnumProperty  ( name='DataByteOrder',  default="BigEndian", items=e_DataByteOrder_items )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=7, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FlipNormals','m_Normals','m_SwapBytes','m_FileName','m_LimitsFileName','m_HeaderSize','e_DataByteOrder',]
@@ -1182,7 +1182,7 @@ add_class( VTKMCubesReader )
 TYPENAMES.append('VTKMCubesReaderType' )
 
 #--------------------------------------------------------------
-class VTKMFIXReader(Node, VTKNode):
+class VTKMFIXReader(Node, BVTK_Node):
 
     bl_idname = 'VTKMFIXReaderType'
     bl_label  = 'vtkMFIXReader'
@@ -1191,7 +1191,7 @@ class VTKMFIXReader(Node, VTKNode):
     m_TimeStep      = bpy.props.IntProperty      ( name='TimeStep',      default=0 )
     m_TimeStepRange = bpy.props.IntVectorProperty( name='TimeStepRange', default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName','m_TimeStep','m_TimeStepRange',]
@@ -1202,7 +1202,7 @@ add_class( VTKMFIXReader )
 TYPENAMES.append('VTKMFIXReaderType' )
 
 #--------------------------------------------------------------
-class VTKMINCImageReader(Node, VTKNode):
+class VTKMINCImageReader(Node, BVTK_Node):
 
     bl_idname = 'VTKMINCImageReaderType'
     bl_label  = 'vtkMINCImageReader'
@@ -1227,7 +1227,7 @@ class VTKMINCImageReader(Node, VTKNode):
     m_DataOrigin               = bpy.props.FloatVectorProperty( name='DataOrigin',               default=[0.0, 0.0, 0.0], size=3 )
     m_DataSpacing              = bpy.props.FloatVectorProperty( name='DataSpacing',              default=[1.0, 1.0, 1.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=17, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=17, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileLowerLeft','m_RescaleRealValues','m_SwapBytes','m_FileName','m_FilePattern','m_FilePrefix','m_FileDimensionality','m_FileNameSliceOffset','m_FileNameSliceSpacing','m_HeaderSize','m_MemoryBufferLength','m_NumberOfScalarComponents','m_TimeStep','e_DataByteOrder','e_DataScalarType','m_DataOrigin','m_DataSpacing',]
@@ -1238,14 +1238,14 @@ add_class( VTKMINCImageReader )
 TYPENAMES.append('VTKMINCImageReaderType' )
 
 #--------------------------------------------------------------
-class VTKMNIObjectReader(Node, VTKNode):
+class VTKMNIObjectReader(Node, BVTK_Node):
 
     bl_idname = 'VTKMNIObjectReaderType'
     bl_label  = 'vtkMNIObjectReader'
     
     m_FileName = bpy.props.StringProperty( name='FileName', default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName',]
@@ -1256,14 +1256,14 @@ add_class( VTKMNIObjectReader )
 TYPENAMES.append('VTKMNIObjectReaderType' )
 
 #--------------------------------------------------------------
-class VTKMNITagPointReader(Node, VTKNode):
+class VTKMNITagPointReader(Node, BVTK_Node):
 
     bl_idname = 'VTKMNITagPointReaderType'
     bl_label  = 'vtkMNITagPointReader'
     
     m_FileName = bpy.props.StringProperty( name='FileName', default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName',]
@@ -1274,14 +1274,14 @@ add_class( VTKMNITagPointReader )
 TYPENAMES.append('VTKMNITagPointReaderType' )
 
 #--------------------------------------------------------------
-class VTKMNITransformReader(Node, VTKNode):
+class VTKMNITransformReader(Node, BVTK_Node):
 
     bl_idname = 'VTKMNITransformReaderType'
     bl_label  = 'vtkMNITransformReader'
     
     m_FileName = bpy.props.StringProperty( name='FileName', default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName',]
@@ -1292,7 +1292,7 @@ add_class( VTKMNITransformReader )
 TYPENAMES.append('VTKMNITransformReaderType' )
 
 #--------------------------------------------------------------
-class VTKMPASReader(Node, VTKNode):
+class VTKMPASReader(Node, BVTK_Node):
 
     bl_idname = 'VTKMPASReaderType'
     bl_label  = 'vtkMPASReader'
@@ -1307,7 +1307,7 @@ class VTKMPASReader(Node, VTKNode):
     m_LayerThickness           = bpy.props.IntProperty   ( name='LayerThickness',           default=10000 )
     m_VerticalLevel            = bpy.props.IntProperty   ( name='VerticalLevel',            default=-1 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=9, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=9, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_IsAtmosphere','m_IsZeroCentered','m_ProjectLatLon','m_ShowMultilayerView','m_UseDimensionedArrayNames','m_FileName','m_VerticalDimension','m_LayerThickness','m_VerticalLevel',]
@@ -1318,14 +1318,14 @@ add_class( VTKMPASReader )
 TYPENAMES.append('VTKMPASReaderType' )
 
 #--------------------------------------------------------------
-class VTKMRCReader(Node, VTKNode):
+class VTKMRCReader(Node, BVTK_Node):
 
     bl_idname = 'VTKMRCReaderType'
     bl_label  = 'vtkMRCReader'
     
     m_FileName = bpy.props.StringProperty( name='FileName', default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName',]
@@ -1336,7 +1336,7 @@ add_class( VTKMRCReader )
 TYPENAMES.append('VTKMRCReaderType' )
 
 #--------------------------------------------------------------
-class VTKMedicalImageReader2(Node, VTKNode):
+class VTKMedicalImageReader2(Node, BVTK_Node):
 
     bl_idname = 'VTKMedicalImageReader2Type'
     bl_label  = 'vtkMedicalImageReader2'
@@ -1366,7 +1366,7 @@ class VTKMedicalImageReader2(Node, VTKNode):
     m_DataOrigin               = bpy.props.FloatVectorProperty( name='DataOrigin',               default=[0.0, 0.0, 0.0], size=3 )
     m_DataSpacing              = bpy.props.FloatVectorProperty( name='DataSpacing',              default=[1.0, 1.0, 1.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=22, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=22, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileLowerLeft','m_SwapBytes','m_Date','m_FileName','m_FilePattern','m_FilePrefix','m_ImageNumber','m_Modality','m_PatientID','m_PatientName','m_Series','m_Study','m_FileDimensionality','m_FileNameSliceOffset','m_FileNameSliceSpacing','m_HeaderSize','m_MemoryBufferLength','m_NumberOfScalarComponents','e_DataByteOrder','e_DataScalarType','m_DataOrigin','m_DataSpacing',]
@@ -1377,7 +1377,7 @@ add_class( VTKMedicalImageReader2 )
 TYPENAMES.append('VTKMedicalImageReader2Type' )
 
 #--------------------------------------------------------------
-class VTKMetaImageReader(Node, VTKNode):
+class VTKMetaImageReader(Node, BVTK_Node):
 
     bl_idname = 'VTKMetaImageReaderType'
     bl_label  = 'vtkMetaImageReader'
@@ -1400,7 +1400,7 @@ class VTKMetaImageReader(Node, VTKNode):
     m_DataOrigin               = bpy.props.FloatVectorProperty( name='DataOrigin',               default=[0.0, 0.0, 0.0], size=3 )
     m_DataSpacing              = bpy.props.FloatVectorProperty( name='DataSpacing',              default=[1.0, 1.0, 1.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=15, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=15, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileLowerLeft','m_SwapBytes','m_FileName','m_FilePattern','m_FilePrefix','m_FileDimensionality','m_FileNameSliceOffset','m_FileNameSliceSpacing','m_HeaderSize','m_MemoryBufferLength','m_NumberOfScalarComponents','e_DataByteOrder','e_DataScalarType','m_DataOrigin','m_DataSpacing',]
@@ -1411,7 +1411,7 @@ add_class( VTKMetaImageReader )
 TYPENAMES.append('VTKMetaImageReaderType' )
 
 #--------------------------------------------------------------
-class VTKMultiBlockPLOT3DReader(Node, VTKNode):
+class VTKMultiBlockPLOT3DReader(Node, BVTK_Node):
 
     bl_idname = 'VTKMultiBlockPLOT3DReaderType'
     bl_label  = 'vtkMultiBlockPLOT3DReader'
@@ -1436,7 +1436,7 @@ class VTKMultiBlockPLOT3DReader(Node, VTKNode):
     m_R                             = bpy.props.FloatProperty ( name='R',                             default=1.0 )
     e_ByteOrder                     = bpy.props.EnumProperty  ( name='ByteOrder',                     default="BigEndian", items=e_ByteOrder_items )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=18, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=18, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_AutoDetectFormat','m_BinaryFile','m_DoublePrecision','m_ForceRead','m_HasByteCount','m_IBlanking','m_MultiGrid','m_PreserveIntermediateFunctions','m_TwoDimensionalGeometry','m_FileName','m_FunctionFileName','m_QFileName','m_XYZFileName','m_ScalarFunctionNumber','m_VectorFunctionNumber','m_Gamma','m_R','e_ByteOrder',]
@@ -1447,7 +1447,7 @@ add_class( VTKMultiBlockPLOT3DReader )
 TYPENAMES.append('VTKMultiBlockPLOT3DReaderType' )
 
 #--------------------------------------------------------------
-class VTKMultiNewickTreeReader(Node, VTKNode):
+class VTKMultiNewickTreeReader(Node, BVTK_Node):
 
     bl_idname = 'VTKMultiNewickTreeReaderType'
     bl_label  = 'vtkMultiNewickTreeReader'
@@ -1469,7 +1469,7 @@ class VTKMultiNewickTreeReader(Node, VTKNode):
     m_TensorsName         = bpy.props.StringProperty( name='TensorsName',         default="" )
     m_VectorsName         = bpy.props.StringProperty( name='VectorsName',         default="" )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadAllColorScalars','m_ReadAllFields','m_ReadAllNormals','m_ReadAllScalars','m_ReadAllTCoords','m_ReadAllTensors','m_ReadAllVectors','m_ReadFromInputString','m_FieldDataName','m_FileName','m_LookupTableName','m_NormalsName','m_ScalarsName','m_TCoordsName','m_TensorsName','m_VectorsName',]
@@ -1480,7 +1480,7 @@ add_class( VTKMultiNewickTreeReader )
 TYPENAMES.append('VTKMultiNewickTreeReaderType' )
 
 #--------------------------------------------------------------
-class VTKNIFTIImageReader(Node, VTKNode):
+class VTKNIFTIImageReader(Node, BVTK_Node):
 
     bl_idname = 'VTKNIFTIImageReaderType'
     bl_label  = 'vtkNIFTIImageReader'
@@ -1505,7 +1505,7 @@ class VTKNIFTIImageReader(Node, VTKNode):
     m_DataOrigin               = bpy.props.FloatVectorProperty( name='DataOrigin',               default=[0.0, 0.0, 0.0], size=3 )
     m_DataSpacing              = bpy.props.FloatVectorProperty( name='DataSpacing',              default=[1.0, 1.0, 1.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=17, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=17, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileLowerLeft','m_PlanarRGB','m_SwapBytes','m_TimeAsVector','m_FileName','m_FilePattern','m_FilePrefix','m_FileDimensionality','m_FileNameSliceOffset','m_FileNameSliceSpacing','m_HeaderSize','m_MemoryBufferLength','m_NumberOfScalarComponents','e_DataByteOrder','e_DataScalarType','m_DataOrigin','m_DataSpacing',]
@@ -1516,7 +1516,7 @@ add_class( VTKNIFTIImageReader )
 TYPENAMES.append('VTKNIFTIImageReaderType' )
 
 #--------------------------------------------------------------
-class VTKNetCDFCFReader(Node, VTKNode):
+class VTKNetCDFCFReader(Node, BVTK_Node):
 
     bl_idname = 'VTKNetCDFCFReaderType'
     bl_label  = 'vtkNetCDFCFReader'
@@ -1529,7 +1529,7 @@ class VTKNetCDFCFReader(Node, VTKNode):
     m_VerticalScale           = bpy.props.FloatProperty ( name='VerticalScale',           default=1.0 )
     e_OutputType              = bpy.props.EnumProperty  ( name='OutputType',              default="Automatic", items=e_OutputType_items )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=6, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReplaceFillValueWithNan','m_SphericalCoordinates','m_FileName','m_VerticalBias','m_VerticalScale','e_OutputType',]
@@ -1540,7 +1540,7 @@ add_class( VTKNetCDFCFReader )
 TYPENAMES.append('VTKNetCDFCFReaderType' )
 
 #--------------------------------------------------------------
-class VTKNetCDFPOPReader(Node, VTKNode):
+class VTKNetCDFPOPReader(Node, BVTK_Node):
 
     bl_idname = 'VTKNetCDFPOPReaderType'
     bl_label  = 'vtkNetCDFPOPReader'
@@ -1548,7 +1548,7 @@ class VTKNetCDFPOPReader(Node, VTKNode):
     m_FileName = bpy.props.StringProperty   ( name='FileName', default="", subtype='FILE_PATH' )
     m_Stride   = bpy.props.IntVectorProperty( name='Stride',   default=[1, 1, 1], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName','m_Stride',]
@@ -1559,7 +1559,7 @@ add_class( VTKNetCDFPOPReader )
 TYPENAMES.append('VTKNetCDFPOPReaderType' )
 
 #--------------------------------------------------------------
-class VTKNetCDFReader(Node, VTKNode):
+class VTKNetCDFReader(Node, BVTK_Node):
 
     bl_idname = 'VTKNetCDFReaderType'
     bl_label  = 'vtkNetCDFReader'
@@ -1567,7 +1567,7 @@ class VTKNetCDFReader(Node, VTKNode):
     m_ReplaceFillValueWithNan = bpy.props.BoolProperty  ( name='ReplaceFillValueWithNan', default=True )
     m_FileName                = bpy.props.StringProperty( name='FileName',                default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReplaceFillValueWithNan','m_FileName',]
@@ -1578,7 +1578,7 @@ add_class( VTKNetCDFReader )
 TYPENAMES.append('VTKNetCDFReaderType' )
 
 #--------------------------------------------------------------
-class VTKNewickTreeReader(Node, VTKNode):
+class VTKNewickTreeReader(Node, BVTK_Node):
 
     bl_idname = 'VTKNewickTreeReaderType'
     bl_label  = 'vtkNewickTreeReader'
@@ -1600,7 +1600,7 @@ class VTKNewickTreeReader(Node, VTKNode):
     m_TensorsName         = bpy.props.StringProperty( name='TensorsName',         default="" )
     m_VectorsName         = bpy.props.StringProperty( name='VectorsName',         default="" )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadAllColorScalars','m_ReadAllFields','m_ReadAllNormals','m_ReadAllScalars','m_ReadAllTCoords','m_ReadAllTensors','m_ReadAllVectors','m_ReadFromInputString','m_FieldDataName','m_FileName','m_LookupTableName','m_NormalsName','m_ScalarsName','m_TCoordsName','m_TensorsName','m_VectorsName',]
@@ -1611,7 +1611,7 @@ add_class( VTKNewickTreeReader )
 TYPENAMES.append('VTKNewickTreeReaderType' )
 
 #--------------------------------------------------------------
-class VTKNrrdReader(Node, VTKNode):
+class VTKNrrdReader(Node, BVTK_Node):
 
     bl_idname = 'VTKNrrdReaderType'
     bl_label  = 'vtkNrrdReader'
@@ -1637,7 +1637,7 @@ class VTKNrrdReader(Node, VTKNode):
     m_DataOrigin               = bpy.props.FloatVectorProperty( name='DataOrigin',               default=[0.0, 0.0, 0.0], size=3 )
     m_DataSpacing              = bpy.props.FloatVectorProperty( name='DataSpacing',              default=[1.0, 1.0, 1.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=18, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=18, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileLowerLeft','m_SwapBytes','m_FileName','m_FilePattern','m_FilePrefix','m_ScalarArrayName','m_DataMask','m_FileDimensionality','m_FileNameSliceOffset','m_FileNameSliceSpacing','m_HeaderSize','m_MemoryBufferLength','m_NumberOfScalarComponents','e_DataByteOrder','e_DataScalarType','m_DataVOI','m_DataOrigin','m_DataSpacing',]
@@ -1648,14 +1648,14 @@ add_class( VTKNrrdReader )
 TYPENAMES.append('VTKNrrdReaderType' )
 
 #--------------------------------------------------------------
-class VTKOBJReader(Node, VTKNode):
+class VTKOBJReader(Node, BVTK_Node):
 
     bl_idname = 'VTKOBJReaderType'
     bl_label  = 'vtkOBJReader'
     
     m_FileName = bpy.props.StringProperty( name='FileName', default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName',]
@@ -1666,7 +1666,7 @@ add_class( VTKOBJReader )
 TYPENAMES.append('VTKOBJReaderType' )
 
 #--------------------------------------------------------------
-class VTKOpenFOAMReader(Node, VTKNode):
+class VTKOpenFOAMReader(Node, BVTK_Node):
 
     bl_idname = 'VTKOpenFOAMReaderType'
     bl_label  = 'vtkOpenFOAMReader'
@@ -1684,7 +1684,7 @@ class VTKOpenFOAMReader(Node, VTKNode):
     m_Use64BitLabels             = bpy.props.BoolProperty  ( name='Use64BitLabels',             default=False )
     m_FileName                   = bpy.props.StringProperty( name='FileName',                   default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=12, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=12, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_AddDimensionsToArrayNames','m_CacheMesh','m_CopyDataToCellZones','m_CreateCellToPoint','m_DecomposePolyhedra','m_ListTimeStepsByControlDict','m_PositionsIsIn13Format','m_ReadZones','m_SkipZeroTime','m_Use64BitFloats','m_Use64BitLabels','m_FileName',]
@@ -1695,7 +1695,7 @@ add_class( VTKOpenFOAMReader )
 TYPENAMES.append('VTKOpenFOAMReaderType' )
 
 #--------------------------------------------------------------
-class VTKPChacoReader(Node, VTKNode):
+class VTKPChacoReader(Node, BVTK_Node):
 
     bl_idname = 'VTKPChacoReaderType'
     bl_label  = 'vtkPChacoReader'
@@ -1706,7 +1706,7 @@ class VTKPChacoReader(Node, VTKNode):
     m_GenerateVertexWeightArrays   = bpy.props.BoolProperty  ( name='GenerateVertexWeightArrays',   default=True )
     m_BaseName                     = bpy.props.StringProperty( name='BaseName',                     default="" )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_GenerateEdgeWeightArrays','m_GenerateGlobalElementIdArray','m_GenerateGlobalNodeIdArray','m_GenerateVertexWeightArrays','m_BaseName',]
@@ -1717,7 +1717,7 @@ add_class( VTKPChacoReader )
 TYPENAMES.append('VTKPChacoReaderType' )
 
 #--------------------------------------------------------------
-class VTKPDBReader(Node, VTKNode):
+class VTKPDBReader(Node, BVTK_Node):
 
     bl_idname = 'VTKPDBReaderType'
     bl_label  = 'vtkPDBReader'
@@ -1726,7 +1726,7 @@ class VTKPDBReader(Node, VTKNode):
     m_BScale   = bpy.props.FloatProperty ( name='BScale',   default=1.0 )
     m_HBScale  = bpy.props.FloatProperty ( name='HBScale',  default=1.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName','m_BScale','m_HBScale',]
@@ -1737,14 +1737,14 @@ add_class( VTKPDBReader )
 TYPENAMES.append('VTKPDBReaderType' )
 
 #--------------------------------------------------------------
-class VTKPDataSetReader(Node, VTKNode):
+class VTKPDataSetReader(Node, BVTK_Node):
 
     bl_idname = 'VTKPDataSetReaderType'
     bl_label  = 'vtkPDataSetReader'
     
     m_FileName = bpy.props.StringProperty( name='FileName', default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName',]
@@ -1755,14 +1755,14 @@ add_class( VTKPDataSetReader )
 TYPENAMES.append('VTKPDataSetReaderType' )
 
 #--------------------------------------------------------------
-class VTKPLYReader(Node, VTKNode):
+class VTKPLYReader(Node, BVTK_Node):
 
     bl_idname = 'VTKPLYReaderType'
     bl_label  = 'vtkPLYReader'
     
     m_FileName = bpy.props.StringProperty( name='FileName', default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName',]
@@ -1773,7 +1773,7 @@ add_class( VTKPLYReader )
 TYPENAMES.append('VTKPLYReaderType' )
 
 #--------------------------------------------------------------
-class VTKPNGReader(Node, VTKNode):
+class VTKPNGReader(Node, BVTK_Node):
 
     bl_idname = 'VTKPNGReaderType'
     bl_label  = 'vtkPNGReader'
@@ -1797,7 +1797,7 @@ class VTKPNGReader(Node, VTKNode):
     m_DataOrigin               = bpy.props.FloatVectorProperty( name='DataOrigin',               default=[0.0, 0.0, 0.0], size=3 )
     m_DataSpacing              = bpy.props.FloatVectorProperty( name='DataSpacing',              default=[1.0, 1.0, 1.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileLowerLeft','m_ReadSpacingFromFile','m_SwapBytes','m_FileName','m_FilePattern','m_FilePrefix','m_FileDimensionality','m_FileNameSliceOffset','m_FileNameSliceSpacing','m_HeaderSize','m_MemoryBufferLength','m_NumberOfScalarComponents','e_DataByteOrder','e_DataScalarType','m_DataOrigin','m_DataSpacing',]
@@ -1808,7 +1808,7 @@ add_class( VTKPNGReader )
 TYPENAMES.append('VTKPNGReaderType' )
 
 #--------------------------------------------------------------
-class VTKPNMReader(Node, VTKNode):
+class VTKPNMReader(Node, BVTK_Node):
 
     bl_idname = 'VTKPNMReaderType'
     bl_label  = 'vtkPNMReader'
@@ -1834,7 +1834,7 @@ class VTKPNMReader(Node, VTKNode):
     m_DataOrigin               = bpy.props.FloatVectorProperty( name='DataOrigin',               default=[0.0, 0.0, 0.0], size=3 )
     m_DataSpacing              = bpy.props.FloatVectorProperty( name='DataSpacing',              default=[1.0, 1.0, 1.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=18, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=18, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileLowerLeft','m_SwapBytes','m_FileName','m_FilePattern','m_FilePrefix','m_ScalarArrayName','m_DataMask','m_FileDimensionality','m_FileNameSliceOffset','m_FileNameSliceSpacing','m_HeaderSize','m_MemoryBufferLength','m_NumberOfScalarComponents','e_DataByteOrder','e_DataScalarType','m_DataVOI','m_DataOrigin','m_DataSpacing',]
@@ -1845,7 +1845,7 @@ add_class( VTKPNMReader )
 TYPENAMES.append('VTKPNMReaderType' )
 
 #--------------------------------------------------------------
-class VTKPOpenFOAMReader(Node, VTKNode):
+class VTKPOpenFOAMReader(Node, BVTK_Node):
 
     bl_idname = 'VTKPOpenFOAMReaderType'
     bl_label  = 'vtkPOpenFOAMReader'
@@ -1863,7 +1863,7 @@ class VTKPOpenFOAMReader(Node, VTKNode):
     m_Use64BitLabels             = bpy.props.BoolProperty  ( name='Use64BitLabels',             default=False )
     m_FileName                   = bpy.props.StringProperty( name='FileName',                   default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=12, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=12, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_AddDimensionsToArrayNames','m_CacheMesh','m_CopyDataToCellZones','m_CreateCellToPoint','m_DecomposePolyhedra','m_ListTimeStepsByControlDict','m_PositionsIsIn13Format','m_ReadZones','m_SkipZeroTime','m_Use64BitFloats','m_Use64BitLabels','m_FileName',]
@@ -1874,7 +1874,7 @@ add_class( VTKPOpenFOAMReader )
 TYPENAMES.append('VTKPOpenFOAMReaderType' )
 
 #--------------------------------------------------------------
-class VTKPSLACReader(Node, VTKNode):
+class VTKPSLACReader(Node, BVTK_Node):
 
     bl_idname = 'VTKPSLACReaderType'
     bl_label  = 'vtkPSLACReader'
@@ -1884,7 +1884,7 @@ class VTKPSLACReader(Node, VTKNode):
     m_ReadMidpoints       = bpy.props.BoolProperty  ( name='ReadMidpoints',       default=True )
     m_MeshFileName        = bpy.props.StringProperty( name='MeshFileName',        default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadExternalSurface','m_ReadInternalVolume','m_ReadMidpoints','m_MeshFileName',]
@@ -1895,7 +1895,7 @@ add_class( VTKPSLACReader )
 TYPENAMES.append('VTKPSLACReaderType' )
 
 #--------------------------------------------------------------
-class VTKPTSReader(Node, VTKNode):
+class VTKPTSReader(Node, BVTK_Node):
 
     bl_idname = 'VTKPTSReaderType'
     bl_label  = 'vtkPTSReader'
@@ -1909,7 +1909,7 @@ class VTKPTSReader(Node, VTKNode):
     m_MaxNumberOfPoints        = bpy.props.IntProperty        ( name='MaxNumberOfPoints',        default=1000000 )
     m_ReadBounds               = bpy.props.FloatVectorProperty( name='ReadBounds',               default=[1e+30, -1e+30, 1e+30, -1e+30, 1e+30, -1e+30], size=6 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=8, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=8, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_CreateCells','m_IncludeColorAndLuminance','m_LimitReadToBounds','m_LimitToMaxNumberOfPoints','m_OutputDataTypeIsDouble','m_FileName','m_MaxNumberOfPoints','m_ReadBounds',]
@@ -1920,7 +1920,7 @@ add_class( VTKPTSReader )
 TYPENAMES.append('VTKPTSReaderType' )
 
 #--------------------------------------------------------------
-class VTKParticleReader(Node, VTKNode):
+class VTKParticleReader(Node, BVTK_Node):
 
     bl_idname = 'VTKParticleReaderType'
     bl_label  = 'vtkParticleReader'
@@ -1933,7 +1933,7 @@ class VTKParticleReader(Node, VTKNode):
     e_DataByteOrder = bpy.props.EnumProperty  ( name='DataByteOrder', default="LittleEndian", items=e_DataByteOrder_items )
     e_FileType      = bpy.props.EnumProperty  ( name='FileType',      default="Unknown", items=e_FileType_items )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_HasScalar','m_SwapBytes','m_FileName','e_DataByteOrder','e_FileType',]
@@ -1944,7 +1944,7 @@ add_class( VTKParticleReader )
 TYPENAMES.append('VTKParticleReaderType' )
 
 #--------------------------------------------------------------
-class VTKPhyloXMLTreeReader(Node, VTKNode):
+class VTKPhyloXMLTreeReader(Node, BVTK_Node):
 
     bl_idname = 'VTKPhyloXMLTreeReaderType'
     bl_label  = 'vtkPhyloXMLTreeReader'
@@ -1954,7 +1954,7 @@ class VTKPhyloXMLTreeReader(Node, VTKNode):
     m_TimeStep            = bpy.props.IntProperty      ( name='TimeStep',            default=0 )
     m_TimeStepRange       = bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_FileName','m_TimeStep','m_TimeStepRange',]
@@ -1965,14 +1965,14 @@ add_class( VTKPhyloXMLTreeReader )
 TYPENAMES.append('VTKPhyloXMLTreeReaderType' )
 
 #--------------------------------------------------------------
-class VTKPlot3DMetaReader(Node, VTKNode):
+class VTKPlot3DMetaReader(Node, BVTK_Node):
 
     bl_idname = 'VTKPlot3DMetaReaderType'
     bl_label  = 'vtkPlot3DMetaReader'
     
     m_FileName = bpy.props.StringProperty( name='FileName', default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName',]
@@ -1983,7 +1983,7 @@ add_class( VTKPlot3DMetaReader )
 TYPENAMES.append('VTKPlot3DMetaReaderType' )
 
 #--------------------------------------------------------------
-class VTKPolyDataReader(Node, VTKNode):
+class VTKPolyDataReader(Node, BVTK_Node):
 
     bl_idname = 'VTKPolyDataReaderType'
     bl_label  = 'vtkPolyDataReader'
@@ -2005,7 +2005,7 @@ class VTKPolyDataReader(Node, VTKNode):
     m_TensorsName         = bpy.props.StringProperty( name='TensorsName',         default="" )
     m_VectorsName         = bpy.props.StringProperty( name='VectorsName',         default="" )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadAllColorScalars','m_ReadAllFields','m_ReadAllNormals','m_ReadAllScalars','m_ReadAllTCoords','m_ReadAllTensors','m_ReadAllVectors','m_ReadFromInputString','m_FieldDataName','m_FileName','m_LookupTableName','m_NormalsName','m_ScalarsName','m_TCoordsName','m_TensorsName','m_VectorsName',]
@@ -2016,7 +2016,7 @@ add_class( VTKPolyDataReader )
 TYPENAMES.append('VTKPolyDataReaderType' )
 
 #--------------------------------------------------------------
-class VTKProStarReader(Node, VTKNode):
+class VTKProStarReader(Node, BVTK_Node):
 
     bl_idname = 'VTKProStarReaderType'
     bl_label  = 'vtkProStarReader'
@@ -2024,7 +2024,7 @@ class VTKProStarReader(Node, VTKNode):
     m_FileName    = bpy.props.StringProperty( name='FileName',    default="", subtype='FILE_PATH' )
     m_ScaleFactor = bpy.props.FloatProperty ( name='ScaleFactor', default=1.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName','m_ScaleFactor',]
@@ -2035,7 +2035,7 @@ add_class( VTKProStarReader )
 TYPENAMES.append('VTKProStarReaderType' )
 
 #--------------------------------------------------------------
-class VTKRISReader(Node, VTKNode):
+class VTKRISReader(Node, BVTK_Node):
 
     bl_idname = 'VTKRISReaderType'
     bl_label  = 'vtkRISReader'
@@ -2044,7 +2044,7 @@ class VTKRISReader(Node, VTKNode):
     m_FileName   = bpy.props.StringProperty( name='FileName',   default="", subtype='FILE_PATH' )
     m_MaxRecords = bpy.props.IntProperty   ( name='MaxRecords', default=0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_Delimiter','m_FileName','m_MaxRecords',]
@@ -2055,7 +2055,7 @@ add_class( VTKRISReader )
 TYPENAMES.append('VTKRISReaderType' )
 
 #--------------------------------------------------------------
-class VTKRTXMLPolyDataReader(Node, VTKNode):
+class VTKRTXMLPolyDataReader(Node, BVTK_Node):
 
     bl_idname = 'VTKRTXMLPolyDataReaderType'
     bl_label  = 'vtkRTXMLPolyDataReader'
@@ -2065,7 +2065,7 @@ class VTKRTXMLPolyDataReader(Node, VTKNode):
     m_TimeStep            = bpy.props.IntProperty      ( name='TimeStep',            default=0 )
     m_TimeStepRange       = bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_FileName','m_TimeStep','m_TimeStepRange',]
@@ -2076,7 +2076,7 @@ add_class( VTKRTXMLPolyDataReader )
 TYPENAMES.append('VTKRTXMLPolyDataReaderType' )
 
 #--------------------------------------------------------------
-class VTKRectilinearGridReader(Node, VTKNode):
+class VTKRectilinearGridReader(Node, BVTK_Node):
 
     bl_idname = 'VTKRectilinearGridReaderType'
     bl_label  = 'vtkRectilinearGridReader'
@@ -2098,7 +2098,7 @@ class VTKRectilinearGridReader(Node, VTKNode):
     m_TensorsName         = bpy.props.StringProperty( name='TensorsName',         default="" )
     m_VectorsName         = bpy.props.StringProperty( name='VectorsName',         default="" )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadAllColorScalars','m_ReadAllFields','m_ReadAllNormals','m_ReadAllScalars','m_ReadAllTCoords','m_ReadAllTensors','m_ReadAllVectors','m_ReadFromInputString','m_FieldDataName','m_FileName','m_LookupTableName','m_NormalsName','m_ScalarsName','m_TCoordsName','m_TensorsName','m_VectorsName',]
@@ -2109,14 +2109,14 @@ add_class( VTKRectilinearGridReader )
 TYPENAMES.append('VTKRectilinearGridReaderType' )
 
 #--------------------------------------------------------------
-class VTKSLACParticleReader(Node, VTKNode):
+class VTKSLACParticleReader(Node, BVTK_Node):
 
     bl_idname = 'VTKSLACParticleReaderType'
     bl_label  = 'vtkSLACParticleReader'
     
     m_FileName = bpy.props.StringProperty( name='FileName', default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName',]
@@ -2127,7 +2127,7 @@ add_class( VTKSLACParticleReader )
 TYPENAMES.append('VTKSLACParticleReaderType' )
 
 #--------------------------------------------------------------
-class VTKSLACReader(Node, VTKNode):
+class VTKSLACReader(Node, BVTK_Node):
 
     bl_idname = 'VTKSLACReaderType'
     bl_label  = 'vtkSLACReader'
@@ -2137,7 +2137,7 @@ class VTKSLACReader(Node, VTKNode):
     m_ReadMidpoints       = bpy.props.BoolProperty  ( name='ReadMidpoints',       default=True )
     m_MeshFileName        = bpy.props.StringProperty( name='MeshFileName',        default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadExternalSurface','m_ReadInternalVolume','m_ReadMidpoints','m_MeshFileName',]
@@ -2148,7 +2148,7 @@ add_class( VTKSLACReader )
 TYPENAMES.append('VTKSLACReaderType' )
 
 #--------------------------------------------------------------
-class VTKSLCReader(Node, VTKNode):
+class VTKSLCReader(Node, BVTK_Node):
 
     bl_idname = 'VTKSLCReaderType'
     bl_label  = 'vtkSLCReader'
@@ -2171,7 +2171,7 @@ class VTKSLCReader(Node, VTKNode):
     m_DataOrigin               = bpy.props.FloatVectorProperty( name='DataOrigin',               default=[0.0, 0.0, 0.0], size=3 )
     m_DataSpacing              = bpy.props.FloatVectorProperty( name='DataSpacing',              default=[1.0, 1.0, 1.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=15, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=15, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileLowerLeft','m_SwapBytes','m_FileName','m_FilePattern','m_FilePrefix','m_FileDimensionality','m_FileNameSliceOffset','m_FileNameSliceSpacing','m_HeaderSize','m_MemoryBufferLength','m_NumberOfScalarComponents','e_DataByteOrder','e_DataScalarType','m_DataOrigin','m_DataSpacing',]
@@ -2182,13 +2182,13 @@ add_class( VTKSLCReader )
 TYPENAMES.append('VTKSLCReaderType' )
 
 #--------------------------------------------------------------
-class VTKSQLiteToTableReader(Node, VTKNode):
+class VTKSQLiteToTableReader(Node, BVTK_Node):
 
     bl_idname = 'VTKSQLiteToTableReaderType'
     bl_label  = 'vtkSQLiteToTableReader'
     
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return []
@@ -2199,7 +2199,7 @@ add_class( VTKSQLiteToTableReader )
 TYPENAMES.append('VTKSQLiteToTableReaderType' )
 
 #--------------------------------------------------------------
-class VTKSTLReader(Node, VTKNode):
+class VTKSTLReader(Node, BVTK_Node):
 
     bl_idname = 'VTKSTLReaderType'
     bl_label  = 'vtkSTLReader'
@@ -2208,7 +2208,7 @@ class VTKSTLReader(Node, VTKNode):
     m_ScalarTags = bpy.props.BoolProperty  ( name='ScalarTags', default=True )
     m_FileName   = bpy.props.StringProperty( name='FileName',   default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_Merging','m_ScalarTags','m_FileName',]
@@ -2219,7 +2219,7 @@ add_class( VTKSTLReader )
 TYPENAMES.append('VTKSTLReaderType' )
 
 #--------------------------------------------------------------
-class VTKSegYReader(Node, VTKNode):
+class VTKSegYReader(Node, BVTK_Node):
 
     bl_idname = 'VTKSegYReaderType'
     bl_label  = 'vtkSegYReader'
@@ -2232,7 +2232,7 @@ class VTKSegYReader(Node, VTKNode):
     m_YCoordByte     = bpy.props.IntProperty   ( name='YCoordByte',     default=77 )
     e_XYCoordMode    = bpy.props.EnumProperty  ( name='XYCoordMode',    default="Source", items=e_XYCoordMode_items )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=6, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_StructuredGrid','m_FileName','m_VerticalCRS','m_XCoordByte','m_YCoordByte','e_XYCoordMode',]
@@ -2243,14 +2243,14 @@ add_class( VTKSegYReader )
 TYPENAMES.append('VTKSegYReaderType' )
 
 #--------------------------------------------------------------
-class VTKSimplePointsReader(Node, VTKNode):
+class VTKSimplePointsReader(Node, BVTK_Node):
 
     bl_idname = 'VTKSimplePointsReaderType'
     bl_label  = 'vtkSimplePointsReader'
     
     m_FileName = bpy.props.StringProperty( name='FileName', default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName',]
@@ -2261,7 +2261,7 @@ add_class( VTKSimplePointsReader )
 TYPENAMES.append('VTKSimplePointsReaderType' )
 
 #--------------------------------------------------------------
-class VTKStructuredGridReader(Node, VTKNode):
+class VTKStructuredGridReader(Node, BVTK_Node):
 
     bl_idname = 'VTKStructuredGridReaderType'
     bl_label  = 'vtkStructuredGridReader'
@@ -2283,7 +2283,7 @@ class VTKStructuredGridReader(Node, VTKNode):
     m_TensorsName         = bpy.props.StringProperty( name='TensorsName',         default="" )
     m_VectorsName         = bpy.props.StringProperty( name='VectorsName',         default="" )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadAllColorScalars','m_ReadAllFields','m_ReadAllNormals','m_ReadAllScalars','m_ReadAllTCoords','m_ReadAllTensors','m_ReadAllVectors','m_ReadFromInputString','m_FieldDataName','m_FileName','m_LookupTableName','m_NormalsName','m_ScalarsName','m_TCoordsName','m_TensorsName','m_VectorsName',]
@@ -2294,7 +2294,7 @@ add_class( VTKStructuredGridReader )
 TYPENAMES.append('VTKStructuredGridReaderType' )
 
 #--------------------------------------------------------------
-class VTKStructuredPointsReader(Node, VTKNode):
+class VTKStructuredPointsReader(Node, BVTK_Node):
 
     bl_idname = 'VTKStructuredPointsReaderType'
     bl_label  = 'vtkStructuredPointsReader'
@@ -2316,7 +2316,7 @@ class VTKStructuredPointsReader(Node, VTKNode):
     m_TensorsName         = bpy.props.StringProperty( name='TensorsName',         default="" )
     m_VectorsName         = bpy.props.StringProperty( name='VectorsName',         default="" )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadAllColorScalars','m_ReadAllFields','m_ReadAllNormals','m_ReadAllScalars','m_ReadAllTCoords','m_ReadAllTensors','m_ReadAllVectors','m_ReadFromInputString','m_FieldDataName','m_FileName','m_LookupTableName','m_NormalsName','m_ScalarsName','m_TCoordsName','m_TensorsName','m_VectorsName',]
@@ -2327,7 +2327,7 @@ add_class( VTKStructuredPointsReader )
 TYPENAMES.append('VTKStructuredPointsReaderType' )
 
 #--------------------------------------------------------------
-class VTKTIFFReader(Node, VTKNode):
+class VTKTIFFReader(Node, BVTK_Node):
 
     bl_idname = 'VTKTIFFReaderType'
     bl_label  = 'vtkTIFFReader'
@@ -2353,7 +2353,7 @@ class VTKTIFFReader(Node, VTKNode):
     m_DataOrigin               = bpy.props.FloatVectorProperty( name='DataOrigin',               default=[0.0, 0.0, 0.0], size=3 )
     m_DataSpacing              = bpy.props.FloatVectorProperty( name='DataSpacing',              default=[1.0, 1.0, 1.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=18, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=18, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileLowerLeft','m_OriginSpecifiedFlag','m_SpacingSpecifiedFlag','m_SwapBytes','m_FileName','m_FilePattern','m_FilePrefix','m_FileDimensionality','m_FileNameSliceOffset','m_FileNameSliceSpacing','m_HeaderSize','m_MemoryBufferLength','m_NumberOfScalarComponents','m_OrientationType','e_DataByteOrder','e_DataScalarType','m_DataOrigin','m_DataSpacing',]
@@ -2364,7 +2364,7 @@ add_class( VTKTIFFReader )
 TYPENAMES.append('VTKTIFFReaderType' )
 
 #--------------------------------------------------------------
-class VTKTableReader(Node, VTKNode):
+class VTKTableReader(Node, BVTK_Node):
 
     bl_idname = 'VTKTableReaderType'
     bl_label  = 'vtkTableReader'
@@ -2386,7 +2386,7 @@ class VTKTableReader(Node, VTKNode):
     m_TensorsName         = bpy.props.StringProperty( name='TensorsName',         default="" )
     m_VectorsName         = bpy.props.StringProperty( name='VectorsName',         default="" )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadAllColorScalars','m_ReadAllFields','m_ReadAllNormals','m_ReadAllScalars','m_ReadAllTCoords','m_ReadAllTensors','m_ReadAllVectors','m_ReadFromInputString','m_FieldDataName','m_FileName','m_LookupTableName','m_NormalsName','m_ScalarsName','m_TCoordsName','m_TensorsName','m_VectorsName',]
@@ -2397,13 +2397,13 @@ add_class( VTKTableReader )
 TYPENAMES.append('VTKTableReaderType' )
 
 #--------------------------------------------------------------
-class VTKTecplotReader(Node, VTKNode):
+class VTKTecplotReader(Node, BVTK_Node):
 
     bl_idname = 'VTKTecplotReaderType'
     bl_label  = 'vtkTecplotReader'
     
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return []
@@ -2414,7 +2414,7 @@ add_class( VTKTecplotReader )
 TYPENAMES.append('VTKTecplotReaderType' )
 
 #--------------------------------------------------------------
-class VTKTecplotTableReader(Node, VTKNode):
+class VTKTecplotTableReader(Node, BVTK_Node):
 
     bl_idname = 'VTKTecplotTableReaderType'
     bl_label  = 'vtkTecplotTableReader'
@@ -2428,7 +2428,7 @@ class VTKTecplotTableReader(Node, VTKNode):
     m_MaxRecords          = bpy.props.IntProperty   ( name='MaxRecords',          default=0 )
     m_SkipColumnNames     = bpy.props.IntProperty   ( name='SkipColumnNames',     default=1 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=8, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=8, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_GeneratePedigreeIds','m_OutputPedigreeIds','m_FileName','m_PedigreeIdArrayName','m_ColumnNamesOnLine','m_HeaderLines','m_MaxRecords','m_SkipColumnNames',]
@@ -2439,7 +2439,7 @@ add_class( VTKTecplotTableReader )
 TYPENAMES.append('VTKTecplotTableReaderType' )
 
 #--------------------------------------------------------------
-class VTKTreeReader(Node, VTKNode):
+class VTKTreeReader(Node, BVTK_Node):
 
     bl_idname = 'VTKTreeReaderType'
     bl_label  = 'vtkTreeReader'
@@ -2461,7 +2461,7 @@ class VTKTreeReader(Node, VTKNode):
     m_TensorsName         = bpy.props.StringProperty( name='TensorsName',         default="" )
     m_VectorsName         = bpy.props.StringProperty( name='VectorsName',         default="" )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadAllColorScalars','m_ReadAllFields','m_ReadAllNormals','m_ReadAllScalars','m_ReadAllTCoords','m_ReadAllTensors','m_ReadAllVectors','m_ReadFromInputString','m_FieldDataName','m_FileName','m_LookupTableName','m_NormalsName','m_ScalarsName','m_TCoordsName','m_TensorsName','m_VectorsName',]
@@ -2472,14 +2472,14 @@ add_class( VTKTreeReader )
 TYPENAMES.append('VTKTreeReaderType' )
 
 #--------------------------------------------------------------
-class VTKTulipReader(Node, VTKNode):
+class VTKTulipReader(Node, BVTK_Node):
 
     bl_idname = 'VTKTulipReaderType'
     bl_label  = 'vtkTulipReader'
     
     m_FileName = bpy.props.StringProperty( name='FileName', default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName',]
@@ -2490,7 +2490,7 @@ add_class( VTKTulipReader )
 TYPENAMES.append('VTKTulipReaderType' )
 
 #--------------------------------------------------------------
-class VTKUnstructuredGridReader(Node, VTKNode):
+class VTKUnstructuredGridReader(Node, BVTK_Node):
 
     bl_idname = 'VTKUnstructuredGridReaderType'
     bl_label  = 'vtkUnstructuredGridReader'
@@ -2512,7 +2512,7 @@ class VTKUnstructuredGridReader(Node, VTKNode):
     m_TensorsName         = bpy.props.StringProperty( name='TensorsName',         default="" )
     m_VectorsName         = bpy.props.StringProperty( name='VectorsName',         default="" )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadAllColorScalars','m_ReadAllFields','m_ReadAllNormals','m_ReadAllScalars','m_ReadAllTCoords','m_ReadAllTensors','m_ReadAllVectors','m_ReadFromInputString','m_FieldDataName','m_FileName','m_LookupTableName','m_NormalsName','m_ScalarsName','m_TCoordsName','m_TensorsName','m_VectorsName',]
@@ -2523,14 +2523,14 @@ add_class( VTKUnstructuredGridReader )
 TYPENAMES.append('VTKUnstructuredGridReaderType' )
 
 #--------------------------------------------------------------
-class VTKVASPAnimationReader(Node, VTKNode):
+class VTKVASPAnimationReader(Node, BVTK_Node):
 
     bl_idname = 'VTKVASPAnimationReaderType'
     bl_label  = 'vtkVASPAnimationReader'
     
     m_FileName = bpy.props.StringProperty( name='FileName', default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName',]
@@ -2541,14 +2541,14 @@ add_class( VTKVASPAnimationReader )
 TYPENAMES.append('VTKVASPAnimationReaderType' )
 
 #--------------------------------------------------------------
-class VTKVASPTessellationReader(Node, VTKNode):
+class VTKVASPTessellationReader(Node, BVTK_Node):
 
     bl_idname = 'VTKVASPTessellationReaderType'
     bl_label  = 'vtkVASPTessellationReader'
     
     m_FileName = bpy.props.StringProperty( name='FileName', default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName',]
@@ -2559,14 +2559,14 @@ add_class( VTKVASPTessellationReader )
 TYPENAMES.append('VTKVASPTessellationReaderType' )
 
 #--------------------------------------------------------------
-class VTKVeraOutReader(Node, VTKNode):
+class VTKVeraOutReader(Node, BVTK_Node):
 
     bl_idname = 'VTKVeraOutReaderType'
     bl_label  = 'vtkVeraOutReader'
     
     m_FileName = bpy.props.StringProperty( name='FileName', default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName',]
@@ -2577,7 +2577,7 @@ add_class( VTKVeraOutReader )
 TYPENAMES.append('VTKVeraOutReaderType' )
 
 #--------------------------------------------------------------
-class VTKVolume16Reader(Node, VTKNode):
+class VTKVolume16Reader(Node, BVTK_Node):
 
     bl_idname = 'VTKVolume16ReaderType'
     bl_label  = 'vtkVolume16Reader'
@@ -2594,7 +2594,7 @@ class VTKVolume16Reader(Node, VTKNode):
     m_DataOrigin     = bpy.props.FloatVectorProperty( name='DataOrigin',     default=[0.0, 0.0, 0.0], size=3 )
     m_DataSpacing    = bpy.props.FloatVectorProperty( name='DataSpacing',    default=[1.0, 1.0, 1.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=10, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=10, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_SwapBytes','m_FilePattern','m_FilePrefix','m_DataMask','m_HeaderSize','e_DataByteOrder','m_DataDimensions','m_ImageRange','m_DataOrigin','m_DataSpacing',]
@@ -2605,7 +2605,7 @@ add_class( VTKVolume16Reader )
 TYPENAMES.append('VTKVolume16ReaderType' )
 
 #--------------------------------------------------------------
-class VTKWindBladeReader(Node, VTKNode):
+class VTKWindBladeReader(Node, BVTK_Node):
 
     bl_idname = 'VTKWindBladeReaderType'
     bl_label  = 'vtkWindBladeReader'
@@ -2613,7 +2613,7 @@ class VTKWindBladeReader(Node, VTKNode):
     m_Filename  = bpy.props.StringProperty   ( name='Filename',  default="" )
     m_SubExtent = bpy.props.IntVectorProperty( name='SubExtent', default=[0, 0, 1000000000, 32513, 0, 0], size=6 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_Filename','m_SubExtent',]
@@ -2624,14 +2624,14 @@ add_class( VTKWindBladeReader )
 TYPENAMES.append('VTKWindBladeReaderType' )
 
 #--------------------------------------------------------------
-class VTKXGMLReader(Node, VTKNode):
+class VTKXGMLReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXGMLReaderType'
     bl_label  = 'vtkXGMLReader'
     
     m_FileName = bpy.props.StringProperty( name='FileName', default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName',]
@@ -2642,7 +2642,7 @@ add_class( VTKXGMLReader )
 TYPENAMES.append('VTKXGMLReaderType' )
 
 #--------------------------------------------------------------
-class VTKXMLGenericDataObjectReader(Node, VTKNode):
+class VTKXMLGenericDataObjectReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXMLGenericDataObjectReaderType'
     bl_label  = 'vtkXMLGenericDataObjectReader'
@@ -2652,7 +2652,7 @@ class VTKXMLGenericDataObjectReader(Node, VTKNode):
     m_TimeStep            = bpy.props.IntProperty      ( name='TimeStep',            default=0 )
     m_TimeStepRange       = bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_FileName','m_TimeStep','m_TimeStepRange',]
@@ -2663,7 +2663,7 @@ add_class( VTKXMLGenericDataObjectReader )
 TYPENAMES.append('VTKXMLGenericDataObjectReaderType' )
 
 #--------------------------------------------------------------
-class VTKXMLHierarchicalBoxDataReader(Node, VTKNode):
+class VTKXMLHierarchicalBoxDataReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXMLHierarchicalBoxDataReaderType'
     bl_label  = 'vtkXMLHierarchicalBoxDataReader'
@@ -2675,7 +2675,7 @@ class VTKXMLHierarchicalBoxDataReader(Node, VTKNode):
     m_TimeStep                     = bpy.props.IntProperty      ( name='TimeStep',                     default=0 )
     m_TimeStepRange                = bpy.props.IntVectorProperty( name='TimeStepRange',                default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=6, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_FileName','m_MaximumLevelsToReadByDefault','m_PieceDistribution','m_TimeStep','m_TimeStepRange',]
@@ -2686,7 +2686,7 @@ add_class( VTKXMLHierarchicalBoxDataReader )
 TYPENAMES.append('VTKXMLHierarchicalBoxDataReaderType' )
 
 #--------------------------------------------------------------
-class VTKXMLHierarchicalDataReader(Node, VTKNode):
+class VTKXMLHierarchicalDataReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXMLHierarchicalDataReaderType'
     bl_label  = 'vtkXMLHierarchicalDataReader'
@@ -2697,7 +2697,7 @@ class VTKXMLHierarchicalDataReader(Node, VTKNode):
     m_TimeStep            = bpy.props.IntProperty      ( name='TimeStep',            default=0 )
     m_TimeStepRange       = bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_FileName','m_PieceDistribution','m_TimeStep','m_TimeStepRange',]
@@ -2708,7 +2708,7 @@ add_class( VTKXMLHierarchicalDataReader )
 TYPENAMES.append('VTKXMLHierarchicalDataReaderType' )
 
 #--------------------------------------------------------------
-class VTKXMLHyperTreeGridReader(Node, VTKNode):
+class VTKXMLHyperTreeGridReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXMLHyperTreeGridReaderType'
     bl_label  = 'vtkXMLHyperTreeGridReader'
@@ -2718,7 +2718,7 @@ class VTKXMLHyperTreeGridReader(Node, VTKNode):
     m_TimeStep            = bpy.props.IntProperty      ( name='TimeStep',            default=0 )
     m_TimeStepRange       = bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_FileName','m_TimeStep','m_TimeStepRange',]
@@ -2729,7 +2729,7 @@ add_class( VTKXMLHyperTreeGridReader )
 TYPENAMES.append('VTKXMLHyperTreeGridReaderType' )
 
 #--------------------------------------------------------------
-class VTKXMLImageDataReader(Node, VTKNode):
+class VTKXMLImageDataReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXMLImageDataReaderType'
     bl_label  = 'vtkXMLImageDataReader'
@@ -2740,7 +2740,7 @@ class VTKXMLImageDataReader(Node, VTKNode):
     m_TimeStep            = bpy.props.IntProperty      ( name='TimeStep',            default=0 )
     m_TimeStepRange       = bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_WholeSlices','m_FileName','m_TimeStep','m_TimeStepRange',]
@@ -2751,7 +2751,7 @@ add_class( VTKXMLImageDataReader )
 TYPENAMES.append('VTKXMLImageDataReaderType' )
 
 #--------------------------------------------------------------
-class VTKXMLMultiBlockDataReader(Node, VTKNode):
+class VTKXMLMultiBlockDataReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXMLMultiBlockDataReaderType'
     bl_label  = 'vtkXMLMultiBlockDataReader'
@@ -2762,7 +2762,7 @@ class VTKXMLMultiBlockDataReader(Node, VTKNode):
     m_TimeStep            = bpy.props.IntProperty      ( name='TimeStep',            default=0 )
     m_TimeStepRange       = bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_FileName','m_PieceDistribution','m_TimeStep','m_TimeStepRange',]
@@ -2773,7 +2773,7 @@ add_class( VTKXMLMultiBlockDataReader )
 TYPENAMES.append('VTKXMLMultiBlockDataReaderType' )
 
 #--------------------------------------------------------------
-class VTKXMLMultiGroupDataReader(Node, VTKNode):
+class VTKXMLMultiGroupDataReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXMLMultiGroupDataReaderType'
     bl_label  = 'vtkXMLMultiGroupDataReader'
@@ -2784,7 +2784,7 @@ class VTKXMLMultiGroupDataReader(Node, VTKNode):
     m_TimeStep            = bpy.props.IntProperty      ( name='TimeStep',            default=0 )
     m_TimeStepRange       = bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_FileName','m_PieceDistribution','m_TimeStep','m_TimeStepRange',]
@@ -2795,7 +2795,7 @@ add_class( VTKXMLMultiGroupDataReader )
 TYPENAMES.append('VTKXMLMultiGroupDataReaderType' )
 
 #--------------------------------------------------------------
-class VTKXMLPImageDataReader(Node, VTKNode):
+class VTKXMLPImageDataReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXMLPImageDataReaderType'
     bl_label  = 'vtkXMLPImageDataReader'
@@ -2805,7 +2805,7 @@ class VTKXMLPImageDataReader(Node, VTKNode):
     m_TimeStep            = bpy.props.IntProperty      ( name='TimeStep',            default=0 )
     m_TimeStepRange       = bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_FileName','m_TimeStep','m_TimeStepRange',]
@@ -2816,7 +2816,7 @@ add_class( VTKXMLPImageDataReader )
 TYPENAMES.append('VTKXMLPImageDataReaderType' )
 
 #--------------------------------------------------------------
-class VTKXMLPPolyDataReader(Node, VTKNode):
+class VTKXMLPPolyDataReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXMLPPolyDataReaderType'
     bl_label  = 'vtkXMLPPolyDataReader'
@@ -2826,7 +2826,7 @@ class VTKXMLPPolyDataReader(Node, VTKNode):
     m_TimeStep            = bpy.props.IntProperty      ( name='TimeStep',            default=0 )
     m_TimeStepRange       = bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_FileName','m_TimeStep','m_TimeStepRange',]
@@ -2837,7 +2837,7 @@ add_class( VTKXMLPPolyDataReader )
 TYPENAMES.append('VTKXMLPPolyDataReaderType' )
 
 #--------------------------------------------------------------
-class VTKXMLPRectilinearGridReader(Node, VTKNode):
+class VTKXMLPRectilinearGridReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXMLPRectilinearGridReaderType'
     bl_label  = 'vtkXMLPRectilinearGridReader'
@@ -2847,7 +2847,7 @@ class VTKXMLPRectilinearGridReader(Node, VTKNode):
     m_TimeStep            = bpy.props.IntProperty      ( name='TimeStep',            default=0 )
     m_TimeStepRange       = bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_FileName','m_TimeStep','m_TimeStepRange',]
@@ -2858,7 +2858,7 @@ add_class( VTKXMLPRectilinearGridReader )
 TYPENAMES.append('VTKXMLPRectilinearGridReaderType' )
 
 #--------------------------------------------------------------
-class VTKXMLPStructuredGridReader(Node, VTKNode):
+class VTKXMLPStructuredGridReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXMLPStructuredGridReaderType'
     bl_label  = 'vtkXMLPStructuredGridReader'
@@ -2868,7 +2868,7 @@ class VTKXMLPStructuredGridReader(Node, VTKNode):
     m_TimeStep            = bpy.props.IntProperty      ( name='TimeStep',            default=0 )
     m_TimeStepRange       = bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_FileName','m_TimeStep','m_TimeStepRange',]
@@ -2879,7 +2879,7 @@ add_class( VTKXMLPStructuredGridReader )
 TYPENAMES.append('VTKXMLPStructuredGridReaderType' )
 
 #--------------------------------------------------------------
-class VTKXMLPTableReader(Node, VTKNode):
+class VTKXMLPTableReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXMLPTableReaderType'
     bl_label  = 'vtkXMLPTableReader'
@@ -2889,7 +2889,7 @@ class VTKXMLPTableReader(Node, VTKNode):
     m_TimeStep            = bpy.props.IntProperty      ( name='TimeStep',            default=0 )
     m_TimeStepRange       = bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_FileName','m_TimeStep','m_TimeStepRange',]
@@ -2900,7 +2900,7 @@ add_class( VTKXMLPTableReader )
 TYPENAMES.append('VTKXMLPTableReaderType' )
 
 #--------------------------------------------------------------
-class VTKXMLPUnstructuredGridReader(Node, VTKNode):
+class VTKXMLPUnstructuredGridReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXMLPUnstructuredGridReaderType'
     bl_label  = 'vtkXMLPUnstructuredGridReader'
@@ -2910,7 +2910,7 @@ class VTKXMLPUnstructuredGridReader(Node, VTKNode):
     m_TimeStep            = bpy.props.IntProperty      ( name='TimeStep',            default=0 )
     m_TimeStepRange       = bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_FileName','m_TimeStep','m_TimeStepRange',]
@@ -2921,7 +2921,7 @@ add_class( VTKXMLPUnstructuredGridReader )
 TYPENAMES.append('VTKXMLPUnstructuredGridReaderType' )
 
 #--------------------------------------------------------------
-class VTKXMLPartitionedDataSetCollectionReader(Node, VTKNode):
+class VTKXMLPartitionedDataSetCollectionReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXMLPartitionedDataSetCollectionReaderType'
     bl_label  = 'vtkXMLPartitionedDataSetCollectionReader'
@@ -2932,7 +2932,7 @@ class VTKXMLPartitionedDataSetCollectionReader(Node, VTKNode):
     m_TimeStep            = bpy.props.IntProperty      ( name='TimeStep',            default=0 )
     m_TimeStepRange       = bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_FileName','m_PieceDistribution','m_TimeStep','m_TimeStepRange',]
@@ -2943,7 +2943,7 @@ add_class( VTKXMLPartitionedDataSetCollectionReader )
 TYPENAMES.append('VTKXMLPartitionedDataSetCollectionReaderType' )
 
 #--------------------------------------------------------------
-class VTKXMLPartitionedDataSetReader(Node, VTKNode):
+class VTKXMLPartitionedDataSetReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXMLPartitionedDataSetReaderType'
     bl_label  = 'vtkXMLPartitionedDataSetReader'
@@ -2954,7 +2954,7 @@ class VTKXMLPartitionedDataSetReader(Node, VTKNode):
     m_TimeStep            = bpy.props.IntProperty      ( name='TimeStep',            default=0 )
     m_TimeStepRange       = bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_FileName','m_PieceDistribution','m_TimeStep','m_TimeStepRange',]
@@ -2965,7 +2965,7 @@ add_class( VTKXMLPartitionedDataSetReader )
 TYPENAMES.append('VTKXMLPartitionedDataSetReaderType' )
 
 #--------------------------------------------------------------
-class VTKXMLPolyDataReader(Node, VTKNode):
+class VTKXMLPolyDataReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXMLPolyDataReaderType'
     bl_label  = 'vtkXMLPolyDataReader'
@@ -2975,7 +2975,7 @@ class VTKXMLPolyDataReader(Node, VTKNode):
     m_TimeStep            = bpy.props.IntProperty      ( name='TimeStep',            default=0 )
     m_TimeStepRange       = bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_FileName','m_TimeStep','m_TimeStepRange',]
@@ -2986,7 +2986,7 @@ add_class( VTKXMLPolyDataReader )
 TYPENAMES.append('VTKXMLPolyDataReaderType' )
 
 #--------------------------------------------------------------
-class VTKXMLRectilinearGridReader(Node, VTKNode):
+class VTKXMLRectilinearGridReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXMLRectilinearGridReaderType'
     bl_label  = 'vtkXMLRectilinearGridReader'
@@ -2997,7 +2997,7 @@ class VTKXMLRectilinearGridReader(Node, VTKNode):
     m_TimeStep            = bpy.props.IntProperty      ( name='TimeStep',            default=0 )
     m_TimeStepRange       = bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_WholeSlices','m_FileName','m_TimeStep','m_TimeStepRange',]
@@ -3008,7 +3008,7 @@ add_class( VTKXMLRectilinearGridReader )
 TYPENAMES.append('VTKXMLRectilinearGridReaderType' )
 
 #--------------------------------------------------------------
-class VTKXMLStructuredGridReader(Node, VTKNode):
+class VTKXMLStructuredGridReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXMLStructuredGridReaderType'
     bl_label  = 'vtkXMLStructuredGridReader'
@@ -3019,7 +3019,7 @@ class VTKXMLStructuredGridReader(Node, VTKNode):
     m_TimeStep            = bpy.props.IntProperty      ( name='TimeStep',            default=0 )
     m_TimeStepRange       = bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_WholeSlices','m_FileName','m_TimeStep','m_TimeStepRange',]
@@ -3030,7 +3030,7 @@ add_class( VTKXMLStructuredGridReader )
 TYPENAMES.append('VTKXMLStructuredGridReaderType' )
 
 #--------------------------------------------------------------
-class VTKXMLTableReader(Node, VTKNode):
+class VTKXMLTableReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXMLTableReaderType'
     bl_label  = 'vtkXMLTableReader'
@@ -3040,7 +3040,7 @@ class VTKXMLTableReader(Node, VTKNode):
     m_TimeStep            = bpy.props.IntProperty      ( name='TimeStep',            default=0 )
     m_TimeStepRange       = bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_FileName','m_TimeStep','m_TimeStepRange',]
@@ -3051,7 +3051,7 @@ add_class( VTKXMLTableReader )
 TYPENAMES.append('VTKXMLTableReaderType' )
 
 #--------------------------------------------------------------
-class VTKXMLTreeReader(Node, VTKNode):
+class VTKXMLTreeReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXMLTreeReaderType'
     bl_label  = 'vtkXMLTreeReader'
@@ -3066,7 +3066,7 @@ class VTKXMLTreeReader(Node, VTKNode):
     m_VertexPedigreeIdArrayName = bpy.props.StringProperty( name='VertexPedigreeIdArrayName', default="vertex id" )
     m_XMLString                 = bpy.props.StringProperty( name='XMLString',                 default="" )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=9, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=9, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_GenerateEdgePedigreeIds','m_GenerateVertexPedigreeIds','m_MaskArrays','m_ReadCharData','m_ReadTagName','m_EdgePedigreeIdArrayName','m_FileName','m_VertexPedigreeIdArrayName','m_XMLString',]
@@ -3077,7 +3077,7 @@ add_class( VTKXMLTreeReader )
 TYPENAMES.append('VTKXMLTreeReaderType' )
 
 #--------------------------------------------------------------
-class VTKXMLUniformGridAMRReader(Node, VTKNode):
+class VTKXMLUniformGridAMRReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXMLUniformGridAMRReaderType'
     bl_label  = 'vtkXMLUniformGridAMRReader'
@@ -3089,7 +3089,7 @@ class VTKXMLUniformGridAMRReader(Node, VTKNode):
     m_TimeStep                     = bpy.props.IntProperty      ( name='TimeStep',                     default=0 )
     m_TimeStepRange                = bpy.props.IntVectorProperty( name='TimeStepRange',                default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=6, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_FileName','m_MaximumLevelsToReadByDefault','m_PieceDistribution','m_TimeStep','m_TimeStepRange',]
@@ -3100,7 +3100,7 @@ add_class( VTKXMLUniformGridAMRReader )
 TYPENAMES.append('VTKXMLUniformGridAMRReaderType' )
 
 #--------------------------------------------------------------
-class VTKXMLUnstructuredGridReader(Node, VTKNode):
+class VTKXMLUnstructuredGridReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXMLUnstructuredGridReaderType'
     bl_label  = 'vtkXMLUnstructuredGridReader'
@@ -3110,7 +3110,7 @@ class VTKXMLUnstructuredGridReader(Node, VTKNode):
     m_TimeStep            = bpy.props.IntProperty      ( name='TimeStep',            default=0 )
     m_TimeStepRange       = bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReadFromInputString','m_FileName','m_TimeStep','m_TimeStepRange',]
@@ -3121,7 +3121,7 @@ add_class( VTKXMLUnstructuredGridReader )
 TYPENAMES.append('VTKXMLUnstructuredGridReaderType' )
 
 #--------------------------------------------------------------
-class VTKXYZMolReader(Node, VTKNode):
+class VTKXYZMolReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXYZMolReaderType'
     bl_label  = 'vtkXYZMolReader'
@@ -3131,7 +3131,7 @@ class VTKXYZMolReader(Node, VTKNode):
     m_BScale   = bpy.props.FloatProperty ( name='BScale',   default=1.0 )
     m_HBScale  = bpy.props.FloatProperty ( name='HBScale',  default=1.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName','m_TimeStep','m_BScale','m_HBScale',]
@@ -3142,14 +3142,14 @@ add_class( VTKXYZMolReader )
 TYPENAMES.append('VTKXYZMolReaderType' )
 
 #--------------------------------------------------------------
-class VTKXYZMolReader2(Node, VTKNode):
+class VTKXYZMolReader2(Node, BVTK_Node):
 
     bl_idname = 'VTKXYZMolReader2Type'
     bl_label  = 'vtkXYZMolReader2'
     
     m_FileName = bpy.props.StringProperty( name='FileName', default="", subtype='FILE_PATH' )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_FileName',]
@@ -3161,4 +3161,4 @@ TYPENAMES.append('VTKXYZMolReader2Type' )
 
 #--------------------------------------------------------------
 menu_items = [ NodeItem(x) for x in TYPENAMES ]
-CATEGORIES.append( VTKNodeCategory( 'reader', 'reader', items=menu_items) )
+CATEGORIES.append( BVTK_NodeCategory( 'reader', 'reader', items=menu_items) )

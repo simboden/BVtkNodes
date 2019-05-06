@@ -1,6 +1,6 @@
 from  .core import *
 
-class VTKInfoNode(Node, VTKNode):
+class VTKInfoNode(Node, BVTK_Node):
     '''VTK Info Node'''
     bl_idname = 'VTKInfoNodeType'
     bl_label  = 'Info'
@@ -73,4 +73,4 @@ add_class(VTKInfoNode)
 TYPENAMES.append('VTKInfoNodeType')
 
 menu_items = [NodeItem(x) for x in TYPENAMES]
-CATEGORIES.append(VTKNodeCategory("debug", "debug", items=menu_items))
+CATEGORIES.append(BVTK_NodeCategory("debug", "debug", items=menu_items))

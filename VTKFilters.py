@@ -72,7 +72,7 @@ class VTKContourHelper:
 
 # -----------------------------------------------------------------------------
 
-class VTKContourFilter(VTKContourHelper, Node, VTKNode):
+class VTKContourFilter(VTKContourHelper, Node, BVTK_Node):
     '''Manually modified version of VTK Contour Filter'''
     bl_idname = 'VTKContourFilterType'
     bl_label = 'vtkContourFilter'
@@ -84,7 +84,7 @@ class VTKContourFilter(VTKContourHelper, Node, VTKNode):
     m_ArrayComponent = bpy.props.IntProperty(name='ArrayComponent', default=0)
     m_NumberOfContours = bpy.props.IntProperty(name='NumberOfContours', default=1)
 
-    b_properties = bpy.props.BoolVectorProperty(name="", size=7, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties(self):
         return ['m_ComputeGradients', 'm_ComputeNormals', 'm_ComputeScalars', 'm_GenerateTriangles', 'm_ArrayComponent',
@@ -97,7 +97,7 @@ add_class(VTKContourFilter)
 
 # -----------------------------------------------------------------------------
 
-class VTKMarchingCubes(VTKContourHelper, Node, VTKNode):
+class VTKMarchingCubes(VTKContourHelper, Node, BVTK_Node):
     '''Manually modified version of VTK Marching Cubes'''
     bl_idname = 'VTKMarchingCubesType'
     bl_label = 'vtkMarchingCubes'
@@ -107,7 +107,7 @@ class VTKMarchingCubes(VTKContourHelper, Node, VTKNode):
     m_ComputeScalars = bpy.props.BoolProperty(name='ComputeScalars', default=True)
     m_NumberOfContours = bpy.props.IntProperty(name='NumberOfContours', default=1)
 
-    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties(self):
         return ['m_ComputeGradients', 'm_ComputeNormals', 'm_ComputeScalars',
@@ -142,7 +142,7 @@ add_ui_class(UpdateCollection)
 
 # -----------------------------------------------------------------------------
 
-class VTKAppendFilter(Node, VTKNode):
+class VTKAppendFilter(Node, BVTK_Node):
     '''Manually modified version of VTK Append Filter, to handle multiple
     inputs correctly
     '''
@@ -151,7 +151,7 @@ class VTKAppendFilter(Node, VTKNode):
 
     m_MergePoints = bpy.props.BoolProperty(name='MergePoints', default=True)
 
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties(self):
         return ['m_MergePoints', ]

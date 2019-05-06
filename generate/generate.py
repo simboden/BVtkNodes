@@ -130,7 +130,7 @@ TYPENAMES.append('VTK{{C.NAME}}Type' )
 {% endfor %}
 #--------------------------------------------------------------
 menu_items = [ NodeItem(x) for x in TYPENAMES ]
-CATEGORIES.append( VTKNodeCategory( '{{MENU}}', '{{MENU}}', items=menu_items) )
+CATEGORIES.append( BVTK_NodeCategory( '{{MENU}}', '{{MENU}}', items=menu_items) )
 '''
 template = Template(node_template)
 
@@ -241,16 +241,16 @@ def generate(group):
 
 
 # Base class names for groups
-bases = { 'Source':        'VTKNode',
-          'Reader':        'VTKNode',
-          'Writer':        'VTKNode',
-          'Filter':        'VTKNode',
-          'Filter1':       'VTKNode',
-          'Filter2':       'VTKNode',
-          'Transform':     'VTKNode',
-          'ImplicitFunc':  'VTKNode',
-          'ParametricFunc':'VTKNode',
-          'Integrator':    'VTKNode',
+bases = { 'Source':        'BVTK_Node',
+          'Reader':        'BVTK_Node',
+          'Writer':        'BVTK_Node',
+          'Filter':        'BVTK_Node',
+          'Filter1':       'BVTK_Node',
+          'Filter2':       'BVTK_Node',
+          'Transform':     'BVTK_Node',
+          'ImplicitFunc':  'BVTK_Node',
+          'ParametricFunc':'BVTK_Node',
+          'Integrator':    'BVTK_Node',
 }
 
 # File names for generated python files

@@ -5,7 +5,7 @@ from .core import *
 TYPENAMES = []
 
 #--------------------------------------------------------------
-class VTKParametricBohemianDome(Node, VTKNode):
+class VTKParametricBohemianDome(Node, BVTK_Node):
 
     bl_idname = 'VTKParametricBohemianDomeType'
     bl_label  = 'vtkParametricBohemianDome'
@@ -28,7 +28,7 @@ class VTKParametricBohemianDome(Node, VTKNode):
     m_MinimumV             = bpy.props.FloatProperty( name='MinimumV',             default=-3.141592653589793 )
     m_MinimumW             = bpy.props.FloatProperty( name='MinimumW',             default=0.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=17, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=17, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ClockwiseOrdering','m_DerivativesAvailable','m_JoinU','m_JoinV','m_JoinW','m_TwistU','m_TwistV','m_TwistW','m_A','m_B','m_C','m_MaximumU','m_MaximumV','m_MaximumW','m_MinimumU','m_MinimumV','m_MinimumW',]
@@ -39,7 +39,7 @@ add_class( VTKParametricBohemianDome )
 TYPENAMES.append('VTKParametricBohemianDomeType' )
 
 #--------------------------------------------------------------
-class VTKParametricBour(Node, VTKNode):
+class VTKParametricBour(Node, BVTK_Node):
 
     bl_idname = 'VTKParametricBourType'
     bl_label  = 'vtkParametricBour'
@@ -59,7 +59,7 @@ class VTKParametricBour(Node, VTKNode):
     m_MinimumV             = bpy.props.FloatProperty( name='MinimumV',             default=0.0 )
     m_MinimumW             = bpy.props.FloatProperty( name='MinimumW',             default=0.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=14, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=14, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ClockwiseOrdering','m_DerivativesAvailable','m_JoinU','m_JoinV','m_JoinW','m_TwistU','m_TwistV','m_TwistW','m_MaximumU','m_MaximumV','m_MaximumW','m_MinimumU','m_MinimumV','m_MinimumW',]
@@ -70,7 +70,7 @@ add_class( VTKParametricBour )
 TYPENAMES.append('VTKParametricBourType' )
 
 #--------------------------------------------------------------
-class VTKParametricBoy(Node, VTKNode):
+class VTKParametricBoy(Node, BVTK_Node):
 
     bl_idname = 'VTKParametricBoyType'
     bl_label  = 'vtkParametricBoy'
@@ -91,7 +91,7 @@ class VTKParametricBoy(Node, VTKNode):
     m_MinimumW             = bpy.props.FloatProperty( name='MinimumW',             default=0.0 )
     m_ZScale               = bpy.props.FloatProperty( name='ZScale',               default=0.125 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=15, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=15, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ClockwiseOrdering','m_DerivativesAvailable','m_JoinU','m_JoinV','m_JoinW','m_TwistU','m_TwistV','m_TwistW','m_MaximumU','m_MaximumV','m_MaximumW','m_MinimumU','m_MinimumV','m_MinimumW','m_ZScale',]
@@ -102,7 +102,7 @@ add_class( VTKParametricBoy )
 TYPENAMES.append('VTKParametricBoyType' )
 
 #--------------------------------------------------------------
-class VTKParametricCatalanMinimal(Node, VTKNode):
+class VTKParametricCatalanMinimal(Node, BVTK_Node):
 
     bl_idname = 'VTKParametricCatalanMinimalType'
     bl_label  = 'vtkParametricCatalanMinimal'
@@ -122,7 +122,7 @@ class VTKParametricCatalanMinimal(Node, VTKNode):
     m_MinimumV             = bpy.props.FloatProperty( name='MinimumV',             default=-1.5 )
     m_MinimumW             = bpy.props.FloatProperty( name='MinimumW',             default=0.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=14, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=14, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ClockwiseOrdering','m_DerivativesAvailable','m_JoinU','m_JoinV','m_JoinW','m_TwistU','m_TwistV','m_TwistW','m_MaximumU','m_MaximumV','m_MaximumW','m_MinimumU','m_MinimumV','m_MinimumW',]
@@ -133,7 +133,7 @@ add_class( VTKParametricCatalanMinimal )
 TYPENAMES.append('VTKParametricCatalanMinimalType' )
 
 #--------------------------------------------------------------
-class VTKParametricConicSpiral(Node, VTKNode):
+class VTKParametricConicSpiral(Node, BVTK_Node):
 
     bl_idname = 'VTKParametricConicSpiralType'
     bl_label  = 'vtkParametricConicSpiral'
@@ -157,7 +157,7 @@ class VTKParametricConicSpiral(Node, VTKNode):
     m_MinimumW             = bpy.props.FloatProperty( name='MinimumW',             default=0.0 )
     m_N                    = bpy.props.FloatProperty( name='N',                    default=2.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=18, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=18, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ClockwiseOrdering','m_DerivativesAvailable','m_JoinU','m_JoinV','m_JoinW','m_TwistU','m_TwistV','m_TwistW','m_A','m_B','m_C','m_MaximumU','m_MaximumV','m_MaximumW','m_MinimumU','m_MinimumV','m_MinimumW','m_N',]
@@ -168,7 +168,7 @@ add_class( VTKParametricConicSpiral )
 TYPENAMES.append('VTKParametricConicSpiralType' )
 
 #--------------------------------------------------------------
-class VTKParametricCrossCap(Node, VTKNode):
+class VTKParametricCrossCap(Node, BVTK_Node):
 
     bl_idname = 'VTKParametricCrossCapType'
     bl_label  = 'vtkParametricCrossCap'
@@ -188,7 +188,7 @@ class VTKParametricCrossCap(Node, VTKNode):
     m_MinimumV             = bpy.props.FloatProperty( name='MinimumV',             default=0.0 )
     m_MinimumW             = bpy.props.FloatProperty( name='MinimumW',             default=0.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=14, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=14, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ClockwiseOrdering','m_DerivativesAvailable','m_JoinU','m_JoinV','m_JoinW','m_TwistU','m_TwistV','m_TwistW','m_MaximumU','m_MaximumV','m_MaximumW','m_MinimumU','m_MinimumV','m_MinimumW',]
@@ -199,7 +199,7 @@ add_class( VTKParametricCrossCap )
 TYPENAMES.append('VTKParametricCrossCapType' )
 
 #--------------------------------------------------------------
-class VTKParametricDini(Node, VTKNode):
+class VTKParametricDini(Node, BVTK_Node):
 
     bl_idname = 'VTKParametricDiniType'
     bl_label  = 'vtkParametricDini'
@@ -221,7 +221,7 @@ class VTKParametricDini(Node, VTKNode):
     m_MinimumV             = bpy.props.FloatProperty( name='MinimumV',             default=0.001 )
     m_MinimumW             = bpy.props.FloatProperty( name='MinimumW',             default=0.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ClockwiseOrdering','m_DerivativesAvailable','m_JoinU','m_JoinV','m_JoinW','m_TwistU','m_TwistV','m_TwistW','m_A','m_B','m_MaximumU','m_MaximumV','m_MaximumW','m_MinimumU','m_MinimumV','m_MinimumW',]
@@ -232,7 +232,7 @@ add_class( VTKParametricDini )
 TYPENAMES.append('VTKParametricDiniType' )
 
 #--------------------------------------------------------------
-class VTKParametricEllipsoid(Node, VTKNode):
+class VTKParametricEllipsoid(Node, BVTK_Node):
 
     bl_idname = 'VTKParametricEllipsoidType'
     bl_label  = 'vtkParametricEllipsoid'
@@ -255,7 +255,7 @@ class VTKParametricEllipsoid(Node, VTKNode):
     m_YRadius              = bpy.props.FloatProperty( name='YRadius',              default=1.0 )
     m_ZRadius              = bpy.props.FloatProperty( name='ZRadius',              default=1.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=17, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=17, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ClockwiseOrdering','m_DerivativesAvailable','m_JoinU','m_JoinV','m_JoinW','m_TwistU','m_TwistV','m_TwistW','m_MaximumU','m_MaximumV','m_MaximumW','m_MinimumU','m_MinimumV','m_MinimumW','m_XRadius','m_YRadius','m_ZRadius',]
@@ -266,7 +266,7 @@ add_class( VTKParametricEllipsoid )
 TYPENAMES.append('VTKParametricEllipsoidType' )
 
 #--------------------------------------------------------------
-class VTKParametricEnneper(Node, VTKNode):
+class VTKParametricEnneper(Node, BVTK_Node):
 
     bl_idname = 'VTKParametricEnneperType'
     bl_label  = 'vtkParametricEnneper'
@@ -286,7 +286,7 @@ class VTKParametricEnneper(Node, VTKNode):
     m_MinimumV             = bpy.props.FloatProperty( name='MinimumV',             default=-2.0 )
     m_MinimumW             = bpy.props.FloatProperty( name='MinimumW',             default=0.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=14, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=14, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ClockwiseOrdering','m_DerivativesAvailable','m_JoinU','m_JoinV','m_JoinW','m_TwistU','m_TwistV','m_TwistW','m_MaximumU','m_MaximumV','m_MaximumW','m_MinimumU','m_MinimumV','m_MinimumW',]
@@ -297,7 +297,7 @@ add_class( VTKParametricEnneper )
 TYPENAMES.append('VTKParametricEnneperType' )
 
 #--------------------------------------------------------------
-class VTKParametricFigure8Klein(Node, VTKNode):
+class VTKParametricFigure8Klein(Node, BVTK_Node):
 
     bl_idname = 'VTKParametricFigure8KleinType'
     bl_label  = 'vtkParametricFigure8Klein'
@@ -318,7 +318,7 @@ class VTKParametricFigure8Klein(Node, VTKNode):
     m_MinimumW             = bpy.props.FloatProperty( name='MinimumW',             default=0.0 )
     m_Radius               = bpy.props.FloatProperty( name='Radius',               default=1.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=15, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=15, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ClockwiseOrdering','m_DerivativesAvailable','m_JoinU','m_JoinV','m_JoinW','m_TwistU','m_TwistV','m_TwistW','m_MaximumU','m_MaximumV','m_MaximumW','m_MinimumU','m_MinimumV','m_MinimumW','m_Radius',]
@@ -329,7 +329,7 @@ add_class( VTKParametricFigure8Klein )
 TYPENAMES.append('VTKParametricFigure8KleinType' )
 
 #--------------------------------------------------------------
-class VTKParametricHenneberg(Node, VTKNode):
+class VTKParametricHenneberg(Node, BVTK_Node):
 
     bl_idname = 'VTKParametricHennebergType'
     bl_label  = 'vtkParametricHenneberg'
@@ -349,7 +349,7 @@ class VTKParametricHenneberg(Node, VTKNode):
     m_MinimumV             = bpy.props.FloatProperty( name='MinimumV',             default=-1.5707963267948966 )
     m_MinimumW             = bpy.props.FloatProperty( name='MinimumW',             default=0.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=14, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=14, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ClockwiseOrdering','m_DerivativesAvailable','m_JoinU','m_JoinV','m_JoinW','m_TwistU','m_TwistV','m_TwistW','m_MaximumU','m_MaximumV','m_MaximumW','m_MinimumU','m_MinimumV','m_MinimumW',]
@@ -360,7 +360,7 @@ add_class( VTKParametricHenneberg )
 TYPENAMES.append('VTKParametricHennebergType' )
 
 #--------------------------------------------------------------
-class VTKParametricKlein(Node, VTKNode):
+class VTKParametricKlein(Node, BVTK_Node):
 
     bl_idname = 'VTKParametricKleinType'
     bl_label  = 'vtkParametricKlein'
@@ -380,7 +380,7 @@ class VTKParametricKlein(Node, VTKNode):
     m_MinimumV             = bpy.props.FloatProperty( name='MinimumV',             default=0.0 )
     m_MinimumW             = bpy.props.FloatProperty( name='MinimumW',             default=0.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=14, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=14, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ClockwiseOrdering','m_DerivativesAvailable','m_JoinU','m_JoinV','m_JoinW','m_TwistU','m_TwistV','m_TwistW','m_MaximumU','m_MaximumV','m_MaximumW','m_MinimumU','m_MinimumV','m_MinimumW',]
@@ -391,7 +391,7 @@ add_class( VTKParametricKlein )
 TYPENAMES.append('VTKParametricKleinType' )
 
 #--------------------------------------------------------------
-class VTKParametricKuen(Node, VTKNode):
+class VTKParametricKuen(Node, BVTK_Node):
 
     bl_idname = 'VTKParametricKuenType'
     bl_label  = 'vtkParametricKuen'
@@ -412,7 +412,7 @@ class VTKParametricKuen(Node, VTKNode):
     m_MinimumV             = bpy.props.FloatProperty( name='MinimumV',             default=0.0 )
     m_MinimumW             = bpy.props.FloatProperty( name='MinimumW',             default=0.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=15, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=15, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ClockwiseOrdering','m_DerivativesAvailable','m_JoinU','m_JoinV','m_JoinW','m_TwistU','m_TwistV','m_TwistW','m_DeltaV0','m_MaximumU','m_MaximumV','m_MaximumW','m_MinimumU','m_MinimumV','m_MinimumW',]
@@ -423,7 +423,7 @@ add_class( VTKParametricKuen )
 TYPENAMES.append('VTKParametricKuenType' )
 
 #--------------------------------------------------------------
-class VTKParametricMobius(Node, VTKNode):
+class VTKParametricMobius(Node, BVTK_Node):
 
     bl_idname = 'VTKParametricMobiusType'
     bl_label  = 'vtkParametricMobius'
@@ -444,7 +444,7 @@ class VTKParametricMobius(Node, VTKNode):
     m_MinimumW             = bpy.props.FloatProperty( name='MinimumW',             default=0.0 )
     m_Radius               = bpy.props.FloatProperty( name='Radius',               default=1.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=15, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=15, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ClockwiseOrdering','m_DerivativesAvailable','m_JoinU','m_JoinV','m_JoinW','m_TwistU','m_TwistV','m_TwistW','m_MaximumU','m_MaximumV','m_MaximumW','m_MinimumU','m_MinimumV','m_MinimumW','m_Radius',]
@@ -455,7 +455,7 @@ add_class( VTKParametricMobius )
 TYPENAMES.append('VTKParametricMobiusType' )
 
 #--------------------------------------------------------------
-class VTKParametricPluckerConoid(Node, VTKNode):
+class VTKParametricPluckerConoid(Node, BVTK_Node):
 
     bl_idname = 'VTKParametricPluckerConoidType'
     bl_label  = 'vtkParametricPluckerConoid'
@@ -476,7 +476,7 @@ class VTKParametricPluckerConoid(Node, VTKNode):
     m_MinimumV             = bpy.props.FloatProperty( name='MinimumV',             default=0.0 )
     m_MinimumW             = bpy.props.FloatProperty( name='MinimumW',             default=0.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=15, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=15, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ClockwiseOrdering','m_DerivativesAvailable','m_JoinU','m_JoinV','m_JoinW','m_TwistU','m_TwistV','m_TwistW','m_N','m_MaximumU','m_MaximumV','m_MaximumW','m_MinimumU','m_MinimumV','m_MinimumW',]
@@ -487,7 +487,7 @@ add_class( VTKParametricPluckerConoid )
 TYPENAMES.append('VTKParametricPluckerConoidType' )
 
 #--------------------------------------------------------------
-class VTKParametricPseudosphere(Node, VTKNode):
+class VTKParametricPseudosphere(Node, BVTK_Node):
 
     bl_idname = 'VTKParametricPseudosphereType'
     bl_label  = 'vtkParametricPseudosphere'
@@ -507,7 +507,7 @@ class VTKParametricPseudosphere(Node, VTKNode):
     m_MinimumV             = bpy.props.FloatProperty( name='MinimumV',             default=-3.141592653589793 )
     m_MinimumW             = bpy.props.FloatProperty( name='MinimumW',             default=0.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=14, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=14, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ClockwiseOrdering','m_DerivativesAvailable','m_JoinU','m_JoinV','m_JoinW','m_TwistU','m_TwistV','m_TwistW','m_MaximumU','m_MaximumV','m_MaximumW','m_MinimumU','m_MinimumV','m_MinimumW',]
@@ -518,7 +518,7 @@ add_class( VTKParametricPseudosphere )
 TYPENAMES.append('VTKParametricPseudosphereType' )
 
 #--------------------------------------------------------------
-class VTKParametricRandomHills(Node, VTKNode):
+class VTKParametricRandomHills(Node, BVTK_Node):
 
     bl_idname = 'VTKParametricRandomHillsType'
     bl_label  = 'vtkParametricRandomHills'
@@ -547,7 +547,7 @@ class VTKParametricRandomHills(Node, VTKNode):
     m_XVarianceScaleFactor  = bpy.props.FloatProperty( name='XVarianceScaleFactor',  default=0.3333333333333333 )
     m_YVarianceScaleFactor  = bpy.props.FloatProperty( name='YVarianceScaleFactor',  default=0.3333333333333333 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=23, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=23, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_AllowRandomGeneration','m_ClockwiseOrdering','m_DerivativesAvailable','m_JoinU','m_JoinV','m_JoinW','m_TwistU','m_TwistV','m_TwistW','m_NumberOfHills','m_RandomSeed','m_AmplitudeScaleFactor','m_HillAmplitude','m_HillXVariance','m_HillYVariance','m_MaximumU','m_MaximumV','m_MaximumW','m_MinimumU','m_MinimumV','m_MinimumW','m_XVarianceScaleFactor','m_YVarianceScaleFactor',]
@@ -558,7 +558,7 @@ add_class( VTKParametricRandomHills )
 TYPENAMES.append('VTKParametricRandomHillsType' )
 
 #--------------------------------------------------------------
-class VTKParametricRoman(Node, VTKNode):
+class VTKParametricRoman(Node, BVTK_Node):
 
     bl_idname = 'VTKParametricRomanType'
     bl_label  = 'vtkParametricRoman'
@@ -579,7 +579,7 @@ class VTKParametricRoman(Node, VTKNode):
     m_MinimumW             = bpy.props.FloatProperty( name='MinimumW',             default=0.0 )
     m_Radius               = bpy.props.FloatProperty( name='Radius',               default=1.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=15, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=15, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ClockwiseOrdering','m_DerivativesAvailable','m_JoinU','m_JoinV','m_JoinW','m_TwistU','m_TwistV','m_TwistW','m_MaximumU','m_MaximumV','m_MaximumW','m_MinimumU','m_MinimumV','m_MinimumW','m_Radius',]
@@ -590,7 +590,7 @@ add_class( VTKParametricRoman )
 TYPENAMES.append('VTKParametricRomanType' )
 
 #--------------------------------------------------------------
-class VTKParametricSpline(Node, VTKNode):
+class VTKParametricSpline(Node, BVTK_Node):
 
     bl_idname = 'VTKParametricSplineType'
     bl_label  = 'vtkParametricSpline'
@@ -616,7 +616,7 @@ class VTKParametricSpline(Node, VTKNode):
     m_MinimumW             = bpy.props.FloatProperty( name='MinimumW',             default=0.0 )
     m_RightValue           = bpy.props.FloatProperty( name='RightValue',           default=0.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=20, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=20, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ClockwiseOrdering','m_Closed','m_DerivativesAvailable','m_JoinU','m_JoinV','m_JoinW','m_ParameterizeByLength','m_TwistU','m_TwistV','m_TwistW','m_LeftConstraint','m_RightConstraint','m_LeftValue','m_MaximumU','m_MaximumV','m_MaximumW','m_MinimumU','m_MinimumV','m_MinimumW','m_RightValue',]
@@ -627,7 +627,7 @@ add_class( VTKParametricSpline )
 TYPENAMES.append('VTKParametricSplineType' )
 
 #--------------------------------------------------------------
-class VTKParametricSuperEllipsoid(Node, VTKNode):
+class VTKParametricSuperEllipsoid(Node, BVTK_Node):
 
     bl_idname = 'VTKParametricSuperEllipsoidType'
     bl_label  = 'vtkParametricSuperEllipsoid'
@@ -652,7 +652,7 @@ class VTKParametricSuperEllipsoid(Node, VTKNode):
     m_YRadius              = bpy.props.FloatProperty( name='YRadius',              default=1.0 )
     m_ZRadius              = bpy.props.FloatProperty( name='ZRadius',              default=1.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=19, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=19, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ClockwiseOrdering','m_DerivativesAvailable','m_JoinU','m_JoinV','m_JoinW','m_TwistU','m_TwistV','m_TwistW','m_MaximumU','m_MaximumV','m_MaximumW','m_MinimumU','m_MinimumV','m_MinimumW','m_N1','m_N2','m_XRadius','m_YRadius','m_ZRadius',]
@@ -663,7 +663,7 @@ add_class( VTKParametricSuperEllipsoid )
 TYPENAMES.append('VTKParametricSuperEllipsoidType' )
 
 #--------------------------------------------------------------
-class VTKParametricSuperToroid(Node, VTKNode):
+class VTKParametricSuperToroid(Node, BVTK_Node):
 
     bl_idname = 'VTKParametricSuperToroidType'
     bl_label  = 'vtkParametricSuperToroid'
@@ -690,7 +690,7 @@ class VTKParametricSuperToroid(Node, VTKNode):
     m_YRadius              = bpy.props.FloatProperty( name='YRadius',              default=1.0 )
     m_ZRadius              = bpy.props.FloatProperty( name='ZRadius',              default=1.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=21, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=21, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ClockwiseOrdering','m_DerivativesAvailable','m_JoinU','m_JoinV','m_JoinW','m_TwistU','m_TwistV','m_TwistW','m_CrossSectionRadius','m_MaximumU','m_MaximumV','m_MaximumW','m_MinimumU','m_MinimumV','m_MinimumW','m_N1','m_N2','m_RingRadius','m_XRadius','m_YRadius','m_ZRadius',]
@@ -701,7 +701,7 @@ add_class( VTKParametricSuperToroid )
 TYPENAMES.append('VTKParametricSuperToroidType' )
 
 #--------------------------------------------------------------
-class VTKParametricTorus(Node, VTKNode):
+class VTKParametricTorus(Node, BVTK_Node):
 
     bl_idname = 'VTKParametricTorusType'
     bl_label  = 'vtkParametricTorus'
@@ -723,7 +723,7 @@ class VTKParametricTorus(Node, VTKNode):
     m_MinimumW             = bpy.props.FloatProperty( name='MinimumW',             default=0.0 )
     m_RingRadius           = bpy.props.FloatProperty( name='RingRadius',           default=1.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ClockwiseOrdering','m_DerivativesAvailable','m_JoinU','m_JoinV','m_JoinW','m_TwistU','m_TwistV','m_TwistW','m_CrossSectionRadius','m_MaximumU','m_MaximumV','m_MaximumW','m_MinimumU','m_MinimumV','m_MinimumW','m_RingRadius',]
@@ -735,4 +735,4 @@ TYPENAMES.append('VTKParametricTorusType' )
 
 #--------------------------------------------------------------
 menu_items = [ NodeItem(x) for x in TYPENAMES ]
-CATEGORIES.append( VTKNodeCategory( 'parametricfunc', 'parametricfunc', items=menu_items) )
+CATEGORIES.append( BVTK_NodeCategory( 'parametricfunc', 'parametricfunc', items=menu_items) )

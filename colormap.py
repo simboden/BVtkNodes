@@ -24,7 +24,7 @@ def default_texture(name):
     return tex
 
 
-class VTKColorMapper(Node, VTKNode):
+class VTKColorMapper(Node, BVTK_Node):
     '''VTK Color Mapper Node'''
     bl_idname = 'VTKColorMapperType'
     bl_label  = 'ColorMapper'
@@ -138,7 +138,7 @@ class VTKColorMapper(Node, VTKNode):
 
 
 
-class VTKColorMap(Node, VTKNode):
+class VTKColorMap(Node, BVTK_Node):
     '''VTK Color Map'''
     bl_idname = 'VTKColorMapType' # type name
     bl_label  = 'ColorMap'       # label for nice name display
@@ -240,4 +240,4 @@ add_class(VTKColorMap)
 TYPENAMES.append('VTKColorMapType')
 
 menu_items = [NodeItem(x) for x in TYPENAMES]
-CATEGORIES.append(VTKNodeCategory("color", "color", items=menu_items))
+CATEGORIES.append(BVTK_NodeCategory("color", "color", items=menu_items))

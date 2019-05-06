@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------------
 
 bl_info = {
-    "name": "BVTKNodes, Blender VTK Nodes",
+    "name": "BVTK_Nodes, Blender VTK Nodes",
     "author": "Silvano Imboden, Lorenzo Celli, Paul McManus",
     "version": (0, 1),
     "blender": (2, 79,  0),
@@ -36,12 +36,12 @@ try:
     dir(vtk)
 except:
     message = '''
-    BVTKNodes add-on failed to access the VTK library. You must
+    BVTK_Nodes add-on failed to access the VTK library. You must
     compile and install Python library corresponding to the Python
     library version used by Blender, and then compile and install
     VTK on top of it. Finally you must customize environment variables
     to use the compiled Python library before starting Blender.
-    Please refer to BVTKNodes documentation for help.
+    Please refer to BVTK_Nodes documentation for help.
     '''
     raise Exception(message)
 

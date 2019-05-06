@@ -22,7 +22,7 @@ class VTKImplicitFunction:
     position/rotation/etc. Called every second.
     '''
 
-    # TODO: Seems to contain stuff similar to core.py VTKNode, check
+    # TODO: Seems to contain stuff similar to core.py BVTK_Node, check
     # if can be inherited.
 
     def set_wire(self, value):
@@ -108,7 +108,7 @@ useless_list = {}
 # returned or Blender will misbehave or even crash."
 
 
-class VTKPlane(VTKImplicitFunction, Node, VTKNode):
+class VTKPlane(VTKImplicitFunction, Node, BVTK_Node):
     '''Manually modified version of VTK Plane'''
     bl_idname = 'VTKPlaneType'
     bl_label = 'vtkPlane'
@@ -116,7 +116,7 @@ class VTKPlane(VTKImplicitFunction, Node, VTKNode):
     m_Normal = bpy.props.FloatVectorProperty(name='Normal', default=[0.0, 0.0, 1.0], size=3)
     m_Origin = bpy.props.FloatVectorProperty(name='Origin', default=[0.0, 0.0, 0.0], size=3)
 
-    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties(self):
         return ['m_Normal', 'm_Origin', ]
@@ -166,7 +166,7 @@ add_class(VTKPlane)
 
 # --------------------------------------------------------------
 
-class VTKSphere(VTKImplicitFunction, Node, VTKNode):
+class VTKSphere(VTKImplicitFunction, Node, BVTK_Node):
     '''Manually modified version VTK Sphere'''
     bl_idname = 'VTKSphereType'
     bl_label = 'vtkSphere'
@@ -174,7 +174,7 @@ class VTKSphere(VTKImplicitFunction, Node, VTKNode):
     m_Radius = bpy.props.FloatProperty(name='Radius', default=0.5)
     m_Center = bpy.props.FloatVectorProperty(name='Center', default=[0.0, 0.0, 0.0], size=3)
 
-    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties(self):
         return ['m_Radius', 'm_Center', ]

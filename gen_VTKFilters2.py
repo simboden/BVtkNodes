@@ -5,7 +5,7 @@ from .core import *
 TYPENAMES = []
 
 #--------------------------------------------------------------
-class VTKApplyColors(Node, VTKNode):
+class VTKApplyColors(Node, BVTK_Node):
 
     bl_idname = 'VTKApplyColorsType'
     bl_label  = 'vtkApplyColors'
@@ -26,7 +26,7 @@ class VTKApplyColors(Node, VTKNode):
     m_SelectedCellColor         = bpy.props.FloatVectorProperty( name='SelectedCellColor',         default=[0.0, 0.0, 0.0], size=3 )
     m_SelectedPointColor        = bpy.props.FloatVectorProperty( name='SelectedPointColor',        default=[0.0, 0.0, 0.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=15, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=15, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ScaleCellLookupTable','m_ScalePointLookupTable','m_UseCellLookupTable','m_UseCurrentAnnotationColor','m_UsePointLookupTable','m_CellColorOutputArrayName','m_PointColorOutputArrayName','m_DefaultCellOpacity','m_DefaultPointOpacity','m_SelectedCellOpacity','m_SelectedPointOpacity','m_DefaultCellColor','m_DefaultPointColor','m_SelectedCellColor','m_SelectedPointColor',]
@@ -37,7 +37,7 @@ add_class( VTKApplyColors )
 TYPENAMES.append('VTKApplyColorsType' )
 
 #--------------------------------------------------------------
-class VTKApplyIcons(Node, VTKNode):
+class VTKApplyIcons(Node, BVTK_Node):
 
     bl_idname = 'VTKApplyIconsType'
     bl_label  = 'vtkApplyIcons'
@@ -50,7 +50,7 @@ class VTKApplyIcons(Node, VTKNode):
     m_SelectedIcon        = bpy.props.IntProperty   ( name='SelectedIcon',        default=0 )
     e_SelectionMode       = bpy.props.EnumProperty  ( name='SelectionMode',       default="IgnoreSelection", items=e_SelectionMode_items )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=6, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_UseLookupTable','m_IconOutputArrayName','m_AttributeType','m_DefaultIcon','m_SelectedIcon','e_SelectionMode',]
@@ -61,7 +61,7 @@ add_class( VTKApplyIcons )
 TYPENAMES.append('VTKApplyIconsType' )
 
 #--------------------------------------------------------------
-class VTKAreaContourSpectrumFilter(Node, VTKNode):
+class VTKAreaContourSpectrumFilter(Node, BVTK_Node):
 
     bl_idname = 'VTKAreaContourSpectrumFilterType'
     bl_label  = 'vtkAreaContourSpectrumFilter'
@@ -70,7 +70,7 @@ class VTKAreaContourSpectrumFilter(Node, VTKNode):
     m_FieldId         = bpy.props.IntProperty( name='FieldId',         default=0 )
     m_NumberOfSamples = bpy.props.IntProperty( name='NumberOfSamples', default=100 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ArcId','m_FieldId','m_NumberOfSamples',]
@@ -81,7 +81,7 @@ add_class( VTKAreaContourSpectrumFilter )
 TYPENAMES.append('VTKAreaContourSpectrumFilterType' )
 
 #--------------------------------------------------------------
-class VTKBinCellDataFilter(Node, VTKNode):
+class VTKBinCellDataFilter(Node, BVTK_Node):
 
     bl_idname = 'VTKBinCellDataFilterType'
     bl_label  = 'vtkBinCellDataFilter'
@@ -95,7 +95,7 @@ class VTKBinCellDataFilter(Node, VTKNode):
     m_NumberOfBins                 = bpy.props.IntProperty   ( name='NumberOfBins',                 default=2 )
     m_Tolerance                    = bpy.props.FloatProperty ( name='Tolerance',                    default=1.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=8, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=8, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ComputeTolerance','m_SpatialMatch','m_StoreNumberOfNonzeroBins','m_NumberOfNonzeroBinsArrayName','m_ArrayComponent','m_CellOverlapMethod','m_NumberOfBins','m_Tolerance',]
@@ -106,13 +106,13 @@ add_class( VTKBinCellDataFilter )
 TYPENAMES.append('VTKBinCellDataFilterType' )
 
 #--------------------------------------------------------------
-class VTKBlankStructuredGridWithImage(Node, VTKNode):
+class VTKBlankStructuredGridWithImage(Node, BVTK_Node):
 
     bl_idname = 'VTKBlankStructuredGridWithImageType'
     bl_label  = 'vtkBlankStructuredGridWithImage'
     
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return []
@@ -123,7 +123,7 @@ add_class( VTKBlankStructuredGridWithImage )
 TYPENAMES.append('VTKBlankStructuredGridWithImageType' )
 
 #--------------------------------------------------------------
-class VTKCellDistanceSelector(Node, VTKNode):
+class VTKCellDistanceSelector(Node, BVTK_Node):
 
     bl_idname = 'VTKCellDistanceSelectorType'
     bl_label  = 'vtkCellDistanceSelector'
@@ -132,7 +132,7 @@ class VTKCellDistanceSelector(Node, VTKNode):
     m_IncludeSeed     = bpy.props.BoolProperty( name='IncludeSeed',     default=True )
     m_Distance        = bpy.props.IntProperty ( name='Distance',        default=1 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_AddIntermediate','m_IncludeSeed','m_Distance',]
@@ -143,7 +143,7 @@ add_class( VTKCellDistanceSelector )
 TYPENAMES.append('VTKCellDistanceSelectorType' )
 
 #--------------------------------------------------------------
-class VTKCompositeDataProbeFilter(Node, VTKNode):
+class VTKCompositeDataProbeFilter(Node, BVTK_Node):
 
     bl_idname = 'VTKCompositeDataProbeFilterType'
     bl_label  = 'vtkCompositeDataProbeFilter'
@@ -158,7 +158,7 @@ class VTKCompositeDataProbeFilter(Node, VTKNode):
     m_ValidPointMaskArrayName = bpy.props.StringProperty( name='ValidPointMaskArrayName', default="vtkValidPointMask" )
     m_Tolerance               = bpy.props.FloatProperty ( name='Tolerance',               default=1.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=9, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=9, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_CategoricalData','m_ComputeTolerance','m_PassCellArrays','m_PassFieldArrays','m_PassPartialArrays','m_PassPointArrays','m_SpatialMatch','m_ValidPointMaskArrayName','m_Tolerance',]
@@ -169,7 +169,7 @@ add_class( VTKCompositeDataProbeFilter )
 TYPENAMES.append('VTKCompositeDataProbeFilterType' )
 
 #--------------------------------------------------------------
-class VTKConvertSelection(Node, VTKNode):
+class VTKConvertSelection(Node, BVTK_Node):
 
     bl_idname = 'VTKConvertSelectionType'
     bl_label  = 'vtkConvertSelection'
@@ -180,7 +180,7 @@ class VTKConvertSelection(Node, VTKNode):
     m_InputFieldType    = bpy.props.IntProperty   ( name='InputFieldType',    default=-1 )
     m_OutputType        = bpy.props.IntProperty   ( name='OutputType',        default=4 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_AllowMissingArray','m_MatchAnyValues','m_ArrayName','m_InputFieldType','m_OutputType',]
@@ -191,13 +191,13 @@ add_class( VTKConvertSelection )
 TYPENAMES.append('VTKConvertSelectionType' )
 
 #--------------------------------------------------------------
-class VTKCookieCutter(Node, VTKNode):
+class VTKCookieCutter(Node, BVTK_Node):
 
     bl_idname = 'VTKCookieCutterType'
     bl_label  = 'vtkCookieCutter'
     
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return []
@@ -208,14 +208,14 @@ add_class( VTKCookieCutter )
 TYPENAMES.append('VTKCookieCutterType' )
 
 #--------------------------------------------------------------
-class VTKDeformPointSet(Node, VTKNode):
+class VTKDeformPointSet(Node, BVTK_Node):
 
     bl_idname = 'VTKDeformPointSetType'
     bl_label  = 'vtkDeformPointSet'
     
     m_InitializeWeights = bpy.props.BoolProperty( name='InitializeWeights', default=True )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_InitializeWeights',]
@@ -226,7 +226,7 @@ add_class( VTKDeformPointSet )
 TYPENAMES.append('VTKDeformPointSetType' )
 
 #--------------------------------------------------------------
-class VTKDelaunay2D(Node, VTKNode):
+class VTKDelaunay2D(Node, BVTK_Node):
 
     bl_idname = 'VTKDelaunay2DType'
     bl_label  = 'vtkDelaunay2D'
@@ -237,7 +237,7 @@ class VTKDelaunay2D(Node, VTKNode):
     m_Offset                = bpy.props.FloatProperty( name='Offset',                default=1.0 )
     m_Tolerance             = bpy.props.FloatProperty( name='Tolerance',             default=1e-05 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_BoundingTriangulation','m_ProjectionPlaneMode','m_Alpha','m_Offset','m_Tolerance',]
@@ -248,7 +248,7 @@ add_class( VTKDelaunay2D )
 TYPENAMES.append('VTKDelaunay2DType' )
 
 #--------------------------------------------------------------
-class VTKDepthImageToPointCloud(Node, VTKNode):
+class VTKDepthImageToPointCloud(Node, BVTK_Node):
 
     bl_idname = 'VTKDepthImageToPointCloudType'
     bl_label  = 'vtkDepthImageToPointCloud'
@@ -258,7 +258,7 @@ class VTKDepthImageToPointCloud(Node, VTKNode):
     m_ProduceColorScalars    = bpy.props.BoolProperty( name='ProduceColorScalars',    default=True )
     m_ProduceVertexCellArray = bpy.props.BoolProperty( name='ProduceVertexCellArray', default=True )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_CullFarPoints','m_CullNearPoints','m_ProduceColorScalars','m_ProduceVertexCellArray',]
@@ -269,14 +269,14 @@ add_class( VTKDepthImageToPointCloud )
 TYPENAMES.append('VTKDepthImageToPointCloudType' )
 
 #--------------------------------------------------------------
-class VTKExtractArraysOverTime(Node, VTKNode):
+class VTKExtractArraysOverTime(Node, BVTK_Node):
 
     bl_idname = 'VTKExtractArraysOverTimeType'
     bl_label  = 'vtkExtractArraysOverTime'
     
     m_ReportStatisticsOnly = bpy.props.BoolProperty( name='ReportStatisticsOnly', default=False )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReportStatisticsOnly',]
@@ -287,13 +287,13 @@ add_class( VTKExtractArraysOverTime )
 TYPENAMES.append('VTKExtractArraysOverTimeType' )
 
 #--------------------------------------------------------------
-class VTKExtractFunctionalBagPlot(Node, VTKNode):
+class VTKExtractFunctionalBagPlot(Node, BVTK_Node):
 
     bl_idname = 'VTKExtractFunctionalBagPlotType'
     bl_label  = 'vtkExtractFunctionalBagPlot'
     
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return []
@@ -304,14 +304,14 @@ add_class( VTKExtractFunctionalBagPlot )
 TYPENAMES.append('VTKExtractFunctionalBagPlotType' )
 
 #--------------------------------------------------------------
-class VTKExtractSelectedArraysOverTime(Node, VTKNode):
+class VTKExtractSelectedArraysOverTime(Node, BVTK_Node):
 
     bl_idname = 'VTKExtractSelectedArraysOverTimeType'
     bl_label  = 'vtkExtractSelectedArraysOverTime'
     
     m_ReportStatisticsOnly = bpy.props.BoolProperty( name='ReportStatisticsOnly', default=False )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReportStatisticsOnly',]
@@ -322,14 +322,14 @@ add_class( VTKExtractSelectedArraysOverTime )
 TYPENAMES.append('VTKExtractSelectedArraysOverTimeType' )
 
 #--------------------------------------------------------------
-class VTKExtractSelectedBlock(Node, VTKNode):
+class VTKExtractSelectedBlock(Node, BVTK_Node):
 
     bl_idname = 'VTKExtractSelectedBlockType'
     bl_label  = 'vtkExtractSelectedBlock'
     
     m_PreserveTopology = bpy.props.BoolProperty( name='PreserveTopology', default=True )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_PreserveTopology',]
@@ -340,7 +340,7 @@ add_class( VTKExtractSelectedBlock )
 TYPENAMES.append('VTKExtractSelectedBlockType' )
 
 #--------------------------------------------------------------
-class VTKExtractSelectedFrustum(Node, VTKNode):
+class VTKExtractSelectedFrustum(Node, BVTK_Node):
 
     bl_idname = 'VTKExtractSelectedFrustumType'
     bl_label  = 'vtkExtractSelectedFrustum'
@@ -351,7 +351,7 @@ class VTKExtractSelectedFrustum(Node, VTKNode):
     m_ContainingCells  = bpy.props.IntProperty ( name='ContainingCells',  default=0 )
     m_FieldType        = bpy.props.IntProperty ( name='FieldType',        default=0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_InsideOut','m_PreserveTopology','m_ShowBounds','m_ContainingCells','m_FieldType',]
@@ -362,14 +362,14 @@ add_class( VTKExtractSelectedFrustum )
 TYPENAMES.append('VTKExtractSelectedFrustumType' )
 
 #--------------------------------------------------------------
-class VTKExtractSelectedIds(Node, VTKNode):
+class VTKExtractSelectedIds(Node, BVTK_Node):
 
     bl_idname = 'VTKExtractSelectedIdsType'
     bl_label  = 'vtkExtractSelectedIds'
     
     m_PreserveTopology = bpy.props.BoolProperty( name='PreserveTopology', default=True )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_PreserveTopology',]
@@ -380,14 +380,14 @@ add_class( VTKExtractSelectedIds )
 TYPENAMES.append('VTKExtractSelectedIdsType' )
 
 #--------------------------------------------------------------
-class VTKExtractSelectedLocations(Node, VTKNode):
+class VTKExtractSelectedLocations(Node, BVTK_Node):
 
     bl_idname = 'VTKExtractSelectedLocationsType'
     bl_label  = 'vtkExtractSelectedLocations'
     
     m_PreserveTopology = bpy.props.BoolProperty( name='PreserveTopology', default=True )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_PreserveTopology',]
@@ -398,13 +398,13 @@ add_class( VTKExtractSelectedLocations )
 TYPENAMES.append('VTKExtractSelectedLocationsType' )
 
 #--------------------------------------------------------------
-class VTKExtractSelectedPolyDataIds(Node, VTKNode):
+class VTKExtractSelectedPolyDataIds(Node, BVTK_Node):
 
     bl_idname = 'VTKExtractSelectedPolyDataIdsType'
     bl_label  = 'vtkExtractSelectedPolyDataIds'
     
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return []
@@ -415,14 +415,14 @@ add_class( VTKExtractSelectedPolyDataIds )
 TYPENAMES.append('VTKExtractSelectedPolyDataIdsType' )
 
 #--------------------------------------------------------------
-class VTKExtractSelectedThresholds(Node, VTKNode):
+class VTKExtractSelectedThresholds(Node, BVTK_Node):
 
     bl_idname = 'VTKExtractSelectedThresholdsType'
     bl_label  = 'vtkExtractSelectedThresholds'
     
     m_PreserveTopology = bpy.props.BoolProperty( name='PreserveTopology', default=True )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_PreserveTopology',]
@@ -433,7 +433,7 @@ add_class( VTKExtractSelectedThresholds )
 TYPENAMES.append('VTKExtractSelectedThresholdsType' )
 
 #--------------------------------------------------------------
-class VTKExtractSelection(Node, VTKNode):
+class VTKExtractSelection(Node, BVTK_Node):
 
     bl_idname = 'VTKExtractSelectionType'
     bl_label  = 'vtkExtractSelection'
@@ -442,7 +442,7 @@ class VTKExtractSelection(Node, VTKNode):
     m_ShowBounds           = bpy.props.BoolProperty( name='ShowBounds',           default=False )
     m_UseProbeForLocations = bpy.props.BoolProperty( name='UseProbeForLocations', default=False )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_PreserveTopology','m_ShowBounds','m_UseProbeForLocations',]
@@ -453,7 +453,7 @@ add_class( VTKExtractSelection )
 TYPENAMES.append('VTKExtractSelectionType' )
 
 #--------------------------------------------------------------
-class VTKExtractSelectionLegacy(Node, VTKNode):
+class VTKExtractSelectionLegacy(Node, BVTK_Node):
 
     bl_idname = 'VTKExtractSelectionLegacyType'
     bl_label  = 'vtkExtractSelectionLegacy'
@@ -462,7 +462,7 @@ class VTKExtractSelectionLegacy(Node, VTKNode):
     m_ShowBounds           = bpy.props.BoolProperty( name='ShowBounds',           default=True )
     m_UseProbeForLocations = bpy.props.BoolProperty( name='UseProbeForLocations', default=True )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_PreserveTopology','m_ShowBounds','m_UseProbeForLocations',]
@@ -473,7 +473,7 @@ add_class( VTKExtractSelectionLegacy )
 TYPENAMES.append('VTKExtractSelectionLegacyType' )
 
 #--------------------------------------------------------------
-class VTKFastSplatter(Node, VTKNode):
+class VTKFastSplatter(Node, BVTK_Node):
 
     bl_idname = 'VTKFastSplatterType'
     bl_label  = 'vtkFastSplatter'
@@ -485,7 +485,7 @@ class VTKFastSplatter(Node, VTKNode):
     m_OutputDimensions = bpy.props.IntVectorProperty  ( name='OutputDimensions', default=[100, 100, 1], size=3 )
     m_ModelBounds      = bpy.props.FloatVectorProperty( name='ModelBounds',      default=[0.0, -1.0, 0.0, -1.0, 0.0, -1.0], size=6 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_MaxValue','m_MinValue','e_LimitMode','m_OutputDimensions','m_ModelBounds',]
@@ -496,13 +496,13 @@ add_class( VTKFastSplatter )
 TYPENAMES.append('VTKFastSplatterType' )
 
 #--------------------------------------------------------------
-class VTKFiberSurface(Node, VTKNode):
+class VTKFiberSurface(Node, BVTK_Node):
 
     bl_idname = 'VTKFiberSurfaceType'
     bl_label  = 'vtkFiberSurface'
     
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return []
@@ -513,7 +513,7 @@ add_class( VTKFiberSurface )
 TYPENAMES.append('VTKFiberSurfaceType' )
 
 #--------------------------------------------------------------
-class VTKFitToHeightMapFilter(Node, VTKNode):
+class VTKFitToHeightMapFilter(Node, BVTK_Node):
 
     bl_idname = 'VTKFitToHeightMapFilterType'
     bl_label  = 'vtkFitToHeightMapFilter'
@@ -522,7 +522,7 @@ class VTKFitToHeightMapFilter(Node, VTKNode):
     m_UseHeightMapOffset = bpy.props.BoolProperty( name='UseHeightMapOffset', default=True )
     e_FittingStrategy    = bpy.props.EnumProperty( name='FittingStrategy',    default="PointProjection", items=e_FittingStrategy_items )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_UseHeightMapOffset','e_FittingStrategy',]
@@ -533,7 +533,7 @@ add_class( VTKFitToHeightMapFilter )
 TYPENAMES.append('VTKFitToHeightMapFilterType' )
 
 #--------------------------------------------------------------
-class VTKGenericGlyph3DFilter(Node, VTKNode):
+class VTKGenericGlyph3DFilter(Node, BVTK_Node):
 
     bl_idname = 'VTKGenericGlyph3DFilterType'
     bl_label  = 'vtkGenericGlyph3DFilter'
@@ -554,7 +554,7 @@ class VTKGenericGlyph3DFilter(Node, VTKNode):
     e_VectorMode       = bpy.props.EnumProperty       ( name='VectorMode',       default="UseVector", items=e_VectorMode_items )
     m_Range            = bpy.props.FloatVectorProperty( name='Range',            default=[0.0, 1.0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=11, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=11, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_Clamping','m_GeneratePointIds','m_Orient','m_Scaling','m_PointIdsName','m_ScaleFactor','e_ColorMode','e_IndexMode','e_ScaleMode','e_VectorMode','m_Range',]
@@ -565,13 +565,13 @@ add_class( VTKGenericGlyph3DFilter )
 TYPENAMES.append('VTKGenericGlyph3DFilterType' )
 
 #--------------------------------------------------------------
-class VTKGenericProbeFilter(Node, VTKNode):
+class VTKGenericProbeFilter(Node, BVTK_Node):
 
     bl_idname = 'VTKGenericProbeFilterType'
     bl_label  = 'vtkGenericProbeFilter'
     
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return []
@@ -582,7 +582,7 @@ add_class( VTKGenericProbeFilter )
 TYPENAMES.append('VTKGenericProbeFilterType' )
 
 #--------------------------------------------------------------
-class VTKGenericStreamTracer(Node, VTKNode):
+class VTKGenericStreamTracer(Node, BVTK_Node):
 
     bl_idname = 'VTKGenericStreamTracerType'
     bl_label  = 'vtkGenericStreamTracer'
@@ -606,7 +606,7 @@ class VTKGenericStreamTracer(Node, VTKNode):
     e_MinimumIntegrationStepUnit = bpy.props.EnumProperty       ( name='MinimumIntegrationStepUnit', default="CellLengthUnit", items=e_MinimumIntegrationStepUnit_items )
     m_StartPosition              = bpy.props.FloatVectorProperty( name='StartPosition',              default=[0.0, 0.0, 0.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=12, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=12, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ComputeVorticity','m_MaximumNumberOfSteps','m_MaximumError','m_RotationScale','m_TerminalSpeed','e_InitialIntegrationStepUnit','e_IntegrationDirection','e_IntegratorType','e_MaximumIntegrationStepUnit','e_MaximumPropagationUnit','e_MinimumIntegrationStepUnit','m_StartPosition',]
@@ -617,7 +617,7 @@ add_class( VTKGenericStreamTracer )
 TYPENAMES.append('VTKGenericStreamTracerType' )
 
 #--------------------------------------------------------------
-class VTKGlyph2D(Node, VTKNode):
+class VTKGlyph2D(Node, BVTK_Node):
 
     bl_idname = 'VTKGlyph2DType'
     bl_label  = 'vtkGlyph2D'
@@ -639,7 +639,7 @@ class VTKGlyph2D(Node, VTKNode):
     e_VectorMode       = bpy.props.EnumProperty       ( name='VectorMode',       default="UseVector", items=e_VectorMode_items )
     m_Range            = bpy.props.FloatVectorProperty( name='Range',            default=[0.0, 1.0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=12, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=12, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_Clamping','m_FillCellData','m_GeneratePointIds','m_Orient','m_Scaling','m_PointIdsName','m_ScaleFactor','e_ColorMode','e_IndexMode','e_ScaleMode','e_VectorMode','m_Range',]
@@ -650,7 +650,7 @@ add_class( VTKGlyph2D )
 TYPENAMES.append('VTKGlyph2DType' )
 
 #--------------------------------------------------------------
-class VTKGlyph3D(Node, VTKNode):
+class VTKGlyph3D(Node, BVTK_Node):
 
     bl_idname = 'VTKGlyph3DType'
     bl_label  = 'vtkGlyph3D'
@@ -672,7 +672,7 @@ class VTKGlyph3D(Node, VTKNode):
     e_VectorMode       = bpy.props.EnumProperty       ( name='VectorMode',       default="UseVector", items=e_VectorMode_items )
     m_Range            = bpy.props.FloatVectorProperty( name='Range',            default=[0.0, 1.0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=12, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=12, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_Clamping','m_FillCellData','m_GeneratePointIds','m_Orient','m_Scaling','m_PointIdsName','m_ScaleFactor','e_ColorMode','e_IndexMode','e_ScaleMode','e_VectorMode','m_Range',]
@@ -683,7 +683,7 @@ add_class( VTKGlyph3D )
 TYPENAMES.append('VTKGlyph3DType' )
 
 #--------------------------------------------------------------
-class VTKImageAccumulate(Node, VTKNode):
+class VTKImageAccumulate(Node, BVTK_Node):
 
     bl_idname = 'VTKImageAccumulateType'
     bl_label  = 'vtkImageAccumulate'
@@ -693,7 +693,7 @@ class VTKImageAccumulate(Node, VTKNode):
     m_ComponentOrigin  = bpy.props.FloatVectorProperty( name='ComponentOrigin',  default=[0.0, 0.0, 0.0], size=3 )
     m_ComponentSpacing = bpy.props.FloatVectorProperty( name='ComponentSpacing', default=[1.0, 1.0, 1.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_IgnoreZero','m_ReverseStencil','m_ComponentOrigin','m_ComponentSpacing',]
@@ -704,7 +704,7 @@ add_class( VTKImageAccumulate )
 TYPENAMES.append('VTKImageAccumulateType' )
 
 #--------------------------------------------------------------
-class VTKImageBlend(Node, VTKNode):
+class VTKImageBlend(Node, BVTK_Node):
 
     bl_idname = 'VTKImageBlendType'
     bl_label  = 'vtkImageBlend'
@@ -720,7 +720,7 @@ class VTKImageBlend(Node, VTKNode):
     e_SplitMode              = bpy.props.EnumProperty     ( name='SplitMode',              default="Slab", items=e_SplitMode_items )
     m_MinimumPieceSize       = bpy.props.IntVectorProperty( name='MinimumPieceSize',       default=[16, 1, 1], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=8, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=8, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_EnableSMP','m_GlobalDefaultEnableSMP','m_DesiredBytesPerPiece','m_NumberOfThreads','m_CompoundThreshold','e_BlendMode','e_SplitMode','m_MinimumPieceSize',]
@@ -731,7 +731,7 @@ add_class( VTKImageBlend )
 TYPENAMES.append('VTKImageBlendType' )
 
 #--------------------------------------------------------------
-class VTKImageChangeInformation(Node, VTKNode):
+class VTKImageChangeInformation(Node, BVTK_Node):
 
     bl_idname = 'VTKImageChangeInformationType'
     bl_label  = 'vtkImageChangeInformation'
@@ -745,7 +745,7 @@ class VTKImageChangeInformation(Node, VTKNode):
     m_OutputSpacing     = bpy.props.FloatVectorProperty( name='OutputSpacing',     default=[1e+30, 1e+30, 1e+30], size=3 )
     m_SpacingScale      = bpy.props.FloatVectorProperty( name='SpacingScale',      default=[1.0, 1.0, 1.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=8, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=8, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_CenterImage','m_ExtentTranslation','m_OutputExtentStart','m_OriginScale','m_OriginTranslation','m_OutputOrigin','m_OutputSpacing','m_SpacingScale',]
@@ -756,7 +756,7 @@ add_class( VTKImageChangeInformation )
 TYPENAMES.append('VTKImageChangeInformationType' )
 
 #--------------------------------------------------------------
-class VTKImageCheckerboard(Node, VTKNode):
+class VTKImageCheckerboard(Node, BVTK_Node):
 
     bl_idname = 'VTKImageCheckerboardType'
     bl_label  = 'vtkImageCheckerboard'
@@ -770,7 +770,7 @@ class VTKImageCheckerboard(Node, VTKNode):
     m_MinimumPieceSize       = bpy.props.IntVectorProperty( name='MinimumPieceSize',       default=[16, 1, 1], size=3 )
     m_NumberOfDivisions      = bpy.props.IntVectorProperty( name='NumberOfDivisions',      default=[2, 2, 2], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=7, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_EnableSMP','m_GlobalDefaultEnableSMP','m_DesiredBytesPerPiece','m_NumberOfThreads','e_SplitMode','m_MinimumPieceSize','m_NumberOfDivisions',]
@@ -781,7 +781,7 @@ add_class( VTKImageCheckerboard )
 TYPENAMES.append('VTKImageCheckerboardType' )
 
 #--------------------------------------------------------------
-class VTKImageCorrelation(Node, VTKNode):
+class VTKImageCorrelation(Node, BVTK_Node):
 
     bl_idname = 'VTKImageCorrelationType'
     bl_label  = 'vtkImageCorrelation'
@@ -795,7 +795,7 @@ class VTKImageCorrelation(Node, VTKNode):
     e_SplitMode              = bpy.props.EnumProperty     ( name='SplitMode',              default="Slab", items=e_SplitMode_items )
     m_MinimumPieceSize       = bpy.props.IntVectorProperty( name='MinimumPieceSize',       default=[16, 1, 1], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=7, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_EnableSMP','m_GlobalDefaultEnableSMP','m_DesiredBytesPerPiece','m_Dimensionality','m_NumberOfThreads','e_SplitMode','m_MinimumPieceSize',]
@@ -806,7 +806,7 @@ add_class( VTKImageCorrelation )
 TYPENAMES.append('VTKImageCorrelationType' )
 
 #--------------------------------------------------------------
-class VTKImageDifference(Node, VTKNode):
+class VTKImageDifference(Node, BVTK_Node):
 
     bl_idname = 'VTKImageDifferenceType'
     bl_label  = 'vtkImageDifference'
@@ -823,7 +823,7 @@ class VTKImageDifference(Node, VTKNode):
     e_SplitMode              = bpy.props.EnumProperty     ( name='SplitMode',              default="Slab", items=e_SplitMode_items )
     m_MinimumPieceSize       = bpy.props.IntVectorProperty( name='MinimumPieceSize',       default=[16, 1, 1], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=10, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=10, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_AllowShift','m_Averaging','m_EnableSMP','m_GlobalDefaultEnableSMP','m_DesiredBytesPerPiece','m_NumberOfThreads','m_Threshold','m_AverageThresholdFactor','e_SplitMode','m_MinimumPieceSize',]
@@ -834,7 +834,7 @@ add_class( VTKImageDifference )
 TYPENAMES.append('VTKImageDifferenceType' )
 
 #--------------------------------------------------------------
-class VTKImageDotProduct(Node, VTKNode):
+class VTKImageDotProduct(Node, BVTK_Node):
 
     bl_idname = 'VTKImageDotProductType'
     bl_label  = 'vtkImageDotProduct'
@@ -847,7 +847,7 @@ class VTKImageDotProduct(Node, VTKNode):
     e_SplitMode              = bpy.props.EnumProperty     ( name='SplitMode',              default="Slab", items=e_SplitMode_items )
     m_MinimumPieceSize       = bpy.props.IntVectorProperty( name='MinimumPieceSize',       default=[16, 1, 1], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=6, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_EnableSMP','m_GlobalDefaultEnableSMP','m_DesiredBytesPerPiece','m_NumberOfThreads','e_SplitMode','m_MinimumPieceSize',]
@@ -858,7 +858,7 @@ add_class( VTKImageDotProduct )
 TYPENAMES.append('VTKImageDotProductType' )
 
 #--------------------------------------------------------------
-class VTKImageHistogram(Node, VTKNode):
+class VTKImageHistogram(Node, BVTK_Node):
 
     bl_idname = 'VTKImageHistogramType'
     bl_label  = 'vtkImageHistogram'
@@ -881,7 +881,7 @@ class VTKImageHistogram(Node, VTKNode):
     m_HistogramImageSize     = bpy.props.IntVectorProperty( name='HistogramImageSize',     default=[256, 256], size=2 )
     m_MinimumPieceSize       = bpy.props.IntVectorProperty( name='MinimumPieceSize',       default=[16, 1, 1], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=15, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=15, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_AutomaticBinning','m_EnableSMP','m_GenerateHistogramImage','m_GlobalDefaultEnableSMP','m_ActiveComponent','m_DesiredBytesPerPiece','m_MaximumNumberOfBins','m_NumberOfBins','m_NumberOfThreads','m_BinOrigin','m_BinSpacing','e_HistogramImageScale','e_SplitMode','m_HistogramImageSize','m_MinimumPieceSize',]
@@ -892,7 +892,7 @@ add_class( VTKImageHistogram )
 TYPENAMES.append('VTKImageHistogramType' )
 
 #--------------------------------------------------------------
-class VTKImageHistogramStatistics(Node, VTKNode):
+class VTKImageHistogramStatistics(Node, BVTK_Node):
 
     bl_idname = 'VTKImageHistogramStatisticsType'
     bl_label  = 'vtkImageHistogramStatistics'
@@ -917,7 +917,7 @@ class VTKImageHistogramStatistics(Node, VTKNode):
     m_AutoRangeExpansionFactors = bpy.props.FloatVectorProperty( name='AutoRangeExpansionFactors', default=[0.1, 0.1], size=2 )
     m_AutoRangePercentiles      = bpy.props.FloatVectorProperty( name='AutoRangePercentiles',      default=[1.0, 99.0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=17, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=17, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_AutomaticBinning','m_EnableSMP','m_GenerateHistogramImage','m_GlobalDefaultEnableSMP','m_ActiveComponent','m_DesiredBytesPerPiece','m_MaximumNumberOfBins','m_NumberOfBins','m_NumberOfThreads','m_BinOrigin','m_BinSpacing','e_HistogramImageScale','e_SplitMode','m_HistogramImageSize','m_MinimumPieceSize','m_AutoRangeExpansionFactors','m_AutoRangePercentiles',]
@@ -928,7 +928,7 @@ add_class( VTKImageHistogramStatistics )
 TYPENAMES.append('VTKImageHistogramStatisticsType' )
 
 #--------------------------------------------------------------
-class VTKImageLogic(Node, VTKNode):
+class VTKImageLogic(Node, BVTK_Node):
 
     bl_idname = 'VTKImageLogicType'
     bl_label  = 'vtkImageLogic'
@@ -944,7 +944,7 @@ class VTKImageLogic(Node, VTKNode):
     e_SplitMode              = bpy.props.EnumProperty     ( name='SplitMode',              default="Slab", items=e_SplitMode_items )
     m_MinimumPieceSize       = bpy.props.IntVectorProperty( name='MinimumPieceSize',       default=[16, 1, 1], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=8, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=8, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_EnableSMP','m_GlobalDefaultEnableSMP','m_DesiredBytesPerPiece','m_NumberOfThreads','m_OutputTrueValue','e_Operation','e_SplitMode','m_MinimumPieceSize',]
@@ -955,7 +955,7 @@ add_class( VTKImageLogic )
 TYPENAMES.append('VTKImageLogicType' )
 
 #--------------------------------------------------------------
-class VTKImageMask(Node, VTKNode):
+class VTKImageMask(Node, BVTK_Node):
 
     bl_idname = 'VTKImageMaskType'
     bl_label  = 'vtkImageMask'
@@ -970,7 +970,7 @@ class VTKImageMask(Node, VTKNode):
     e_SplitMode              = bpy.props.EnumProperty     ( name='SplitMode',              default="Slab", items=e_SplitMode_items )
     m_MinimumPieceSize       = bpy.props.IntVectorProperty( name='MinimumPieceSize',       default=[16, 1, 1], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=8, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=8, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_EnableSMP','m_GlobalDefaultEnableSMP','m_NotMask','m_DesiredBytesPerPiece','m_NumberOfThreads','m_MaskAlpha','e_SplitMode','m_MinimumPieceSize',]
@@ -981,7 +981,7 @@ add_class( VTKImageMask )
 TYPENAMES.append('VTKImageMaskType' )
 
 #--------------------------------------------------------------
-class VTKImageMathematics(Node, VTKNode):
+class VTKImageMathematics(Node, BVTK_Node):
 
     bl_idname = 'VTKImageMathematicsType'
     bl_label  = 'vtkImageMathematics'
@@ -999,7 +999,7 @@ class VTKImageMathematics(Node, VTKNode):
     e_SplitMode              = bpy.props.EnumProperty     ( name='SplitMode',              default="Slab", items=e_SplitMode_items )
     m_MinimumPieceSize       = bpy.props.IntVectorProperty( name='MinimumPieceSize',       default=[16, 1, 1], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=10, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=10, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_DivideByZeroToC','m_EnableSMP','m_GlobalDefaultEnableSMP','m_DesiredBytesPerPiece','m_NumberOfThreads','m_ConstantC','m_ConstantK','e_Operation','e_SplitMode','m_MinimumPieceSize',]
@@ -1010,7 +1010,7 @@ add_class( VTKImageMathematics )
 TYPENAMES.append('VTKImageMathematicsType' )
 
 #--------------------------------------------------------------
-class VTKImageNonMaximumSuppression(Node, VTKNode):
+class VTKImageNonMaximumSuppression(Node, BVTK_Node):
 
     bl_idname = 'VTKImageNonMaximumSuppressionType'
     bl_label  = 'vtkImageNonMaximumSuppression'
@@ -1025,7 +1025,7 @@ class VTKImageNonMaximumSuppression(Node, VTKNode):
     e_SplitMode              = bpy.props.EnumProperty     ( name='SplitMode',              default="Slab", items=e_SplitMode_items )
     m_MinimumPieceSize       = bpy.props.IntVectorProperty( name='MinimumPieceSize',       default=[16, 1, 1], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=8, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=8, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_EnableSMP','m_GlobalDefaultEnableSMP','m_HandleBoundaries','m_DesiredBytesPerPiece','m_Dimensionality','m_NumberOfThreads','e_SplitMode','m_MinimumPieceSize',]
@@ -1036,7 +1036,7 @@ add_class( VTKImageNonMaximumSuppression )
 TYPENAMES.append('VTKImageNonMaximumSuppressionType' )
 
 #--------------------------------------------------------------
-class VTKImageRectilinearWipe(Node, VTKNode):
+class VTKImageRectilinearWipe(Node, BVTK_Node):
 
     bl_idname = 'VTKImageRectilinearWipeType'
     bl_label  = 'vtkImageRectilinearWipe'
@@ -1053,7 +1053,7 @@ class VTKImageRectilinearWipe(Node, VTKNode):
     m_MinimumPieceSize       = bpy.props.IntVectorProperty( name='MinimumPieceSize',       default=[16, 1, 1], size=3 )
     m_Position               = bpy.props.IntVectorProperty( name='Position',               default=[0, 0], size=2 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=9, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=9, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_EnableSMP','m_GlobalDefaultEnableSMP','m_DesiredBytesPerPiece','m_NumberOfThreads','e_SplitMode','e_Wipe','m_Axis','m_MinimumPieceSize','m_Position',]
@@ -1064,7 +1064,7 @@ add_class( VTKImageRectilinearWipe )
 TYPENAMES.append('VTKImageRectilinearWipeType' )
 
 #--------------------------------------------------------------
-class VTKImageThresholdConnectivity(Node, VTKNode):
+class VTKImageThresholdConnectivity(Node, BVTK_Node):
 
     bl_idname = 'VTKImageThresholdConnectivityType'
     bl_label  = 'vtkImageThresholdConnectivity'
@@ -1080,7 +1080,7 @@ class VTKImageThresholdConnectivity(Node, VTKNode):
     m_SliceRangeZ          = bpy.props.IntVectorProperty  ( name='SliceRangeZ',          default=[-1000000000, 1000000000], size=2 )
     m_NeighborhoodRadius   = bpy.props.FloatVectorProperty( name='NeighborhoodRadius',   default=[0.0, 0.0, 0.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=10, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=10, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReplaceIn','m_ReplaceOut','m_ActiveComponent','m_InValue','m_NeighborhoodFraction','m_OutValue','m_SliceRangeX','m_SliceRangeY','m_SliceRangeZ','m_NeighborhoodRadius',]
@@ -1091,13 +1091,13 @@ add_class( VTKImageThresholdConnectivity )
 TYPENAMES.append('VTKImageThresholdConnectivityType' )
 
 #--------------------------------------------------------------
-class VTKImageToPoints(Node, VTKNode):
+class VTKImageToPoints(Node, BVTK_Node):
 
     bl_idname = 'VTKImageToPointsType'
     bl_label  = 'vtkImageToPoints'
     
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return []
@@ -1108,13 +1108,13 @@ add_class( VTKImageToPoints )
 TYPENAMES.append('VTKImageToPointsType' )
 
 #--------------------------------------------------------------
-class VTKImageToStructuredPoints(Node, VTKNode):
+class VTKImageToStructuredPoints(Node, BVTK_Node):
 
     bl_idname = 'VTKImageToStructuredPointsType'
     bl_label  = 'vtkImageToStructuredPoints'
     
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return []
@@ -1125,7 +1125,7 @@ add_class( VTKImageToStructuredPoints )
 TYPENAMES.append('VTKImageToStructuredPointsType' )
 
 #--------------------------------------------------------------
-class VTKMergeDataObjectFilter(Node, VTKNode):
+class VTKMergeDataObjectFilter(Node, BVTK_Node):
 
     bl_idname = 'VTKMergeDataObjectFilterType'
     bl_label  = 'vtkMergeDataObjectFilter'
@@ -1133,7 +1133,7 @@ class VTKMergeDataObjectFilter(Node, VTKNode):
     
     e_OutputField = bpy.props.EnumProperty( name='OutputField', default="DataObjectField", items=e_OutputField_items )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['e_OutputField',]
@@ -1144,14 +1144,14 @@ add_class( VTKMergeDataObjectFilter )
 TYPENAMES.append('VTKMergeDataObjectFilterType' )
 
 #--------------------------------------------------------------
-class VTKPExtractArraysOverTime(Node, VTKNode):
+class VTKPExtractArraysOverTime(Node, BVTK_Node):
 
     bl_idname = 'VTKPExtractArraysOverTimeType'
     bl_label  = 'vtkPExtractArraysOverTime'
     
     m_ReportStatisticsOnly = bpy.props.BoolProperty( name='ReportStatisticsOnly', default=False )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReportStatisticsOnly',]
@@ -1162,14 +1162,14 @@ add_class( VTKPExtractArraysOverTime )
 TYPENAMES.append('VTKPExtractArraysOverTimeType' )
 
 #--------------------------------------------------------------
-class VTKPExtractSelectedArraysOverTime(Node, VTKNode):
+class VTKPExtractSelectedArraysOverTime(Node, BVTK_Node):
 
     bl_idname = 'VTKPExtractSelectedArraysOverTimeType'
     bl_label  = 'vtkPExtractSelectedArraysOverTime'
     
     m_ReportStatisticsOnly = bpy.props.BoolProperty( name='ReportStatisticsOnly', default=False )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ReportStatisticsOnly',]
@@ -1180,7 +1180,7 @@ add_class( VTKPExtractSelectedArraysOverTime )
 TYPENAMES.append('VTKPExtractSelectedArraysOverTimeType' )
 
 #--------------------------------------------------------------
-class VTKPProbeFilter(Node, VTKNode):
+class VTKPProbeFilter(Node, BVTK_Node):
 
     bl_idname = 'VTKPProbeFilterType'
     bl_label  = 'vtkPProbeFilter'
@@ -1195,7 +1195,7 @@ class VTKPProbeFilter(Node, VTKNode):
     m_ValidPointMaskArrayName = bpy.props.StringProperty( name='ValidPointMaskArrayName', default="vtkValidPointMask" )
     m_Tolerance               = bpy.props.FloatProperty ( name='Tolerance',               default=1.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=9, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=9, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_CategoricalData','m_ComputeTolerance','m_PassCellArrays','m_PassFieldArrays','m_PassPartialArrays','m_PassPointArrays','m_SpatialMatch','m_ValidPointMaskArrayName','m_Tolerance',]
@@ -1206,7 +1206,7 @@ add_class( VTKPProbeFilter )
 TYPENAMES.append('VTKPProbeFilterType' )
 
 #--------------------------------------------------------------
-class VTKParallelCoordinatesHistogramRepresentation(Node, VTKNode):
+class VTKParallelCoordinatesHistogramRepresentation(Node, BVTK_Node):
 
     bl_idname = 'VTKParallelCoordinatesHistogramRepresentationType'
     bl_label  = 'vtkParallelCoordinatesHistogramRepresentation'
@@ -1231,7 +1231,7 @@ class VTKParallelCoordinatesHistogramRepresentation(Node, VTKNode):
     m_HistogramLookupTableRange = bpy.props.FloatVectorProperty( name='HistogramLookupTableRange', default=[0.0, 10.0], size=2 )
     m_LineColor                 = bpy.props.FloatVectorProperty( name='LineColor',                 default=[1.0, 1.0, 1.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=19, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=19, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_Selectable','m_ShowOutliers','m_UseCurves','m_UseHistograms','m_SelectionArrayName','m_CurveResolution','m_LabelRenderMode','m_NumberOfAxisLabels','m_PreferredNumberOfOutliers','m_SelectionType','m_AngleBrushThreshold','m_FontSize','m_FunctionBrushThreshold','m_LineOpacity','m_NumberOfHistogramBins','m_AxisColor','m_AxisLabelColor','m_HistogramLookupTableRange','m_LineColor',]
@@ -1242,7 +1242,7 @@ add_class( VTKParallelCoordinatesHistogramRepresentation )
 TYPENAMES.append('VTKParallelCoordinatesHistogramRepresentationType' )
 
 #--------------------------------------------------------------
-class VTKParallelCoordinatesRepresentation(Node, VTKNode):
+class VTKParallelCoordinatesRepresentation(Node, BVTK_Node):
 
     bl_idname = 'VTKParallelCoordinatesRepresentationType'
     bl_label  = 'vtkParallelCoordinatesRepresentation'
@@ -1262,7 +1262,7 @@ class VTKParallelCoordinatesRepresentation(Node, VTKNode):
     m_AxisLabelColor         = bpy.props.FloatVectorProperty( name='AxisLabelColor',         default=[1.0, 1.0, 1.0], size=3 )
     m_LineColor              = bpy.props.FloatVectorProperty( name='LineColor',              default=[1.0, 1.0, 1.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=14, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=14, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_Selectable','m_UseCurves','m_SelectionArrayName','m_CurveResolution','m_LabelRenderMode','m_NumberOfAxisLabels','m_SelectionType','m_AngleBrushThreshold','m_FontSize','m_FunctionBrushThreshold','m_LineOpacity','m_AxisColor','m_AxisLabelColor','m_LineColor',]
@@ -1273,7 +1273,7 @@ add_class( VTKParallelCoordinatesRepresentation )
 TYPENAMES.append('VTKParallelCoordinatesRepresentationType' )
 
 #--------------------------------------------------------------
-class VTKParticlePathFilter(Node, VTKNode):
+class VTKParticlePathFilter(Node, BVTK_Node):
 
     bl_idname = 'VTKParticlePathFilterType'
     bl_label  = 'vtkParticlePathFilter'
@@ -1292,7 +1292,7 @@ class VTKParticlePathFilter(Node, VTKNode):
     m_TerminalSpeed               = bpy.props.FloatProperty ( name='TerminalSpeed',               default=1e-12 )
     m_TerminationTime             = bpy.props.FloatProperty ( name='TerminationTime',             default=0.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=13, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=13, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ComputeVorticity','m_DisableResetCache','m_EnableParticleWriting','m_IgnorePipelineTime','m_ParticleFileName','m_ForceReinjectionEveryNSteps','m_IntegratorType','m_StaticMesh','m_StaticSeeds','m_RotationScale','m_StartTime','m_TerminalSpeed','m_TerminationTime',]
@@ -1303,7 +1303,7 @@ add_class( VTKParticlePathFilter )
 TYPENAMES.append('VTKParticlePathFilterType' )
 
 #--------------------------------------------------------------
-class VTKParticleTracer(Node, VTKNode):
+class VTKParticleTracer(Node, BVTK_Node):
 
     bl_idname = 'VTKParticleTracerType'
     bl_label  = 'vtkParticleTracer'
@@ -1322,7 +1322,7 @@ class VTKParticleTracer(Node, VTKNode):
     m_TerminalSpeed               = bpy.props.FloatProperty ( name='TerminalSpeed',               default=1e-12 )
     m_TerminationTime             = bpy.props.FloatProperty ( name='TerminationTime',             default=0.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=13, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=13, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ComputeVorticity','m_DisableResetCache','m_EnableParticleWriting','m_IgnorePipelineTime','m_ParticleFileName','m_ForceReinjectionEveryNSteps','m_IntegratorType','m_StaticMesh','m_StaticSeeds','m_RotationScale','m_StartTime','m_TerminalSpeed','m_TerminationTime',]
@@ -1333,7 +1333,7 @@ add_class( VTKParticleTracer )
 TYPENAMES.append('VTKParticleTracerType' )
 
 #--------------------------------------------------------------
-class VTKPointInterpolator(Node, VTKNode):
+class VTKPointInterpolator(Node, BVTK_Node):
 
     bl_idname = 'VTKPointInterpolatorType'
     bl_label  = 'vtkPointInterpolator'
@@ -1347,7 +1347,7 @@ class VTKPointInterpolator(Node, VTKNode):
     m_NullValue                = bpy.props.FloatProperty ( name='NullValue',                default=0.0 )
     e_NullPointsStrategy       = bpy.props.EnumProperty  ( name='NullPointsStrategy',       default="NullValue", items=e_NullPointsStrategy_items )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=7, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_PassCellArrays','m_PassFieldArrays','m_PassPointArrays','m_PromoteOutputArrays','m_ValidPointsMaskArrayName','m_NullValue','e_NullPointsStrategy',]
@@ -1358,7 +1358,7 @@ add_class( VTKPointInterpolator )
 TYPENAMES.append('VTKPointInterpolatorType' )
 
 #--------------------------------------------------------------
-class VTKPointInterpolator2D(Node, VTKNode):
+class VTKPointInterpolator2D(Node, BVTK_Node):
 
     bl_idname = 'VTKPointInterpolator2DType'
     bl_label  = 'vtkPointInterpolator2D'
@@ -1374,7 +1374,7 @@ class VTKPointInterpolator2D(Node, VTKNode):
     m_NullValue                = bpy.props.FloatProperty ( name='NullValue',                default=0.0 )
     e_NullPointsStrategy       = bpy.props.EnumProperty  ( name='NullPointsStrategy',       default="NullValue", items=e_NullPointsStrategy_items )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=9, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=9, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_InterpolateZ','m_PassCellArrays','m_PassFieldArrays','m_PassPointArrays','m_PromoteOutputArrays','m_ValidPointsMaskArrayName','m_ZArrayName','m_NullValue','e_NullPointsStrategy',]
@@ -1385,7 +1385,7 @@ add_class( VTKPointInterpolator2D )
 TYPENAMES.append('VTKPointInterpolator2DType' )
 
 #--------------------------------------------------------------
-class VTKProbeFilter(Node, VTKNode):
+class VTKProbeFilter(Node, BVTK_Node):
 
     bl_idname = 'VTKProbeFilterType'
     bl_label  = 'vtkProbeFilter'
@@ -1399,7 +1399,7 @@ class VTKProbeFilter(Node, VTKNode):
     m_ValidPointMaskArrayName = bpy.props.StringProperty( name='ValidPointMaskArrayName', default="vtkValidPointMask" )
     m_Tolerance               = bpy.props.FloatProperty ( name='Tolerance',               default=1.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=8, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=8, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_CategoricalData','m_ComputeTolerance','m_PassCellArrays','m_PassFieldArrays','m_PassPointArrays','m_SpatialMatch','m_ValidPointMaskArrayName','m_Tolerance',]
@@ -1410,7 +1410,7 @@ add_class( VTKProbeFilter )
 TYPENAMES.append('VTKProbeFilterType' )
 
 #--------------------------------------------------------------
-class VTKProbePolyhedron(Node, VTKNode):
+class VTKProbePolyhedron(Node, BVTK_Node):
 
     bl_idname = 'VTKProbePolyhedronType'
     bl_label  = 'vtkProbePolyhedron'
@@ -1418,7 +1418,7 @@ class VTKProbePolyhedron(Node, VTKNode):
     m_ProbeCellData  = bpy.props.BoolProperty( name='ProbeCellData',  default=True )
     m_ProbePointData = bpy.props.BoolProperty( name='ProbePointData', default=True )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ProbeCellData','m_ProbePointData',]
@@ -1429,14 +1429,14 @@ add_class( VTKProbePolyhedron )
 TYPENAMES.append('VTKProbePolyhedronType' )
 
 #--------------------------------------------------------------
-class VTKProbeSelectedLocations(Node, VTKNode):
+class VTKProbeSelectedLocations(Node, BVTK_Node):
 
     bl_idname = 'VTKProbeSelectedLocationsType'
     bl_label  = 'vtkProbeSelectedLocations'
     
     m_PreserveTopology = bpy.props.BoolProperty( name='PreserveTopology', default=True )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_PreserveTopology',]
@@ -1447,7 +1447,7 @@ add_class( VTKProbeSelectedLocations )
 TYPENAMES.append('VTKProbeSelectedLocationsType' )
 
 #--------------------------------------------------------------
-class VTKProgrammableGlyphFilter(Node, VTKNode):
+class VTKProgrammableGlyphFilter(Node, BVTK_Node):
 
     bl_idname = 'VTKProgrammableGlyphFilterType'
     bl_label  = 'vtkProgrammableGlyphFilter'
@@ -1455,7 +1455,7 @@ class VTKProgrammableGlyphFilter(Node, VTKNode):
     
     e_ColorMode = bpy.props.EnumProperty( name='ColorMode', default="ColorByInput", items=e_ColorMode_items )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['e_ColorMode',]
@@ -1466,7 +1466,7 @@ add_class( VTKProgrammableGlyphFilter )
 TYPENAMES.append('VTKProgrammableGlyphFilterType' )
 
 #--------------------------------------------------------------
-class VTKProjectedTerrainPath(Node, VTKNode):
+class VTKProjectedTerrainPath(Node, BVTK_Node):
 
     bl_idname = 'VTKProjectedTerrainPathType'
     bl_label  = 'vtkProjectedTerrainPath'
@@ -1477,7 +1477,7 @@ class VTKProjectedTerrainPath(Node, VTKNode):
     m_HeightTolerance      = bpy.props.FloatProperty( name='HeightTolerance',      default=10.0 )
     e_ProjectionMode       = bpy.props.EnumProperty ( name='ProjectionMode',       default="Simple", items=e_ProjectionMode_items )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_MaximumNumberOfLines','m_HeightOffset','m_HeightTolerance','e_ProjectionMode',]
@@ -1488,7 +1488,7 @@ add_class( VTKProjectedTerrainPath )
 TYPENAMES.append('VTKProjectedTerrainPathType' )
 
 #--------------------------------------------------------------
-class VTKResampleWithDataSet(Node, VTKNode):
+class VTKResampleWithDataSet(Node, BVTK_Node):
 
     bl_idname = 'VTKResampleWithDataSetType'
     bl_label  = 'vtkResampleWithDataSet'
@@ -1501,7 +1501,7 @@ class VTKResampleWithDataSet(Node, VTKNode):
     m_PassPointArrays         = bpy.props.BoolProperty ( name='PassPointArrays',         default=False )
     m_Tolerance               = bpy.props.FloatProperty( name='Tolerance',               default=1.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=7, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_CategoricalData','m_ComputeTolerance','m_MarkBlankPointsAndCells','m_PassCellArrays','m_PassFieldArrays','m_PassPointArrays','m_Tolerance',]
@@ -1512,7 +1512,7 @@ add_class( VTKResampleWithDataSet )
 TYPENAMES.append('VTKResampleWithDataSetType' )
 
 #--------------------------------------------------------------
-class VTKSPHInterpolator(Node, VTKNode):
+class VTKSPHInterpolator(Node, BVTK_Node):
 
     bl_idname = 'VTKSPHInterpolatorType'
     bl_label  = 'vtkSPHInterpolator'
@@ -1532,7 +1532,7 @@ class VTKSPHInterpolator(Node, VTKNode):
     m_NullValue                = bpy.props.FloatProperty ( name='NullValue',                default=0.0 )
     e_NullPointsStrategy       = bpy.props.EnumProperty  ( name='NullPointsStrategy',       default="NullValue", items=e_NullPointsStrategy_items )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=13, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=13, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ComputeShepardSum','m_PassCellArrays','m_PassFieldArrays','m_PassPointArrays','m_PromoteOutputArrays','m_ShepardNormalization','m_CutoffArrayName','m_DensityArrayName','m_MassArrayName','m_ShepardSumArrayName','m_ValidPointsMaskArrayName','m_NullValue','e_NullPointsStrategy',]
@@ -1543,7 +1543,7 @@ add_class( VTKSPHInterpolator )
 TYPENAMES.append('VTKSPHInterpolatorType' )
 
 #--------------------------------------------------------------
-class VTKSelectEnclosedPoints(Node, VTKNode):
+class VTKSelectEnclosedPoints(Node, BVTK_Node):
 
     bl_idname = 'VTKSelectEnclosedPointsType'
     bl_label  = 'vtkSelectEnclosedPoints'
@@ -1552,7 +1552,7 @@ class VTKSelectEnclosedPoints(Node, VTKNode):
     m_InsideOut    = bpy.props.BoolProperty ( name='InsideOut',    default=True )
     m_Tolerance    = bpy.props.FloatProperty( name='Tolerance',    default=0.0001 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_CheckSurface','m_InsideOut','m_Tolerance',]
@@ -1563,7 +1563,7 @@ add_class( VTKSelectEnclosedPoints )
 TYPENAMES.append('VTKSelectEnclosedPointsType' )
 
 #--------------------------------------------------------------
-class VTKSmoothPolyDataFilter(Node, VTKNode):
+class VTKSmoothPolyDataFilter(Node, BVTK_Node):
 
     bl_idname = 'VTKSmoothPolyDataFilterType'
     bl_label  = 'vtkSmoothPolyDataFilter'
@@ -1578,7 +1578,7 @@ class VTKSmoothPolyDataFilter(Node, VTKNode):
     m_FeatureAngle         = bpy.props.FloatProperty( name='FeatureAngle',         default=45.0 )
     m_RelaxationFactor     = bpy.props.FloatProperty( name='RelaxationFactor',     default=0.01 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=9, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=9, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_BoundarySmoothing','m_FeatureEdgeSmoothing','m_GenerateErrorScalars','m_GenerateErrorVectors','m_NumberOfIterations','m_Convergence','m_EdgeAngle','m_FeatureAngle','m_RelaxationFactor',]
@@ -1589,7 +1589,7 @@ add_class( VTKSmoothPolyDataFilter )
 TYPENAMES.append('VTKSmoothPolyDataFilterType' )
 
 #--------------------------------------------------------------
-class VTKStreaklineFilter(Node, VTKNode):
+class VTKStreaklineFilter(Node, BVTK_Node):
 
     bl_idname = 'VTKStreaklineFilterType'
     bl_label  = 'vtkStreaklineFilter'
@@ -1608,7 +1608,7 @@ class VTKStreaklineFilter(Node, VTKNode):
     m_TerminalSpeed               = bpy.props.FloatProperty ( name='TerminalSpeed',               default=1e-12 )
     m_TerminationTime             = bpy.props.FloatProperty ( name='TerminationTime',             default=0.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=13, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=13, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ComputeVorticity','m_DisableResetCache','m_EnableParticleWriting','m_IgnorePipelineTime','m_ParticleFileName','m_ForceReinjectionEveryNSteps','m_IntegratorType','m_StaticMesh','m_StaticSeeds','m_RotationScale','m_StartTime','m_TerminalSpeed','m_TerminationTime',]
@@ -1619,7 +1619,7 @@ add_class( VTKStreaklineFilter )
 TYPENAMES.append('VTKStreaklineFilterType' )
 
 #--------------------------------------------------------------
-class VTKStreamTracer(Node, VTKNode):
+class VTKStreamTracer(Node, BVTK_Node):
 
     bl_idname = 'VTKStreamTracerType'
     bl_label  = 'vtkStreamTracer'
@@ -1641,7 +1641,7 @@ class VTKStreamTracer(Node, VTKNode):
     e_IntegratorType         = bpy.props.EnumProperty       ( name='IntegratorType',         default="RungeKutta2", items=e_IntegratorType_items )
     m_StartPosition          = bpy.props.FloatVectorProperty( name='StartPosition',          default=[0.0, 0.0, 0.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=14, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=14, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ComputeVorticity','m_SurfaceStreamlines','m_IntegrationStepUnit','m_MaximumNumberOfSteps','m_InitialIntegrationStep','m_MaximumError','m_MaximumIntegrationStep','m_MaximumPropagation','m_MinimumIntegrationStep','m_RotationScale','m_TerminalSpeed','e_IntegrationDirection','e_IntegratorType','m_StartPosition',]
@@ -1652,7 +1652,7 @@ add_class( VTKStreamTracer )
 TYPENAMES.append('VTKStreamTracerType' )
 
 #--------------------------------------------------------------
-class VTKSubPixelPositionEdgels(Node, VTKNode):
+class VTKSubPixelPositionEdgels(Node, BVTK_Node):
 
     bl_idname = 'VTKSubPixelPositionEdgelsType'
     bl_label  = 'vtkSubPixelPositionEdgels'
@@ -1660,7 +1660,7 @@ class VTKSubPixelPositionEdgels(Node, VTKNode):
     m_TargetFlag  = bpy.props.BoolProperty ( name='TargetFlag',  default=True )
     m_TargetValue = bpy.props.FloatProperty( name='TargetValue', default=0.0 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_TargetFlag','m_TargetValue',]
@@ -1671,14 +1671,14 @@ add_class( VTKSubPixelPositionEdgels )
 TYPENAMES.append('VTKSubPixelPositionEdgelsType' )
 
 #--------------------------------------------------------------
-class VTKSynchronizeTimeFilter(Node, VTKNode):
+class VTKSynchronizeTimeFilter(Node, BVTK_Node):
 
     bl_idname = 'VTKSynchronizeTimeFilterType'
     bl_label  = 'vtkSynchronizeTimeFilter'
     
     m_RelativeTolerance = bpy.props.FloatProperty( name='RelativeTolerance', default=1e-05 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_RelativeTolerance',]
@@ -1689,7 +1689,7 @@ add_class( VTKSynchronizeTimeFilter )
 TYPENAMES.append('VTKSynchronizeTimeFilterType' )
 
 #--------------------------------------------------------------
-class VTKTemporalStreamTracer(Node, VTKNode):
+class VTKTemporalStreamTracer(Node, BVTK_Node):
 
     bl_idname = 'VTKTemporalStreamTracerType'
     bl_label  = 'vtkTemporalStreamTracer'
@@ -1722,7 +1722,7 @@ class VTKTemporalStreamTracer(Node, VTKNode):
     e_TerminationTimeUnit         = bpy.props.EnumProperty       ( name='TerminationTimeUnit',         default="StepUnit", items=e_TerminationTimeUnit_items )
     m_StartPosition               = bpy.props.FloatVectorProperty( name='StartPosition',               default=[0.0, 0.0, 0.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=24, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=24, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ComputeVorticity','m_EnableParticleWriting','m_IgnorePipelineTime','m_StaticMesh','m_StaticSeeds','m_SurfaceStreamlines','m_ParticleFileName','m_ForceReinjectionEveryNSteps','m_IntegrationStepUnit','m_MaximumNumberOfSteps','m_TimeStep','m_InitialIntegrationStep','m_MaximumError','m_MaximumIntegrationStep','m_MaximumPropagation','m_MinimumIntegrationStep','m_RotationScale','m_TerminalSpeed','m_TerminationTime','m_TimeStepResolution','e_IntegrationDirection','e_IntegratorType','e_TerminationTimeUnit','m_StartPosition',]
@@ -1733,7 +1733,7 @@ add_class( VTKTemporalStreamTracer )
 TYPENAMES.append('VTKTemporalStreamTracerType' )
 
 #--------------------------------------------------------------
-class VTKTensorGlyph(Node, VTKNode):
+class VTKTensorGlyph(Node, BVTK_Node):
 
     bl_idname = 'VTKTensorGlyphType'
     bl_label  = 'vtkTensorGlyph'
@@ -1750,7 +1750,7 @@ class VTKTensorGlyph(Node, VTKNode):
     m_ScaleFactor        = bpy.props.FloatProperty( name='ScaleFactor',        default=1.0 )
     e_ColorMode          = bpy.props.EnumProperty ( name='ColorMode',          default="Scalars", items=e_ColorMode_items )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=10, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=10, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ClampScaling','m_ColorGlyphs','m_ExtractEigenvalues','m_Scaling','m_Symmetric','m_ThreeGlyphs','m_Length','m_MaxScaleFactor','m_ScaleFactor','e_ColorMode',]
@@ -1761,7 +1761,7 @@ add_class( VTKTensorGlyph )
 TYPENAMES.append('VTKTensorGlyphType' )
 
 #--------------------------------------------------------------
-class VTKTrimmedExtrusionFilter(Node, VTKNode):
+class VTKTrimmedExtrusionFilter(Node, BVTK_Node):
 
     bl_idname = 'VTKTrimmedExtrusionFilterType'
     bl_label  = 'vtkTrimmedExtrusionFilter'
@@ -1773,7 +1773,7 @@ class VTKTrimmedExtrusionFilter(Node, VTKNode):
     e_ExtrusionStrategy  = bpy.props.EnumProperty       ( name='ExtrusionStrategy',  default="BoundaryEdges", items=e_ExtrusionStrategy_items )
     m_ExtrusionDirection = bpy.props.FloatVectorProperty( name='ExtrusionDirection', default=[0.0, 0.0, 1.0], size=3 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_Capping','e_CappingStrategy','e_ExtrusionStrategy','m_ExtrusionDirection',]
@@ -1784,7 +1784,7 @@ add_class( VTKTrimmedExtrusionFilter )
 TYPENAMES.append('VTKTrimmedExtrusionFilterType' )
 
 #--------------------------------------------------------------
-class VTKVolumeContourSpectrumFilter(Node, VTKNode):
+class VTKVolumeContourSpectrumFilter(Node, BVTK_Node):
 
     bl_idname = 'VTKVolumeContourSpectrumFilterType'
     bl_label  = 'vtkVolumeContourSpectrumFilter'
@@ -1793,7 +1793,7 @@ class VTKVolumeContourSpectrumFilter(Node, VTKNode):
     m_FieldId         = bpy.props.IntProperty( name='FieldId',         default=0 )
     m_NumberOfSamples = bpy.props.IntProperty( name='NumberOfSamples', default=100 )
     
-    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=VTKNode.get_b, set=VTKNode.set_b)
+    b_properties = bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
     def m_properties( self ):
         return ['m_ArcId','m_FieldId','m_NumberOfSamples',]
@@ -1805,4 +1805,4 @@ TYPENAMES.append('VTKVolumeContourSpectrumFilterType' )
 
 #--------------------------------------------------------------
 menu_items = [ NodeItem(x) for x in TYPENAMES ]
-CATEGORIES.append( VTKNodeCategory( 'filter2', 'filter2', items=menu_items) )
+CATEGORIES.append( BVTK_NodeCategory( 'filter2', 'filter2', items=menu_items) )

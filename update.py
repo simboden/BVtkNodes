@@ -4,7 +4,7 @@ import bpy
 from .core import b_path
 
 # -----------------------------------------------------------------------------
-#  Functions and classes for running BVTKNodes internal function queue and
+#  Functions and classes for running BVTK_Nodes internal function queue and
 #  other updates
 # -----------------------------------------------------------------------------
 
@@ -97,7 +97,7 @@ def no_queue_update(node, cb, x=True):
 
 class FunctionsQueue:
     '''Class for Functions Queue. Used for running a queue system for 
-    BVTKNodes functions.
+    BVTK_Nodes functions.
     '''
     functions = [] # List of functions in queueus
     executed = [] # List of executed functions

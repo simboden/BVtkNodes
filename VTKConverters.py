@@ -6,7 +6,7 @@ import bmesh
 # Converters from VTK to Blender
 # -----------------------------------------------------------------------------
 
-class VTK2Blender(Node, VTKNode):
+class VTK2Blender(Node, BVTK_Node):
     '''Output VTK Node to Blender Mesh Object'''
     bl_idname = 'VTK2BlenderType' # type name
     bl_label  = 'VTK To Blender'  # label for nice name display
@@ -517,7 +517,7 @@ TYPENAMES = []
 add_class(VTK2Blender)
 TYPENAMES.append('VTK2BlenderType')
 menu_items = [NodeItem(x) for x in TYPENAMES]
-CATEGORIES.append(VTKNodeCategory("converters", "converters", items=menu_items))
+CATEGORIES.append(BVTK_NodeCategory("converters", "converters", items=menu_items))
 
 add_class(OperatorNodeUpdate)
 add_ui_class(VTKAutoUpdateScan)
