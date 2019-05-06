@@ -126,28 +126,28 @@ def check_cache():
     # any previous node_id must be invalidated
     if NodesMaxId == 1:
         for nt in bpy.data.node_groups:
-            if nt.bl_idname == 'VTKTreeType':
+            if nt.bl_idname == 'BVTK_NodeTreeType':
                 for n in nt.nodes:
                     n.node_id = 0
 
     # For each node check if it has a node_id
     # and if it has a vtk_obj associated
     for nt in bpy.data.node_groups:
-        if nt.bl_idname == 'VTKTreeType':
+        if nt.bl_idname == 'BVTK_NodeTreeType':
             for n in nt.nodes:
                 if get_vtkobj(n) == None or n.node_id == 0:
                     node_created(n)
 
 
 # -----------------------------------------------------------------------------
-# VTKTree
+# BVTK_NodeTree
 # -----------------------------------------------------------------------------
 
-class VTKTree(NodeTree):
-    '''VTK Node Tree'''         # description string - used for tooltip
-    bl_idname = 'VTKTreeType'   # typename string - defaults to class name
-    bl_label  = 'VTK'           # label
-    bl_icon   = 'COLOR_RED'     # icon
+class BVTK_NodeTree(NodeTree):
+    '''BVTK Node Tree'''
+    bl_idname = 'BVTK_NodeTreeType'
+    bl_label  = 'VTK'
+    bl_icon   = 'COLOR_RED'
 
 
 # -----------------------------------------------------------------------------
@@ -176,7 +176,7 @@ class BVTK_Node:
 
     @classmethod
     def poll(cls, ntree):
-        return ntree.bl_idname == 'VTKTreeType'
+        return ntree.bl_idname == 'BVTK_NodeTreeType'
 
     def free(self):
         node_deleted(self)
@@ -370,7 +370,7 @@ def check_b_properties():
                 b[name] = [True for i in range(np)]
 
 # Register classes
-add_class(VTKTree)
+add_class(BVTK_NodeTree)
 add_class(VTKSocket)
 add_ui_class(BVTK_NodeWrite)
 
@@ -382,7 +382,7 @@ add_ui_class(BVTK_NodeWrite)
 class BVTK_NodeCategory(NodeCategory):
     @classmethod
     def poll(cls, context):
-        return context.space_data.tree_type == 'VTKTreeType'
+        return context.space_data.tree_type == 'BVTK_NodeTreeType'
 
 CATEGORIES = []            
 
@@ -412,7 +412,7 @@ def print_nodes():
     print( "########################")
     print( "maxid = ", NodesMaxId )
     for nt in bpy.data.node_groups:
-        if nt.bl_idname == "VTKTreeType":
+        if nt.bl_idname == "BVTK_NodeTreeType":
             print( "## tree", nt.name)
             for n in nt.nodes:
                 if get_vtkobj(n) is None:

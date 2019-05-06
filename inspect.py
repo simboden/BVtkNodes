@@ -16,7 +16,7 @@ class VTKInspectPanel(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.active_node is not None and context.space_data.tree_type == 'VTKTreeType'
+        return context.active_node is not None and context.space_data.tree_type == 'BVTK_NodeTreeType'
 
     def draw(self, context):
         active_node = context.active_node

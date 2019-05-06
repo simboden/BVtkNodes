@@ -30,7 +30,7 @@ class IEPanel(bpy.types.Panel):
     @classmethod
     def poll(cls, context):
         space = context.space_data
-        return space.tree_type == 'VTKTreeType'
+        return space.tree_type == 'BVTK_NodeTreeType'
 
     def draw(self, context):
         layout = self.layout
@@ -57,7 +57,7 @@ class ArrangePanel(bpy.types.Panel):
     @classmethod
     def poll(cls, context):
         space = context.space_data
-        return space.tree_type == 'VTKTreeType'
+        return space.tree_type == 'BVTK_NodeTreeType'
 
     def draw(self, context):
         layout = self.layout
@@ -88,7 +88,7 @@ class ExamplesPanel(bpy.types.Panel):
     @classmethod
     def poll(cls, context):
         space = context.space_data
-        return space.tree_type == 'VTKTreeType'
+        return space.tree_type == 'BVTK_NodeTreeType'
 
     def draw(self, context):
         layout = self.layout
@@ -287,7 +287,7 @@ class ImportVtkNodeTree(bpy.types.Operator):
         node_tree = context.space_data.node_tree
 
         if node_tree is None:
-            node_tree = bpy.data.node_groups.new('NodeTree', 'VTKTreeType')
+            node_tree = bpy.data.node_groups.new('NodeTree', 'BVTK_NodeTreeType')
             context.space_data.node_tree = node_tree
 
         if self.confirm and node_tree.nodes:

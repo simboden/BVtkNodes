@@ -11,7 +11,7 @@ class BVTK_PT_ShowHide_Properties_Panel(bpy.types.Panel):
     @classmethod
     def poll(cls, context):
         return  context.active_node is not None and \
-                context.space_data.tree_type == 'VTKTreeType' and \
+                context.space_data.tree_type == 'BVTK_NodeTreeType' and \
                 hasattr(context.active_node, 'b_properties')
 
     def draw(self, context):

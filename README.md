@@ -22,6 +22,10 @@ quality rendering and many kind of mesh editing tools. The add-on was
 
 **Note:** This repository is being updated, information may be partially out of date.
 
+**Warning:** On-going code changes may result in incompatibility of
+  previously saved files due to class name changes! I will remove this
+  warning when renaming is complete.
+
 - **Tested version**: Blender version 2.79b
   and VTK library version 8.2.0.
 - **License**: [GPL v3](http://www.gnu.org/licenses/quick-guide-gplv3.html)
