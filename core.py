@@ -154,10 +154,10 @@ class BVTK_NodeTree(NodeTree):
 # Custom socket type
 # -----------------------------------------------------------------------------
 
-class VTKSocket(NodeSocket):
-    '''VTK Socket'''            # description / tooltip
-    bl_idname = 'VTKSocketType' # typename
-    bl_label  = 'vtk Socket'    # label
+class BVTK_NodeSocket(NodeSocket):
+    '''BVTK Node Socket'''
+    bl_idname = 'BVTK_NodeSocketType'
+    bl_label  = 'BVTK Node Socket'
     
     def draw(self, context, layout, node, text):
         layout.label(text)
@@ -171,7 +171,7 @@ class VTKSocket(NodeSocket):
 # -----------------------------------------------------------------------------
 
 class BVTK_Node:
-    
+    '''Base class for VTK Nodes'''
     node_id = bpy.props.IntProperty(default=0)
 
     @classmethod
@@ -303,9 +303,9 @@ class BVTK_Node:
         input_ports.extend(extra_input)
         output_ports.extend(extra_output)
         for x in input_ports:
-            self.inputs.new('VTKSocketType', x)
+            self.inputs.new('BVTK_NodeSocketType', x)
         for x in output_ports:
-            self.outputs.new('VTKSocketType', x)
+            self.outputs.new('BVTK_NodeSocketType', x)
         # Some nodes need to set properties (such as link limit) after creation
         if hasattr(self, 'setup'):
             self.setup()
@@ -371,7 +371,7 @@ def check_b_properties():
 
 # Register classes
 add_class(BVTK_NodeTree)
-add_class(VTKSocket)
+add_class(BVTK_NodeSocket)
 add_ui_class(BVTK_NodeWrite)
 
 

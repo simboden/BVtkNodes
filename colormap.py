@@ -89,7 +89,7 @@ class VTKColorMapper(Node, BVTK_Node):
         return (['input'],[],[],['output'])
 
     def setup(self):
-        self.inputs.new('VTKSocketType', 'lookuptable')
+        self.inputs.new('BVTK_NodeSocketType', 'lookuptable')
 
     def update(self):
         if self.last_color_by != self.color_by or self.auto_range:
