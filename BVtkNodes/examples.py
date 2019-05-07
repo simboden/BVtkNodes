@@ -367,9 +367,12 @@ class ImportVtkNodeTreeFromPy(bpy.types.Operator):
         self.filepath = ''
         return {'FINISHED'}
 
-
-# Questo metodo al momento e' una merda ed e' preferibile non usarlo in attesa
-# che sia reso piu' versatile
+#
+# --- experiment meant to interpreting an existing vtk-python-example 
+# --- and translate it to a node-network
+#
+# --- it is not completed, do not use it
+#
 def node_tree_from_py(context, py):
     space = context.space_data
     nodes = space.node_tree.nodes
@@ -413,13 +416,13 @@ def node_tree_from_py(context, py):
                                     if attr in obj.m_properties():
                                         setattr(obj, attr, val)
                                     else:
-                                        print(obj.bl_idname + ' non ha nessun attributo ' + attr + ' in questo addon')
+                                        print(obj.bl_idname + ' got no attributes' + attr + ' in this addon')
                                 else:
-                                    print(objname + ', nodo corrispondente mai creato')
+                                    print(objname + ', missing corresponding node')
 
                             if 'To' in toSet:
                                 if toSet.count('To') > 1:
-                                    print('Eccezione "To" non gestita')
+                                    print(' "To" is not handled yet')
                                 else:
                                     set(n1, 'e_' + toSet.split('To')[0],
                                         toSet.split('To')[1].replace('(', '').replace(')', ''))
@@ -431,9 +434,9 @@ def node_tree_from_py(context, py):
                                 try:
                                     set(n1, 'm_' + toSet.split('(')[0], eval(toSet.split('(')[1].replace(')', '')))
                                 except:
-                                    print(toSet + ' argomento non definito')
+                                    print(toSet + ' undefined argument')
                             else:
-                                print('Il seguente set non è stato interpretato: ' + line)
+                                print('this "Set" has not been interpreted: ' + line)
     for i in range(len(linked)):
         linked[i].location = (i * 300, 0)
 
