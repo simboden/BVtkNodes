@@ -130,6 +130,101 @@ class BVTK_OT_NewText(bpy.types.Operator):
             self.report({'INFO'}, "See '" + text.name + "' in the text editor")
         return {'FINISHED'}
 
+
+# ----------------------------------------------------------------
+# MultiBlockLeaf
+# ----------------------------------------------------------------
+
+
+class VTKMultiBlockLeaf(Node, VTKNode):
+    """ This node is useful to break down a vtkMultiBlock
+    into the blocks of which it is composed.
+    """
+    bl_idname = 'VTKMultiBlockLeafType'
+    bl_label = 'MultiBlockLeaf'
+
+    def blocks(self, context):
+        """ Returns a list for a dynamic enum. Once verified that
+        the input vtk object is decomposable in blocks, the list
+        will contain an element for every block, with the following
+        information:
+        - Block index
+        - Block data type (ex. structured grid)
+        - Block custom name (if it's defined, in most cases it's not)
+        """
+        in_node, vtkobj = self.get_input_node('input')
+        if not in_node:
+            return []
+        elif not vtkobj:
+            return []
+        else:
+            vtkobj = resolve_algorithm_output(vtkobj)
+            if not vtkobj:
+                return []
+            if not hasattr(vtkobj, "GetNumberOfBlocks") or not hasattr(vtkobj, "GetBlock"):
+                return []
+            items = []
+            meta_flag = True if hasattr(vtkobj, "GetMetaData") else False
+            for i in range(vtkobj.GetNumberOfBlocks()):
+                block = vtkobj.GetBlock(i)
+                meta_data = vtkobj.GetMetaData(i) if meta_flag else None
+                if meta_data:
+                    custom_name = meta_data.Get(vtk.vtkCompositeDataSet.NAME())
+                    if not custom_name: custom_name = ""
+                else:
+                    custom_name = ""
+                name = str(i) + " " + (block.__class__.__name__ if block else "Empty block") + custom_name
+                items.append((str(i), name, ""))
+            return items
+
+    block = bpy.props.EnumProperty(items=block, name="Output block")
+
+    def m_properties(self):
+        return []
+
+    def m_connections(self):
+        return (['input'], [], [], ['output'])
+
+    def draw_buttons(self, context, layout):
+        in_node, vtkobj = self.get_input_node('input')
+        if not in_node:
+            layout.label('Connect a node')
+        elif not vtkobj:
+            layout.label('Input has not vtkobj (try updating)')
+        else:
+            vtkobj = resolve_algorithm_output(vtkobj)
+            if not vtkobj:
+                return
+            class_name = vtkobj.__class__.__name__
+            layout.label("Input: "+class_name)
+            if not hasattr(vtkobj, "GetNumberOfBlocks") or not hasattr(vtkobj, "GetBlock"):
+                layout.label("Input object does not contain multiple blocks of data (can't find 'GetBlock' method)")
+                return
+            layout.prop(self, "block")
+
+    def apply_properties(self, vtkobj):
+        pass
+
+    def apply_inputs(self, vtkobj):
+        pass
+
+    def get_output(self, socketname):
+        """ The function checks if the specified block can be retrieved from the input vtk object,
+        in case it's possible the said block is returned.
+        """
+        in_node, vtkobj = self.get_input_node('input')
+        if in_node:
+            if vtkobj:
+                vtkobj = resolve_algorithm_output(vtkobj)
+                if vtkobj:
+                    if hasattr(vtkobj, "GetNumberOfBlocks") or not hasattr(vtkobj, "GetBlock"):
+                        return vtkobj.GetBlock(int(self.block))
+        return None
+
+
+add_class(VTKMultiBlockLeaf)
+TYPENAMES.append('VTKMultiBlockLeafType')
+
 # Add classes and menu items
 TYPENAMES = []
 add_class(BVTK_Node_CustomFilter)
