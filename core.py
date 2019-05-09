@@ -238,7 +238,7 @@ class BVTK_Node:
             if self.b_properties[i]:
                 layout.prop(self, m_properties[i])
         if self.bl_idname.endswith('WriterType'):
-            layout.operator('vtk.node_write').id = self.node_id
+            layout.operator('node.bvtk_node_write').id = self.node_id
 
     def copy(self, node):
         '''Copies setup from another node'''
@@ -326,10 +326,10 @@ class BVTK_Node:
 # VTK Node Write
 # -----------------------------------------------------------------------------
 
-class BVTK_NodeWrite(bpy.types.Operator):
+class BVTK_OT_NodeWrite(bpy.types.Operator):
     '''Operator to call VTK Write() for a node'''
-    bl_idname = "vtk.node_write"
-    bl_label = "write"
+    bl_idname = "node.bvtk_node_write"
+    bl_label = "Write"
 
     id = bpy.props.IntProperty()
 
@@ -372,7 +372,7 @@ def check_b_properties():
 # Register classes
 add_class(BVTK_NodeTree)
 add_class(BVTK_NodeSocket)
-add_ui_class(BVTK_NodeWrite)
+add_ui_class(BVTK_OT_NodeWrite)
 
 
 # -----------------------------------------------------------------------------
