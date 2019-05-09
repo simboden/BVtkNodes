@@ -451,7 +451,7 @@ def node_tree_from_py(context, py):
     for i in range(len(linked)):
         linked[i].location = (i * 300, 0)
 
-    tb = nodes.new('VTK2BlenderType')
+    tb = nodes.new('BVTK_Node_VTKToBlenderType')
     tb.location = (len(linked) * 300, 0)
     links.new(tb.inputs[0], linked[len(linked) - 1].outputs[0])
 

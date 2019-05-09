@@ -51,7 +51,7 @@
             "width": 200.0
         },
         {
-            "bl_idname": "VTK2BlenderType",
+            "bl_idname": "BVTK_Node_VTKToBlenderType",
             "color": [
                 0.6079999804496765,
                 0.6079999804496765,
@@ -73,7 +73,7 @@
             "width": 200.0
         },
         {
-            "bl_idname": "VTK2BlenderType",
+            "bl_idname": "BVTK_Node_VTKToBlenderType",
             "color": [
                 0.6079999804496765,
                 0.6079999804496765,

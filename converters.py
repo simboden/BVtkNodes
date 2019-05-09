@@ -6,15 +6,15 @@ import bmesh
 # Converters from VTK to Blender
 # -----------------------------------------------------------------------------
 
-class VTK2Blender(Node, BVTK_Node):
-    '''Output VTK Node to Blender Mesh Object'''
-    bl_idname = 'VTK2BlenderType' # type name
+class BVTK_Node_VTKToBlender(Node, BVTK_Node):
+    '''Convert output from VTK Node to Blender Mesh Object'''
+    bl_idname = 'BVTK_Node_VTKToBlenderType' # type name
     bl_label  = 'VTK To Blender'  # label for nice name display
 
     def start_scan(self, context):
         if context:
             if self.auto_update:
-                bpy.ops.vtk.auto_update_scan(
+                bpy.ops.node.bvtk_auto_update_scan(
                     node_name=self.name,
                     tree_name=context.space_data.node_tree.name)
 
@@ -35,7 +35,7 @@ class VTK2Blender(Node, BVTK_Node):
         layout.prop(self, 'smooth', text='Smooth')
         #layout.box().prop(self, "auto_center", text='auto center', expand=True)
         layout.separator()
-        layout.operator("node.update", text="update").node_path = node_path(self)
+        layout.operator("node.bvtk_node_update", text="update").node_path = node_path(self)
 
     def update_cb(self):
         '''Update node'''
@@ -206,9 +206,9 @@ def compare(dict1, dict2):
     return diff
 
 
-class VTKAutoUpdateScan(bpy.types.Operator):
-    '''VTK Auto Update Scan'''
-    bl_idname = "vtk.auto_update_scan"
+class BVTK_OT_AutoUpdateScan(bpy.types.Operator):
+    '''BVTK Auto Update Scan'''
+    bl_idname = "node.bvtk_auto_update_scan"
     bl_label = "auto update"
     _timer = None
     node_name = bpy.props.StringProperty()
@@ -241,7 +241,7 @@ class VTKAutoUpdateScan(bpy.types.Operator):
         self.tree = bpy.data.node_groups[self.tree_name].nodes
         self.node = bpy.data.node_groups[self.tree_name].nodes[self.node_name]
         self.last_map = map(self.node)
-        bpy.ops.node.update(node_path=node_path(self.node))
+        bpy.ops.node.bvtk_node_update(node_path=node_path(self.node))
         wm = context.window_manager
         self._timer = wm.event_timer_add(0.01, context.window)
         wm.modal_handler_add(self)
@@ -492,9 +492,9 @@ def imgdata_to_blender(data, name):
     tex.image = img
 
 
-class OperatorNodeUpdate(bpy.types.Operator):
+class BVTK_OT_NodeUpdate(bpy.types.Operator):
     '''Node Update Operator'''
-    bl_idname = "node.update"
+    bl_idname = "node.bvtk_node_update"
     bl_label = "update"
     node_path = bpy.props.StringProperty()
     use_queue = bpy.props.BoolProperty(default = True)
@@ -514,12 +514,12 @@ class OperatorNodeUpdate(bpy.types.Operator):
 
 # Add classes and menu items
 TYPENAMES = []
-add_class(VTK2Blender)
-TYPENAMES.append('VTK2BlenderType')
+add_class(BVTK_Node_VTKToBlender)
+TYPENAMES.append('BVTK_Node_VTKToBlenderType')
 menu_items = [NodeItem(x) for x in TYPENAMES]
-CATEGORIES.append(BVTK_NodeCategory("converters", "converters", items=menu_items))
+CATEGORIES.append(BVTK_NodeCategory("Converters", "Converters", items=menu_items))
 
-add_class(OperatorNodeUpdate)
-add_ui_class(VTKAutoUpdateScan)
+add_class(BVTK_OT_NodeUpdate)
+add_ui_class(BVTK_OT_AutoUpdateScan)
 add_ui_class(VTKFunctionQueue)
 

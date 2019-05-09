@@ -68,8 +68,8 @@ from . import colormap
 from . import customfilter
 from . import info
 from . import update
+from . import converters
 
-from . import VTKConverters
 from . import VTKSources
 from . import VTKReaders
 from . import VTKWriters
@@ -90,8 +90,7 @@ if need_reloading:
     importlib.reload(info)
     importlib.reload(favorites_data)
     importlib.reload(favorites)
-
-    importlib.reload(VTKConverters)
+    importlib.reload(converters)
 
     importlib.reload(gen_VTKSources)
     importlib.reload(VTKSources)
@@ -124,7 +123,7 @@ def on_frame_change(scene):
     '''Update nodes after frame changes by updating all VTK to Blender nodes'''
     for node_group in bpy.data.node_groups:
         for node in node_group.nodes:
-            if node.bl_idname == 'VTK2BlenderType':
+            if node.bl_idname == 'BVTK_Node_VTKToBlenderType':
                 update.no_queue_update(node, node.update_cb)
 
 

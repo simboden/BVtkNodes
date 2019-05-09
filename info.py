@@ -56,7 +56,7 @@ class BVTK_Node_Info(Node, BVTK_Node):
         row.separator()
         row.separator()
         row.separator()
-        row.operator("node.update", text="update").node_path = node_path(self)
+        row.operator("node.bvtk_node_update", text="update").node_path = node_path(self)
         row.separator()
         row.separator()
         row.separator()

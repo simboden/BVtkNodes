@@ -1,5 +1,5 @@
 b={'VTKImageContinuousDilate3DType': [True, True, True, True, True, True, True],
- 'VTK2BlenderType': [True, True],
+ 'BVTK_Node_VTKToBlenderType': [True, True],
  'VTKImageIslandRemoval2DType': [True, True, True, True],
  'VTKPassArraysType': [True, True],
  'VTKDensifyPolyDataType': [True],

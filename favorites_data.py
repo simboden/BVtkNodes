@@ -1,4 +1,4 @@
-favorites = [('VTK2BlenderType', 'ToBlender'),
+favorites = [('BVTK_Node_VTKToBlenderType', 'VTK To Blender'),
  ('BVTK_Node_InfoType', 'Info'),
  ('VTKConeSourceType', 'vtkConeSource'),
  ('VTKClipPolyDataType', 'vtkClipPolyData'),
