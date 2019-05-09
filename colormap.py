@@ -240,4 +240,4 @@ add_class(BVTK_Node_ColorRamp)
 TYPENAMES.append('BVTK_Node_ColorRampType')
 
 menu_items = [NodeItem(x) for x in TYPENAMES]
-CATEGORIES.append(BVTK_NodeCategory("color", "color", items=menu_items))
+CATEGORIES.append(BVTK_NodeCategory("Color", "Color", items=menu_items))

@@ -5,12 +5,12 @@ from .core import *
 # -----------------------------------------------------------------------------
 
 
-class VTKCustomFilter(Node, BVTK_Node):
+class BVTK_Node_CustomFilter(Node, BVTK_Node):
     '''VTK Custom Filter, defined in Blender text data block. Supports one
     or multiple inputs. Custom function must return a variable which
     is set as input of the node following custom filter.
     '''
-    bl_idname = 'VTKCustomFilterType'
+    bl_idname = 'BVTK_Node_CustomFilterType'
     bl_label = 'CustomFilter'
 
     def texts(self, context):
@@ -48,7 +48,7 @@ class VTKCustomFilter(Node, BVTK_Node):
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, 'text')
-        op = row.operator('vtk.new_text', icon='ZOOMIN', text='')
+        op = row.operator('node.bvtk_new_text', icon='ZOOMIN', text='')
         op.name = 'customfilter.py'
         op.body = self.__doc__.replace("    ","")
         if len(self.functions()):
@@ -74,17 +74,17 @@ class VTKCustomFilter(Node, BVTK_Node):
             try:
                 exec(t, globals(), locals())
             except Exception as e:
-                print('VTKCustomFilter - error while parsing user defined text:',
+                print('BVTK_Node_CustomFilter - error while parsing user defined text:',
                       str(e).replace('<string>', self.text))
                 return self.get_input_node('input')[1]
             if self.func not in locals():
-                print('VTKCustomFilter - function not found')
+                print('BVTK_Node_CustomFilter - function not found')
             else:
                 try:
                     user_output = eval(self.func+'(input_objects)')
                     return user_output
                 except Exception as e:
-                    print('VTKCustomFilter - error while executing user defined function:',str(e))
+                    print('BVTK_Node_CustomFilter - error while executing user defined function:',str(e))
         return self.get_input_node('input')[1]
 
     def setup(self):
@@ -101,12 +101,12 @@ class VTKCustomFilter(Node, BVTK_Node):
 
     def import_properties(self, dict):
         '''Import node properties'''
-        bpy.ops.vtk.new_text(body=dict['text_as_string'], name=dict['text_name'])
+        bpy.ops.node.bvtk_new_text(body=dict['text_as_string'], name=dict['text_name'])
 
 
-class VTKNewText(bpy.types.Operator):
+class BVTK_OT_NewText(bpy.types.Operator):
     '''New text operator'''
-    bl_idname = 'vtk.new_text'
+    bl_idname = 'node.bvtk_new_text'
     bl_label = 'Create a new text'
 
     name = bpy.props.StringProperty(default='New text')
@@ -131,9 +131,9 @@ class VTKNewText(bpy.types.Operator):
 
 # Add classes and menu items
 TYPENAMES = []
-add_class(VTKCustomFilter)
-TYPENAMES.append('VTKCustomFilterType')
-add_ui_class(VTKNewText)
+add_class(BVTK_Node_CustomFilter)
+TYPENAMES.append('BVTK_Node_CustomFilterType')
+add_ui_class(BVTK_OT_NewText)
 
 menu_items = [NodeItem(x) for x in TYPENAMES]
-CATEGORIES.append(BVTK_NodeCategory("custom", "custom", items=menu_items))
+CATEGORIES.append(BVTK_NodeCategory("Custom", "Custom", items=menu_items))
