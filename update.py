@@ -65,7 +65,7 @@ def Update(node, cb, x=True):
         if cb:
             queue.add(cb)
         queue.add(SetColor, node, ex_color)
-        bpy.ops.vtk.function_queue()
+        bpy.ops.node.bvtk_function_queue()
 
 
 def no_queue_update(node, cb, x=True):
@@ -95,7 +95,7 @@ def no_queue_update(node, cb, x=True):
 # -----------------------------------------------------------------------------
 
 
-class FunctionsQueue:
+class BVTK_FunctionsQueue:
     '''Class for Functions Queue. Used for running a queue system for 
     BVTK_Nodes functions.
     '''
@@ -131,14 +131,14 @@ class FunctionsQueue:
         self.i = 0
 
 # Global functions queue
-queue = FunctionsQueue()
+queue = BVTK_FunctionsQueue()
 
 
-class VTKFunctionQueue(bpy.types.Operator):
+class BVTK_OT_FunctionQueue(bpy.types.Operator):
     '''Operator to call a function in functions queue. 
     Calls are spaced (separated in time) by 1/100 s.
     '''
-    bl_idname = "vtk.function_queue"
+    bl_idname = "node.bvtk_function_queue"
     bl_label = "Run a VTK function in queue"
 
     _timer = None
@@ -168,6 +168,7 @@ class VTKFunctionQueue(bpy.types.Operator):
         wm = context.window_manager
         wm.event_timer_remove(self._timer)
 
+# add_ui_class(BVTK_OT_FunctionQueue) # TODO: Works only if in converters.py?
 
 # -----------------------------------------------------------------------------
 # Vtk logs

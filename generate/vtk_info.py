@@ -327,7 +327,7 @@ HiddenProp = (
 InterestingClasses = (
 vtk.vtkAlgorithm,                  # sources, reader, writers, filters
 vtk.vtkAbstractTransform,          # transform
-vtk.vtkImplicitFunction,           # implicti functions
+vtk.vtkImplicitFunction,           # implicit functions
 vtk.vtkInitialValueProblemSolver,  # Integrator
 vtk.vtkParametricFunction          # parametric function
 )
