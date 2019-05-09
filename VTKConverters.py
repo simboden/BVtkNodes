@@ -41,7 +41,7 @@ class VTK2Blender(Node, BVTK_Node):
         '''Update node'''
         input_node, vtkobj = self.get_input_node('input')
         ramp = None
-        if input_node and input_node.bl_idname == 'VTKColorMapperType':
+        if input_node and input_node.bl_idname == 'BVTK_Node_ColorMapperType':
             ramp = input_node
             ramp.update()    # setting auto range
             input_node, vtkobj = input_node.get_input_node('input')

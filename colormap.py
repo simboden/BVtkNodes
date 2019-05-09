@@ -24,10 +24,10 @@ def default_texture(name):
     return tex
 
 
-class VTKColorMapper(Node, BVTK_Node):
-    '''VTK Color Mapper Node'''
-    bl_idname = 'VTKColorMapperType'
-    bl_label  = 'ColorMapper'
+class BVTK_Node_ColorMapper(Node, BVTK_Node):
+    '''BVTK Color Mapper Node'''
+    bl_idname = 'BVTK_Node_ColorMapperType'
+    bl_label  = 'Color Mapper'
 
     def array_change(self, context):
         '''Determine coloring by either point or cell data'''
@@ -138,10 +138,10 @@ class VTKColorMapper(Node, BVTK_Node):
 
 
 
-class VTKColorMap(Node, BVTK_Node):
-    '''VTK Color Map'''
-    bl_idname = 'VTKColorMapType' # type name
-    bl_label  = 'ColorMap'       # label for nice name display
+class BVTK_Node_ColorRamp(Node, BVTK_Node):
+    '''BVTK Color Ramp Node'''
+    bl_idname = 'BVTK_Node_ColorRampType'
+    bl_label  = 'Color Ramp'
 
     texture_type = bpy.props.EnumProperty(
         name="texture type",
@@ -234,10 +234,10 @@ class VTKColorMap(Node, BVTK_Node):
 
 # Add classes and menu items
 TYPENAMES = []
-add_class(VTKColorMapper)
-TYPENAMES.append('VTKColorMapperType')
-add_class(VTKColorMap)
-TYPENAMES.append('VTKColorMapType')
+add_class(BVTK_Node_ColorMapper)
+TYPENAMES.append('BVTK_Node_ColorMapperType')
+add_class(BVTK_Node_ColorRamp)
+TYPENAMES.append('BVTK_Node_ColorRampType')
 
 menu_items = [NodeItem(x) for x in TYPENAMES]
 CATEGORIES.append(BVTK_NodeCategory("color", "color", items=menu_items))
