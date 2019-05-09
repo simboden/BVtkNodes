@@ -25,7 +25,10 @@ bl_info = {
 # tkeskita TODO list:
 # - rename classes to conform to Blender 2.8 naming rules
 # - replace all prints with Python logging
-
+#
+# global replace command:
+# for f in `find . -type f -regex ".*\.py$"`; do sed -i 's/foo/bar/g' $f; done
+#
 # Import VTK Python module
 try:
     import vtk
