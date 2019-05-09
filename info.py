@@ -1,8 +1,8 @@
 from  .core import *
 
-class VTKInfoNode(Node, BVTK_Node):
-    '''VTK Info Node'''
-    bl_idname = 'VTKInfoNodeType'
+class BVTK_Node_Info(Node, BVTK_Node):
+    '''BVTK Info Node'''
+    bl_idname = 'BVTK_Node_InfoType'
     bl_label  = 'Info'
 
     def m_properties(self):
@@ -69,8 +69,8 @@ class VTKInfoNode(Node, BVTK_Node):
         return self.get_input_node('input')[1]
 
 TYPENAMES = []
-add_class(VTKInfoNode)
-TYPENAMES.append('VTKInfoNodeType')
+add_class(BVTK_Node_Info)
+TYPENAMES.append('BVTK_Node_InfoType')
 
 menu_items = [NodeItem(x) for x in TYPENAMES]
-CATEGORIES.append(BVTK_NodeCategory("debug", "debug", items=menu_items))
+CATEGORIES.append(BVTK_NodeCategory("Debug", "Debug", items=menu_items))

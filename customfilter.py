@@ -11,7 +11,7 @@ class BVTK_Node_CustomFilter(Node, BVTK_Node):
     is set as input of the node following custom filter.
     '''
     bl_idname = 'BVTK_Node_CustomFilterType'
-    bl_label = 'CustomFilter'
+    bl_label = 'Custom Filter'
 
     def texts(self, context):
         '''Generate list of text objects to choose'''
