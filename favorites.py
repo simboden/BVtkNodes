@@ -10,12 +10,11 @@ favorites = favorites_data.favorites
 favorites_file = favorites_data.__file__
 
 
-class VTKFavoritesPanel(bpy.types.Panel):
-    '''VTK Favorites Panel'''
+class BVTK_PT_Favorites(bpy.types.Panel):
+    '''BVTK Favorites Panel'''
     bl_label = 'Favorites'
-    bl_idname = 'vtk_favorites'
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'  # 'UI'
+    bl_region_type = 'TOOLS'
     bl_category = 'favorites'
 
     @classmethod
@@ -28,14 +27,14 @@ class VTKFavoritesPanel(bpy.types.Panel):
         layout = self.layout
         # Button to add active node to favorites
         if active_node:
-            add = layout.operator('vtk.update_favorites', icon='ZOOMIN', text=active_node.bl_label)
+            add = layout.operator('node.bvtk_update_favorites', icon='ZOOMIN', text=active_node.bl_label)
             add.label = active_node.bl_label
             add.type = active_node.bl_idname
             layout.separator()
-        # Favotires buttons
+        # Favorites buttons
         for f in favorites:
             row = layout.row(align=True)
-            remove = row.operator('vtk.update_favorites', icon='PANEL_CLOSE', text='')
+            remove = row.operator('node.bvtk_update_favorites', icon='PANEL_CLOSE', text='')
             remove.label = f[1]
             remove.type = f[0]
             remove.remove = True
@@ -44,9 +43,9 @@ class VTKFavoritesPanel(bpy.types.Panel):
             op.use_transform = True
 
 
-class VTKUpdateFavorites(bpy.types.Operator):
+class BVTK_OT_UpdateFavorites(bpy.types.Operator):
     '''Update favorites operator'''
-    bl_idname = 'vtk.update_favorites'
+    bl_idname = 'node.bvtk_update_favorites'
     bl_label = 'add/remove favorites'
 
     remove = bpy.props.BoolProperty(default=False)
@@ -69,5 +68,5 @@ class VTKUpdateFavorites(bpy.types.Operator):
         return {'FINISHED'}
 
 
-add_ui_class(VTKFavoritesPanel)
-add_ui_class(VTKUpdateFavorites)
+add_ui_class(BVTK_PT_Favorites)
+add_ui_class(BVTK_OT_UpdateFavorites)

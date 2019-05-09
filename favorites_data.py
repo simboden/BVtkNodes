@@ -1,5 +1,5 @@
 favorites = [('VTK2BlenderType', 'ToBlender'),
- ('VTKInfoNodeType', 'Info'),
+ ('BVTK_Node_InfoType', 'Info'),
  ('VTKConeSourceType', 'vtkConeSource'),
  ('VTKClipPolyDataType', 'vtkClipPolyData'),
  ('BVTK_Node_ColorMapperType', 'Color Mapper'),
