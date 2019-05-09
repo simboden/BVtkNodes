@@ -6,12 +6,13 @@ from .core import *
 # Dubug panel and node documentation panel (information about
 # active node's vtk object)
 # -----------------------------------------------------------------------------
-class VTKInspectPanel(bpy.types.Panel):
-    '''Print information about active node's vtk object'''
+class BVTK_PT_Inspect(bpy.types.Panel):
+    '''Panel for operators which printing information about active node's
+    VTK object
+    '''
     bl_label = 'Inspect'
-    bl_idname = 'vtk_utilities_debug'
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'  # 'UI'
+    bl_region_type = 'TOOLS'
     bl_category = 'inspect'
 
     @classmethod
@@ -23,17 +24,17 @@ class VTKInspectPanel(bpy.types.Panel):
         layout = self.layout
         layout.label('VTK version: ' + vtk.vtkVersion().GetVTKVersion())
         vtkobj = active_node.get_vtkobj()
-        layout.operator('vtk.update_obj', text='Update Object')
+        layout.operator('node.bvtk_update_obj', text='Update Object')
         if vtkobj:
             column = layout.column(align=True)
-            o = column.operator('vtk.set_text_editor', text='Documentation')
+            o = column.operator('node.bvtk_set_text_editor', text='Documentation')
             o.print = 0
-            o = column.operator('vtk.set_text_editor', text='Node Status')
+            o = column.operator('node.bvtk_set_text_editor', text='Node Status')
             o.print = 1
-            o = column.operator('vtk.set_text_editor', text='Output Status')
+            o = column.operator('node.bvtk_set_text_editor', text='Output Status')
             o.print = 2
             o = column.operator(
-                'vtk.open_website', text=' Online Documentation', icon='WORLD')
+                'node.bvtk_open_website', text=' Online Documentation', icon='WORLD')
             o.href = 'https://www.vtk.org/doc/nightly/html/class{}.html'.format(active_node.bl_label)
         else:
             layout.label('Not a VTK node')
@@ -41,9 +42,8 @@ class VTKInspectPanel(bpy.types.Panel):
 # -----------------------------------------------------------------------------
 # Add button to console header
 # -----------------------------------------------------------------------------
-class VTKConsoleHeader(bpy.types.Header):
-    '''VTK Console Header Buttons'''
-    bl_idname = 'vtk_console_header'
+class BVTK_ConsoleHeader(bpy.types.Header):
+    '''BVTK Header Buttons in Python Console'''
     bl_space_type = 'CONSOLE'
 
     def draw(self, context):
@@ -68,10 +68,10 @@ class VTKConsoleHeader(bpy.types.Header):
 # -----------------------------------------------------------------------------
 # Operators
 # -----------------------------------------------------------------------------
-class VTKSetTextEditor(bpy.types.Operator):
+class BVTK_OT_SetTextEditor(bpy.types.Operator):
     '''Add node info to the text editor'''
-    bl_idname = "vtk.set_text_editor"
-    bl_label = "Print info in the text editor"
+    bl_idname = "node.bvtk_set_text_editor"
+    bl_label = "Print info (BVTK in text editor)"
 
     # 0 to print doc, 1 to print node status, 2 to print outputs status
     print = bpy.props.IntProperty(default=0)
@@ -126,9 +126,9 @@ class VTKSetTextEditor(bpy.types.Operator):
         return s
 
 
-class VTKOpenWebsite(bpy.types.Operator):
+class BVTK_OT_OpenWebsite(bpy.types.Operator):
     '''Open web site in web browser'''
-    bl_idname = 'vtk.open_website'
+    bl_idname = 'node.bvtk_open_website'
     bl_label = ''
 
     href = bpy.props.StringProperty()
@@ -139,9 +139,9 @@ class VTKOpenWebsite(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class VTKUpdateObj(bpy.types.Operator):
-    '''Run update of this VTK Object'''
-    bl_idname = "vtk.update_obj"
+class BVTK_OT_UpdateObj(bpy.types.Operator):
+    '''Run update of this node's VTK Object'''
+    bl_idname = "node.bvtk_update_obj"
     bl_label = "call update()"
 
     prop = bpy.props.StringProperty()
@@ -158,10 +158,10 @@ class VTKUpdateObj(bpy.types.Operator):
         return {'FINISHED'}
 
 # Register classes
-add_ui_class(VTKSetTextEditor)
-add_ui_class(VTKOpenWebsite)
-add_ui_class(VTKConsoleHeader)
-add_ui_class(VTKUpdateObj)
-add_ui_class(VTKInspectPanel)
+add_ui_class(BVTK_PT_Inspect)
+add_ui_class(BVTK_ConsoleHeader)
+add_ui_class(BVTK_OT_SetTextEditor)
+add_ui_class(BVTK_OT_OpenWebsite)
+add_ui_class(BVTK_OT_UpdateObj)
 
 
