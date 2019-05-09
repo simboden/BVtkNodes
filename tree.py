@@ -10,22 +10,20 @@ import os
 # Node tree JSON import/export, node arranging operator and node tree examples
 # -----------------------------------------------------------------------------
 
-examples_dir = os.path.realpath(__file__).replace('examples.py', 'examples/')
-examples_data_dir = os.path.realpath(__file__).replace('examples.py', 'examples_data/')
+examples_dir = os.path.realpath(__file__).replace('tree.py', 'examples/')
+examples_data_dir = os.path.realpath(__file__).replace('tree.py', 'examples_data/')
 
 # -----------------------------------------------------------------------------
 # Functions to save node state into a dictionary
 # -----------------------------------------------------------------------------
 
 
-class IEPanel(bpy.types.Panel):
+class BVTK_PT_Tree_IE(bpy.types.Panel):
     '''Import and export VTK node tree as json'''
-    bl_label = 'Import export'
-    bl_idname = 'vtk_utilities_importexport'
+    bl_label = 'Import/Export'
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
-    bl_category = 'examples'
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_category = 'tree'
 
     @classmethod
     def poll(cls, context):
@@ -37,22 +35,20 @@ class IEPanel(bpy.types.Panel):
         scene = context.scene
 
         row = layout.row()
-        row.operator('vtk_node_tree.export', text='Save as json', icon='FILE_TEXT')
+        row.operator('node.bvtk_node_tree_export', text='Save as json', icon='FILE_TEXT')
 
         row = layout.row()
-        row.operator('vtk_node_tree.import', text='Import from json', icon='FILESEL')
+        row.operator('node.bvtk_node_tree_import', text='Import from json', icon='FILESEL')
 
-core.add_ui_class(IEPanel)
+core.add_ui_class(BVTK_PT_Tree_IE)
 
 
-class ArrangePanel(bpy.types.Panel):
+class BVTK_PT_Tree_Arrange(bpy.types.Panel):
     '''Arrange nodes in node tree'''
-    bl_label = 'Arrange tree'
-    bl_idname = 'vtk_utilities_arrangetree'
+    bl_label = 'Arrange Tree'
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
-    bl_category = 'examples'
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_category = 'tree'
 
     @classmethod
     def poll(cls, context):
@@ -64,26 +60,25 @@ class ArrangePanel(bpy.types.Panel):
         scene = context.scene
 
         col = layout.column(align=True)
-        op = col.operator('vtk.arrange_tree', text='arrange', icon='NODETREE')
-        col.prop(scene, 'vtk_arrange_x_spacing', text='x spacing')
-        col.prop(scene, 'vtk_arrange_y_spacing', text='y spacing')
+        op = col.operator('node.bvtk_arrange_tree', text='arrange', icon='NODETREE')
+        col.prop(scene, 'bvtk_arrange_x_spacing', text='x spacing')
+        col.prop(scene, 'bvtk_arrange_y_spacing', text='y spacing')
 
 def arrange(scene, context):
-    bpy.ops.vtk.arrange_tree()
+    bpy.ops.node.bvtk_arrange_tree()
 
-bpy.types.Scene.vtk_arrange_x_spacing = bpy.props.IntProperty(default=10, update=arrange)
-bpy.types.Scene.vtk_arrange_y_spacing = bpy.props.IntProperty(default=10, update=arrange)
+bpy.types.Scene.bvtk_arrange_x_spacing = bpy.props.IntProperty(default=10, update=arrange)
+bpy.types.Scene.bvtk_arrange_y_spacing = bpy.props.IntProperty(default=10, update=arrange)
 
-core.add_ui_class(ArrangePanel)
+core.add_ui_class(BVTK_PT_Tree_Arrange)
 
 
-class ExamplesPanel(bpy.types.Panel):
+class BVTK_PT_Tree_Examples(bpy.types.Panel):
     '''Examples Panel'''
     bl_label = 'Examples'
-    bl_idname = 'vtk_utilities_examples'
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
-    bl_category = 'examples'
+    bl_category = 'tree'
 
     @classmethod
     def poll(cls, context):
@@ -93,26 +88,27 @@ class ExamplesPanel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         row = layout.row()
-        layout.menu('ExamplesMenu')
+        layout.menu('BVTK_MT_Tree_Examples')
 
-core.add_ui_class(ExamplesPanel)
+core.add_ui_class(BVTK_PT_Tree_Examples)
 
 
-class ExamplesMenu(bpy.types.Menu):
+class BVTK_MT_Tree_Examples(bpy.types.Menu):
     '''Examples Menu'''
     bl_label = "Examples"
-    bl_idname = 'ExamplesMenu'
 
     def draw(self, context):
         layout = self.layout
         for i in os.listdir(examples_dir):
             if i.endswith('.json'):
-                layout.operator('vtk_node_tree.import', text=i.replace('.json', '')).filepath = examples_dir + i
+                layout.operator('node.bvtk_node_tree_import', \
+                                text = i.replace('.json', '') \
+                ).filepath = examples_dir + i
 
         for em in ExamplesMenus:
             layout.menu(em.bl_idname)
 
-core.add_ui_class(ExamplesMenu)
+core.add_ui_class(BVTK_MT_Tree_Examples)
 
 
 
@@ -124,13 +120,12 @@ for name in [name for name in os.listdir(examples_dir) \
         layout = self.layout
         for i in os.listdir(self.filepath):
             if i.endswith('.json'):
-                layout.operator('vtk_node_tree.import', \
+                layout.operator('node.bvtk_node_tree_import', \
                                 text=i.replace('.json', '')).filepath = \
                                 os.path.join(self.filepath, i)
 
-    menu_type = type("ExamplesCategory_" + name, (bpy.types.Menu,), {
+    menu_type = type("BVTK_TreeExamplesCategory_" + name, (bpy.types.Menu,), {
         "bl_label": name,
-        "bl_idname": "ExamplesCategory_" + name,
         "draw": menu_draw,
         "filepath": os.path.join(examples_dir, name)
     })
@@ -274,9 +269,9 @@ def node_to_dict(node):
 # -----------------------------------------------------------------------------
 
 
-class ImportVtkNodeTree(bpy.types.Operator):
+class BVTK_OT_Tree_Import(bpy.types.Operator):
     '''Import VTK Node Tree'''
-    bl_idname = "vtk_node_tree.import"
+    bl_idname = "node.bvtk_node_tree_import"
     bl_label = "choose file"
 
     filepath = bpy.props.StringProperty(subtype='FILE_PATH', default='')
@@ -319,12 +314,12 @@ class ImportVtkNodeTree(bpy.types.Operator):
         self.filepath = ''
         return {'FINISHED'}
 
-core.add_ui_class(ImportVtkNodeTree)
+core.add_ui_class(BVTK_OT_Tree_Import)
 
 
-class ExportVtkNodeTree(bpy.types.Operator, ExportHelper):
+class BVTK_OT_Tree_Export(bpy.types.Operator, ExportHelper):
     '''Save VTK node tree into a json file'''
-    bl_idname = "vtk_node_tree.export"
+    bl_idname = "node.bvtk_node_tree_export"
     bl_label = "Export Vtk Node Tree"
     filename_ext = ".json"
 
@@ -340,12 +335,15 @@ class ExportVtkNodeTree(bpy.types.Operator, ExportHelper):
         f.close()
         return {'FINISHED'}
 
-core.add_ui_class(ExportVtkNodeTree)
+core.add_ui_class(BVTK_OT_Tree_Export)
 
 
-class ImportVtkNodeTreeFromPy(bpy.types.Operator):
+class BVTK_OT_Tree_ImportFromPy(bpy.types.Operator):
     '''Import VTK node tree from Python file'''
-    bl_idname = "vtk_node_tree.import_py"
+    # Note: This class and node_tree_from_py are currently not used.
+    # This was an attempt to generate node tree from VTK examples.
+    # TODO: Continue attempt at some point? It's a nice idea.
+    bl_idname = "node.bvtk_node_tree_import_py"
     bl_label = "choose file"
 
     filepath = bpy.props.StringProperty(subtype='FILE_PATH', default='')
@@ -493,7 +491,7 @@ def arrange_height(node, x_spacing, y_spacing, initial_y=0, initial_x=0):
     return total_height
 
 
-class NodeBlock:
+class BVTK_NodeBlock:
     '''Node block used for arranging nodes'''
     def __init__(self, node_start):
         self.nodes = []
@@ -512,10 +510,10 @@ class NodeBlock:
                     self.add_from(link.from_node)
 
 
-class VTKArrangeTree(bpy.types.Operator):
+class BVTK_OT_Tree_Arrange(bpy.types.Operator):
     '''VTK Arrange Tree operator'''
-    bl_idname = "vtk.arrange_tree"
-    bl_label = "arrange_tree"
+    bl_idname = "node.bvtk_arrange_tree"
+    bl_label = "Arrange"
 
     def has_input(self, node):
         '''true if node has at least one input linked'''
@@ -527,8 +525,8 @@ class VTKArrangeTree(bpy.types.Operator):
     def execute(self, context):
         tree = context.space_data.node_tree
         node_blocks = []   # nodes with no connections in input
-        x_spacing = context.scene.vtk_arrange_x_spacing
-        y_spacing = context.scene.vtk_arrange_y_spacing
+        x_spacing = context.scene.bvtk_arrange_x_spacing
+        y_spacing = context.scene.bvtk_arrange_y_spacing
         i = 0
         for node in tree.nodes:
             if not self.has_input(node):
@@ -537,11 +535,11 @@ class VTKArrangeTree(bpy.types.Operator):
                     if node in nb.nodes:
                         flag = False
                         break
-                if flag: node_blocks.append(NodeBlock(node))
+                if flag: node_blocks.append(BVTK_NodeBlock(node))
         h = 0
         for nb in node_blocks:
             h -= arrange_height(nb.start, x_spacing, y_spacing, h)
         return {'FINISHED'}
 
 
-core.add_ui_class(VTKArrangeTree)
+core.add_ui_class(BVTK_OT_Tree_Arrange)
