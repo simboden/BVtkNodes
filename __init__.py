@@ -74,6 +74,7 @@ from . import VTKSources
 from . import VTKReaders
 from . import VTKWriters
 from . import VTKFilters
+
 from . import VTKOthers
 
 if need_reloading:
@@ -110,6 +111,7 @@ if need_reloading:
     importlib.reload(gen_VTKImplicitFunc)
     importlib.reload(gen_VTKParametricFunc)
     importlib.reload(gen_VTKIntegrator)
+
     importlib.reload(VTKOthers)
 
 @persistent
