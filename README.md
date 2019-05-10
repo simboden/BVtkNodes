@@ -12,7 +12,7 @@ BVTKNodes provides Blender users access to data readers for many
 scientific data formats, along with capability to convert VTK data
 into a Blender mesh. For VTK users, the add-on provides access to high
 quality rendering and many kind of mesh editing tools. The add-on was
-[presented at Blender Conference 2018](https://www.youtube.com/watch?v=KcF4LBTTyvk)
+[presented at Blender Conference 2018](https://www.youtube.com/watch?v=KcF4LBTTyvk).
 
 <p align="center">
 <img src="isosurfaces.jpg">
@@ -20,14 +20,7 @@ quality rendering and many kind of mesh editing tools. The add-on was
 
 ### Information
 
-**Note:** This repository is being updated, information may be partially out of date.
-
-**Warning:** On-going code changes may result in incompatibility of
-  previously saved files due to class name changes! I will remove this
-  warning when renaming is complete.
-
-- **Tested version**: Blender version 2.79b
-  and VTK library version 8.2.0.
+- **Tested version**: Blender version 2.79b and VTK library version 8.2.0.
 - **License**: [GPL v3](http://www.gnu.org/licenses/quick-guide-gplv3.html)
 - **Contributors**: Silvano Imboden (s.imboden@cineca.it), Lorenzo Celli,
   Paul McManus, Tuomo Keskitalo
@@ -36,7 +29,7 @@ quality rendering and many kind of mesh editing tools. The add-on was
 
 BVTKNodes add-on requires VTK version 8.2.0 and VTK python wrappers
 compatible with the python version used in Blender.
-Another VTK version (>7) may be alternatively used, if generated class
+Another VTK version (7 or later) may be alternatively used, if generated class
 definitions (gen_VTK*.py files) are also updated (by running
 populate_db.py and generate.py. Warning: Modifications may be
 required).
