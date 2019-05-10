@@ -18,9 +18,8 @@ import bpy
 from bpy.types import NodeTree, Node, NodeSocket
 from nodeitems_utils import NodeCategory, NodeItem
 import os
-
 import vtk
-   
+
 from . import b_properties # Boolean properties
 b_path = b_properties.__file__ # Boolean properties config file path
 from .update import *

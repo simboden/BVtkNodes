@@ -18,15 +18,10 @@ bl_info = {
     "category": "Node",
     }
 
-# tkeskita OPEN ISSUES
-# - generate/vtk_info_modified.py is not used, can it be deleted?
-#
-# tkeskita TODO list:
-# - replace all prints with Python logging
+# OPEN ISSUES
+# - generate/vtk_info_modified.py is not used, should it be deleted?
 
-from .core import l # Import logging
-
-# Import VTK Python module
+# Import VTK Python module or exit immediately
 try:
     import vtk
 except:
@@ -43,9 +38,9 @@ except:
     to use the compiled Python library before starting Blender.
     Please refer to BVTKNodes documentation for help.
     '''
-    l.error(message)
     raise Exception(message)
 
+from .core import l # Import logging
 l.info("Loaded VTK version: " + vtk.vtkVersion().GetVTKVersion())
 l.info("VTK base path: " + vtk.__file__)
 
