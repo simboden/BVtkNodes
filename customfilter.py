@@ -1,3 +1,4 @@
+from .core import l # Import logging
 from .core import *
 
 # -----------------------------------------------------------------------------
@@ -74,17 +75,17 @@ class BVTK_Node_CustomFilter(Node, BVTK_Node):
             try:
                 exec(t, globals(), locals())
             except Exception as e:
-                print('BVTK_Node_CustomFilter - error while parsing user defined text:',
+                l.error('error while parsing user defined text: ' + \
                       str(e).replace('<string>', self.text))
                 return self.get_input_node('input')[1]
             if self.func not in locals():
-                print('BVTK_Node_CustomFilter - function not found')
+                l.error('function not found')
             else:
                 try:
                     user_output = eval(self.func+'(input_objects)')
                     return user_output
                 except Exception as e:
-                    print('BVTK_Node_CustomFilter - error while executing user defined function:',str(e))
+                    l.error('error while executing user defined function:' + str(e))
         return self.get_input_node('input')[1]
 
     def setup(self):

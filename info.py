@@ -1,4 +1,5 @@
-from  .core import *
+from .core import l # Import logging
+from .core import *
 
 class BVTK_Node_Info(Node, BVTK_Node):
     '''BVTK Info Node'''
@@ -12,7 +13,7 @@ class BVTK_Node_Info(Node, BVTK_Node):
         return (['input'],[],[],['output'])
 
     def update_cb(self):
-        print('tree updated')
+        l.debug('tree updated')
 
     def draw_buttons(self, context, layout):
         in_node, vtkobj = self.get_input_node('input')

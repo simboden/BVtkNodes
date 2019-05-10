@@ -15,13 +15,13 @@
         {
             "from_node_name": "vtkClipPolyData",
             "from_socket_identifier": "output 0",
-            "to_node_name": "ToBlender",
+            "to_node_name": "VTK To Blender",
             "to_socket_identifier": "input"
         },
         {
             "from_node_name": "vtkClipPolyData",
             "from_socket_identifier": "output 1",
-            "to_node_name": "ToBlender.001",
+            "to_node_name": "VTK To Blender.001",
             "to_socket_identifier": "input"
         }
     ],
@@ -66,7 +66,7 @@
             ],
             "m_Name": "mesh",
             "mute": false,
-            "name": "ToBlender",
+            "name": "VTK To Blender",
             "show_options": true,
             "show_preview": false,
             "smooth": false,
@@ -88,7 +88,7 @@
             ],
             "m_Name": "mesh2",
             "mute": false,
-            "name": "ToBlender.001",
+            "name": "VTK To Blender.001",
             "show_options": true,
             "show_preview": false,
             "smooth": false,

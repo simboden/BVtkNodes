@@ -1,3 +1,4 @@
+from .core import l # Import logging
 import bpy
 from mathutils import *
 from math import *
@@ -181,7 +182,7 @@ def node_from_dict(nodes, node_dict):
     '''Create a node using data from node dictionary'''
     idname = node_dict['bl_idname']
     if not hasattr(bpy.types, idname):
-        print('Node type not found:', idname)
+        l.error('Node type not found ' + idname)
     else:
         new_node = nodes.new(type=idname)
         for prop in node_dict:
@@ -253,7 +254,7 @@ def node_to_dict(node):
             attr = [i for i in attr]
         if 'FileName' in prop and issubclass(attr.__class__, str):
             attr = os.path.realpath(bpy.path.abspath(attr)).replace(examples_data_dir, '$/')
-        print(prop.ljust(20), classname.ljust(20), str(attr))
+        l.debug(prop.ljust(20) + classname.ljust(20) + str(attr))
         dict[prop] = attr
     if hasattr(node, 'export_properties'):
         ep = node.export_properties()
@@ -404,7 +405,7 @@ def node_tree_from_py(context, py):
                     vtkObjs[a[0]] = nodes.new(type)
                     linked.append(vtkObjs[a[0]])
                 else:
-                    print(a[1] + " can't be converted to node")
+                    l.error(a[1] + " can't be converted to node")
             elif '=' not in line and '.' in line:
                 if '.SetInputConnection' in line:
                     n1 = line.split('.SetInputConnection')[0]
@@ -415,7 +416,7 @@ def node_tree_from_py(context, py):
                             links.new(vtkObjs[n1].inputs[0], vtkObjs[n2].outputs[0])
                 elif '.Set' in line:
                     if line.count('(') > 1:
-                        print(line + ": I'm too stupid to handle more than 2 brackets")
+                        l.error(line + ": I'm too stupid to handle more than 2 brackets")
                     else:
                         n1 = line.split('.Set')[0]
                         if n1 in vtkObjs.keys():
@@ -427,13 +428,13 @@ def node_tree_from_py(context, py):
                                     if attr in obj.m_properties():
                                         setattr(obj, attr, val)
                                     else:
-                                        print(obj.bl_idname + ' got no attributes ' + attr + ' in this addon')
+                                        l.error(obj.bl_idname + ' got no attributes ' + attr + ' in this addon')
                                 else:
-                                    print(objname + ', missing corresponding node')
+                                    l.error(objname + ', missing corresponding node')
 
                             if 'To' in toSet:
                                 if toSet.count('To') > 1:
-                                    print('"To" is not handled yet')
+                                    l.error('"To" is not handled yet')
                                 else:
                                     set(n1, 'e_' + toSet.split('To')[0],
                                         toSet.split('To')[1].replace('(', '').replace(')', ''))
@@ -445,9 +446,9 @@ def node_tree_from_py(context, py):
                                 try:
                                     set(n1, 'm_' + toSet.split('(')[0], eval(toSet.split('(')[1].replace(')', '')))
                                 except:
-                                    print(toSet + ' argument not defined')
+                                    l.error(toSet + ' argument not defined')
                             else:
-                                print('This "Set" has not been interpreted: ' + line)
+                                l.error('This "Set" has not been interpreted: ' + line)
     for i in range(len(linked)):
         linked[i].location = (i * 300, 0)
 

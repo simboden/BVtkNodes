@@ -52,7 +52,7 @@ def node_created(node):
     if node.bl_label.startswith('vtk'):
         vtk_class = getattr(vtk, node.bl_label, None)
         if vtk_class is None:
-            print("BVTK_NodeData: - bad classname", node.bl_label ) 
+            l.error("bad classname " + node.bl_label)
             return
         VTKCache[node.node_id] = vtk_class() # make an instance of node.vtk_class
 
@@ -72,7 +72,7 @@ def node_created(node):
         #
         #         exec('bpy.types.'+node.bl_idname+'.'+m_property+'=bpy.props.'+prop[0].__name__+'('+s+' description='+repr(prop_doc)+')')
     
-    # print( "node_created", node.bl_label, node.node_id )
+    l.debug("node_created " + node.bl_label + " " + str(node.node_id))
 
 
 def node_deleted(node):
@@ -88,25 +88,25 @@ def node_deleted(node):
         # if obj: 
         #     obj.UnRegister(obj)  # vtkObjects have no Delete in Python -- maybe is not needed
         del VTKCache[node.node_id]
-    # print("node_deleted", node.bl_label, node.node_id)
+    l.debug("deleted " + node.bl_label + " " + str(node.node_id))
 
 
 def get_node(node_id):
     '''Get node corresponding to node_id.'''
     node = NodesMap.get(node_id)
     if node is None:
-        print("get_node - node not found, node_id=", node_id)
+        l.error("not found node_id " + node_id)
     return node
 
 
 def get_vtkobj(node):
     '''Get the VTK object associated to a node'''
     if node is None:
-        print("get_vtkobj - bad node")
+        l.error("bad node " + str(node))
         return None
 
     if not node.node_id in VTKCache:
-        # print("get_vtkobj - node_id not in cache", node.node_id)
+        l.debug("node_id not in cache " + str(node.node_id))
         return None
 
     return VTKCache[node.node_id]
@@ -115,7 +115,7 @@ def get_vtkobj(node):
 def init_cache():
     '''Initialize Node Cache'''
     global NodesMaxId, NodesMap, VTKCache  
-    print("init_cache")
+    l.debug("Initializing")
     NodesMaxId = 1
     NodesMap   = {}
     VTKCache   = {}
@@ -208,7 +208,7 @@ class BVTK_Node:
         if socketname == 'output 1':
             return vtkobj.GetOutputPort(1)
         else:
-            print('bad output link name:', '"' + socketname + '"')
+            l.error("bad output link name " + socketname)
             return None
         # TODO: handle output 2,3,....
 
@@ -404,35 +404,33 @@ CATEGORIES = []
 # -----------------------------------------------------------------------------
 
 def ls(o):
-    print('\n'.join(sorted(dir(o))))
+    l.debug('\n'.join(sorted(dir(o))))
 
 
 def print_cls(obj):
-    print( "------------------------------" )
-    print( "Class =",obj.__class__.__name__ )
-    print( "------------------------------" )
+    l.debug( "------------------------------" )
+    l.debug( "Class = " + obj.__class__.__name__ )
+    l.debug( "------------------------------" )
     for m in sorted(dir(obj)):
         if not m.startswith('__'):
             attr = getattr(obj,m)
             rep = str(attr)
             if len(rep) > 100:
                 rep = rep[:100] + '  [...]'
-            print (m.ljust(30),"=",rep )
+            l.debug (m.ljust(30) + "=" + rep)
 
 
 def print_nodes(): 
-    print( "########################")
-    print( "maxid = ", NodesMaxId )
+    l.debug("maxid = " + str(NodesMaxId))
     for nt in bpy.data.node_groups:
         if nt.bl_idname == "BVTK_NodeTreeType":
-            print( "## tree", nt.name)
+            l.debug( "tree " + nt.name)
             for n in nt.nodes:
                 if get_vtkobj(n) is None:
-                    x = "vtkObj:NO"
+                    x = ""
                 else:
-                    x = 'vtkobj:ok'
-                print( "##    node", n.node_id, n.name.ljust(30,'.'), x )
-    print( "########################")
+                    x = "VTK object"
+                l.debug("node " + n.node_id + n.name.ljust(30,' ') + x)
 
 
 # -----------------------------------------------------------------------------

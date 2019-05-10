@@ -1,4 +1,5 @@
 from .update import *
+from .core import l # Import logging
 from .core import *
 import bmesh
 
@@ -59,7 +60,7 @@ def vtkdata_to_blender(data, name, ramp=None, smooth=False):
     given color ramp and normal smoothing.
     '''
     if not data:
-        print('vtkdata_to_blender -- no data!')
+        l.error('no data!')
         return
     if issubclass(data.__class__, vtk.vtkImageData):
         imgdata_to_blender(data, name)
@@ -89,7 +90,7 @@ def vtkdata_to_blender(data, name, ramp=None, smooth=False):
         except:
             err += 1
     if err:
-        print('num err', err)
+        l.error('num err ' + str(err))
 
     # Set normals
     point_normals = data.GetPointData().GetNormals()
@@ -123,7 +124,7 @@ def vtkdata_to_blender(data, name, ramp=None, smooth=False):
 
     bm.to_mesh(me)  # store bmesh to mesh
 
-    print('vtkdata_to_blender -- ok!  -- num verts =', len(verts))
+    l.info('conversion successful, verts = ' + str(len(verts)))
 
     #if (autoCenter):
     #    bpy.data.objects[me.name].select = True
@@ -225,7 +226,7 @@ class BVTK_OT_AutoUpdateScan(bpy.types.Operator):
                     try:
                         no_queue_update(self.node, self.node.update_cb)
                     except Exception as e:
-                        print('ERROR UPDATING -- '+str(e))
+                        l.error('ERROR UPDATING ' + str(e))
             else:
                 self.cancel(context)
                 return {'CANCELLED'}
@@ -326,7 +327,7 @@ def face_unwrap(bm, data, array_index, vrange):
     if scalars is not None:
         min, max = vrange
         if max==min:
-            print("can't unwrap -- values are constant -- range(",min,",",max,")!")
+            l.error("can't unwrap -- values are constant -- range(" + str(min) + "," + str(max) + ")!")
             return bm
         uv_layer = bm.loops.layers.uv.verify()
         for face in bm.faces:
@@ -342,7 +343,7 @@ def point_unwrap(bm, data, array_index, vrange):
     if scalars is not None:
         min, max = vrange
         if max == min:
-            print("can't unwrap -- values are constant -- range(",min,",",max,")!")
+            l.error("can't unwrap -- values are constant -- range(" + str(min) + "," + str(max) + ")!")
             return bm
         uv_layer = bm.loops.layers.uv.verify()
         for face in bm.faces:
@@ -400,7 +401,7 @@ def create_lut(name, vrange, n_div, texture, b=0.5, h=5.5, x=5, y=0, z=0, fontsi
     # Calculate label interval
     min, max = vrange
     if min > max or h <= 0:
-        print('vrange maximum greater than minimum')
+        l.error('vrange maximum greater than minimum')
         return
     import math
     idealspace = (max-min)/(h)
@@ -462,10 +463,10 @@ def imgdata_to_blender(data, name):
         if prog != l_prog:
             l_prog = prog
             wm.progress_update(prog)
-            print('Converting to img: '+str(prog)+'%', end='\r'),
+            l.debug('Converting to img: ' + str(prog) + '%')
     img.pixels = p
     wm.progress_end()
-    print('imgdata_to_blender -- ok! -- num pixels = '+str(l))
+    l.info('Image data conversion succesful, num pixels = ' + str(l))
 
     # Create plane mesh with UVs to show the image
     spacing = data.GetSpacing()
@@ -495,7 +496,7 @@ def imgdata_to_blender(data, name):
 class BVTK_OT_NodeUpdate(bpy.types.Operator):
     '''Node Update Operator'''
     bl_idname = "node.bvtk_node_update"
-    bl_label = "update"
+    bl_label = "Update Node"
     node_path = bpy.props.StringProperty()
     use_queue = bpy.props.BoolProperty(default = True)
 
@@ -503,7 +504,7 @@ class BVTK_OT_NodeUpdate(bpy.types.Operator):
         check_cache()
         node = eval(self.node_path)
         if node:
-            print('Updating from: '+ node.name)
+            l.debug('Updating from node: '+ node.name)
             if self.use_queue:
                 Update(node, node.update_cb)
             else:
