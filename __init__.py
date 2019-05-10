@@ -5,8 +5,8 @@
 #---------------------------------------------------------------------------------
 
 bl_info = {
-    "name": "BVTK_Nodes, Blender VTK Nodes",
-    "author": "Silvano Imboden, Lorenzo Celli, Paul McManus",
+    "name": "BVTKNodes, Blender VTK Nodes",
+    "author": "Silvano Imboden, Lorenzo Celli, Paul McManus, Tuomo Keskitalo",
     "version": (0, 1),
     "blender": (2, 79,  0),
     "location": "Node Editor > Use Nodes > VTK > New NodeTree",
@@ -20,15 +20,22 @@ bl_info = {
 
 # tkeskita OPEN ISSUES
 # - generate/vtk_info_modified.py is not used, can it be deleted?
-# - does b_properties.py need to be updated for VTK 8.2.0?
-
+#
 # tkeskita TODO list:
-# - rename classes to conform to Blender 2.8 naming rules
 # - replace all prints with Python logging
 #
-# global replace command:
-# for f in `find . -type f -regex ".*\.py$"`; do sed -i 's/foo/bar/g' $f; done
-#
+
+# Set up logging of messages using Python logging
+# Logging is nicely explained in:
+# https://code.blender.org/2016/05/logging-from-python-code-in-blender/
+# To see debug messages, configure logging in file
+# $HOME/.config/blender/{version}/scripts/startup/setup_logging.py
+# add there something like:
+# import logging
+# logging.basicConfig(format='%(funcName)s: %(message)s', level=logging.DEBUG)
+import logging
+l = logging.getLogger(__name__)
+
 # Import VTK Python module
 try:
     import vtk
@@ -39,17 +46,18 @@ try:
     dir(vtk)
 except:
     message = '''
-    BVTK_Nodes add-on failed to access the VTK library. You must
+    BVTKNodes add-on failed to access the VTK library. You must
     compile and install Python library corresponding to the Python
     library version used by Blender, and then compile and install
     VTK on top of it. Finally you must customize environment variables
     to use the compiled Python library before starting Blender.
-    Please refer to BVTK_Nodes documentation for help.
+    Please refer to BVTKNodes documentation for help.
     '''
+    l.error(message)
     raise Exception(message)
 
-print("Loaded VTK version: " + vtk.vtkVersion().GetVTKVersion())
-print("VTK base path: " + vtk.__file__)
+l.info("Loaded VTK version: " + vtk.vtkVersion().GetVTKVersion())
+l.info("VTK base path: " + vtk.__file__)
 
 need_reloading = "bpy" in locals()
 
@@ -181,12 +189,12 @@ def register():
         try:
             bpy.utils.register_class(c)
         except:
-            print('error registering ', c)
+            l.critical('error registering ', c)
     for c in sorted(core.CLASSES.keys()):
         try:
             bpy.utils.register_class(core.CLASSES[c])
         except:
-            print('error registering ', c)
+            l.critical('error registering ', c)
     custom_register_node_categories()
 
 def unregister():
