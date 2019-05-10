@@ -209,7 +209,7 @@ def compare(dict1, dict2):
 class BVTK_OT_AutoUpdateScan(bpy.types.Operator):
     '''BVTK Auto Update Scan'''
     bl_idname = "node.bvtk_auto_update_scan"
-    bl_label = "auto update"
+    bl_label = "Auto Update"
     _timer = None
     node_name = bpy.props.StringProperty()
     tree_name = bpy.props.StringProperty()

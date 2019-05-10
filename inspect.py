@@ -57,11 +57,11 @@ class BVTK_ConsoleHeader(bpy.types.Header):
         if node_tree:
             self.layout.separator()
             row = self.layout.row(align=True)
-            o = row.operator("console.insert", text="Node")
+            o = row.operator("console.insert", text="Get Node")
             o.text = "x=bpy.data.node_groups['" + node_tree + "'].nodes.active"
-            o = row.operator("console.insert", text="VTK Object")
+            o = row.operator("console.insert", text="Get VTK Object")
             o.text = "x=bpy.data.node_groups['" + node_tree + "'].nodes.active.get_vtkobj()"
-            o = row.operator("console.insert", text="Node Output")
+            o = row.operator("console.insert", text="Get Node Output")
             o.text = "x=bpy.data.node_groups['" + node_tree + "'].nodes.active.get_vtkobj().GetOutput()"
 
 

@@ -20,7 +20,7 @@ examples_data_dir = os.path.realpath(__file__).replace('tree.py', 'examples_data
 
 class BVTK_PT_Tree_IE(bpy.types.Panel):
     '''Import and export VTK node tree as json'''
-    bl_label = 'Import/Export'
+    bl_label = 'Import/Export Tree'
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = 'tree'
@@ -35,10 +35,10 @@ class BVTK_PT_Tree_IE(bpy.types.Panel):
         scene = context.scene
 
         row = layout.row()
-        row.operator('node.bvtk_node_tree_export', text='Save as json', icon='FILE_TEXT')
+        row.operator('node.bvtk_node_tree_export', text='Export JSON', icon='FILE_TEXT')
 
         row = layout.row()
-        row.operator('node.bvtk_node_tree_import', text='Import from json', icon='FILESEL')
+        row.operator('node.bvtk_node_tree_import', text='Import JSON', icon='FILESEL')
 
 core.add_ui_class(BVTK_PT_Tree_IE)
 
@@ -60,7 +60,7 @@ class BVTK_PT_Tree_Arrange(bpy.types.Panel):
         scene = context.scene
 
         col = layout.column(align=True)
-        op = col.operator('node.bvtk_arrange_tree', text='arrange', icon='NODETREE')
+        op = col.operator('node.bvtk_arrange_tree', icon='NODETREE')
         col.prop(scene, 'bvtk_arrange_x_spacing', text='x spacing')
         col.prop(scene, 'bvtk_arrange_y_spacing', text='y spacing')
 
