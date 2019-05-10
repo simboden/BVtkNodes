@@ -1380,4 +1380,4 @@ TYPENAMES.append('VTKVoronoi2DType' )
 
 #--------------------------------------------------------------
 menu_items = [ NodeItem(x) for x in TYPENAMES ]
-CATEGORIES.append( BVTK_NodeCategory( 'filter', 'filter', items=menu_items) )
+CATEGORIES.append( BVTK_NodeCategory( 'Filter', 'Filter', items=menu_items) )

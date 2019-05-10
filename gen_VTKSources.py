@@ -1543,4 +1543,4 @@ TYPENAMES.append('VTKWindowToImageFilterType' )
 
 #--------------------------------------------------------------
 menu_items = [ NodeItem(x) for x in TYPENAMES ]
-CATEGORIES.append( BVTK_NodeCategory( 'source', 'source', items=menu_items) )
+CATEGORIES.append( BVTK_NodeCategory( 'Source', 'Source', items=menu_items) )

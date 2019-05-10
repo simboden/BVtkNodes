@@ -382,4 +382,4 @@ TYPENAMES.append('VTKSuperquadricType' )
 
 #--------------------------------------------------------------
 menu_items = [ NodeItem(x) for x in TYPENAMES ]
-CATEGORIES.append( BVTK_NodeCategory( 'implicitfunc', 'implicitfunc', items=menu_items) )
+CATEGORIES.append( BVTK_NodeCategory( 'ImplicitFunc', 'ImplicitFunc', items=menu_items) )

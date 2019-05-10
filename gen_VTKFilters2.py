@@ -1805,4 +1805,4 @@ TYPENAMES.append('VTKVolumeContourSpectrumFilterType' )
 
 #--------------------------------------------------------------
 menu_items = [ NodeItem(x) for x in TYPENAMES ]
-CATEGORIES.append( BVTK_NodeCategory( 'filter2', 'filter2', items=menu_items) )
+CATEGORIES.append( BVTK_NodeCategory( 'Filter2', 'Filter2', items=menu_items) )

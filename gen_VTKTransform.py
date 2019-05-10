@@ -273,4 +273,4 @@ TYPENAMES.append('VTKTransformType' )
 
 #--------------------------------------------------------------
 menu_items = [ NodeItem(x) for x in TYPENAMES ]
-CATEGORIES.append( BVTK_NodeCategory( 'transform', 'transform', items=menu_items) )
+CATEGORIES.append( BVTK_NodeCategory( 'Transform', 'Transform', items=menu_items) )

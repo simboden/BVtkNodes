@@ -1659,7 +1659,7 @@ class VTKEuclideanClusterExtraction(Node, BVTK_Node):
     
     m_ColorClusters      = bpy.props.BoolProperty       ( name='ColorClusters',      default=False )
     m_ScalarConnectivity = bpy.props.BoolProperty       ( name='ScalarConnectivity', default=False )
-    m_Radius             = bpy.props.FloatProperty      ( name='Radius',             default=1e+30 )
+    m_Radius             = bpy.props.FloatProperty      ( name='Radius',             default=0.0 )
     e_ExtractionMode     = bpy.props.EnumProperty       ( name='ExtractionMode',     default="LargestCluster", items=e_ExtractionMode_items )
     m_ClosestPoint       = bpy.props.FloatVectorProperty( name='ClosestPoint',       default=[0.0, 0.0, 0.0], size=3 )
     m_ScalarRange        = bpy.props.FloatVectorProperty( name='ScalarRange',        default=[0.0, 1.0], size=2 )
@@ -9228,4 +9228,4 @@ TYPENAMES.append('VTKYoungsMaterialInterfaceType' )
 
 #--------------------------------------------------------------
 menu_items = [ NodeItem(x) for x in TYPENAMES ]
-CATEGORIES.append( BVTK_NodeCategory( 'filter1', 'filter1', items=menu_items) )
+CATEGORIES.append( BVTK_NodeCategory( 'Filter1', 'Filter1', items=menu_items) )

@@ -2096,4 +2096,4 @@ TYPENAMES.append('VTKXMLUnstructuredGridWriterType' )
 
 #--------------------------------------------------------------
 menu_items = [ NodeItem(x) for x in TYPENAMES ]
-CATEGORIES.append( BVTK_NodeCategory( 'writer', 'writer', items=menu_items) )
+CATEGORIES.append( BVTK_NodeCategory( 'Writer', 'Writer', items=menu_items) )

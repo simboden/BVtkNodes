@@ -140,7 +140,7 @@ def generate(group):
     classes = get_classes(group)
 
     # Dictionary to hold final class data
-    DIC = { 'MENU':group.lower(),
+    DIC = { 'MENU':group,
             'CLASSES':[],
             'BASE':bases[group]
     }

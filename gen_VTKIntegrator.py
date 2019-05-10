@@ -57,4 +57,4 @@ TYPENAMES.append('VTKRungeKutta45Type' )
 
 #--------------------------------------------------------------
 menu_items = [ NodeItem(x) for x in TYPENAMES ]
-CATEGORIES.append( BVTK_NodeCategory( 'integrator', 'integrator', items=menu_items) )
+CATEGORIES.append( BVTK_NodeCategory( 'Integrator', 'Integrator', items=menu_items) )

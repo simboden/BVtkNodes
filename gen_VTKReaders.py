@@ -2611,7 +2611,7 @@ class VTKWindBladeReader(Node, BVTK_Node):
     bl_label  = 'vtkWindBladeReader'
     
     m_Filename  = bpy.props.StringProperty   ( name='Filename',  default="" )
-    m_SubExtent = bpy.props.IntVectorProperty( name='SubExtent', default=[0, 0, 1000000000, 32513, 0, 0], size=6 )
+    m_SubExtent = bpy.props.IntVectorProperty( name='SubExtent', default=[0, 0, -1000000000, 32583, 0, 0], size=6 )
     
     b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
     
@@ -3161,4 +3161,4 @@ TYPENAMES.append('VTKXYZMolReader2Type' )
 
 #--------------------------------------------------------------
 menu_items = [ NodeItem(x) for x in TYPENAMES ]
-CATEGORIES.append( BVTK_NodeCategory( 'reader', 'reader', items=menu_items) )
+CATEGORIES.append( BVTK_NodeCategory( 'Reader', 'Reader', items=menu_items) )
