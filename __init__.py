@@ -23,18 +23,8 @@ bl_info = {
 #
 # tkeskita TODO list:
 # - replace all prints with Python logging
-#
 
-# Set up logging of messages using Python logging
-# Logging is nicely explained in:
-# https://code.blender.org/2016/05/logging-from-python-code-in-blender/
-# To see debug messages, configure logging in file
-# $HOME/.config/blender/{version}/scripts/startup/setup_logging.py
-# add there something like:
-# import logging
-# logging.basicConfig(format='%(funcName)s: %(message)s', level=logging.DEBUG)
-import logging
-l = logging.getLogger(__name__)
+from .core import l # Import logging
 
 # Import VTK Python module
 try:

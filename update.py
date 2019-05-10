@@ -1,3 +1,4 @@
+from .core import l # Import logging
 import time
 import vtk
 import bpy
@@ -43,7 +44,7 @@ def Update(node, cb, x=True):
     Sets color of node to reflect node run status. Finally updates this
     node and queues argument function cb() if argument x is True.
     '''
-    #print('on_update')  # , node.name )
+    l.debug('on_update ' + node.name)
     if x:
         queue.add(log_check)
     ex_color = node.color.copy() # Current color
@@ -74,7 +75,7 @@ def no_queue_update(node, cb, x=True):
     Finally updates this node by calling argument cb() if argument x
     is True, and VTK Update function otherwise.
     '''
-    #print('on_update')  # , node.name )
+    l.debug('on_update ' + node.name)
     vtkobj = node.get_vtkobj()
     for input_node in node.input_nodes():
         no_queue_update(input_node, None, False)
@@ -118,9 +119,7 @@ class BVTK_FunctionsQueue:
             try:
                 f[0](*f[1])
             except Exception as e:
-                print('------- exception occurred -------')
-                print(e)
-                print('----------------------------------')
+                l.critical(e)
             self.executed.append(i)
             self.i += 1
 
