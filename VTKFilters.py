@@ -11,7 +11,7 @@ add_ui_class(ValueSettings)
 
 # -----------------------------------------------------------------------------
 
-class VTKContourHelper:
+class BVTK_ContourHelper:
     '''Base class for filters which use variable number of discrete
     data values for input, similar to vtkCountourFilter.
     '''
@@ -26,13 +26,13 @@ class VTKContourHelper:
                     prop = getattr(self, prop)
                     prop_path = node_prop_path(self, 'm_ContourValues')
                     row = layout.row()
-                    op = row.operator('vtk.update_collection', text='', icon='ZOOMIN')
+                    op = row.operator('node.bvtk_update_collection', text='', icon='ZOOMIN')
                     op.prop_path = prop_path
                     op.add = True
                     row.label('Contour values')
                     for i, item in enumerate(self.m_ContourValues):
                         row = layout.row(align=True)
-                        op = row.operator('vtk.update_collection', text='', icon='ZOOMOUT')
+                        op = row.operator('node.bvtk_update_collection', text='', icon='ZOOMOUT')
                         op.prop_path = prop_path
                         op.add = False
                         op.index = i
@@ -70,9 +70,30 @@ class VTKContourHelper:
                 item = self.m_ContourValues.add()
                 item.value = val
 
+
+class BVTK_OT_UpdateCollection(bpy.types.Operator):
+    '''Operator to update collection'''
+    bl_idname = "node.bvtk_update_collection"
+    bl_label = "Update"
+    index = bpy.props.IntProperty(default = 0)
+    value = bpy.props.FloatProperty()
+    prop_path = bpy.props.StringProperty()
+    add = bpy.props.BoolProperty(default=True)
+
+    def execute(self, context):
+        prop = eval(self.prop_path)
+        if self.add:
+            item = prop.add()
+            item.value = self.value
+        else:
+            prop.remove(self.index)
+        return {'FINISHED'}
+
+add_ui_class(BVTK_OT_UpdateCollection)
+
 # -----------------------------------------------------------------------------
 
-class VTKContourFilter(VTKContourHelper, Node, BVTK_Node):
+class VTKContourFilter(BVTK_ContourHelper, Node, BVTK_Node):
     '''Manually modified version of VTK Contour Filter'''
     bl_idname = 'VTKContourFilterType'
     bl_label = 'vtkContourFilter'
@@ -97,7 +118,7 @@ add_class(VTKContourFilter)
 
 # -----------------------------------------------------------------------------
 
-class VTKMarchingCubes(VTKContourHelper, Node, BVTK_Node):
+class VTKMarchingCubes(BVTK_ContourHelper, Node, BVTK_Node):
     '''Manually modified version of VTK Marching Cubes'''
     bl_idname = 'VTKMarchingCubesType'
     bl_label = 'vtkMarchingCubes'
@@ -117,28 +138,6 @@ class VTKMarchingCubes(VTKContourHelper, Node, BVTK_Node):
         return (['input'], ['output'], [], [])
 
 add_class(VTKMarchingCubes)
-
-# -----------------------------------------------------------------------------
-
-class UpdateCollection(bpy.types.Operator):
-    '''Operator to update collection'''
-    bl_idname = "vtk.update_collection"
-    bl_label = "update"
-    index = bpy.props.IntProperty(default = 0)
-    value = bpy.props.FloatProperty()
-    prop_path = bpy.props.StringProperty()
-    add = bpy.props.BoolProperty(default=True)
-
-    def execute(self, context):
-        prop = eval(self.prop_path)
-        if self.add:
-            item = prop.add()
-            item.value = self.value
-        else:
-            prop.remove(self.index)
-        return {'FINISHED'}
-
-add_ui_class(UpdateCollection)
 
 # -----------------------------------------------------------------------------
 
