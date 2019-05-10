@@ -330,7 +330,14 @@ class BVTK_Node:
         b_properties.b[self.bl_idname] = [v for v in value]
         bpy.ops.node.select_all(action='SELECT')
         bpy.ops.node.select_all(action='DESELECT')
-        open(b_path,'w').write('b='+str(b_properties.b).replace('],','],\n'))
+
+        # Write sorted b_properties.b dictionary
+        # Note: lambda function used to force sort on dictionary key
+        txt="b={"
+        for key, value in sorted(b_properties.b.items(), key=lambda s: str.lower(s[0])):
+            txt += " '" + key + "': " + str(value) + ",\n"
+        txt += "}\n"
+        open(b_path,'w').write(txt)
 
 
 # -----------------------------------------------------------------------------
