@@ -40,35 +40,7 @@ except:
     '''
     raise Exception(message)
 
-from .core import l # Import logging
-l.info("Loaded VTK version: " + vtk.vtkVersion().GetVTKVersion())
-l.info("VTK base path: " + vtk.__file__)
-
 need_reloading = "bpy" in locals()
-
-import bpy
-from   bpy.app.handlers import persistent
-import nodeitems_utils
-from   nodeitems_utils import NodeItem
-
-from . import core
-from . import b_properties
-from . import showhide_properties
-from . import inspect
-from . import favorites
-from . import tree
-from . import colormap
-from . import customfilter
-from . import info
-from . import update
-from . import converters
-
-from . import VTKSources
-from . import VTKReaders
-from . import VTKWriters
-from . import VTKFilters
-
-from . import VTKOthers
 
 if need_reloading:
     import importlib
@@ -106,6 +78,42 @@ if need_reloading:
     importlib.reload(gen_VTKIntegrator)
 
     importlib.reload(VTKOthers)
+
+else:
+    import bpy
+    from   bpy.app.handlers import persistent
+    import nodeitems_utils
+    from   nodeitems_utils import NodeItem
+
+    from . import core
+    from . import b_properties
+    from . import showhide_properties
+    from . import inspect
+    from . import favorites
+    from . import tree
+    from . import colormap
+    from . import customfilter
+    from . import info
+    from . import update
+    from . import converters
+
+    from . import VTKSources
+    from . import VTKReaders
+    from . import VTKWriters
+    from . import VTKFilters
+    
+    from . import VTKOthers
+
+from .core import l # Import logging
+
+if need_reloading:
+    l.debug("Reloaded modules")
+else:
+    l.debug("Initialized modules")
+
+l.info("Loaded VTK version: " + vtk.vtkVersion().GetVTKVersion())
+l.info("VTK base path: " + vtk.__file__)
+
 
 @persistent
 def on_file_loaded(scene):
@@ -174,12 +182,12 @@ def register():
         try:
             bpy.utils.register_class(c)
         except:
-            l.critical('error registering ', c)
+            l.critical('error registering ' + c)
     for c in sorted(core.CLASSES.keys()):
         try:
             bpy.utils.register_class(core.CLASSES[c])
         except:
-            l.critical('error registering ', c)
+            l.critical('error registering ' + c)
     custom_register_node_categories()
 
 def unregister():
