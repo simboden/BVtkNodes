@@ -42,7 +42,7 @@ class BVTK_PT_Inspect(bpy.types.Panel):
 # -----------------------------------------------------------------------------
 # Add button to console header
 # -----------------------------------------------------------------------------
-class BVTK_ConsoleHeader(bpy.types.Header):
+class BVTK_HT_Console(bpy.types.Header):
     '''BVTK Header Buttons in Python Console'''
     bl_space_type = 'CONSOLE'
 
@@ -159,7 +159,7 @@ class BVTK_OT_UpdateObj(bpy.types.Operator):
 
 # Register classes
 add_ui_class(BVTK_PT_Inspect)
-add_ui_class(BVTK_ConsoleHeader)
+add_ui_class(BVTK_HT_Console)
 add_ui_class(BVTK_OT_SetTextEditor)
 add_ui_class(BVTK_OT_OpenWebsite)
 add_ui_class(BVTK_OT_UpdateObj)
