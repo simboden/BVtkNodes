@@ -29,6 +29,20 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
     bl_idname = 'BVTK_Node_ColorMapperType'
     bl_label  = 'Color Mapper'
 
+    # Properties of ColorMapper
+    texture_type: bpy.props.EnumProperty(
+        name="texture type",
+        items=[('BLEND','BLEND','BLEND','TEXTURE_DATA',0),
+               ('IMAGE','IMAGE','IMAGE','FILE_IMAGE',1)],
+        default='BLEND'
+    )
+    default_texture: bpy.props.StringProperty(default="")
+    last_color_by: bpy.props.StringProperty(default='')
+    lut: bpy.props.BoolProperty(default=False) # Lookup table
+    height: bpy.props.FloatProperty(default=5.5)
+    max: bpy.props.FloatProperty(default=0)
+    min: bpy.props.FloatProperty(default=0)
+
     def array_change(self, context):
         '''Determine coloring by either point or cell data'''
         vtkobj = self.get_input_node('input')[1]
@@ -65,21 +79,9 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
             items.append(('', '', ''))
         return items
 
-    # Properties of ColorMapper
-    color_by = bpy.props.EnumProperty(items=color_arrays, name="color by", update=array_change)
-    texture_type = bpy.props.EnumProperty(
-        name="texture type",
-        items=[('BLEND','BLEND','BLEND','TEXTURE_DATA',0),
-               ('IMAGE','IMAGE','IMAGE','FILE_IMAGE',1)],
-        default='BLEND'
-    )
-    auto_range = bpy.props.BoolProperty(default=True, update=array_change)
-    default_texture = bpy.props.StringProperty(default="")
-    last_color_by = bpy.props.StringProperty(default='')
-    lut = bpy.props.BoolProperty(default=False) # Lookup table
-    height = bpy.props.FloatProperty(default=5.5)
-    max = bpy.props.FloatProperty(default=0)
-    min = bpy.props.FloatProperty(default=0)
+    # Must define these annotations here after function defs
+    color_by: bpy.props.EnumProperty(items=color_arrays, name="color by", update=array_change)
+    auto_range: bpy.props.BoolProperty(default=True, update=array_change)
 
     def m_properties(self):
         return ['color_by', 'texture_type', 'auto_range',
@@ -143,14 +145,13 @@ class BVTK_Node_ColorRamp(Node, BVTK_Node):
     bl_idname = 'BVTK_Node_ColorRampType'
     bl_label  = 'Color Ramp'
 
-    texture_type = bpy.props.EnumProperty(
+    texture_type: bpy.props.EnumProperty(
         name="texture type",
         items=[('BLEND','BLEND','BLEND','TEXTURE_DATA',0),
                ('IMAGE','IMAGE','IMAGE','FILE_IMAGE',1)],
         default='BLEND'
     )
-    my_texture = bpy.props.StringProperty()
-
+    my_texture: bpy.props.StringProperty()
 
     def m_properties(self):
         return []

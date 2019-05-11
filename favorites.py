@@ -48,9 +48,9 @@ class BVTK_OT_UpdateFavorites(bpy.types.Operator):
     bl_idname = 'node.bvtk_update_favorites'
     bl_label = 'add/remove favorites'
 
-    remove = bpy.props.BoolProperty(default=False)
-    label = bpy.props.StringProperty()
-    type = bpy.props.StringProperty()
+    remove: bpy.props.BoolProperty(default=False)
+    label: bpy.props.StringProperty()
+    type: bpy.props.StringProperty()
 
     def execute(self, context):
         global favorites

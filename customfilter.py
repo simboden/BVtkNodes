@@ -25,6 +25,7 @@ class BVTK_Node_CustomFilter(Node, BVTK_Node):
             t.append(('No texts found', 'No texts found', 'No texts found', 'TEXT', i))
         return t
 
+    text: bpy.props.EnumProperty(items=texts, name='text')
 
     def functions(self, context=None):
         '''Generate list of functions to choose'''
@@ -37,8 +38,7 @@ class BVTK_Node_CustomFilter(Node, BVTK_Node):
                     f.append((name, name, name))
         return f
 
-    text = bpy.props.EnumProperty(items=texts, name='text')
-    func = bpy.props.EnumProperty(items=functions, name='function')
+    func: bpy.props.EnumProperty(items=functions, name='function')
 
     def m_properties(self):
         return []
@@ -110,8 +110,8 @@ class BVTK_OT_NewText(bpy.types.Operator):
     bl_idname = 'node.bvtk_new_text'
     bl_label = 'Create a new text'
 
-    name = bpy.props.StringProperty(default='New text')
-    body = bpy.props.StringProperty()
+    name: bpy.props.StringProperty(default='New text')
+    body: bpy.props.StringProperty()
 
     def execute(self, context):
         text = bpy.data.texts.new(self.name)

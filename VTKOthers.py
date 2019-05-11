@@ -38,7 +38,8 @@ class BVTK_ImplicitFunction:
             return bpy.data.objects[self.object].draw_type == 'WIRE'
         return False
 
-    draw_wire = bpy.props.BoolProperty(set = set_wire, get = is_wire)
+    draw_wire: bpy.props.BoolProperty(set=set_wire, get=is_wire)
+
     # TODO: decipher and rewrite comment:
     # useful for not transparent objects,
     # set max draw type to wire. Set a variable
@@ -51,7 +52,7 @@ class BVTK_ImplicitFunction:
         if self.using_object:
             self.link_object()
 
-    using_object = bpy.props.BoolProperty(default=False, update=update_object)
+    using_object: bpy.props.BoolProperty(default=False, update=update_object)
 
     def link_object(self):
         '''Link object to node'''
@@ -101,7 +102,7 @@ class BVTK_ImplicitFunction:
 
 
 class BVTK_OT_LinkObject(bpy.types.Operator):
-    '''Operator to assign properties from linked object at 1 s interval.'''
+    '''Operator to assign properties from linked object at 1 s interval'''
 
     # Usage example: Connect a VTKPlane node with a plane object
     # or an empty. Sets m_Normal and m_Origin of the node
@@ -109,9 +110,10 @@ class BVTK_OT_LinkObject(bpy.types.Operator):
 
     bl_idname = "node.bvtk_link_object"
     bl_label = "Connect object and node"
+
     _timer = None
-    object_name = bpy.props.StringProperty()        # name of the object to connect
-    node_path = bpy.props.StringProperty()          # path of the node to connect
+    object_name: bpy.props.StringProperty()        # name of the object to connect
+    node_path: bpy.props.StringProperty()          # path of the node to connect
 
     def node_is_valid(self):
         '''return false if node has been deleted or link has been turned off'''
@@ -162,10 +164,12 @@ class VTKPlane(BVTK_ImplicitFunction, Node, BVTK_Node):
     bl_idname = 'VTKPlaneType'
     bl_label = 'vtkPlane'
 
-    m_Normal = bpy.props.FloatVectorProperty(name='Normal', default=[0.0, 0.0, 1.0], size=3)
-    m_Origin = bpy.props.FloatVectorProperty(name='Origin', default=[0.0, 0.0, 0.0], size=3)
+    m_Normal: bpy.props.FloatVectorProperty(name='Normal', default=[0.0, 0.0, 1.0], size=3)
+    m_Origin: bpy.props.FloatVectorProperty(name='Origin', default=[0.0, 0.0, 0.0], size=3)
 
-    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+
+    use_wire = True
 
     def m_properties(self):
         return ['m_Normal', 'm_Origin', ]
@@ -193,8 +197,7 @@ class VTKPlane(BVTK_ImplicitFunction, Node, BVTK_Node):
         useless_list[self.name] = items
         return items
 
-    object = bpy.props.EnumProperty(items=objects_list)
-    use_wire = True
+    object: bpy.props.EnumProperty(items=objects_list)
 
     def properties_from_obj(self, ob):
         mat = ob.matrix_world
@@ -219,10 +222,10 @@ class VTKSphere(BVTK_ImplicitFunction, Node, BVTK_Node):
     bl_idname = 'VTKSphereType'
     bl_label = 'vtkSphere'
 
-    m_Radius = bpy.props.FloatProperty(name='Radius', default=0.5)
-    m_Center = bpy.props.FloatVectorProperty(name='Center', default=[0.0, 0.0, 0.0], size=3)
+    m_Radius: bpy.props.FloatProperty(name='Radius', default=0.5)
+    m_Center: bpy.props.FloatVectorProperty(name='Center', default=[0.0, 0.0, 0.0], size=3)
 
-    b_properties = bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties(self):
         return ['m_Radius', 'm_Center', ]
@@ -247,7 +250,7 @@ class VTKSphere(BVTK_ImplicitFunction, Node, BVTK_Node):
         useless_list[self.name] = items
         return items
 
-    object = bpy.props.EnumProperty(items=objects_list)
+    object: bpy.props.EnumProperty(items=objects_list)
 
     def properties_from_obj(self, ob):
         self.m_Radius = ob.empty_draw_size*ob.scale[0]  # assuming scale x = y = z

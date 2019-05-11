@@ -74,7 +74,7 @@ class BVTK_OT_SetTextEditor(bpy.types.Operator):
     bl_label = "Print info (BVTK in text editor)"
 
     # 0 to print doc, 1 to print node status, 2 to print outputs status
-    print = bpy.props.IntProperty(default=0)
+    print: bpy.props.IntProperty(default=0)
 
     def execute(self, context):
         active_node = context.active_node
@@ -130,8 +130,8 @@ class BVTK_OT_OpenWebsite(bpy.types.Operator):
     '''Open web site in web browser'''
     bl_idname = 'node.bvtk_open_website'
     bl_label = ''
-
-    href = bpy.props.StringProperty()
+    
+    href: bpy.props.StringProperty()
 
     def execute(self, context):
         import webbrowser
@@ -144,7 +144,7 @@ class BVTK_OT_UpdateObj(bpy.types.Operator):
     bl_idname = "node.bvtk_update_obj"
     bl_label = "call update()"
 
-    prop = bpy.props.StringProperty()
+    prop: bpy.props.StringProperty()
 
     def execute(self, context):
         check_cache()

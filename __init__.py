@@ -182,12 +182,12 @@ def register():
         try:
             bpy.utils.register_class(c)
         except:
-            l.critical('error registering ' + c)
+            l.critical('error registering ' + str(c))
     for c in sorted(core.CLASSES.keys()):
         try:
             bpy.utils.register_class(core.CLASSES[c])
         except:
-            l.critical('error registering ' + c)
+            l.critical('error registering ' + str(c))
     custom_register_node_categories()
 
 def unregister():

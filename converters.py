@@ -12,6 +12,10 @@ class BVTK_Node_VTKToBlender(Node, BVTK_Node):
     bl_idname = 'BVTK_Node_VTKToBlenderType' # type name
     bl_label  = 'VTK To Blender'  # label for nice name display
 
+    m_Name: bpy.props.StringProperty(name='Name', default='mesh')
+    auto_center: bpy.props.BoolProperty(default=False)  # todo: delete this
+    smooth: bpy.props.BoolProperty(name='Smooth', default=False)
+
     def start_scan(self, context):
         if context:
             if self.auto_update:
@@ -19,10 +23,7 @@ class BVTK_Node_VTKToBlender(Node, BVTK_Node):
                     node_name=self.name,
                     tree_name=context.space_data.node_tree.name)
 
-    m_Name = bpy.props.StringProperty(name='Name', default='mesh')
-    auto_update = bpy.props.BoolProperty(default=False, update=start_scan)
-    auto_center = bpy.props.BoolProperty(default=False)  # todo: delete this
-    smooth = bpy.props.BoolProperty(name='Smooth', default=False)
+    auto_update: bpy.props.BoolProperty(default=False, update=start_scan)
 
     def m_properties(self):
         return ['m_Name', 'smooth', ]
@@ -211,9 +212,10 @@ class BVTK_OT_AutoUpdateScan(bpy.types.Operator):
     '''BVTK Auto Update Scan'''
     bl_idname = "node.bvtk_auto_update_scan"
     bl_label = "Auto Update"
+
     _timer = None
-    node_name = bpy.props.StringProperty()
-    tree_name = bpy.props.StringProperty()
+    node_name: bpy.props.StringProperty()
+    tree_name: bpy.props.StringProperty()
 
     def modal(self, context, event):
         if event.type == 'TIMER':
@@ -497,8 +499,9 @@ class BVTK_OT_NodeUpdate(bpy.types.Operator):
     '''Node Update Operator'''
     bl_idname = "node.bvtk_node_update"
     bl_label = "Update Node"
-    node_path = bpy.props.StringProperty()
-    use_queue = bpy.props.BoolProperty(default = True)
+
+    node_path: bpy.props.StringProperty()
+    use_queue: bpy.props.BoolProperty(default = True)
 
     def execute(self, context):
         check_cache()

@@ -275,9 +275,8 @@ class BVTK_OT_Tree_Import(bpy.types.Operator):
     bl_idname = "node.bvtk_node_tree_import"
     bl_label = "choose file"
 
-    filepath = bpy.props.StringProperty(subtype='FILE_PATH', default='')
-
-    confirm = bpy.props.BoolProperty(default=True)
+    filepath: bpy.props.StringProperty(subtype='FILE_PATH', default='')
+    confirm: bpy.props.BoolProperty(default=True)
 
     def invoke(self, context, event):
         node_tree = context.space_data.node_tree
@@ -322,7 +321,7 @@ class BVTK_OT_Tree_Export(bpy.types.Operator, ExportHelper):
     '''Save VTK node tree into a json file'''
     bl_idname = "node.bvtk_node_tree_export"
     bl_label = "Export Vtk Node Tree"
-    filename_ext = ".json"
+    # filename_ext = ".json"
 
     def execute(self, context):
         node_tree = context.space_data.node_tree
@@ -347,9 +346,8 @@ class BVTK_OT_Tree_ImportFromPy(bpy.types.Operator):
     bl_idname = "node.bvtk_node_tree_import_py"
     bl_label = "choose file"
 
-    filepath = bpy.props.StringProperty(subtype='FILE_PATH', default='')
-
-    confirm = bpy.props.BoolProperty(default=True)
+    filepath: bpy.props.StringProperty(subtype='FILE_PATH', default='')
+    confirm: bpy.props.BoolProperty(default=True)
 
     def invoke(self, context, event):
         node_tree = context.space_data.node_tree

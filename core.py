@@ -181,7 +181,8 @@ class BVTK_NodeSocket(NodeSocket):
 
 class BVTK_Node:
     '''Base class for VTK Nodes'''
-    node_id = bpy.props.IntProperty(default=0)
+
+    node_id: bpy.props.IntProperty(default=0)
 
     @classmethod
     def poll(cls, ntree):
@@ -347,7 +348,7 @@ class BVTK_OT_NodeWrite(bpy.types.Operator):
     bl_idname = "node.bvtk_node_write"
     bl_label = "Write"
 
-    id = bpy.props.IntProperty()
+    id: bpy.props.IntProperty()
 
     def execute(self, context):
         check_cache()
