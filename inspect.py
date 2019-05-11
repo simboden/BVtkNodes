@@ -130,7 +130,7 @@ class BVTK_OT_OpenWebsite(bpy.types.Operator):
     '''Open web site in web browser'''
     bl_idname = 'node.bvtk_open_website'
     bl_label = ''
-    
+
     href: bpy.props.StringProperty()
 
     def execute(self, context):

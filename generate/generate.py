@@ -118,8 +118,8 @@ class VTK{{C.NAME}}(Node, {{BASE}}):
     {% endfor %}
     {% for x in C.PROPS  %}{{x.decl}}
     {% endfor %}
-    b_properties = bpy.props.BoolVectorProperty(name="", size={{C.NP}}, get={{BASE}}.get_b, set={{BASE}}.set_b)
-    
+    b_properties: bpy.props.BoolVectorProperty(name="", size={{C.NP}}, get={{BASE}}.get_b, set={{BASE}}.set_b)
+
     def m_properties( self ):
         return [{% for x in C.PROPS %}'{{x.prefix}}{{x.name}}',{% endfor %}]
     def m_connections( self ):
@@ -187,7 +187,7 @@ def generate(group):
                 items_arg = ", subtype='FILE_PATH'"
 
             # Declaration row
-            P['decl'] = "{}{} = bpy.props.{}( name={} default={}{}{} )".format(
+            P['decl'] = "{}{}: bpy.props.{}( name={} default={}{}{} )".format(
                 prefix,
                 name.ljust(wn),
                 ptype.ljust(wp),
