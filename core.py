@@ -123,13 +123,11 @@ def init_cache():
 
 
 def check_cache():
-    '''Rebuild Node Cache. Called by all operators.
-    TODO: Check this description:
-    If an operator is called a button exist,
-    if at the same time NodesMaxId == 1.
-    This means that the Cache is out of sync (this happen after reloading addons).
-    We must rebuild the Cache, and the operator must be interrupted.
-    ( the next try will work )
+    '''Rebuild Node Cache. Called by all operators. Cache is out of sync
+    if an operator is called and at the same time NodesMaxId=1.
+    This happens after reloading addons. Cache is rebuilt, and the
+    operator must be interrupted, but the next operator call will work
+    OK.
     '''
     global NodesMaxId
 
@@ -353,7 +351,7 @@ class BVTK_OT_NodeWrite(bpy.types.Operator):
 
     def execute(self, context):
         check_cache()
-        node = get_node(self.id)  # TODO: change node_id to node_path
+        node = get_node(self.id)  # TODO: change node_id to node_path?
         if node:
             def cb():
                 node.get_vtkobj().Write()
