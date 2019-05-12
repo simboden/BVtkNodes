@@ -23,7 +23,7 @@ class BVTK_PT_Tree_IE(bpy.types.Panel):
     '''Import and export VTK node tree as json'''
     bl_label = 'Import/Export Tree'
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = 'tree'
 
     @classmethod
@@ -39,7 +39,7 @@ class BVTK_PT_Tree_IE(bpy.types.Panel):
         row.operator('node.bvtk_node_tree_export', text='Export JSON', icon='FILE_TEXT')
 
         row = layout.row()
-        row.operator('node.bvtk_node_tree_import', text='Import JSON', icon='FILESEL')
+        row.operator('node.bvtk_node_tree_import', text='Import JSON', icon='FILE')
 
 core.add_ui_class(BVTK_PT_Tree_IE)
 
@@ -48,7 +48,7 @@ class BVTK_PT_Tree_Arrange(bpy.types.Panel):
     '''Arrange nodes in node tree'''
     bl_label = 'Arrange Tree'
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = 'tree'
 
     @classmethod
@@ -78,7 +78,7 @@ class BVTK_PT_Tree_Examples(bpy.types.Panel):
     '''Examples Panel'''
     bl_label = 'Examples'
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = 'tree'
 
     @classmethod

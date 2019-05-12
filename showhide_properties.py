@@ -1,11 +1,11 @@
 from . import core
 import bpy
 
-class BVTK_PT_ShowHide_Properties_Panel(bpy.types.Panel):
+class BVTK_PT_ShowHide_Properties(bpy.types.Panel):
     '''BVTK Show/hide properties panel'''
     bl_label = 'Show/Hide Properties'
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = 'properties'
 
     @classmethod
@@ -28,4 +28,4 @@ class BVTK_PT_ShowHide_Properties_Panel(bpy.types.Panel):
                 row.label(prop_dict['attr'][2:]) # removing first chars 'm_'
 
 
-core.add_ui_class(BVTK_PT_ShowHide_Properties_Panel)
+core.add_ui_class(BVTK_PT_ShowHide_Properties)

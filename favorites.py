@@ -14,7 +14,7 @@ class BVTK_PT_Favorites(bpy.types.Panel):
     '''BVTK Favorites Panel'''
     bl_label = 'Favorites'
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = 'favorites'
 
     @classmethod
