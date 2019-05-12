@@ -49,7 +49,7 @@ class BVTK_Node_Info(Node, BVTK_Node):
                     r = arr.GetRange()
                     name = arr.GetName()
                     row = layout.row()
-                    row.label(k+':'+str(i)+': '+name+' max:'+str(r[0])+' min:'+str(r[1]))
+                    row.label(text=k+':'+str(i)+': '+name+' max:'+str(r[0])+' min:'+str(r[1]))
 
         layout.separator()
         row = layout.row()

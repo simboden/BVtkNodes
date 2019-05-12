@@ -119,7 +119,7 @@ class BVTK_FunctionsQueue:
             try:
                 f[0](*f[1])
             except Exception as e:
-                l.critical(e)
+                l.critical(str(e))
             self.executed.append(i)
             self.i += 1
 
