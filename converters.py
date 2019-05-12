@@ -246,7 +246,7 @@ class BVTK_OT_AutoUpdateScan(bpy.types.Operator):
         self.last_map = map(self.node)
         bpy.ops.node.bvtk_node_update(node_path=node_path(self.node))
         wm = context.window_manager
-        self._timer = wm.event_timer_add(0.01, context.window)
+        self._timer = wm.event_timer_add(0.01, window=context.window)
         wm.modal_handler_add(self)
         return {'RUNNING_MODAL'}
 

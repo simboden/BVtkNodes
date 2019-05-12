@@ -140,7 +140,7 @@ class BVTK_OT_LinkObject(bpy.types.Operator):
         self.object = bpy.data.objects[self.object_name]
         self.node = eval(self.node_path)
         wm = context.window_manager
-        self._timer = wm.event_timer_add(1, context.window)
+        self._timer = wm.event_timer_add(1, window=context.window)
         wm.modal_handler_add(self)
         return {'RUNNING_MODAL'}
 
