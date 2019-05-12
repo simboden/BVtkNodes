@@ -55,7 +55,7 @@ class BVTK_Node_CustomFilter(Node, BVTK_Node):
         if len(self.functions()):
             layout.prop(self, 'func')
         else:
-            layout.label('No functions found in specified text')
+            layout.label(text='No functions found in specified text')
 
     def apply_properties(self, vtkobj):
         pass

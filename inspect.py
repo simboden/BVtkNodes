@@ -22,7 +22,7 @@ class BVTK_PT_Inspect(bpy.types.Panel):
     def draw(self, context):
         active_node = context.active_node
         layout = self.layout
-        layout.label('VTK version: ' + vtk.vtkVersion().GetVTKVersion())
+        layout.label(text='VTK version: ' + vtk.vtkVersion().GetVTKVersion())
         vtkobj = active_node.get_vtkobj()
         layout.operator('node.bvtk_update_obj', text='Update Object')
         if vtkobj:
@@ -37,7 +37,7 @@ class BVTK_PT_Inspect(bpy.types.Panel):
                 'node.bvtk_open_website', text=' Online Documentation', icon='WORLD')
             o.href = 'https://www.vtk.org/doc/nightly/html/class{}.html'.format(active_node.bl_label)
         else:
-            layout.label('Not a VTK node')
+            layout.label(text='Not a VTK node')
 
 # -----------------------------------------------------------------------------
 # Add button to console header

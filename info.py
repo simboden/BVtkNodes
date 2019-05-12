@@ -18,23 +18,23 @@ class BVTK_Node_Info(Node, BVTK_Node):
     def draw_buttons(self, context, layout):
         in_node, vtkobj = self.get_input_node('input')
         if not in_node:
-            layout.label('Connect a node')
+            layout.label(text='Connect a node')
         elif not vtkobj:
-            layout.label('Input has not vtkobj (try updating)')
+            layout.label(text='Input has not vtkobj (try updating)')
         else:
             vtkobj = resolve_algorithm_output(vtkobj)
             if not vtkobj:
                 return
 
-            layout.label(vtkobj.__class__.__name__)
+            layout.label(text=vtkobj.__class__.__name__)
 
-            layout.label('num pts: ' + str(vtkobj.GetNumberOfPoints()))
+            layout.label(text='num pts: ' + str(vtkobj.GetNumberOfPoints()))
             if hasattr(vtkobj, 'GetNumberOfCells'):
-                layout.label('num cells: ' + str(vtkobj.GetNumberOfCells()))
+                layout.label(text='num cells: ' + str(vtkobj.GetNumberOfCells()))
             if hasattr(vtkobj, 'GetBounds'):
-                layout.label('x range: ' + str(vtkobj.GetBounds()[0])+' - '+str(vtkobj.GetBounds()[1]))
-                layout.label('y range: ' + str(vtkobj.GetBounds()[2])+' - '+str(vtkobj.GetBounds()[3]))
-                layout.label('z range: ' + str(vtkobj.GetBounds()[4])+' - '+str(vtkobj.GetBounds()[5]))
+                layout.label(text='x range: ' + str(vtkobj.GetBounds()[0])+' - '+str(vtkobj.GetBounds()[1]))
+                layout.label(text='y range: ' + str(vtkobj.GetBounds()[2])+' - '+str(vtkobj.GetBounds()[3]))
+                layout.label(text='z range: ' + str(vtkobj.GetBounds()[4])+' - '+str(vtkobj.GetBounds()[5]))
             data = {}
             if hasattr(vtkobj, 'GetPointData'):
                 data['Point data'] = vtkobj.GetPointData()

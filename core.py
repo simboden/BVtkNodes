@@ -168,8 +168,8 @@ class BVTK_NodeSocket(NodeSocket):
     bl_idname = 'BVTK_NodeSocketType'
     bl_label  = 'BVTK Node Socket'
     
-    def draw(self, context, layout, node, text):
-        layout.label(text)
+    def draw(self, context, layout, node, txt):
+        layout.label(text=txt)
 
     def draw_color(self, context, node):
         return (1.0, 0.4, 0.216, 0.5)

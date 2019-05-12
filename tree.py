@@ -287,7 +287,7 @@ class BVTK_OT_Tree_Import(bpy.types.Operator):
 
         if self.confirm and node_tree.nodes:
             def draw(self2, context):
-                self2.layout.label("This will erase current node tree")
+                self2.layout.label(text="This will erase current node tree")
                 self2.layout.operator_context = 'INVOKE_DEFAULT'
                 self2.layout.operator(self.bl_idname, text='Confirm').confirm=False
             bpy.context.window_manager.popup_menu(draw, title="Are you sure?", icon='QUESTION')
@@ -357,7 +357,7 @@ class BVTK_OT_Tree_ImportFromPy(bpy.types.Operator):
 
         if self.confirm and node_tree.nodes:
             def draw(self2, context):
-                self2.layout.label("This will erase current node tree")
+                self2.layout.label(text="This will erase current node tree")
                 self2.layout.operator_context = 'INVOKE_DEFAULT'
                 self2.layout.operator(self.bl_idname, text='Confirm').confirm=False
             bpy.context.window_manager.popup_menu(draw, title="Are you sure?", icon='QUESTION')

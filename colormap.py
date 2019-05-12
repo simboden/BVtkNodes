@@ -118,9 +118,9 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
     def draw_buttons(self, context, layout):
         in_node, vtkobj = self.get_input_node('input')
         if not in_node:
-            layout.label('Connect a node')
+            layout.label(text='Connect a node')
         elif not vtkobj:
-            layout.label('Input has not vtkobj (try updating)')
+            layout.label(text='Input has not vtkobj (try updating)')
         else:
             vtkobj = resolve_algorithm_output(vtkobj)
             if hasattr(vtkobj, 'GetPointData'):
@@ -136,7 +136,7 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
                 row.prop(self, 'max')
                 layout.separator()
             else:
-                layout.label('Input has no associated data (try updating)')
+                layout.label(text='Input has no associated data (try updating)')
 
 
 

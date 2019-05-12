@@ -27,7 +27,7 @@ class BVTK_PT_Favorites(bpy.types.Panel):
         layout = self.layout
         # Button to add active node to favorites
         if active_node:
-            add = layout.operator('node.bvtk_update_favorites', icon='ZOOMIN', text=active_node.bl_label)
+            add = layout.operator('node.bvtk_update_favorites', icon='ZOOM_IN', text=active_node.bl_label)
             add.label = active_node.bl_label
             add.type = active_node.bl_idname
             layout.separator()
