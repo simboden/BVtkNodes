@@ -1,0 +1,211 @@
+{
+    "links": [
+        {
+            "from_node_name": "vtkImageGaussianSmooth",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkContourFilter",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkContourFilter",
+            "from_socket_identifier": "output",
+            "to_node_name": "VTK To Blender",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkXMLImageDataReader",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkImageGaussianSmooth",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkImageGaussianSmooth",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkContourFilter.001",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkContourFilter.001",
+            "from_socket_identifier": "output",
+            "to_node_name": "VTK To Blender.001",
+            "to_socket_identifier": "input"
+        }
+    ],
+    "nodes": [
+        {
+            "additional_properties": {
+                "m_ContourValues": [
+                    66.0
+                ]
+            },
+            "bl_idname": "VTKContourFilterType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -240.0,
+                0.0
+            ],
+            "m_ArrayComponent": 0,
+            "m_ComputeGradients": true,
+            "m_ComputeNormals": true,
+            "m_ComputeScalars": true,
+            "m_GenerateTriangles": true,
+            "m_NumberOfContours": 1,
+            "mute": false,
+            "name": "vtkContourFilter",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTKXMLImageDataReaderType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -720.0,
+                0.0
+            ],
+            "m_FileName": "$/head.vti",
+            "m_ReadFromInputString": false,
+            "m_TimeStep": 0,
+            "m_TimeStepRange": [
+                0,
+                0
+            ],
+            "m_WholeSlices": true,
+            "mute": false,
+            "name": "vtkXMLImageDataReader",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTKImageGaussianSmoothType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "e_SplitMode": "Slab",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -480.0,
+                0.0
+            ],
+            "m_DesiredBytesPerPiece": 65536,
+            "m_Dimensionality": 3,
+            "m_EnableSMP": false,
+            "m_GlobalDefaultEnableSMP": false,
+            "m_MinimumPieceSize": [
+                16,
+                1,
+                1
+            ],
+            "m_NumberOfThreads": 4,
+            "m_RadiusFactors": [
+                1.2000000476837158,
+                1.2000000476837158,
+                1.2000000476837158
+            ],
+            "m_StandardDeviations": [
+                1.5,
+                1.5,
+                1.5
+            ],
+            "mute": false,
+            "name": "vtkImageGaussianSmooth",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "BVTK_Node_VTKToBlenderType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                0.0,
+                0.0
+            ],
+            "m_Name": "skel",
+            "mute": false,
+            "name": "VTK To Blender",
+            "show_options": true,
+            "show_preview": false,
+            "smooth": true,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "BVTK_Node_VTKToBlenderType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                0.0,
+                -180.0
+            ],
+            "m_Name": "skin",
+            "mute": false,
+            "name": "VTK To Blender.001",
+            "show_options": true,
+            "show_preview": false,
+            "smooth": true,
+            "width": 200.0
+        },
+        {
+            "additional_properties": {
+                "m_ContourValues": [
+                    20.0
+                ]
+            },
+            "bl_idname": "VTKContourFilterType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -240.0,
+                -180.0
+            ],
+            "m_ArrayComponent": 0,
+            "m_ComputeGradients": true,
+            "m_ComputeNormals": true,
+            "m_ComputeScalars": true,
+            "m_GenerateTriangles": true,
+            "m_NumberOfContours": 1,
+            "mute": false,
+            "name": "vtkContourFilter.001",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        }
+    ]
+}
