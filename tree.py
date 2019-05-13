@@ -181,22 +181,23 @@ def node_tree_from_dict(context, node_tree_dict):
 def node_from_dict(nodes, node_dict):
     '''Create a node using data from node dictionary'''
     idname = node_dict['bl_idname']
-    if not hasattr(bpy.types, idname):
-        l.error('Node type not found ' + idname)
-    else:
-        new_node = nodes.new(type=idname)
-        for prop in node_dict:
-            value = node_dict[prop]
-            if prop == 'additional_properties':
-                if hasattr(new_node, 'import_properties'):
-                    new_node.import_properties(value)
-            else:
-                if 'FileName' in prop and value.startswith('$/'):
-                    value = value.replace('$/', examples_data_dir)
-                try:
-                    setattr(new_node, prop, value)
-                except:
-                    pass
+    # Removed this check, hasattr does not find idname correctly. OK to remove?
+    #if not hasattr(bpy.types, idname):
+    #    l.error('Node type not found ' + idname)
+    #else:
+    new_node = nodes.new(type=idname)
+    for prop in node_dict:
+        value = node_dict[prop]
+        if prop == 'additional_properties':
+            if hasattr(new_node, 'import_properties'):
+                new_node.import_properties(value)
+        else:
+            if 'FileName' in prop and value.startswith('$/'):
+                value = value.replace('$/', examples_data_dir)
+            try:
+                setattr(new_node, prop, value)
+            except:
+                l.error("setattr failed for " + str(prop) + " " + str(value))
 
 def link_from_dict(nodes, links, new_link_dict):
     '''Create link between nodes using data from node dictionary'''
