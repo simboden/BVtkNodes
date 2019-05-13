@@ -452,14 +452,16 @@ def resolve_algorithm_output(vtkobj):
 
 def update_3d_view():
     '''Force update of 3D View'''
+    return # No need for this in Blender 2.8? Remove function when certain.
     screen = bpy.context.screen
     if(screen):
         for area in screen.areas:
             if area.type == 'VIEW_3D':
                 for space in area.spaces:
                     if space.type == 'VIEW_3D':
-                        # This updates viewport, not sure why
-                        space.viewport_shade = space.viewport_shade
+                        # This updates viewport in Blender 2.79, not sure why
+                        # space.viewport_shade = space.viewport_shade
+                        continue
 
 
 def node_path(node):
