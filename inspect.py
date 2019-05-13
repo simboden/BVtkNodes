@@ -13,7 +13,7 @@ class BVTK_PT_Inspect(bpy.types.Panel):
     bl_label = 'Inspect'
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
-    bl_category = 'inspect'
+    bl_category = 'Inspect'
 
     @classmethod
     def poll(cls, context):

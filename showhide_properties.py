@@ -7,7 +7,7 @@ class BVTK_PT_ShowHide_Properties(bpy.types.Panel):
     bl_label = 'Show/Hide Properties'
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
-    bl_category = 'properties'
+    bl_category = 'Properties'
 
     @classmethod
     def poll(cls, context):

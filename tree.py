@@ -24,7 +24,7 @@ class BVTK_PT_Tree_IE(bpy.types.Panel):
     bl_label = 'Import/Export Tree'
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
-    bl_category = 'tree'
+    bl_category = 'Tree'
 
     @classmethod
     def poll(cls, context):
@@ -49,7 +49,7 @@ class BVTK_PT_Tree_Arrange(bpy.types.Panel):
     bl_label = 'Arrange Tree'
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
-    bl_category = 'tree'
+    bl_category = 'Tree'
 
     @classmethod
     def poll(cls, context):
@@ -79,7 +79,7 @@ class BVTK_PT_Tree_Examples(bpy.types.Panel):
     bl_label = 'Examples'
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
-    bl_category = 'tree'
+    bl_category = 'Tree'
 
     @classmethod
     def poll(cls, context):

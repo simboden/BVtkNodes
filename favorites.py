@@ -15,7 +15,7 @@ class BVTK_PT_Favorites(bpy.types.Panel):
     bl_label = 'Favorites'
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
-    bl_category = 'favorites'
+    bl_category = 'Favorites'
 
     @classmethod
     def poll(cls, context):
