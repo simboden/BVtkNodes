@@ -155,8 +155,8 @@ def check_cache():
 class BVTK_NodeTree(NodeTree):
     '''BVTK Node Tree'''
     bl_idname = 'BVTK_NodeTreeType'
-    bl_label  = 'VTK'
-    bl_icon   = 'COLOR_RED'
+    bl_label  = 'BVTK Node Tree'
+    bl_icon   = 'COLOR_BLUE'
 
 
 # -----------------------------------------------------------------------------
