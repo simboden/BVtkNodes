@@ -20,15 +20,16 @@ quality rendering and many kind of mesh editing tools. The add-on was
 
 ### Information
 
-- **Tested version**: Blender version 2.79b and VTK library version 8.2.0.
+- **Tested version**: Blender version 2.80 beta and VTK library version 8.2.0.
 - **License**: [GPL v3](http://www.gnu.org/licenses/quick-guide-gplv3.html)
 - **Contributors**: Silvano Imboden (s.imboden@cineca.it), Lorenzo Celli,
   Paul McManus, Tuomo Keskitalo
 
 ### Prerequisites
 
-BVTKNodes add-on requires VTK version 8.2.0 and VTK python wrappers
-compatible with the python version used in Blender.
+BVTKNodes add-on requires Blender version 2.80 (beta),
+VTK version 8.2.0 and VTK python wrappers
+compatible with the Python version used in Blender.
 Another VTK version (7 or later) may be alternatively used, if generated class
 definitions (gen_VTK*.py files) are also updated (by running
 populate_db.py and generate.py. Warning: Modifications may be
