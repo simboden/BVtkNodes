@@ -68,8 +68,8 @@ class BVTK_PT_Tree_Arrange(bpy.types.Panel):
 def arrange(scene, context):
     bpy.ops.node.bvtk_arrange_tree()
 
-bpy.types.Scene.bvtk_arrange_x_spacing = bpy.props.IntProperty(default=10, update=arrange)
-bpy.types.Scene.bvtk_arrange_y_spacing = bpy.props.IntProperty(default=10, update=arrange)
+bpy.types.Scene.bvtk_arrange_x_spacing = bpy.props.IntProperty(default=30, update=arrange)
+bpy.types.Scene.bvtk_arrange_y_spacing = bpy.props.IntProperty(default=30, update=arrange)
 
 core.add_ui_class(BVTK_PT_Tree_Arrange)
 
@@ -322,7 +322,7 @@ class BVTK_OT_Tree_Export(bpy.types.Operator, ExportHelper):
     '''Save VTK node tree into a json file'''
     bl_idname = "node.bvtk_node_tree_export"
     bl_label = "Export Vtk Node Tree"
-    # filename_ext = ".json"
+    filename_ext = ".json"
 
     def execute(self, context):
         node_tree = context.space_data.node_tree

@@ -49,7 +49,7 @@ class BVTK_Node_CustomFilter(Node, BVTK_Node):
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, 'text')
-        op = row.operator('node.bvtk_new_text', icon='ZOOMIN', text='')
+        op = row.operator('node.bvtk_new_text', icon='ZOOM_IN', text='')
         op.name = 'customfilter.py'
         op.body = self.__doc__.replace("    ","")
         if len(self.functions()):

@@ -202,7 +202,7 @@ def log_show():
             for line in logs.split('\n'):
                 if line:
                     row = layout.row()
-                    row.label(line)
+                    row.label(text=line)
 
         bpy.context.window_manager.popup_menu(draw, 'vtk:', 'INFO')
 

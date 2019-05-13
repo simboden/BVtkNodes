@@ -26,13 +26,13 @@ class BVTK_ContourHelper:
                     prop = getattr(self, prop)
                     prop_path = node_prop_path(self, 'm_ContourValues')
                     row = layout.row()
-                    op = row.operator('node.bvtk_update_collection', text='', icon='ZOOMIN')
+                    op = row.operator('node.bvtk_update_collection', text='', icon='ZOOM_IN')
                     op.prop_path = prop_path
                     op.add = True
                     row.label(text='Contour values')
                     for i, item in enumerate(self.m_ContourValues):
                         row = layout.row(align=True)
-                        op = row.operator('node.bvtk_update_collection', text='', icon='ZOOMOUT')
+                        op = row.operator('node.bvtk_update_collection', text='', icon='ZOOM_OUT')
                         op.prop_path = prop_path
                         op.add = False
                         op.index = i
