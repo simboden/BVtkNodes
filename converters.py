@@ -76,7 +76,6 @@ def vtkdata_to_blender(data, name, ramp=None, smooth=False):
     # Get vertices
     data_p = data.GetPoints()
     verts = [bm.verts.new(data_p.GetPoint(i)) for i in range(data.GetNumberOfPoints())]
-
     # Loop over cells to create edges and faces
     for i in range(data.GetNumberOfCells()):
         data_pi = data.GetCell(i).GetPointIds()
@@ -286,7 +285,7 @@ def get_object(name, data):
     '''Initialize mesh object name with data into current scene'''
     ob = get_item(bpy.data.objects, name, data)
     ob.data = data
-    set_link(bpy.context.scene.objects, ob)
+    set_link(bpy.context.collection.objects, ob)
     return ob
 
 

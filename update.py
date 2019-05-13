@@ -101,7 +101,7 @@ class BVTK_FunctionsQueue:
     BVTK_Nodes functions.
     '''
     functions = [] # List of functions in queueus
-    executed = [] # List of executed functions
+    executed = [] # Index list of executed functions
     running = False # Queue running state
     i = 0 # Index of function being run
 
@@ -119,7 +119,8 @@ class BVTK_FunctionsQueue:
             try:
                 f[0](*f[1])
             except Exception as e:
-                l.critical(str(e))
+                l.critical("i=" + str(i) + ", f[0] = " + str(f[0]) + \
+                           " got exception: " + str(e))
             self.executed.append(i)
             self.i += 1
 

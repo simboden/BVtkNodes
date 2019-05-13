@@ -435,7 +435,7 @@ def print_nodes():
                     x = ""
                 else:
                     x = "VTK object"
-                l.debug("node " + n.node_id + n.name.ljust(30,' ') + x)
+                l.debug("node " + str(n.node_id) + ": " + n.name.ljust(30,' ') + x)
 
 
 # -----------------------------------------------------------------------------
