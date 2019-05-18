@@ -2,11 +2,10 @@
 # Color map nodes and functions
 # -----------------------------------------------------------------------------
 
-from  .core import *
+from .core import *
 
-
-def default_texture(name):
-    '''Create and return a new texture'''
+def get_default_texture(name):
+    '''Create and return a new color ramp BLEND type brush texture'''
     tex_name = name
     tex = bpy.data.textures.new(tex_name, 'BLEND')
     tex.use_color_ramp = True
@@ -32,9 +31,8 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
     # Properties of ColorMapper
     texture_type: bpy.props.EnumProperty(
         name="texture type",
-        items=[('BLEND','BLEND','BLEND','TEXTURE_DATA',0),
-               ('IMAGE','IMAGE','IMAGE','FILE_IMAGE',1)],
-        default='BLEND'
+        items=[('IMAGE','IMAGE','IMAGE','FILE_IMAGE',1)],
+        default='IMAGE'
     )
     default_texture: bpy.props.StringProperty(default="")
     last_color_by: bpy.props.StringProperty(default='')
@@ -105,7 +103,7 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
         if self.default_texture:
             if self.default_texture in bpy.data.textures:
                 return bpy.data.textures[self.default_texture]
-        new_texture = default_texture(self.name)
+        new_texture = get_default_texture(self.name)
         self.default_texture = new_texture.name
         return new_texture
 
@@ -125,7 +123,7 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
             vtkobj = resolve_algorithm_output(vtkobj)
             if hasattr(vtkobj, 'GetPointData'):
                 layout.prop(self, 'lut', text='Generate scalar bar')
-                layout.prop(self, 'texture_type')
+                # layout.prop(self, 'texture_type')
                 if self.lut:
                     layout.prop(self, 'height', text='scalar bar height')
                 layout.prop(self, 'color_by', text='color by')
@@ -147,9 +145,8 @@ class BVTK_Node_ColorRamp(Node, BVTK_Node):
 
     texture_type: bpy.props.EnumProperty(
         name="texture type",
-        items=[('BLEND','BLEND','BLEND','TEXTURE_DATA',0),
-               ('IMAGE','IMAGE','IMAGE','FILE_IMAGE',1)],
-        default='BLEND'
+        items=[('IMAGE','IMAGE','IMAGE','FILE_IMAGE',1)],
+        default='IMAGE'
     )
     my_texture: bpy.props.StringProperty()
 
@@ -160,7 +157,7 @@ class BVTK_Node_ColorRamp(Node, BVTK_Node):
         return ([],[],[],['lookupTable'])
 
     def copy_setup(self, node):
-        new_texture = default_texture(self.name)
+        new_texture = get_default_texture(self.name)
         self.my_texture = new_texture.name
         old_texture = node.get_texture()
         if old_texture:
@@ -177,7 +174,7 @@ class BVTK_Node_ColorRamp(Node, BVTK_Node):
                     e.color = new_el.color
 
     def setup(self):
-        new_texture = default_texture(self.name)
+        new_texture = get_default_texture(self.name)
         self.my_texture = new_texture.name
 
     def get_texture(self):
@@ -217,6 +214,7 @@ class BVTK_Node_ColorRamp(Node, BVTK_Node):
         return {'elements': e}
 
     def import_properties(self, dict):
+        l.debug("importing colormap " + str(self.name))
         '''Import colormap properties. Called by import operator'''
         t = self.get_texture()
         new_elements = dict['elements']

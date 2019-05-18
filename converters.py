@@ -106,11 +106,12 @@ def vtkdata_to_blender(data, name, ramp=None, smooth=False):
     # Set colors and color legend
     if ramp and ramp.color_by:
         texture = ramp.get_texture()
+        l.debug("color_ramp is " + str(texture.color_ramp))
         if ramp.texture_type == 'IMAGE':
-            img = image_from_ramp(texture.color_ramp, texture.name+'IMAGE', 1000)
-            texture = get_item(bpy.data.textures, texture.name+'IMAGE', 'IMAGE')
-            texture.image = img
-        texture_material(me, 'VTK'+name, texture)
+            img = image_from_ramp(texture.color_ramp, texture.name, 1000)
+            # texture = get_item(bpy.data.textures, texture.name+'IMAGE', 'IMAGE')
+            # texture.image = img
+        # texture_material(me, 'VTK'+name, texture)
         color_by = ramp.color_by
         vrange = (ramp.min, ramp.max)
         if ramp.lut:
@@ -293,6 +294,10 @@ def texture_material(me, name, texture=None, texturetype='IMAGE'):
     '''Get or create a material and link with given texture,
     then apply it to given object.
     '''
+    # TODO: Remove this function after image textures work OK
+    l.error("Blender 2.8 no longer supports brush textures to be used for texturing via mat.texture_slots, that was only for Blender Internal")
+    return None, None
+
     if not texture:
         texture = get_item(bpy.data.textures, name, texturetype)
         texture.type = texturetype
@@ -310,16 +315,23 @@ def texture_material(me, name, texture=None, texturetype='IMAGE'):
     else:
         ts = mat.texture_slots[texture.name]
     ts.use = True
+
     return texture, mat
 
-def image_from_ramp(ramp, name, l):
+def image_from_ramp(ramp, name, length):
     '''Create image (size 1 px) from color ramp'''
-    img = get_item(bpy.data.images, name, l, 1)
-    p = []
-    for j in range(l):
-        p.extend(ramp.evaluate(j/l))
-    img.pixels = p
-    return img
+    # Blender requires minimum image height is 4 to show the image
+    # TODO: Check if this is a Blender bug and report it.
+    height = 4
+    img = get_item(bpy.data.images, name, length, height)
+    for j in range(length):
+        for i,val in enumerate(ramp.evaluate(j/length)):
+            for k in range(height):
+                img.pixels[height*k*length + height*j + i] = val
+        # TODO: Delete below
+        #p.extend(ramp.evaluate(j/length))
+    #img.pixels = p
+    #return img
 
 
 def face_unwrap(bm, data, array_index, vrange):
@@ -397,7 +409,7 @@ def create_lut(name, vrange, n_div, texture, b=0.5, h=5.5, x=5, y=0, z=0, fontsi
     me, ob = mesh_and_object(name)
     plane.to_mesh(me)
     ob.location = x,y,z
-    texture_material(me, name, texture)
+    #texture_material(me, name, texture)
 
     # Calculate label interval
     min, max = vrange
@@ -489,9 +501,9 @@ def imgdata_to_blender(data, name):
     me, ob = mesh_and_object(name)
     ob.location = data.GetOrigin()
     plane.to_mesh(me)
-    tex, mat = texture_material(me, 'VTK' + name)
-    mat.use_shadeless = True
-    tex.image = img
+    #tex, mat = texture_material(me, 'VTK' + name)
+    #mat.use_shadeless = True
+    #tex.image = img
 
 
 class BVTK_OT_NodeUpdate(bpy.types.Operator):
