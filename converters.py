@@ -26,7 +26,7 @@ class BVTK_Node_VTKToBlender(Node, BVTK_Node):
     auto_update: bpy.props.BoolProperty(default=False, update=start_scan)
 
     def m_properties(self):
-        return ['m_Name', 'smooth', ]
+        return ['m_Name', 'smooth', 'generate_material']
 
     def m_connections(self):
         return ( ['input'],[],[],[] )

@@ -37,8 +37,8 @@
             "hide": false,
             "label": "",
             "location": [
-                -416.2118225097656,
-                215.05682373046875
+                0,
+                300
             ],
             "m_GenerateClipScalars": true,
             "m_GenerateClippedOutput": true,
@@ -61,8 +61,8 @@
             "hide": false,
             "label": "",
             "location": [
-                -130.5877227783203,
-                218.90753173828125
+                300,
+                300
             ],
             "m_Name": "mesh",
             "mute": false,
@@ -83,8 +83,8 @@
             "hide": false,
             "label": "",
             "location": [
-                -119.65516662597656,
-                43.75318908691406
+                300,
+                50
             ],
             "m_Name": "mesh2",
             "mute": false,
@@ -105,8 +105,8 @@
             "hide": false,
             "label": "",
             "location": [
-                -672.5538940429688,
-                199.5282440185547
+                -400,
+                300
             ],
             "m_Center": [
                 0.0,
@@ -138,8 +138,8 @@
             "hide": false,
             "label": "",
             "location": [
-                -748.314697265625,
-                24.507225036621094
+                -400,
+                100
             ],
             "m_Normal": [
                 1.0,
