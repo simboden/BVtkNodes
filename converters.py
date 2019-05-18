@@ -13,8 +13,8 @@ class BVTK_Node_VTKToBlender(Node, BVTK_Node):
     bl_label  = 'VTK To Blender'  # label for nice name display
 
     m_Name: bpy.props.StringProperty(name='Name', default='mesh')
-    auto_center: bpy.props.BoolProperty(default=False)  # todo: delete this
     smooth: bpy.props.BoolProperty(name='Smooth', default=False)
+    generate_material: bpy.props.BoolProperty(name='Generate Material', default=False)
 
     def start_scan(self, context):
         if context:
@@ -35,7 +35,7 @@ class BVTK_Node_VTKToBlender(Node, BVTK_Node):
         layout.prop(self, 'm_Name')
         layout.prop(self, 'auto_update', text='Auto update')
         layout.prop(self, 'smooth', text='Smooth')
-        #layout.box().prop(self, "auto_center", text='auto center', expand=True)
+        layout.prop(self, 'generate_material')
         layout.separator()
         layout.operator("node.bvtk_node_update", text="update").node_path = node_path(self)
 
@@ -49,16 +49,17 @@ class BVTK_Node_VTKToBlender(Node, BVTK_Node):
             input_node, vtkobj = input_node.get_input_node('input')
         if vtkobj:
             vtkobj = resolve_algorithm_output(vtkobj)
-            vtkdata_to_blender(vtkobj, self.m_Name, ramp, self.smooth)
+            vtkdata_to_blender(vtkobj, self.m_Name, ramp, self.smooth, self.generate_material)
             update_3d_view()
 
     def apply_properties(self, vtkobj):
         pass
 
 
-def vtkdata_to_blender(data, name, ramp=None, smooth=False):
+def vtkdata_to_blender(data, name, ramp=None, smooth=False, generate_material=False):
     '''Convert VTK data to Blender mesh object, using optionally
-    given color ramp and normal smoothing.
+    given color ramp and normal smoothing. Optionally generates default
+    material, which includes also color information if ramp is given.
     '''
     if not data:
         l.error('no data!')
@@ -76,6 +77,7 @@ def vtkdata_to_blender(data, name, ramp=None, smooth=False):
     # Get vertices
     data_p = data.GetPoints()
     verts = [bm.verts.new(data_p.GetPoint(i)) for i in range(data.GetNumberOfPoints())]
+
     # Loop over cells to create edges and faces
     for i in range(data.GetNumberOfCells()):
         data_pi = data.GetCell(i).GetPointIds()
@@ -90,7 +92,7 @@ def vtkdata_to_blender(data, name, ramp=None, smooth=False):
         except:
             err += 1
     if err:
-        l.error('num err ' + str(err))
+        l.error('number of errors: ' + str(err))
 
     # Set normals
     point_normals = data.GetPointData().GetNormals()
@@ -108,20 +110,31 @@ def vtkdata_to_blender(data, name, ramp=None, smooth=False):
         texture = ramp.get_texture()
         l.debug("color_ramp is " + str(texture.color_ramp))
         if ramp.texture_type == 'IMAGE':
-            img = image_from_ramp(texture.color_ramp, texture.name, 1000)
+            image_width = 1000
+            img = image_from_ramp(texture.color_ramp, texture.name, image_width)
+            # TODO: Remove commented lines below
             # texture = get_item(bpy.data.textures, texture.name+'IMAGE', 'IMAGE')
             # texture.image = img
         # texture_material(me, 'VTK'+name, texture)
-        color_by = ramp.color_by
+
+        # Color legend
         vrange = (ramp.min, ramp.max)
         if ramp.lut:
             create_lut(name, vrange, 6, texture, h=ramp.height)
+
+        # Generate UV maps to get coloring either by points or faces
         bm.verts.index_update()
         bm.faces.index_update()
-        if color_by[0] == 'P':
-            bm = point_unwrap(bm, data, int(color_by[1:]), vrange)
+        if ramp.color_by[0] == 'P':
+            bm = point_unwrap(bm, data, int(ramp.color_by[1:]), vrange)
         else:
-            bm = face_unwrap(bm, data, int(color_by[1:]), vrange)
+            bm = face_unwrap(bm, data, int(ramp.color_by[1:]), vrange)
+
+    # Generate default material if wanted
+    if generate_material and ramp and ramp.color_by:
+        create_material(ob, texture.name)
+    elif generate_material:
+        create_material(ob, None)
 
     bm.to_mesh(me)  # store bmesh to mesh
 
@@ -317,6 +330,53 @@ def texture_material(me, name, texture=None, texturetype='IMAGE'):
     ts.use = True
 
     return texture, mat
+
+def create_material(ob, texture_name=None):
+    '''Create default material for final output node mesh object.
+    Add image coloring nodes if texture name is given.
+    '''
+
+    if ob.name in bpy.data.materials:
+        mat = bpy.data.materials[ob.name]
+    else:
+        mat = bpy.data.materials.new(name=ob.name)
+    if not mat.use_nodes:
+        mat.use_nodes = True
+    nodes = mat.node_tree.nodes
+    links = mat.node_tree.links
+
+    # Delete existing nodes
+    for i in nodes:
+        nodes.remove(i)
+
+    node1 = nodes.new('ShaderNodeOutputMaterial')
+    node1.location = (300, 300)
+
+    node2 = nodes.new('ShaderNodeBsdfPrincipled')
+    node2.location = (0, 300)
+    links.new(node2.outputs['BSDF'], node1.inputs['Surface'])
+
+    # Add UV related nodes for colored materials
+    if texture_name:
+        node3 = nodes.new('ShaderNodeTexImage')
+        node3.image = bpy.data.images[texture_name]
+        node3.location = (-300, 300)
+        links.new(node3.outputs['Color'], node2.inputs['Base Color'])
+
+        node4 = nodes.new('ShaderNodeMapping')
+        node4.location = (-700, 300)
+        links.new(node4.outputs['Vector'], node3.inputs['Vector'])
+
+        node5 = nodes.new('ShaderNodeTexCoord')
+        node5.location = (-900, 300)
+        links.new(node5.outputs['UV'], node4.inputs['Vector'])
+
+    # Assign material
+    if ob.data.materials:
+        ob.data.materials[0] = mat
+    else:
+        ob.data.materials.append(mat)
+
 
 def image_from_ramp(ramp, name, length):
     '''Create image (size 1 px) from color ramp'''
