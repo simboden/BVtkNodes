@@ -405,7 +405,8 @@ def face_unwrap(bm, data, array_index, vrange):
         uv_layer = bm.loops.layers.uv.verify()
         for face in bm.faces:
             for loop in face.loops:
-                v=(scalars.GetValue(face.index)-min)/(max-min)
+                v = (scalars.GetValue(face.index) - min)/(max - min)
+                v = min(0.999, max(0.001, v)) # Force value inside range
                 loop[uv_layer].uv = (v, 0.5)
     return bm
 
@@ -421,7 +422,8 @@ def point_unwrap(bm, data, array_index, vrange):
         uv_layer = bm.loops.layers.uv.verify()
         for face in bm.faces:
             for loop in face.loops:
-                v = (scalars.GetValue(loop.vert.index)-min)/(max-min)
+                v = (scalars.GetValue(loop.vert.index) - min)/(max - min)
+                v = min(0.999, max(0.001, v)) # Force value inside range
                 loop[uv_layer].uv = (v, 0.5)
     return bm
 
