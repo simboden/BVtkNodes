@@ -15,7 +15,12 @@ class BVTK_Node_Info(Node, BVTK_Node):
     def update_cb(self):
         l.debug('tree updated')
 
+    def update(self):
+        # Make info node wider to show all text
+        self.width = 300
+
     def draw_buttons(self, context, layout):
+        fs="{:.5g}" # Format string
         in_node, vtkobj = self.get_input_node('input')
         if not in_node:
             layout.label(text='Connect a node')
@@ -26,22 +31,25 @@ class BVTK_Node_Info(Node, BVTK_Node):
             if not vtkobj:
                 return
 
-            layout.label(text=vtkobj.__class__.__name__)
+            layout.label(text='Type: ' + vtkobj.__class__.__name__)
 
-            layout.label(text='num pts: ' + str(vtkobj.GetNumberOfPoints()))
+            layout.label(text='Points: ' + str(vtkobj.GetNumberOfPoints()))
             if hasattr(vtkobj, 'GetNumberOfCells'):
-                layout.label(text='num cells: ' + str(vtkobj.GetNumberOfCells()))
+                layout.label(text='Cells: ' + str(vtkobj.GetNumberOfCells()))
             if hasattr(vtkobj, 'GetBounds'):
-                layout.label(text='x range: ' + str(vtkobj.GetBounds()[0])+' - '+str(vtkobj.GetBounds()[1]))
-                layout.label(text='y range: ' + str(vtkobj.GetBounds()[2])+' - '+str(vtkobj.GetBounds()[3]))
-                layout.label(text='z range: ' + str(vtkobj.GetBounds()[4])+' - '+str(vtkobj.GetBounds()[5]))
+                layout.label(text='X range: ' + fs.format(vtkobj.GetBounds()[0]) + \
+                             ' - ' + fs.format(vtkobj.GetBounds()[1]))
+                layout.label(text='Y range: ' + fs.format(vtkobj.GetBounds()[2]) + \
+                             ' - ' + fs.format(vtkobj.GetBounds()[3]))
+                layout.label(text='Z range: ' + fs.format(vtkobj.GetBounds()[4]) + \
+                             ' - ' + fs.format(vtkobj.GetBounds()[5]))
             data = {}
             if hasattr(vtkobj, 'GetPointData'):
-                data['Point data'] = vtkobj.GetPointData()
+                data['Point data '] = vtkobj.GetPointData()
             if hasattr(vtkobj, 'GetCellData'):
-                data['Cell data'] = vtkobj.GetCellData()
+                data['Cell data '] = vtkobj.GetCellData()
             if hasattr(vtkobj, 'GetFieldData'):
-                data['Field data'] = vtkobj.GetFieldData()
+                data['Field data '] = vtkobj.GetFieldData()
             for k in data:
                 d = data[k]
                 for i in range(d.GetNumberOfArrays()):
@@ -49,7 +57,8 @@ class BVTK_Node_Info(Node, BVTK_Node):
                     r = arr.GetRange()
                     name = arr.GetName()
                     row = layout.row()
-                    row.label(text=k+':'+str(i)+': '+name+' max:'+str(r[0])+' min:'+str(r[1]))
+                    row.label(text = k + '[' + str(i) + ']: \'' + name + '\': ' \
+                              + fs.format(r[0]) +' - ' + fs.format(r[1]))
 
         layout.separator()
         row = layout.row()
