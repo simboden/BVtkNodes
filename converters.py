@@ -398,14 +398,15 @@ def face_unwrap(bm, data, array_index, vrange):
     '''Unwrap by cell data'''
     scalars=data.GetCellData().GetArray(array_index)
     if scalars is not None:
-        min, max = vrange
-        if max==min:
-            l.error("can't unwrap -- values are constant -- range(" + str(min) + "," + str(max) + ")!")
+        minr, maxr = vrange
+        if maxr == minr:
+            l.error("can't unwrap -- values are constant -- range(" + \
+                    str(minr) + "," + str(maxr) + ")!")
             return bm
         uv_layer = bm.loops.layers.uv.verify()
         for face in bm.faces:
             for loop in face.loops:
-                v = (scalars.GetValue(face.index) - min)/(max - min)
+                v = (scalars.GetValue(face.index) - minr)/(maxr - minr)
                 v = min(0.999, max(0.001, v)) # Force value inside range
                 loop[uv_layer].uv = (v, 0.5)
     return bm
@@ -415,14 +416,15 @@ def point_unwrap(bm, data, array_index, vrange):
     '''Unwrap by point data'''
     scalars=data.GetPointData().GetArray(array_index)
     if scalars is not None:
-        min, max = vrange
-        if max == min:
-            l.error("can't unwrap -- values are constant -- range(" + str(min) + "," + str(max) + ")!")
+        minr, maxr = vrange
+        if maxr == minr:
+            l.error("can't unwrap -- values are constant -- range(" + \
+                    str(minr) + "," + str(maxr) + ")!")
             return bm
         uv_layer = bm.loops.layers.uv.verify()
         for face in bm.faces:
             for loop in face.loops:
-                v = (scalars.GetValue(loop.vert.index) - min)/(max - min)
+                v = (scalars.GetValue(loop.vert.index) - minr)/(maxr - minr)
                 v = min(0.999, max(0.001, v)) # Force value inside range
                 loop[uv_layer].uv = (v, 0.5)
     return bm
