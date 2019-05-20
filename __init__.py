@@ -18,20 +18,21 @@ bl_info = {
     "category": "Node",
     }
 
-# Note: See core.py on how to set up Python Logging
+# Note: See core.py on how to set up Python Logging to see debug messages
 
 # OPEN ISSUES
 # - generate/vtk_info_modified.py is not used, should it be deleted?
 # - continue development of node_tree_from_py at some point?
-# - cone.json example raises a lot of VTK errors when run, but still works
-# - generate Material in VTK To Blender node causes continuous regeneration
+# - cone.json example raises a lot of vtkInformation request errors on
+#   first run, but still works, and later updates do not produce errors
+# - Generate Material in VTK To Blender node causes continuous regeneration
 #   of material and/or crashing if Material Settings tab is active
 #   in Properties Editor
 # - brush textures don't get saved in Blend file unless texture is viewed.
 #   When Blend file is opened, Color Ramp node shows only output, no ramp.
-# - color Mapper color_by produces RNA warnings due to empty list
+# - Color Mapper color_by produces RNA warnings due to empty list
 #   until input nodes generate the list
-# - generate Scalar Bar in Color Mapper is not working correctly
+# - Generate Scalar Bar in Color Mapper is not working correctly.
 
 
 # Import VTK Python module or exit immediately
