@@ -27,7 +27,9 @@ bl_info = {
 #   first run, but still works, and later updates do not produce errors
 # - Generate Material in VTK To Blender node causes continuous regeneration
 #   of material and/or crashing if Material Settings tab is active
-#   in Properties Editor
+#   in Properties Editor. This is due to bpy.app.handlers.frame_change_post
+#   call from material list, which seems like a Blender bug.
+#   Reported issue here: https://developer.blender.org/T65034
 # - brush textures don't get saved in Blend file unless texture is viewed.
 #   When Blend file is opened, Color Ramp node shows only output, no ramp.
 # - Color Mapper color_by produces RNA warnings due to empty list
@@ -141,6 +143,7 @@ def on_frame_change(scene):
     for node_group in bpy.data.node_groups:
         for node in node_group.nodes:
             if node.bl_idname == 'BVTK_Node_VTKToBlenderType':
+                l.debug("calling no_queue_update")
                 update.no_queue_update(node, node.update_cb)
 
 
