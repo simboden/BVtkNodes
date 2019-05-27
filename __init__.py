@@ -193,7 +193,9 @@ def register():
     filled in all the gen_VTK*.py and VTK*.py files
     '''
     bpy.app.handlers.load_post.append(on_file_loaded)
-    bpy.app.handlers.frame_change_post.append(on_frame_change)
+    # Commented out frame change until this issue is resolved:
+    # https://developer.blender.org/T65034
+    # bpy.app.handlers.frame_change_post.append(on_frame_change)
     core.check_b_properties() # delayed to here to allow class overriding
     for c in core.UI_CLASSES:
         try:
@@ -214,5 +216,7 @@ def unregister():
     for c in reversed(core.UI_CLASSES):
         bpy.utils.unregister_class(c)
     bpy.app.handlers.load_post.remove(on_file_loaded)
-    bpy.app.handlers.frame_change_post.remove(on_frame_change)
+    # Commented out frame change until this issue is resolved:
+    # https://developer.blender.org/T65034
+    # bpy.app.handlers.frame_change_post.remove(on_frame_change)
             
