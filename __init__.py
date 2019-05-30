@@ -25,16 +25,16 @@ bl_info = {
 # - continue development of node_tree_from_py at some point?
 # - cone.json example raises a lot of vtkInformation request errors on
 #   first run, but still works, and later updates do not produce errors
+# - Color Mapper color_by produces RNA warnings due to empty list
+#   until input nodes generate the list
+# - Generate Scalar Bar in Color Mapper is not working correctly.
+#
+# WAITING ISSUES
 # - Generate Material in VTK To Blender node causes continuous regeneration
 #   of material and/or crashing if Material Settings tab is active
 #   in Properties Editor. This is due to bpy.app.handlers.frame_change_post
 #   call from material list, which seems like a Blender bug.
 #   Reported issue here: https://developer.blender.org/T65034
-# - brush textures don't get saved in Blend file unless texture is viewed.
-#   When Blend file is opened, Color Ramp node shows only output, no ramp.
-# - Color Mapper color_by produces RNA warnings due to empty list
-#   until input nodes generate the list
-# - Generate Scalar Bar in Color Mapper is not working correctly.
 
 
 # Import VTK Python module or exit immediately

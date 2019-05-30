@@ -6,9 +6,16 @@ from .core import *
 
 def get_default_texture(name):
     '''Create and return a new color ramp BLEND type brush texture'''
-    tex_name = name
-    tex = bpy.data.textures.new(tex_name, 'BLEND')
+    if name not in bpy.data.textures:
+        tex = bpy.data.textures.new(name, 'BLEND')
+    else:
+        tex = bpy.data.textures[name]
     tex.use_color_ramp = True
+
+    # Force saving of blend texture, so that ramp is correct when
+    # blend file is loaded. TODO: Is there better way to fix this?
+    tex.use_fake_user = True
+
     elements = tex.color_ramp.elements
     elements[0].color = (10 / 255, 10 / 255, 180 / 255, 1)
     elements[0].position = 0.05
