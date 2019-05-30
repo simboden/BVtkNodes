@@ -388,6 +388,10 @@ def image_from_ramp(ramp, name, length):
         for i,val in enumerate(ramp.evaluate(j/length)):
             for k in range(height):
                 img.pixels[height*k*length + height*j + i] = val
+    # Pack color ramp image so it will be saved with blend file,
+    # to show it correctly when blend file is reloaded
+    img.pack()
+
         # TODO: Delete below
         #p.extend(ramp.evaluate(j/length))
     #img.pixels = p
