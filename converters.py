@@ -379,9 +379,11 @@ def create_material(ob, texture_name=None):
 
 
 def image_from_ramp(ramp, name, length):
-    '''Create image (size 1 px) from color ramp'''
-    # Blender requires minimum image height is 4 to show the image
-    # TODO: Check if this is a Blender bug and report it.
+    '''Create image (size 4 px) from color ramp'''
+    # Blender requires minimum image dimension 3 px to correctly
+    # show up images longer than 256 pixels. Bug is reported:
+    # https://developer.blender.org/T65309
+    # Use height 4 px to ease viewing color ramp in Image Editor
     height = 4
     img = get_item(bpy.data.images, name, length, height)
     for j in range(length):
