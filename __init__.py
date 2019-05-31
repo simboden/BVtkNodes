@@ -35,6 +35,28 @@ bl_info = {
 #   in Properties Editor. This is due to bpy.app.handlers.frame_change_post
 #   call from material list, which seems like a Blender bug.
 #   Reported issue here: https://developer.blender.org/T65034
+#   Currently frame change hook is disabled until this issue is solved.
+#
+# CURRENTLY UNDER WORK
+# - Support for MultiBlockData
+# - Support for time variant data
+# - Support for volume rendering in Blender
+#
+# IDEAS FOR FUTURE DEVELOPMENT
+# - Calculator Node: use vtkExperssion evaluator
+# - VTK exporter: Export Blender mesh and vertex data into VTK file format.
+#   Options: Legacy VTK file format (polydata .vtk) and/or XML format (.vtp).
+#   This could be a separate Blender add-on which would not require
+#   VTK installation.
+# - Blender To VTK Node: A BVTK node which converts Blender mesh into
+#   vtkPolyData. Alternatively add vtkBlendReader to VTK?
+#   Or maybe vtkAlembicReader to VTK? https://www.alembic.io/
+# - Support for several VTK versions in one add-on. Would require making
+#   gen_VTK*.py, VTK*.py and b_properties dependent on specific VTK version
+#   and easy switch between versions.
+# - Time subranges for temporal averaged analysis
+# - Better access to OpenFOAM Reader settings, like selection of
+#   regions and different data arrays
 
 
 # Import VTK Python module or exit immediately
