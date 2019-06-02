@@ -224,29 +224,12 @@ class BVTK_Node_MultiBlockLeaf(Node, BVTK_Node):
         return None
 
 
-<<<<<<< HEAD:customfilter.py
-# Add classes and menu items
-TYPENAMES = []
-add_class(BVTK_Node_CustomFilter)
-TYPENAMES.append('BVTK_Node_CustomFilterType')
-add_ui_class(BVTK_OT_NewText)
-add_class(BVTK_Node_MultiBlockLeaf)
-TYPENAMES.append('BVTK_Node_MultiBlockLeafType')
-=======
-add_class(VTKMultiBlockLeaf)
-TYPENAMES.append('VTKMultiBlockLeafType')
-
-# ----------------------------------------------------------------
-# MultiBlockLeaf
-# ----------------------------------------------------------------
-
-
-class VTKTimeSetter(Node, VTKNode):
-    """ This node provides the possibility o managing time.
-    It displays time sets, time values and shows a property to set them.
-    """
-    bl_idname = 'VTKTimeSetterType'
-    bl_label = 'TimeSetter'
+class BVTK_Node_TimeSelector(Node, BVTK_Node):
+    '''VTK time management node for time variant data. Display time sets,
+    time values and set time.
+    '''
+    bl_idname = 'BVTK_Node_TimeSelectorType'
+    bl_label = 'Time Selector'
 
     def check_range(self, context):
         in_node, out_port = self.get_input_node('input')
@@ -265,7 +248,7 @@ class VTKTimeSetter(Node, VTKNode):
                             elif self.time_step >= size:
                                 self.time_step = size-1
 
-    time_step = bpy.props.IntProperty(update=check_range)
+    time_step: bpy.props.IntProperty(update=check_range)
 
     def m_properties(self):
         return []
@@ -276,31 +259,35 @@ class VTKTimeSetter(Node, VTKNode):
     def draw_buttons(self, context, layout):
         in_node, out_port = self.get_input_node('input')
         if not in_node:
-            layout.label('Connect a node')
-        elif not out_port:
-            layout.label('Input has not vtkobj (try updating)')
-        else:
-            if out_port.IsA('vtkAlgorithmOutput'):
-                prod = out_port.GetProducer()
-                executive = prod.GetExecutive()
-                out_info = prod.GetOutputInformation(out_port.GetIndex())
-                if hasattr(executive, "TIME_STEPS"):
-                    time_steps = out_info.Get(executive.TIME_STEPS())
-                    if time_steps:
-                        row = layout.row()
-                        row.prop(self, 'time_step', text="Time step")
-                        size = len(time_steps)
-                        row.label("Max: "+str(size-1))
-                        if -size <= self.time_step < size:
-                            layout.label("Time: "+str(time_steps[self.time_step]))
-                        else:
-                            layout.label('Index out of time steps range', icon='ERROR')
-                    else:
-                        layout.label('Input executive contains a time steps array but it\'s empty.')
+            layout.label(text='Connect a node')
+            return
+        if not out_port:
+            layout.label(text='Input has not vtkobj (try updating)')
+            return
+        if not out_port.IsA('vtkAlgorithmOutput'):
+            layout.label(text='Input is not a vtkAlgorithm')
+            return
+
+        prod = out_port.GetProducer()
+        executive = prod.GetExecutive()
+        out_info = prod.GetOutputInformation(out_port.GetIndex())
+        if hasattr(executive, "TIME_STEPS"):
+            time_steps = out_info.Get(executive.TIME_STEPS())
+            if time_steps:
+                row = layout.row()
+                row.prop(self, 'time_step', text="Time Step")
+                row = layout.row()
+                size = len(time_steps)
+                row.label(text="Max Steps: "+str(size-1))
+                if -size <= self.time_step < size:
+                    layout.label(text="Time Value: "+str(time_steps[self.time_step]))
                 else:
-                    layout.label('Input executive does not contain any information about time steps.')
+                    layout.label(text='Index error', icon='ERROR')
             else:
-                layout.label('Input is not a vtkAlgorithm. Executive cannot be retrieved and time cannot be set.')
+                layout.label(text='Input is empty (needs update?)')
+        else:
+            layout.label(text='Input contains no time steps')
+        return
 
     def apply_properties(self, vtkobj):
         pass
@@ -309,36 +296,43 @@ class VTKTimeSetter(Node, VTKNode):
         pass
 
     def get_output(self, socketname):
-        """ Checks if the input is valid and if the time step can be set.
+        '''Check if the input is valid and if the time step can be set.
         If tests pass the time step is updated and the input object is returned,
         otherwise None is returned.
-        """
+        '''
         in_node, out_port = self.get_input_node('input')
-        if in_node:
-            if out_port:
-                if out_port.IsA('vtkAlgorithmOutput'):
-                    prod = out_port.GetProducer()
-                    executive = prod.GetExecutive()
-                    out_info = prod.GetOutputInformation(out_port.GetIndex())
-                    if hasattr(executive, "TIME_STEPS"):
-                        time_steps = out_info.Get(executive.TIME_STEPS())
-                        if time_steps:
-                            size = len(time_steps)
-                            if -size <= self.time_step < size:
-                                if hasattr(prod, "UpdateTimeStep"):
-                                    prod.UpdateTimeStep(time_steps[self.time_step])
-                                else:
-                                    print("ERROR: "+prod.__class__.__name__+" does not have 'UpdateTimeStep' method.")
-                                    print("If you can, please document this case and report it to the developers.")
-                            else:
-                                print('ERROR: Index out of time steps range')
-                return resolve_algorithm_output(out_port)
-        return None
+        if not in_node or not out_port:
+            return None
+        if not out_port.IsA('vtkAlgorithmOutput'):
+            return None
+
+        prod = out_port.GetProducer()
+        executive = prod.GetExecutive()
+        out_info = prod.GetOutputInformation(out_port.GetIndex())
+        if hasattr(executive, "TIME_STEPS"):
+            time_steps = out_info.Get(executive.TIME_STEPS())
+            if time_steps:
+                size = len(time_steps)
+                if -size <= self.time_step < size:
+                    if hasattr(prod, "UpdateTimeStep"):
+                        prod.UpdateTimeStep(time_steps[self.time_step])
+                    else:
+                        l.error(prod.__class__.__name__+" does not have 'UpdateTimeStep' method.")
+                        l.error("If you can, please document this case and report it to the developers.")
+                else:
+                    l.error('Index out of time steps range')
+        return resolve_algorithm_output(out_port)
 
 
-add_class(VTKTimeSetter)
-TYPENAMES.append('VTKTimeSetterType')
->>>>>>> cc7e7c0... Time-varying data support (TimeSetter node):BVtkNodes/customfilter.py
+# Add classes and menu items
+TYPENAMES = []
+add_class(BVTK_Node_CustomFilter)
+TYPENAMES.append('BVTK_Node_CustomFilterType')
+add_ui_class(BVTK_OT_NewText)
+add_class(BVTK_Node_MultiBlockLeaf)
+TYPENAMES.append('BVTK_Node_MultiBlockLeafType')
+add_class(BVTK_Node_TimeSelector)
+TYPENAMES.append('BVTK_Node_TimeSelectorType')
 
 menu_items = [NodeItem(x) for x in TYPENAMES]
 CATEGORIES.append(BVTK_NodeCategory("Custom", "Custom", items=menu_items))
