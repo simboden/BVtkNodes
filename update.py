@@ -2,6 +2,7 @@ from .core import l # Import logging
 import time
 import vtk
 import bpy
+import os
 from .core import b_path
 
 # -----------------------------------------------------------------------------
@@ -176,7 +177,8 @@ class BVTK_OT_FunctionQueue(bpy.types.Operator):
 
 
 out = vtk.vtkFileOutputWindow()
-logfile = b_path.rsplit('/', 1)[0]+'/vtklog.txt'
+b_dir = b_path.rsplit(os.sep, 1)[0]
+logfile = os.path.join(b_dir, 'vtklog.txt')
 open(logfile, 'w').write('')
 out.SetFileName(logfile)
 vtk.vtkOutputWindow.SetInstance(out)
