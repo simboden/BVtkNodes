@@ -30,11 +30,15 @@ quality rendering and many kind of mesh editing tools. The add-on was
 BVTKNodes add-on requires Blender version 2.80 (beta),
 VTK version 8.2.0 and VTK python wrappers
 compatible with the Python version used in Blender.
+Easiest way is to
+[Install VTK into Blender Python via Pip](./pip_install_vtk.md)
+although VTK version may be different.
 Another VTK version (7 or later) may be alternatively used, if generated class
 definitions (gen_VTK*.py files) are also updated (by running
 populate_db.py and generate.py. Warning: Modifications may be
 required).
-See [VTK building instructions for Linux](./build_vtk.md).
+If you want to compile custom VTK, please see
+[VTK building instructions for Linux](./build_vtk.md).
 
 ### Installation
 
