@@ -1,5 +1,5 @@
 # Generated definitions for VTK class group: Source
-# VTK version: 8.2.0
+# VTK version: 8.1.2
 
 from .core import *    
 TYPENAMES = []
@@ -1024,28 +1024,6 @@ add_class( VTKRTAnalyticSource )
 TYPENAMES.append('VTKRTAnalyticSourceType' )
 
 #--------------------------------------------------------------
-class VTKRandomHyperTreeGridSource(Node, BVTK_Node):
-
-    bl_idname = 'VTKRandomHyperTreeGridSourceType'
-    bl_label  = 'vtkRandomHyperTreeGridSource'
-    
-    m_MaxDepth     : bpy.props.IntProperty        ( name='MaxDepth',      default=5 )
-    m_Seed         : bpy.props.IntProperty        ( name='Seed',          default=0 )
-    m_SplitFraction: bpy.props.FloatProperty      ( name='SplitFraction', default=0.5 )
-    m_GridSize     : bpy.props.IntVectorProperty  ( name='GridSize',      default=[5, 5, 2], size=3 )
-    m_OutputBounds : bpy.props.FloatVectorProperty( name='OutputBounds',  default=[-10.0, 10.0, -10.0, 10.0, -10.0, 10.0], size=6 )
-    
-    b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
-
-    def m_properties( self ):
-        return ['m_MaxDepth','m_Seed','m_SplitFraction','m_GridSize','m_OutputBounds',]
-    def m_connections( self ):
-        return ([], ['output'], [], []) 
-    
-add_class( VTKRandomHyperTreeGridSource )        
-TYPENAMES.append('VTKRandomHyperTreeGridSourceType' )
-
-#--------------------------------------------------------------
 class VTKRectangularButtonSource(Node, BVTK_Node):
 
     bl_idname = 'VTKRectangularButtonSourceType'
@@ -1309,7 +1287,7 @@ class VTKTemporalFractal(Node, BVTK_Node):
     m_GenerateRectilinearGrids: bpy.props.BoolProperty ( name='GenerateRectilinearGrids', default=True )
     m_GhostLevels             : bpy.props.BoolProperty ( name='GhostLevels',              default=True )
     m_TwoDimensional          : bpy.props.BoolProperty ( name='TwoDimensional',           default=True )
-    m_Asymmetric              : bpy.props.IntProperty  ( name='Asymmetric',               default=1 )
+    m_Asymetric               : bpy.props.IntProperty  ( name='Asymetric',                default=1 )
     m_Dimensions              : bpy.props.IntProperty  ( name='Dimensions',               default=10 )
     m_MaximumLevel            : bpy.props.IntProperty  ( name='MaximumLevel',             default=6 )
     m_FractalValue            : bpy.props.FloatProperty( name='FractalValue',             default=9.5 )
@@ -1317,7 +1295,7 @@ class VTKTemporalFractal(Node, BVTK_Node):
     b_properties: bpy.props.BoolVectorProperty(name="", size=9, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AdaptiveSubdivision','m_DiscreteTimeSteps','m_GenerateRectilinearGrids','m_GhostLevels','m_TwoDimensional','m_Asymmetric','m_Dimensions','m_MaximumLevel','m_FractalValue',]
+        return ['m_AdaptiveSubdivision','m_DiscreteTimeSteps','m_GenerateRectilinearGrids','m_GhostLevels','m_TwoDimensional','m_Asymetric','m_Dimensions','m_MaximumLevel','m_FractalValue',]
     def m_connections( self ):
         return ([], ['output'], [], []) 
     

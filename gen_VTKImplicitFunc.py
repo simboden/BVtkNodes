@@ -1,5 +1,5 @@
 # Generated definitions for VTK class group: ImplicitFunc
-# VTK version: 8.2.0
+# VTK version: 8.1.2
 
 from .core import *    
 TYPENAMES = []
@@ -338,23 +338,6 @@ class VTKSphere(Node, BVTK_Node):
     
 add_class( VTKSphere )        
 TYPENAMES.append('VTKSphereType' )
-
-#--------------------------------------------------------------
-class VTKSpheres(Node, BVTK_Node):
-
-    bl_idname = 'VTKSpheresType'
-    bl_label  = 'vtkSpheres'
-    
-    
-    b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
-
-    def m_properties( self ):
-        return []
-    def m_connections( self ):
-        return ([], [], ['Centers', 'Radii', 'Transform'], ['self']) 
-    
-add_class( VTKSpheres )        
-TYPENAMES.append('VTKSpheresType' )
 
 #--------------------------------------------------------------
 class VTKSuperquadric(Node, BVTK_Node):

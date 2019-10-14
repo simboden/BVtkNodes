@@ -1,5 +1,5 @@
 # Generated definitions for VTK class group: Integrator
-# VTK version: 8.2.0
+# VTK version: 8.1.2
 
 from .core import *    
 TYPENAMES = []

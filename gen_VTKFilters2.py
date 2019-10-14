@@ -1,5 +1,5 @@
 # Generated definitions for VTK class group: Filter2
-# VTK version: 8.2.0
+# VTK version: 8.1.2
 
 from .core import *    
 TYPENAMES = []
@@ -163,7 +163,7 @@ class VTKCompositeDataProbeFilter(Node, BVTK_Node):
     def m_properties( self ):
         return ['m_CategoricalData','m_ComputeTolerance','m_PassCellArrays','m_PassFieldArrays','m_PassPartialArrays','m_PassPointArrays','m_SpatialMatch','m_ValidPointMaskArrayName','m_Tolerance',]
     def m_connections( self ):
-        return (['input 0', 'input 1'], ['output'], ['CellLocatorPrototype'], []) 
+        return (['input 0', 'input 1'], ['output'], [], []) 
     
 add_class( VTKCompositeDataProbeFilter )        
 TYPENAMES.append('VTKCompositeDataProbeFilterType' )
@@ -274,7 +274,7 @@ class VTKExtractArraysOverTime(Node, BVTK_Node):
     bl_idname = 'VTKExtractArraysOverTimeType'
     bl_label  = 'vtkExtractArraysOverTime'
     
-    m_ReportStatisticsOnly: bpy.props.BoolProperty( name='ReportStatisticsOnly', default=False )
+    m_ReportStatisticsOnly: bpy.props.BoolProperty( name='ReportStatisticsOnly', default=True )
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -302,24 +302,6 @@ class VTKExtractFunctionalBagPlot(Node, BVTK_Node):
     
 add_class( VTKExtractFunctionalBagPlot )        
 TYPENAMES.append('VTKExtractFunctionalBagPlotType' )
-
-#--------------------------------------------------------------
-class VTKExtractSelectedArraysOverTime(Node, BVTK_Node):
-
-    bl_idname = 'VTKExtractSelectedArraysOverTimeType'
-    bl_label  = 'vtkExtractSelectedArraysOverTime'
-    
-    m_ReportStatisticsOnly: bpy.props.BoolProperty( name='ReportStatisticsOnly', default=False )
-    
-    b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
-
-    def m_properties( self ):
-        return ['m_ReportStatisticsOnly',]
-    def m_connections( self ):
-        return (['input 0', 'input 1'], ['output'], ['SelectionExtractor'], []) 
-    
-add_class( VTKExtractSelectedArraysOverTime )        
-TYPENAMES.append('VTKExtractSelectedArraysOverTimeType' )
 
 #--------------------------------------------------------------
 class VTKExtractSelectedBlock(Node, BVTK_Node):
@@ -438,26 +420,6 @@ class VTKExtractSelection(Node, BVTK_Node):
     bl_idname = 'VTKExtractSelectionType'
     bl_label  = 'vtkExtractSelection'
     
-    m_PreserveTopology    : bpy.props.BoolProperty( name='PreserveTopology',     default=False )
-    m_ShowBounds          : bpy.props.BoolProperty( name='ShowBounds',           default=False )
-    m_UseProbeForLocations: bpy.props.BoolProperty( name='UseProbeForLocations', default=False )
-    
-    b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
-
-    def m_properties( self ):
-        return ['m_PreserveTopology','m_ShowBounds','m_UseProbeForLocations',]
-    def m_connections( self ):
-        return (['input 0', 'input 1'], ['output'], [], []) 
-    
-add_class( VTKExtractSelection )        
-TYPENAMES.append('VTKExtractSelectionType' )
-
-#--------------------------------------------------------------
-class VTKExtractSelectionLegacy(Node, BVTK_Node):
-
-    bl_idname = 'VTKExtractSelectionLegacyType'
-    bl_label  = 'vtkExtractSelectionLegacy'
-    
     m_PreserveTopology    : bpy.props.BoolProperty( name='PreserveTopology',     default=True )
     m_ShowBounds          : bpy.props.BoolProperty( name='ShowBounds',           default=True )
     m_UseProbeForLocations: bpy.props.BoolProperty( name='UseProbeForLocations', default=True )
@@ -469,8 +431,8 @@ class VTKExtractSelectionLegacy(Node, BVTK_Node):
     def m_connections( self ):
         return (['input 0', 'input 1'], ['output'], [], []) 
     
-add_class( VTKExtractSelectionLegacy )        
-TYPENAMES.append('VTKExtractSelectionLegacyType' )
+add_class( VTKExtractSelection )        
+TYPENAMES.append('VTKExtractSelectionType' )
 
 #--------------------------------------------------------------
 class VTKFastSplatter(Node, BVTK_Node):
@@ -511,26 +473,6 @@ class VTKFiberSurface(Node, BVTK_Node):
     
 add_class( VTKFiberSurface )        
 TYPENAMES.append('VTKFiberSurfaceType' )
-
-#--------------------------------------------------------------
-class VTKFitToHeightMapFilter(Node, BVTK_Node):
-
-    bl_idname = 'VTKFitToHeightMapFilterType'
-    bl_label  = 'vtkFitToHeightMapFilter'
-    e_FittingStrategy_items=[ (x,x,x) for x in ['PointProjection', 'PointMinimumHeight', 'PointMaximumHeight', 'AverageHeight', 'CellMinimumHeight', 'CellMaximumHeight', 'CellAverageHeight']]
-    
-    m_UseHeightMapOffset: bpy.props.BoolProperty( name='UseHeightMapOffset', default=True )
-    e_FittingStrategy   : bpy.props.EnumProperty( name='FittingStrategy',    default="PointProjection", items=e_FittingStrategy_items )
-    
-    b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
-
-    def m_properties( self ):
-        return ['m_UseHeightMapOffset','e_FittingStrategy',]
-    def m_connections( self ):
-        return (['input 0', 'input 1'], ['output'], [], []) 
-    
-add_class( VTKFitToHeightMapFilter )        
-TYPENAMES.append('VTKFitToHeightMapFilterType' )
 
 #--------------------------------------------------------------
 class VTKGenericGlyph3DFilter(Node, BVTK_Node):
@@ -818,15 +760,14 @@ class VTKImageDifference(Node, BVTK_Node):
     m_GlobalDefaultEnableSMP: bpy.props.BoolProperty     ( name='GlobalDefaultEnableSMP', default=False )
     m_DesiredBytesPerPiece  : bpy.props.IntProperty      ( name='DesiredBytesPerPiece',   default=65536 )
     m_NumberOfThreads       : bpy.props.IntProperty      ( name='NumberOfThreads',        default=4 )
-    m_Threshold             : bpy.props.IntProperty      ( name='Threshold',              default=105 )
-    m_AverageThresholdFactor: bpy.props.FloatProperty    ( name='AverageThresholdFactor', default=0.65 )
+    m_Threshold             : bpy.props.IntProperty      ( name='Threshold',              default=16 )
     e_SplitMode             : bpy.props.EnumProperty     ( name='SplitMode',              default="Slab", items=e_SplitMode_items )
     m_MinimumPieceSize      : bpy.props.IntVectorProperty( name='MinimumPieceSize',       default=[16, 1, 1], size=3 )
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=10, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=9, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AllowShift','m_Averaging','m_EnableSMP','m_GlobalDefaultEnableSMP','m_DesiredBytesPerPiece','m_NumberOfThreads','m_Threshold','m_AverageThresholdFactor','e_SplitMode','m_MinimumPieceSize',]
+        return ['m_AllowShift','m_Averaging','m_EnableSMP','m_GlobalDefaultEnableSMP','m_DesiredBytesPerPiece','m_NumberOfThreads','m_Threshold','e_SplitMode','m_MinimumPieceSize',]
     def m_connections( self ):
         return (['input 0', 'input 1'], ['output'], [], []) 
     
@@ -1149,7 +1090,7 @@ class VTKPExtractArraysOverTime(Node, BVTK_Node):
     bl_idname = 'VTKPExtractArraysOverTimeType'
     bl_label  = 'vtkPExtractArraysOverTime'
     
-    m_ReportStatisticsOnly: bpy.props.BoolProperty( name='ReportStatisticsOnly', default=False )
+    m_ReportStatisticsOnly: bpy.props.BoolProperty( name='ReportStatisticsOnly', default=True )
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -1160,24 +1101,6 @@ class VTKPExtractArraysOverTime(Node, BVTK_Node):
     
 add_class( VTKPExtractArraysOverTime )        
 TYPENAMES.append('VTKPExtractArraysOverTimeType' )
-
-#--------------------------------------------------------------
-class VTKPExtractSelectedArraysOverTime(Node, BVTK_Node):
-
-    bl_idname = 'VTKPExtractSelectedArraysOverTimeType'
-    bl_label  = 'vtkPExtractSelectedArraysOverTime'
-    
-    m_ReportStatisticsOnly: bpy.props.BoolProperty( name='ReportStatisticsOnly', default=False )
-    
-    b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
-
-    def m_properties( self ):
-        return ['m_ReportStatisticsOnly',]
-    def m_connections( self ):
-        return (['input 0', 'input 1'], ['output'], ['SelectionExtractor'], []) 
-    
-add_class( VTKPExtractSelectedArraysOverTime )        
-TYPENAMES.append('VTKPExtractSelectedArraysOverTimeType' )
 
 #--------------------------------------------------------------
 class VTKPProbeFilter(Node, BVTK_Node):
@@ -1200,7 +1123,7 @@ class VTKPProbeFilter(Node, BVTK_Node):
     def m_properties( self ):
         return ['m_CategoricalData','m_ComputeTolerance','m_PassCellArrays','m_PassFieldArrays','m_PassPartialArrays','m_PassPointArrays','m_SpatialMatch','m_ValidPointMaskArrayName','m_Tolerance',]
     def m_connections( self ):
-        return (['input 0', 'input 1'], ['output'], ['CellLocatorPrototype'], []) 
+        return (['input 0', 'input 1'], ['output'], [], []) 
     
 add_class( VTKPProbeFilter )        
 TYPENAMES.append('VTKPProbeFilterType' )
@@ -1404,7 +1327,7 @@ class VTKProbeFilter(Node, BVTK_Node):
     def m_properties( self ):
         return ['m_CategoricalData','m_ComputeTolerance','m_PassCellArrays','m_PassFieldArrays','m_PassPointArrays','m_SpatialMatch','m_ValidPointMaskArrayName','m_Tolerance',]
     def m_connections( self ):
-        return (['input 0', 'input 1'], ['output'], ['CellLocatorPrototype'], []) 
+        return (['input 0', 'input 1'], ['output'], [], []) 
     
 add_class( VTKProbeFilter )        
 TYPENAMES.append('VTKProbeFilterType' )
@@ -1506,7 +1429,7 @@ class VTKResampleWithDataSet(Node, BVTK_Node):
     def m_properties( self ):
         return ['m_CategoricalData','m_ComputeTolerance','m_MarkBlankPointsAndCells','m_PassCellArrays','m_PassFieldArrays','m_PassPointArrays','m_Tolerance',]
     def m_connections( self ):
-        return (['input 0', 'input 1'], ['output'], ['CellLocatorPrototype'], []) 
+        return (['input 0', 'input 1'], ['output'], [], []) 
     
 add_class( VTKResampleWithDataSet )        
 TYPENAMES.append('VTKResampleWithDataSetType' )
@@ -1523,7 +1446,6 @@ class VTKSPHInterpolator(Node, BVTK_Node):
     m_PassFieldArrays         : bpy.props.BoolProperty  ( name='PassFieldArrays',          default=True )
     m_PassPointArrays         : bpy.props.BoolProperty  ( name='PassPointArrays',          default=True )
     m_PromoteOutputArrays     : bpy.props.BoolProperty  ( name='PromoteOutputArrays',      default=True )
-    m_ShepardNormalization    : bpy.props.BoolProperty  ( name='ShepardNormalization',     default=True )
     m_CutoffArrayName         : bpy.props.StringProperty( name='CutoffArrayName',          default="" )
     m_DensityArrayName        : bpy.props.StringProperty( name='DensityArrayName',         default="Rho" )
     m_MassArrayName           : bpy.props.StringProperty( name='MassArrayName',            default="" )
@@ -1532,10 +1454,10 @@ class VTKSPHInterpolator(Node, BVTK_Node):
     m_NullValue               : bpy.props.FloatProperty ( name='NullValue',                default=0.0 )
     e_NullPointsStrategy      : bpy.props.EnumProperty  ( name='NullPointsStrategy',       default="NullValue", items=e_NullPointsStrategy_items )
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=13, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=12, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_ComputeShepardSum','m_PassCellArrays','m_PassFieldArrays','m_PassPointArrays','m_PromoteOutputArrays','m_ShepardNormalization','m_CutoffArrayName','m_DensityArrayName','m_MassArrayName','m_ShepardSumArrayName','m_ValidPointsMaskArrayName','m_NullValue','e_NullPointsStrategy',]
+        return ['m_ComputeShepardSum','m_PassCellArrays','m_PassFieldArrays','m_PassPointArrays','m_PromoteOutputArrays','m_CutoffArrayName','m_DensityArrayName','m_MassArrayName','m_ShepardSumArrayName','m_ValidPointsMaskArrayName','m_NullValue','e_NullPointsStrategy',]
     def m_connections( self ):
         return (['input 0', 'input 1'], ['output'], ['Kernel'], []) 
     
@@ -1550,7 +1472,7 @@ class VTKSelectEnclosedPoints(Node, BVTK_Node):
     
     m_CheckSurface: bpy.props.BoolProperty ( name='CheckSurface', default=True )
     m_InsideOut   : bpy.props.BoolProperty ( name='InsideOut',    default=True )
-    m_Tolerance   : bpy.props.FloatProperty( name='Tolerance',    default=0.0001 )
+    m_Tolerance   : bpy.props.FloatProperty( name='Tolerance',    default=0.001 )
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -1759,29 +1681,6 @@ class VTKTensorGlyph(Node, BVTK_Node):
     
 add_class( VTKTensorGlyph )        
 TYPENAMES.append('VTKTensorGlyphType' )
-
-#--------------------------------------------------------------
-class VTKTrimmedExtrusionFilter(Node, BVTK_Node):
-
-    bl_idname = 'VTKTrimmedExtrusionFilterType'
-    bl_label  = 'vtkTrimmedExtrusionFilter'
-    e_CappingStrategy_items=[ (x,x,x) for x in ['Intersection', 'MinimumDistance', 'MaximumDistance', 'AverageDistance']]
-    e_ExtrusionStrategy_items=[ (x,x,x) for x in ['BoundaryEdges', 'AllEdges']]
-    
-    m_Capping           : bpy.props.BoolProperty       ( name='Capping',            default=True )
-    e_CappingStrategy   : bpy.props.EnumProperty       ( name='CappingStrategy',    default="MaximumDistance", items=e_CappingStrategy_items )
-    e_ExtrusionStrategy : bpy.props.EnumProperty       ( name='ExtrusionStrategy',  default="BoundaryEdges", items=e_ExtrusionStrategy_items )
-    m_ExtrusionDirection: bpy.props.FloatVectorProperty( name='ExtrusionDirection', default=[0.0, 0.0, 1.0], size=3 )
-    
-    b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
-
-    def m_properties( self ):
-        return ['m_Capping','e_CappingStrategy','e_ExtrusionStrategy','m_ExtrusionDirection',]
-    def m_connections( self ):
-        return (['input 0', 'input 1'], ['output'], [], []) 
-    
-add_class( VTKTrimmedExtrusionFilter )        
-TYPENAMES.append('VTKTrimmedExtrusionFilterType' )
 
 #--------------------------------------------------------------
 class VTKVolumeContourSpectrumFilter(Node, BVTK_Node):
