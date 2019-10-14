@@ -321,11 +321,18 @@ class BVTK_Node:
             self.setup()
 
     def get_b(self):
-        '''Get boolean property'''
-        return b_properties.b[self.bl_idname]
+        '''Get list of booleans to show/hide boolean properties'''
+        n_properties = len(self.b_properties)
+        # If there are correct number of saved properties, return those
+        if self.bl_idname in b_properties.b:
+            saved_properties = b_properties.b[self.bl_idname]
+            if len(saved_properties) == n_properties:
+                return saved_properties
+        # Otherwise return correct number of Trues (=show all properties by default)
+        return [True] * n_properties
 
     def set_b(self, value):
-        '''Set boolean property a value and update boolean properties file'''
+        '''Set boolean property list and update boolean properties file'''
         b_properties.b[self.bl_idname] = [v for v in value]
         bpy.ops.node.select_all(action='SELECT')
         bpy.ops.node.select_all(action='DESELECT')
