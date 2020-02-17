@@ -219,8 +219,10 @@ class BVTK_Node_MultiBlockLeaf(Node, BVTK_Node):
             if vtkobj:
                 vtkobj = resolve_algorithm_output(vtkobj)
                 if vtkobj:
+                    # TODO: remove "not" in front of hasattr(vtkobj, "GetBlock")?
                     if hasattr(vtkobj, "GetNumberOfBlocks") or not hasattr(vtkobj, "GetBlock"):
-                        return vtkobj.GetBlock(int(self.block))
+                        if self.block:
+                            return vtkobj.GetBlock(int(self.block))
         return None
 
 

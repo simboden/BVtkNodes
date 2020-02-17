@@ -7,11 +7,11 @@
 bl_info = {
     "name": "BVTKNodes, Blender VTK Nodes",
     "author": "Silvano Imboden, Lorenzo Celli, Paul McManus, Tuomo Keskitalo",
-    "version": (0, 3),
+    "version": (0, 4),
     "blender": (2, 80,  0),
     "location": "BVTK Node Tree Editor > New",
     "description": "Create and execute VTK pipelines in Blender Node Editor",
-    "warning": "Experimental. Requires custom installation of VTK library",
+    "warning": "Experimental",
     "wiki_url": "https://github.com/tkeskita/BVtkNodes",
     "tracker_url": "https://github.com/tkeskita/BVtkNodes/issues",
     "support": 'COMMUNITY',
@@ -21,6 +21,10 @@ bl_info = {
 # Note: See core.py on how to set up Python Logging to see debug messages
 
 # OPEN ISSUES
+# - Currently it is not possible to use Blender 2.8 animation system
+#   to animate BVTKNodes properties. This is due to bug in Blender,
+#   and it has been previously reported at
+#   https://developer.blender.org/T66392
 # - generate/vtk_info_modified.py is not used, should it be deleted?
 # - continue development of node_tree_from_py at some point?
 # - cone.json example raises a lot of vtkInformation request errors on
@@ -29,20 +33,13 @@ bl_info = {
 #   until input nodes generate the list
 # - Generate Scalar Bar in Color Mapper is not working correctly.
 #
-# WAITING ISSUES
-# - Generate Material in VTK To Blender node causes continuous regeneration
-#   of material and/or crashing if Material Settings tab is active
-#   in Properties Editor. This is due to bpy.app.handlers.frame_change_post
-#   call from material list, which seems like a Blender bug.
-#   Reported issue here: https://developer.blender.org/T65034
-#   Currently frame change hook is disabled until this issue is solved.
-#
-# CURRENTLY UNDER WORK
-# - Support for MultiBlockData
-# - Support for time variant data
-# - Support for volume rendering in Blender
-#
 # IDEAS FOR FUTURE DEVELOPMENT
+#
+# - Hardcode Blender animation frame number with Time Selector node
+#   time step, so that it is possible to animate transient data.
+# - Add python code text attribute to all VTK nodes, so that it is
+#   possible to give custom code to be run per node during pipeline
+#   execution.
 # - Calculator Node: use vtkExperssion evaluator
 # - VTK exporter: Export Blender mesh and vertex data into VTK file format.
 #   Options: Legacy VTK file format (polydata .vtk) and/or XML format (.vtp).
@@ -215,9 +212,7 @@ def register():
     filled in all the gen_VTK*.py and VTK*.py files
     '''
     bpy.app.handlers.load_post.append(on_file_loaded)
-    # Commented out frame change until this issue is resolved:
-    # https://developer.blender.org/T65034
-    # bpy.app.handlers.frame_change_post.append(on_frame_change)
+    bpy.app.handlers.frame_change_post.append(on_frame_change)
     core.check_b_properties() # delayed to here to allow class overriding
     for c in core.UI_CLASSES:
         try:
@@ -238,7 +233,5 @@ def unregister():
     for c in reversed(core.UI_CLASSES):
         bpy.utils.unregister_class(c)
     bpy.app.handlers.load_post.remove(on_file_loaded)
-    # Commented out frame change until this issue is resolved:
-    # https://developer.blender.org/T65034
-    # bpy.app.handlers.frame_change_post.remove(on_frame_change)
+    bpy.app.handlers.frame_change_post.remove(on_frame_change)
             
