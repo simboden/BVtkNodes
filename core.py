@@ -297,6 +297,8 @@ class BVTK_Node:
         # Run custom code at VTK object
         if len(self.custom_code) > 0:
             for x in self.custom_code.splitlines():
+                if x.startswith("#"):
+                    continue
                 cmd = 'vtkobj.' + x
                 l.debug("Running custom code: '%s'" % cmd)
                 exec(cmd, globals(), locals())
