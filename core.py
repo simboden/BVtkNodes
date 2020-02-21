@@ -184,6 +184,14 @@ class BVTK_Node:
 
     node_id: bpy.props.IntProperty(default=0)
 
+    custom_code: bpy.props.StringProperty(
+        name="Custom Code",
+        description="Custom Python Code to Run for This VTK Object." \
+        + " Use semicolon without spaces as separator",
+        default="",
+        maxlen=0,
+    )
+
     @classmethod
     def poll(cls, ntree):
         return ntree.bl_idname == 'BVTK_NodeTreeType'
@@ -249,6 +257,7 @@ class BVTK_Node:
                 layout.prop(self, m_properties[i])
         if self.bl_idname.endswith('WriterType'):
             layout.operator('node.bvtk_node_write').id = self.node_id
+        layout.prop(self, "custom_code")
 
     def copy(self, node):
         '''Copies setup from another node'''
@@ -275,6 +284,14 @@ class BVTK_Node:
             else:
                 cmd = 'vtkobj.Set'+x[2:]+'(self.'+x+')'
             exec(cmd, globals(), locals())
+
+        # Run custom code at VTK object
+        if len(self.custom_code) > 0:
+            for x in self.custom_code.split(';'):
+                cmd = 'vtkobj.' + x
+                l.debug("Running custom code: '%s'" % cmd)
+                exec(cmd, globals(), locals())
+            exec('vtkobj.Update()', globals(), locals())
 
     def input_nodes(self):
         '''Return input nodes'''
