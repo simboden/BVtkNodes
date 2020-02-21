@@ -257,7 +257,16 @@ class BVTK_Node:
                 layout.prop(self, m_properties[i])
         if self.bl_idname.endswith('WriterType'):
             layout.operator('node.bvtk_node_write').id = self.node_id
-        layout.prop(self, "custom_code")
+
+        # Show Custom Code
+        if len(self.custom_code) > 0:
+            row = layout.row()
+            row.label(text="Custom Code:")
+            box = layout.box()
+            col = box.column()
+            for text in self.custom_code.splitlines():
+                row = col.row()
+                row.label(text=text)
 
     def copy(self, node):
         '''Copies setup from another node'''
@@ -287,7 +296,7 @@ class BVTK_Node:
 
         # Run custom code at VTK object
         if len(self.custom_code) > 0:
-            for x in self.custom_code.split(';'):
+            for x in self.custom_code.splitlines():
                 cmd = 'vtkobj.' + x
                 l.debug("Running custom code: '%s'" % cmd)
                 exec(cmd, globals(), locals())
@@ -361,6 +370,7 @@ class BVTK_Node:
             txt += " '" + key + "': " + str(value) + ",\n"
         txt += "}\n"
         open(b_path,'w').write(txt)
+
 
 
 # -----------------------------------------------------------------------------

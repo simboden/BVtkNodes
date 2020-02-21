@@ -36,5 +36,58 @@ class BVTK_PT_ShowHide_Properties(bpy.types.Panel):
                     row.label(text=prop_dict['attr'][2:]) # removing first chars 'm_'
                 else:
                     l.error("Broken dict " + str(prop_dict))
+        # Custom code editing operators
+        row = layout.row()
+        row.operator("node.bvtk_custom_code_edit", text="Edit Custom Code")
+        row = layout.row()
+        row.operator("node.bvtk_custom_code_save", text="Save Custom Code")
+
+
+class BVTK_OT_Edit_Custom_Code(bpy.types.Operator):
+    '''Edit Custom Code text string for Active Node in Text Editor'''
+    bl_idname = "node.bvtk_custom_code_edit"
+    bl_label = "Edit Custom Code"
+
+    def execute(self, context):
+        active_node = context.active_node
+        name = 'BVTK'
+        if name not in bpy.data.texts.keys():
+            text = bpy.data.texts.new(name)
+        else:
+            text = bpy.data.texts[name]
+        text.from_string(active_node.custom_code)
+        flag = True
+        areas = context.screen.areas
+        for area in areas:
+            if area.type == 'TEXT_EDITOR':
+                for space in area.spaces:
+                    if space.type == 'TEXT_EDITOR':
+                        if flag:
+                            space.text = text
+                            space.top = 0
+                            flag = False
+        self.report({'INFO'}, "Edit node %r " % active_node.name \
+                    + "in text editor %r" % name)
+        return {'FINISHED'}
+
+
+class BVTK_OT_Save_Custom_Code(bpy.types.Operator):
+    '''Save Custom Code text from Text Editor to Active Node'''
+    bl_idname = "node.bvtk_custom_code_save"
+    bl_label = "Save Custom Code"
+
+    def execute(self, context):
+        active_node = context.active_node
+        name = 'BVTK'
+        if name not in bpy.data.texts.keys():
+            self.report({'ERROR'}, "No %r text found in text editor!" % name)
+            return {'FINISHED'}
+        else:
+            active_node.custom_code = bpy.data.texts[name].as_string()
+        self.report({'INFO'}, "Saved Custom Code from %r" % name)
+        return {'FINISHED'}
+
 
 core.add_ui_class(BVTK_PT_ShowHide_Properties)
+core.add_class(BVTK_OT_Edit_Custom_Code)
+core.add_class(BVTK_OT_Save_Custom_Code)
