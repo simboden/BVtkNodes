@@ -161,6 +161,13 @@ def on_frame_change(scene):
     '''Update nodes after frame changes by updating all VTK to Blender nodes'''
     for node_group in bpy.data.node_groups:
         for node in node_group.nodes:
+            # Set frame number directly from Blender timeline.
+            # Note: This is a workaround to enable transient data traversal
+            # while this issue remains: https://developer.blender.org/T66392
+            if node.bl_idname == 'BVTK_Node_TimeSelectorType':
+                node.time_step = bpy.context.scene.frame_current
+                l.debug("SET time_step %d" % node.time_step)
+
             if node.bl_idname == 'BVTK_Node_VTKToBlenderType':
                 l.debug("calling no_queue_update")
                 update.no_queue_update(node, node.update_cb)

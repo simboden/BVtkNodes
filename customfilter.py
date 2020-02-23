@@ -245,10 +245,12 @@ class BVTK_Node_TimeSelector(Node, BVTK_Node):
                         time_steps = out_info.Get(executive.TIME_STEPS())
                         if time_steps:
                             size = len(time_steps)
-                            if self.time_step < -size:
-                                self.time_step = -size
-                            elif self.time_step >= size:
-                                self.time_step = size-1
+                            #if self.time_step < -size:
+                            #    self.time_step = -size
+                            #elif self.time_step >= size:
+                            #    self.time_step = size-1
+                            # Make data loop outside normal time range
+                            self.time_step = self.time_step % size
 
     time_step: bpy.props.IntProperty(update=check_range)
 
