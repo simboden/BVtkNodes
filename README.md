@@ -13,21 +13,22 @@ scientific data formats, along with capability to convert VTK data
 into a Blender mesh. For VTK users, the add-on provides access to high
 quality rendering and many kind of mesh editing tools. The add-on was
 [presented at Blender Conference 2018](https://www.youtube.com/watch?v=KcF4LBTTyvk).
-
+You can see more examples in
+[a gallery thread on blenderartists](https://blenderartists.org/t/bvtknodes-gallery/1161079).
 <p align="center">
 <img src="isosurfaces.jpg">
 </p>
 
 ### Information
 
-- **Tested version**: Blender version 2.80 and VTK library version 8.1.2.
+- **Tested version**: Blender version 2.82 and VTK library version 8.1.2.
 - **License**: [GPL v3](http://www.gnu.org/licenses/quick-guide-gplv3.html)
 - **Contributors**: Silvano Imboden (s.imboden@cineca.it), Lorenzo Celli,
   Paul McManus, Tuomo Keskitalo
 
 ### Prerequisites
 
-BVTKNodes add-on has been tested with Blender version 2.80,
+BVTKNodes add-on has been tested with Blender version 2.82,
 VTK version 8.1.2 and VTK python wrappers
 compatible with the Python version used in Blender.
 Easiest way is to

@@ -35,16 +35,7 @@ bl_info = {
 #
 # IDEAS FOR FUTURE DEVELOPMENT
 #
-# - Hardcode Blender animation frame number with Time Selector node
-#   time step, so that it is possible to animate transient data.
-# - Add python code text attribute to all VTK nodes, so that it is
-#   possible to give custom code to be run per node during pipeline
-#   execution.
-# - Calculator Node: use vtkExperssion evaluator
-# - VTK exporter: Export Blender mesh and vertex data into VTK file format.
-#   Options: Legacy VTK file format (polydata .vtk) and/or XML format (.vtp).
-#   This could be a separate Blender add-on which would not require
-#   VTK installation.
+# - Calculator Node: use vtkExpression evaluator
 # - Blender To VTK Node: A BVTK node which converts Blender mesh into
 #   vtkPolyData. Alternatively add vtkBlendReader to VTK?
 #   Or maybe vtkAlembicReader to VTK? https://www.alembic.io/
