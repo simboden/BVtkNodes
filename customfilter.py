@@ -226,6 +226,25 @@ class BVTK_Node_MultiBlockLeaf(Node, BVTK_Node):
         return None
 
 
+def update_timestep_in_filename(filename, time_step):
+    '''Return file name, where time definition integer string (assumed to
+    be located just before dot at end of file name) has been replaced
+    to argument time step number
+    '''
+    import re
+    rec1 = re.compile(r'(\d+)\.\w+$', re.M)
+    regex1 = rec1.search(filename)
+    if regex1:
+        numbers = regex1.group(1)
+        n = len(numbers)
+        defstr = "%0" + str(n) + "d"
+        replacement = defstr % time_step
+        # Replace with dot at end to increase odds for correct substitution
+        newname = filename.replace(numbers + ".", replacement + ".")
+        return newname
+    return filename
+
+
 class BVTK_Node_TimeSelector(Node, BVTK_Node):
     '''VTK time management node for time variant data. Display time sets,
     time values and set time.
@@ -243,6 +262,7 @@ class BVTK_Node_TimeSelector(Node, BVTK_Node):
                     out_info = prod.GetOutputInformation(out_port.GetIndex())
                     if hasattr(executive, "TIME_STEPS"):
                         time_steps = out_info.Get(executive.TIME_STEPS())
+                        # If reader is aware of time, update time step
                         if time_steps:
                             size = len(time_steps)
                             #if self.time_step < -size:
@@ -251,6 +271,12 @@ class BVTK_Node_TimeSelector(Node, BVTK_Node):
                             #    self.time_step = size-1
                             # Make data loop outside normal time range
                             self.time_step = self.time_step % size
+                        # Hack for time unaware readers: If file name of reader
+                        # node contains number string at end, update it
+                        else:
+                            filename = in_node.m_FileName
+                            newname = update_timestep_in_filename(filename, self.time_step)
+                            in_node.m_FileName = newname
 
     time_step: bpy.props.IntProperty(update=check_range)
 
@@ -288,7 +314,7 @@ class BVTK_Node_TimeSelector(Node, BVTK_Node):
                 else:
                     layout.label(text='Index error', icon='ERROR')
             else:
-                layout.label(text='Input is empty (needs update?)')
+                layout.label(text='No time data on input')
         else:
             layout.label(text='Input contains no time steps')
         return
