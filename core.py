@@ -224,7 +224,7 @@ class BVTK_Node:
         'output' or 'output 0' -> get_vtkobj().getOutputPort()
         'output x'             -> get_vtkobj().getOutputPort(x)
         '''
-        if name not in self.inputs:
+        if not name in self.inputs:
             return []
         input = self.inputs[name]
         if len(input.links) < 1:  # is_linked could be true even with 0 links

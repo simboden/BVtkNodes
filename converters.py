@@ -40,7 +40,7 @@ class BVTK_Node_VTKToBlender(Node, BVTK_Node):
         layout.operator("node.bvtk_node_update", text="update").node_path = node_path(self)
 
     def update_cb(self):
-        '''Update node'''
+        '''Update node color bar'''
         input_node, vtkobj = self.get_input_node('input')
         ramp = None
         if input_node and input_node.bl_idname == 'BVTK_Node_ColorMapperType':

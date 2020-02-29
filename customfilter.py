@@ -262,6 +262,7 @@ class BVTK_Node_TimeSelector(Node, BVTK_Node):
                     out_info = prod.GetOutputInformation(out_port.GetIndex())
                     if hasattr(executive, "TIME_STEPS"):
                         time_steps = out_info.Get(executive.TIME_STEPS())
+
                         # If reader is aware of time, update time step
                         if time_steps:
                             size = len(time_steps)
@@ -269,8 +270,13 @@ class BVTK_Node_TimeSelector(Node, BVTK_Node):
                             #    self.time_step = -size
                             #elif self.time_step >= size:
                             #    self.time_step = size-1
-                            # Make data loop outside normal time range
-                            self.time_step = self.time_step % size
+                            # Make data loop outside normal time range.
+                            # Value test is needed to avoid infinite property
+                            # update loop calling check_range().
+                            time_val = self.time_step % size
+                            if self.time_step != time_val:
+                                self.time_step = time_val
+
                         # Hack for time unaware readers: If file name of reader
                         # node contains number string at end, update it
                         else:
