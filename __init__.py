@@ -76,7 +76,7 @@ if need_reloading:
     importlib.reload(b_properties)
     importlib.reload(showhide_properties)
     importlib.reload(tree)
-    importlib.reload(inspect)
+    importlib.reload(b_inspect)
     importlib.reload(colormap)
     importlib.reload(customfilter)
     importlib.reload(info)
@@ -114,7 +114,7 @@ else:
     from . import core
     from . import b_properties
     from . import showhide_properties
-    from . import inspect
+    from . import b_inspect
     from . import favorites
     from . import tree
     from . import colormap
