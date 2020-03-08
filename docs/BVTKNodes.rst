@@ -40,7 +40,8 @@ pipelines are not required, then it is suggested to use `Paraview
 
 To learn Blender, see resources at `blender.org <https://www.blender.org/>`_
 , `Blender 2.8 fundamentals series in Youtube <https://www.youtube.com/playlist?list=PLa1F2ddGya_-UvuAqHAksYnB0qL9yWDO6>`_ and search for Blender tutorials on a topic.
-To learn VTK, see `VTK wiki <https://vtk.org/Wiki/VTK/Learning_VTK>`_
+To learn VTK, see `VTK wiki <https://vtk.org/Wiki/VTK/Learning_VTK>`_,
+`the VTK Textbook <https://vtk.org/vtk-textbook/>`_
 and view `VTK discourse forum <https://discourse.vtk.org/>`_.
 
 
