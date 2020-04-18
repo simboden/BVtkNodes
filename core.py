@@ -283,8 +283,10 @@ class BVTK_Node:
         for x in [m_properties[i] for i in range(len(m_properties)) if self.b_properties[i]]:
             # SetXFileName(Y) only if attribute is a string
             if 'FileName' in x and isinstance(getattr(self, x), str):
-                value = os.path.realpath(bpy.path.abspath(getattr(self, x)))
-                cmd = 'vtkobj.Set' + x[2:] + '(value)'
+                inputval = getattr(self, x)
+                if len(inputval) > 0:
+                    value = os.path.realpath(bpy.path.abspath(inputval))
+                    cmd = 'vtkobj.Set' + x[2:] + '(value)'
             # SetXToY()
             elif x.startswith('e_'):
                 value = getattr( self, x )
