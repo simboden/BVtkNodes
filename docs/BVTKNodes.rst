@@ -63,6 +63,18 @@ been fully customized for use in Blender, it is possible to add Custom
 Code for VTK objects. This is often needed, since many VTK objects
 require custom input from user to work correctly.
 
+When update of the node tree is triggered, each parameter and value
+shown in the node is set to the VTK object represented by the node,
+unless the value is empty. It is not possible to affect the order in
+which values are set, which may result in unwanted behavior. In this
+case, please add Custom Code to node, which is always run at last.
+
+Some VTK classes include several overlapping methods to specify
+values, e.g. *vtkConeSource* has options for Angle, Height and Radius,
+two of which is enough to specify (third property can be hidden in
+Properties tab to disable it). If all are specified, then the latter
+values take precedence.
+
 .. warning::
 
    BVTKNodes is a
@@ -356,5 +368,5 @@ Other Resources
 Special Use Cases
 -----------------
 
-TODO. Here will be added documentation about various specific node
-pipelines to achieve .
+TODO. Here will be added documentation about various case specific node
+pipelines.
