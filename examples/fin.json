@@ -224,8 +224,8 @@
             "hide": false,
             "label": "",
             "location": [
-                -250.0,
-                -700.0
+                0.0,
+                -550.0
             ],
             "mute": false,
             "name": "Color Ramp.001",
@@ -249,7 +249,7 @@
                 -250.0,
                 0.0
             ],
-            "m_Capping": true,
+            "m_Capping": false,
             "m_DefaultNormal": [
                 0.0,
                 0.0,
@@ -262,7 +262,7 @@
             "m_RadiusFactor": 10.0,
             "m_SidesShareVertices": true,
             "m_TextureLength": 1.0,
-            "m_UseDefaultNormal": true,
+            "m_UseDefaultNormal": false,
             "mute": false,
             "name": "vtkTubeFilter",
             "show_options": true,
@@ -541,7 +541,7 @@
             "label": "",
             "location": [
                 -250,
-                -300
+                -450
             ],
             "m_Clamping": true,
             "m_FillCellData": true,
@@ -600,7 +600,7 @@
             "label": "",
             "location": [
                 -550,
-                -700
+                -600
             ],
             "m_Invert": false,
             "m_ShaftRadius": 0.029999999329447746,

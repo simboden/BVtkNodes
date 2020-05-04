@@ -84,8 +84,8 @@
             "hide": false,
             "label": "",
             "location": [
-                -20.0,
-                520.0
+                0.0,
+                800.0
             ],
             "m_FieldDataName": "",
             "m_FileName": "$/kitchenforniture.vtk",
@@ -122,7 +122,7 @@
             "label": "",
             "location": [
                 300.0,
-                520.0
+                800.0
             ],
             "m_Name": "furniture",
             "mute": false,
@@ -321,7 +321,7 @@
             "label": "",
             "location": [
                 -300.0,
-                20.0
+                0.0
             ],
             "mute": false,
             "name": "Color Ramp",
@@ -341,7 +341,7 @@
             "label": "",
             "location": [
                 -1100.0,
-                60.0
+                50.0
             ],
             "m_Center": [
                 0.0,
@@ -388,7 +388,7 @@
             "label": "",
             "location": [
                 -1100.0,
-                300.0
+                600.0
             ],
             "m_FieldDataName": "",
             "m_FileName": "$/kitchenflow.vtk",
@@ -405,7 +405,7 @@
             "m_ScalarsName": "",
             "m_TCoordsName": "",
             "m_TensorsName": "",
-            "m_VectorsName": "",
+            "m_VectorsName": "vectors",
             "mute": false,
             "name": "vtkStructuredGridReader",
             "show_options": true,
