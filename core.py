@@ -281,16 +281,17 @@ class BVTK_Node:
         '''Sets properties from node to vtkobj based on property name'''
         m_properties=self.m_properties()
         for x in [m_properties[i] for i in range(len(m_properties)) if self.b_properties[i]]:
+            # Skip setting any empty values
+            inputval = getattr(self, x)
+            if len(str(inputval)) == 0:
+                continue
             # SetXFileName(Y) only if attribute is a string
-            if 'FileName' in x and isinstance(getattr(self, x), str):
-                inputval = getattr(self, x)
-                if len(inputval) > 0:
-                    value = os.path.realpath(bpy.path.abspath(inputval))
-                    cmd = 'vtkobj.Set' + x[2:] + '(value)'
+            if 'FileName' in x and isinstance(inputval, str):
+                value = os.path.realpath(bpy.path.abspath(inputval))
+                cmd = 'vtkobj.Set' + x[2:] + '(value)'
             # SetXToY()
             elif x.startswith('e_'):
-                value = getattr( self, x )
-                cmd = 'vtkobj.Set'+x[2:]+'To'+value+'()'
+                cmd = 'vtkobj.Set'+x[2:]+'To'+inputval+'()'
             # SetX(self.Y)
             else:
                 cmd = 'vtkobj.Set'+x[2:]+'(self.'+x+')'
