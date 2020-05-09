@@ -19,6 +19,7 @@ from bpy.types import NodeTree, Node, NodeSocket
 from nodeitems_utils import NodeCategory, NodeItem
 import os
 import vtk
+import functools # for decorators
 
 from . import b_properties # Boolean properties
 b_path = b_properties.__file__ # Boolean properties config file path
@@ -176,6 +177,47 @@ class BVTK_NodeSocket(NodeSocket):
 
 
 # -----------------------------------------------------------------------------
+# Custom Code decorators
+# -----------------------------------------------------------------------------
+
+def show_custom_code(func):
+    '''Decorator to show custom code in nodes. Used in draw_buttons().'''
+    @functools.wraps(func)
+    def show_custom_code_wrapper(self, context, layout):
+        # Call function first
+        value = func(self, context, layout)
+        # Then show Custom Code
+        if len(self.custom_code) > 0:
+            row = layout.row()
+            row.label(text="Custom Code:")
+            box = layout.box()
+            col = box.column()
+            for text in self.custom_code.splitlines():
+                row = col.row()
+                row.label(text=text)
+        return value
+    return show_custom_code_wrapper
+
+
+def run_custom_code(func):
+    '''Decorator to run custom code. Used in apply_properties().'''
+    @functools.wraps(func)
+    def run_custom_code_wrapper(self, vtkobj):
+        # Call function first
+        value = func(self, vtkobj)
+        # Then run Custom Code
+        if len(self.custom_code) > 0:
+            for x in self.custom_code.splitlines():
+                if x.startswith("#"):
+                    continue
+                cmd = 'vtkobj.' + x
+                l.debug("Running custom code: '%s'" % cmd)
+                exec(cmd, globals(), locals())
+            exec('vtkobj.Update()', globals(), locals())
+        return value
+    return run_custom_code_wrapper
+
+# -----------------------------------------------------------------------------
 # base class for all BVTK_Nodes
 # -----------------------------------------------------------------------------
 
@@ -249,6 +291,7 @@ class BVTK_Node:
         '''Shortcut to get vtkobj'''
         return get_vtkobj(self)
 
+    @show_custom_code
     def draw_buttons(self, context, layout):
         '''Draw button'''
         m_properties=self.m_properties()
@@ -257,16 +300,6 @@ class BVTK_Node:
                 layout.prop(self, m_properties[i])
         if self.bl_idname.endswith('WriterType'):
             layout.operator('node.bvtk_node_write').id = self.node_id
-
-        # Show Custom Code
-        if len(self.custom_code) > 0:
-            row = layout.row()
-            row.label(text="Custom Code:")
-            box = layout.box()
-            col = box.column()
-            for text in self.custom_code.splitlines():
-                row = col.row()
-                row.label(text=text)
 
     def copy(self, node):
         '''Copies setup from another node'''
@@ -277,6 +310,7 @@ class BVTK_Node:
             # after being copied
             self.copy_setup(node)
 
+    @run_custom_code
     def apply_properties(self, vtkobj):
         '''Sets properties from node to vtkobj based on property name'''
         m_properties=self.m_properties()
@@ -296,16 +330,6 @@ class BVTK_Node:
             else:
                 cmd = 'vtkobj.Set'+x[2:]+'(self.'+x+')'
             exec(cmd, globals(), locals())
-
-        # Run custom code at VTK object
-        if len(self.custom_code) > 0:
-            for x in self.custom_code.splitlines():
-                if x.startswith("#"):
-                    continue
-                cmd = 'vtkobj.' + x
-                l.debug("Running custom code: '%s'" % cmd)
-                exec(cmd, globals(), locals())
-            exec('vtkobj.Update()', globals(), locals())
 
     def input_nodes(self):
         '''Return input nodes'''

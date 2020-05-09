@@ -1,7 +1,7 @@
 from .gen_VTKFilters1 import *
 from .gen_VTKFilters2 import *
 from .gen_VTKFilters  import *
-
+from .core import show_custom_code, run_custom_code
 
 class BVTK_PG_ValueSettings(bpy.types.PropertyGroup):
     '''Property Group for float array of variable size'''
@@ -17,6 +17,7 @@ class BVTK_ContourHelper:
     '''
     m_ContourValues: bpy.props.CollectionProperty(type=BVTK_PG_ValueSettings)
 
+    @show_custom_code
     def draw_buttons(self, context, layout):
         m_properties = self.m_properties()
         for i in range(len(m_properties)):
@@ -40,6 +41,7 @@ class BVTK_ContourHelper:
                 else:
                     layout.prop(self, prop)
 
+    @run_custom_code
     def apply_properties(self, vtkobj):
         m_properties = self.m_properties()
         for x in [m_properties[i] for i in range(len(m_properties)) if self.b_properties[i]]:

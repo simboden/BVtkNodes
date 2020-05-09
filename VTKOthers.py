@@ -4,6 +4,7 @@ from .gen_VTKParametricFunc import *
 from .gen_VTKIntegrator import *
 import mathutils
 import math
+from .core import show_custom_code, run_custom_code
 
 # --------------------------------------------------------------
 # ImplicitFunctions base class
@@ -65,6 +66,7 @@ class BVTK_ImplicitFunction:
         bpy.ops.node.bvtk_link_object(object_name=ob.name, node_path=node_path(self))
         self.object = ob.name
 
+    @show_custom_code
     def draw_buttons(self, context, layout):
         m_properties = self.m_properties()
         for i in range(len(m_properties)):
@@ -82,6 +84,7 @@ class BVTK_ImplicitFunction:
         text = 'unlink' if self.using_object else 'link'
         row.prop(self, 'using_object', text=text, toggle=True)
 
+    @run_custom_code
     def apply_properties(self,vtkobj):
         if self.using_object and self.object in bpy.data.objects:
             self.properties_from_obj(bpy.data.objects[self.object])
