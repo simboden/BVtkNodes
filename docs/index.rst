@@ -11,3 +11,5 @@ Welcome to BVTKNodes's documentation!
    :caption: Contents:
 
    BVTKNodes.rst
+   ug_nodes.rst
+

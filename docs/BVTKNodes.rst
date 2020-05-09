@@ -368,5 +368,4 @@ Other Resources
 Special Use Cases
 -----------------
 
-TODO. Here will be added documentation about various case specific node
-pipelines.
+See :ref:`ug_nodes`.
