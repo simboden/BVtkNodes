@@ -6,7 +6,13 @@ Node Examples for Unstructured Grids
 Here are listed various node setups used for processing unstructured
 grid (*vtkUnstructuredGrid*) data composed of 3D cells. Examples below
 utilize the *cubeflow* OpenFOAM dataset located in *examples_data*
-folder of the add-on sources.
+folder of the add-on sources. This is a very small and simple 5x5x5
+hexahedral mesh with 5 time points for testing and debugging
+purposes. For more elaborate visualizations, please have a look at
+`a gallery thread on blenderartists <https://blenderartists.org/t/bvtknodes-gallery/1161079>`_.
+
+.. image:: images/ug_cubeflow_geometry.png
+
 
 Set Up Reader
 -------------
@@ -16,14 +22,14 @@ the correct data block and finally info node to see information about
 data read in:
 
 * Add *vtkOpenFOAMReader* - Select *case.foam* file located at the
-  *cubeflow* directory to *FileName* field.
+  *cubeflow* directory to **FileName** field.
 * Add *Time Selector* node and connect it
 * Add *Multi Block Leaf* node and connect it
 * Add *Info* node and connect it
 * Press *Update* button on *Info* node to update pipeline
 
 When data is read in correctly, the *Info* node shows number of
-points/cells, and fields read in. Set *Time Step* value to **5** in
+points/cells, and fields read in. Set **Time Step** value to **5** in
 *Time Selector* node either manually or by changing frame number in
 Blender Timeline Editor.
 
@@ -60,26 +66,94 @@ need to
 .. image:: images/ug_extract_boundary_patch_nodesetup.png
 
 
-Calculations Using Field Data
------------------------------
+Field Data Calculations
+-----------------------
 
-TODO
+You can use the combination of *vtkPassArrays* and
+*vtkArrayCalculator* to calculate new fields from existing fields.
 
-* Vector magnitude
+* In *vtkPassArrays*, you must specify which cell or point data fields
+  will be operated on, by adding Custom Code commands like::
+  
+    AddArray(vtk.vtkDataObject.CELL, "U")
+    AddArray(vtk.vtkDataObject.POINT, "")
 
-* Vector component
+.. note::
+
+   Some nodes (like *vtkContourFilter*) may require use of
+   *vtkPassArrays* or a node specific function to activate arrays to
+   operate on, even if there is only one array in input.
+
+* In *vtkArrayCalculator* node, write the calculator code to **Function**
+  field, the result array name to **ResultArrayName**, and select
+  correct type for the **AttributeType** field. Finally you must
+  specify the array names which are operated on by Custom Code like::
+
+    AddVectorArrayName("U")
+
+* See `the list of operators in vtkArrayCalculator docs <https://vtk.org/doc/nightly/html/classvtkArrayCalculator.html#details>`_. Some examples for **Function** field:
+
+  * First *U* vector component can be extracted by expression like ``U.iHat``
+
+  * *U* vector magnitude can be calculated with ``mag(U)``
+
+.. image:: images/ug_array_calculator_nodesetup.png
 
 
 Cutting Field Data
 ------------------
 
-TODO, vtkCutter in kitchen example
+Use *vtkCutter* in combination with a geometry generator (like
+*vtkPlane*) to slice your field data. Combine with *Color Mapper* and
+*Color Ramp* to color by field value.
+
+* Connect *vtkPlane* to the **CutFunction** connector on the
+  *vtkCutter* node.
+* Disable **GenerateCutScalars** and **GenerateTriangles** in
+  *vtkCutter* node.
+* Connect *Color Ramp* to the **lookuptable** connector in the *Color
+  Mapper* node.
+* In the *VTK To Blender* node, you must enable **Generate Material**,
+  so that result colors will be shown after final Update. Note: 3D
+  Viewport must be in *Material Preview* or *Rendered* mode to see the
+  colors.
+* Run *Update* on the *VTK To Blender* node, then select the correct
+  field for **color by** in *Color Mapper* node, fix range min and max
+  if required, and click *Update* again.
+
+.. image:: images/ug_cut_plane_nodesetup.png
+
+Here is the result in 3D Viewport shown in Material Preview Mode:
+
+.. image:: images/ug_cut_plane_result.png
+
 
 
 Vector Glyphs
 -------------
 
-TODO, vtkGlyph3D in kitchen example
+Glyphs (like one produced by *vtkArrowSource*) can be placed at
+points, oriented and scaled by *vtkGlyph3D* node. This example shows
+how to color glyphs by velocity magnitude.
+
+* Add *vtkCellCenters* node to get points of cell centers.
+* Add *vtkMaskPoints* node, and adjust **MaximumNumberOfPoints** to a
+  small value and set **OnRatio** to 1 (no skipping of data
+  points). It is good idea to use a small value for maximum number
+  of points while tuning, so that calculation does not take a long
+  time.
+* Add *vtkGlyph3D* node, and set **ScaleFactor** to 20, and
+  **ColorMode** to ColorByVector.
+* Connect *vtkArrowSource* to **input 1**, and add *Color Mapper*,
+  *Color Ramp*, and *VTK To Blender* (with Generate Material enabled).
+* Run *Update*, select *Vector Magnitude* in *Color Mapper* node, and
+  run *Update* again.
+
+.. image:: images/ug_glyphs_nodesetup.png
+
+Here is the result in 3D Viewport shown in Material Preview Mode:
+
+.. image:: images/ug_glyphs_result.png
 
 
 Contours

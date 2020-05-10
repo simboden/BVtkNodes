@@ -53,15 +53,16 @@ from VTK Python classes. Simply put, the addon makes VTK classes
 available as nodes in Blender. A manually programmed node class can
 supercede automatically generated code where needed. It is fairly easy
 to upgrade/downgrade to another VTK version, including customized VTK
-builds, so this makes BVTKNodes good for prototyping and testing of
+builds, so this makes BVTKNodes an option for prototyping and testing of
 VTK pipelines.
 
 BVTKNodes includes many custom made nodes that make it possible to
 access VTK time step data, multi block data, and to color surfaces
 according to a customizable color ramp. For nodes which have not yet
 been fully customized for use in Blender, it is possible to add Custom
-Code for VTK objects. This is often needed, since many VTK objects
-require custom input from user to work correctly.
+Code (commands in `Properties`_ Tab) for VTK objects. This is often needed,
+since many VTK objects require custom input from user to work
+correctly.
 
 When update of the node tree is triggered, each parameter and value
 shown in the node is set to the VTK object represented by the node,
@@ -225,7 +226,7 @@ Properties
 
 - **Show/Hide Properties** shows list of VTK object boolean properties,
   which can be hidden or shown in the node based on this setting.
-- **Edit Custom Code** operator copies node's custom code into BVTK
+- **Edit Custom Code** operator copies node's custom code into **BVTK**
   Text Block in Text Editor, where it is possible to add code,
   which will be run, line by line, for the VTK object represented
   by this node when the node is updated.
@@ -355,6 +356,30 @@ the integer part of the File Name is updated to correspond to Timeline
 frame number. This allows animation of time series data for readers
 that are not aware of time (e.g. vtkPolyDataReader, which can read
 point and surface data from .vtk files).
+
+
+Python Interaction and Custom Filter
+------------------------------------
+
+It is possible to interact with nodes and live VTK objects via
+Blender's Python Console. Python Console includes three help operators
+for BVTKNodes:
+
+* *Get Node* operator inserts text which returns access to active
+  node.
+* *Get VTK Object* inserts command which returns access to VTK object
+  of the active node.
+* *Get Node Output* inserts text which returns the Output of VTK
+  object.
+
+Additionally, there is a *Custom Filter* node available, which allows
+user to write all of the Python code in a Blender Text Block, which is
+run at node location. For example, this code returns first block from
+the input, similar to *Multi Block Leaf* node::
+
+  def get_first_block(input):
+    return input.GetProducer().GetOutput(0).GetBlock(0)
+
 
 
 Other Resources
