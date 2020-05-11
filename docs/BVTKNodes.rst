@@ -154,19 +154,19 @@ BVTK (nodes), to make work easy.
 
 - Start a new file in Blender (File --> New --> General).
 - Delete default Cube object.
-- Duplicate the "Default" Workspace (right-click --> Duplicate) and
-  rename the new workspace (double-click on the name) to "BVTK".
+- Duplicate the *Layout* Workspace (right-click --> Duplicate) and
+  rename the new workspace (double-click on the name) to **BVTK**.
 - Split the 3D Viewport horizontally, and then vertically to create 3
   window areas.
-- Change top area from top left corner into "BVTK Node Tree". If you
+- Change top area from top left corner into *BVTK Node Tree*. If you
   don't have this option available, then there is something wrong in
   the installation.
 
   .. image:: images/editor_selection.png
 
 - In BVTK Node Editor, click New to add a new node tree.
-- Change one of the smaller areas into "Text Editor".
-- In Text Editor, click on "New" and rename "Text" into "BVTK".
+- Change one of the smaller areas into *Text Editor*.
+- In Text Editor, click on New and rename Text into **BVTK**.
 - Save this setup as a Blender file so that you can use it as a template
   when starting to process a new case.
 
@@ -186,7 +186,7 @@ shown in `Introduction`_. For other examples, see `Tree`_ tab below.
   `download head.vti from github <https://github.com/tkeskita/BVtkNodes/blob/master/examples_data/head.vti>`_.
 - Create node setup as shown in the image in `Introduction`_. You can
   add nodes from Add menu or by shortcut key shift + A. Link nodes by
-  dragging from connectors to another connector.
+  dragging from a connector to another connector.
 - Set **FileName** in *vtkXMLImageDataReader* node by clicking on the
   folder icon and select *head.vti* file.
 - In *vtkContourFilter* node click plus icon to add a contour value,
@@ -213,7 +213,7 @@ Tabs in BVTK Node Editor
 Tabs are located in the Sidebar of the BVTK Node Editor. You can hide
 and view the Sidebar by pressing "N" key while hovering mouse over the
 BVTK Node Editor. Note: Some tabs become visible only after you select
-a node in the node tree. The properties and operations shown in tabs
+a VTK node in the node tree. The properties and operations shown in tabs
 will affect the active node.
 
 Item, Tool and View Tabs
@@ -226,13 +226,16 @@ Properties
 
 - **Show/Hide Properties** shows list of VTK object boolean properties,
   which can be hidden or shown in the node based on this setting.
-- **Edit Custom Code** operator copies node's custom code into **BVTK**
-  Text Block in Text Editor, where it is possible to add code,
-  which will be run, line by line, for the VTK object represented
-  by this node when the node is updated.
+  Values for hidden properties are ignored (not set to VTK objects
+  during updates).
+- **Edit Custom Code** operator copies node's custom code into
+  **BVTK** Text Block in Text Editor, where it is possible to add and
+  edit Python code. The code will be run, line by line, for the VTK
+  object represented by this node when the node is updated.
 - **Save Custom Code** operator saves the text from the BVTK Text Block
   into custom code storage string of the active node. Custom Code will be
-  shown in the node if there is any saved to it.
+  shown in the node (editor screen updates when mouse cursor enters it)
+  if there is any saved to it.
 
 Inspect
 ^^^^^^^
@@ -256,7 +259,7 @@ This tab contains tools for debugging and information.
 Favorites
 ^^^^^^^^^
 
-This tab lists favorite nodes. You can delete and add nodes for eay
+This tab lists favorite nodes. You can delete and add nodes for easy
 access here.
 
 Tree
@@ -278,7 +281,8 @@ Special Nodes
 VTK To Blender
 ^^^^^^^^^^^^^^
 
-This is the main node, which converts VTK mesh data into Blender mesh.
+This is the main node, which converts VTK surface mesh data into
+a Blender mesh.
 
 - **Name** specifies the object and mesh names for the Blender object
   which will be created. Note: Any pre-existing mesh will be deleted
@@ -311,7 +315,7 @@ it shows:
 Color Mapper
 ^^^^^^^^^^^^
 
-This node is used to assign color to mesh data. You will see the colors
+This node assigns color to mesh data. You will see the colors
 in Blender 3D Viewport when Shading mode is set to either **Material
 Preview** or **Rendered**.
 
@@ -325,8 +329,8 @@ Preview** or **Rendered**.
   images.
 - **color bar** selects the variable according to which coloring is
   carried out.
-- **Automatic range** if enabled, will udate the value ranges
-  automatically.
+- **Automatic range** will udate the value ranges
+  automatically if enabled.
 - **min** and **max** specify the value range.
 - **output** connector should be attached to a *VTK To Blender* node.
 

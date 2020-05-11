@@ -171,7 +171,7 @@ Contours can be generated with *vtkContourFilter*:
    or a node specific function to activate arrays to operate on, even
    if there is only one array in input. To use *vtkAssignAttribute*,
    you need to add Custom Code like
-   ``Assign("p", vtk.vtkDataSetAttributes.SCALARS, vtk.vtkAssignAttribute.POINT_DATA)``) 
+   ``Assign("p", vtk.vtkDataSetAttributes.SCALARS, vtk.vtkAssignAttribute.POINT_DATA)``
 
 .. image:: images/ug_contour_nodesetup.png
 
