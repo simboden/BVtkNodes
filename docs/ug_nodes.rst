@@ -78,12 +78,6 @@ You can use the combination of *vtkPassArrays* and
     AddArray(vtk.vtkDataObject.CELL, "U")
     AddArray(vtk.vtkDataObject.POINT, "")
 
-.. note::
-
-   Some nodes (like *vtkContourFilter*) may require use of
-   *vtkPassArrays* or a node specific function to activate arrays to
-   operate on, even if there is only one array in input.
-
 * In *vtkArrayCalculator* node, write the calculator code to **Function**
   field, the result array name to **ResultArrayName**, and select
   correct type for the **AttributeType** field. Finally you must
@@ -159,10 +153,79 @@ Here is the result in 3D Viewport shown in Material Preview Mode:
 Contours
 --------
 
-TODO
+Contours can be generated with *vtkContourFilter*:
+
+* First add *vtkPassArrays* to select array data to be operated on
+* Add *vtkContourFilter*, and add wanted contour values by pressing
+  the plus icon and then input three values: 0.017, 0.02, 0.023.
+  Disable **GenerateTriangles** to retain polyhedrons.
+* **Optional:** Add *vtkGeometryFilter* and modify minimum values if you
+  want to test first to get only a small part of a large domain.
+* Add *Color Mapper*, *Color Ramp* and *VTK To Blender* nodes. In *VTK
+  To Blender* node, select both **Generate Material** and **Smooth**
+  to get smoothened face normals.
+
+.. note::
+
+   Some nodes require use of *vtkPassArrays*, *vtkAssignAttribute*
+   or a node specific function to activate arrays to operate on, even
+   if there is only one array in input. To use *vtkAssignAttribute*,
+   you need to add Custom Code like
+   ``Assign("p", vtk.vtkDataSetAttributes.SCALARS, vtk.vtkAssignAttribute.POINT_DATA)``) 
+
+.. image:: images/ug_contour_nodesetup.png
+
+Here is the result in 3D Viewport shown in Material Preview Mode:
+
+.. image:: images/ug_contour_result.png
+
+Iso-surface
+-----------
+
+A closed iso-surface (a contour with no holes in surface, e.g. for
+volumetric rendering) can be achieved by clipping with a value with this
+approach using *vtkClipDataSet*, *vtkDataSetRegionSurfaceFilter* and
+*vtkPolyDataNormals* (to get consistent face normals):
+
+.. image:: images/ug_isosurface_nodesetup.png
+
+Here is the result in 3D Viewport shown in Material Preview Mode:
+
+.. image:: images/ug_isosurface_result.png
 
 
 Stream Tracers
 --------------
 
-TODO
+Stream tracers calculated by *vtkStreamTracer* can be visualized with
+e.g. *vtkTubeFilter* using this node setup:
+
+* Select the vector field for tracing with *vtkPassArrays* like above.
+* Generate source points for stream tracer with e.g. *vtkPlaneSource*
+  and make sure points are inside the domain.
+* Add *vtkStreamTracer* and modify settings according to your case:
+
+  * **MaximumNumberOfSteps** should be a large value, but during
+    testing phase you can use a small value to limit result mesh size.
+  * **MaximumError** should be a small value like **1e-9** for smooth
+    traces.
+  * **MaximumPropagation** limits the length of path, should be a
+    large value.
+  * **MinimumIntegrationStepSize** should be a very small value like
+    **1e-10** to avoid early termination.
+
+* Add *vtkTubeFilter* and adjust at least **NumberOfSides** and
+  **Radius**.
+* *vtkPolyDataNormals* (without **FlipNormals**) is needed to get good
+  face normals for the result.
+* Finally add *Color Mapper*, *Color Ramp* and *VTK To Blender* with
+  **Generate Material** and **Smooth** on.
+* Run *Update* on the *VTK To Blender* node, select appropriate
+  coloring in *Color Mapper*, and rerun *Update*.
+
+.. image:: images/ug_stream_tracers_nodesetup.png
+
+Here is the result in 3D Viewport shown in Material Preview Mode:
+
+.. image:: images/ug_stream_tracers_result.png
+
