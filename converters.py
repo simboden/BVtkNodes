@@ -6,6 +6,8 @@ import bmesh
 # -----------------------------------------------------------------------------
 # Converters from VTK to Blender
 # -----------------------------------------------------------------------------
+# Mesh Converter
+# -----------------------------------------------------------------------------
 
 class BVTK_Node_VTKToBlender(Node, BVTK_Node):
     '''Convert output from VTK Node to Blender Mesh Object'''
@@ -144,6 +146,248 @@ def vtkdata_to_blender(data, name, ramp=None, smooth=False, generate_material=Fa
     #    bpy.data.objects[me.name].select = True
     #    context.scene.objects.active = bpy.data.objects[me.name]
     #    bpy.ops.object.origin_set(type='GEOMETRY_ORIGIN')
+
+
+# -----------------------------------------------------------------------------
+# Particle converter
+# -----------------------------------------------------------------------------
+
+class BVTK_OT_InitializeParticleSystem(bpy.types.Operator):
+    '''Operator to initialize Blender Particle system for VTK To Blender
+    Particles node.
+    '''
+    bl_idname = 'node.bvtk_initialize_particle_system'
+    bl_label = 'Initialize Particles'
+
+    def execute(self, context):
+        nSystems = 0
+        for node_group in bpy.data.node_groups:
+            for node in node_group.nodes:
+                if node.bl_idname == 'BVTK_Node_VTKToBlenderParticlesType':
+                    nSystems += 1
+                    zero_particle_system(node)
+        self.report({'INFO'}, "Initialized %d Particle Systems." % nSystems)
+        return {'FINISHED'}
+
+
+def zero_particle_system(node):
+    '''Reinitialize Blender Particle System for argument node'''
+
+    obname = node.ob_name
+    glyph_obname = node.glyph_name
+    np = node.np
+
+    mesh, ob = mesh_and_object(obname)
+    bpy.ops.object.mode_set(mode='OBJECT')
+    bpy.ops.object.select_all(action='DESELECT')
+    bpy.data.objects[obname].select_set(True)
+    bpy.ops.object.particle_system_remove()
+    bpy.ops.object.parent_clear()
+    bpy.ops.object.delete()
+    bpy.data.meshes.remove(mesh)
+
+    mesh_data = bpy.data.meshes.new(obname)
+    ob = bpy.data.objects.new(obname, mesh_data)
+    bpy.context.scene.collection.objects.link(ob)
+    bpy.context.view_layer.objects.active = bpy.data.objects[obname]
+    ob.select_set(True)
+
+    # Must have some geometry from where to emit particles
+    bpy.ops.object.mode_set(mode='EDIT')
+    bpy.ops.mesh.primitive_cube_add(size=1e-6) # TODO: Improve
+    bpy.ops.object.mode_set(mode='OBJECT')
+
+    # Add and parent particle system
+    bpy.ops.object.particle_system_add()
+    bpy.data.objects[glyph_obname].select_set(True)
+    bpy.ops.object.parent_set()
+
+    ob.particle_systems[0].settings.count = np
+    ob.particle_systems[0].settings.frame_start = 0
+    ob.particle_systems[0].settings.frame_end = 0
+    ob.particle_systems[0].settings.lifetime = 1000000
+    ob.particle_systems[0].settings.physics_type = 'NO'
+    ob.particle_systems[0].settings.render_type = 'OBJECT'
+    ob.particle_systems[0].settings.particle_size = 1.0
+    ob.particle_systems[0].settings.instance_object = bpy.data.objects[glyph_obname]
+    ob.particle_systems[0].settings.emit_from = 'VERT'
+    ob.particle_systems[0].settings.normal_factor = 0.0
+    #ob.particle_systems[0].settings.object_align_factor[1] = 1.0
+
+    ob.show_instancer_for_viewport = True
+
+
+class BVTK_Node_VTKToBlenderParticles(Node, BVTK_Node):
+    '''Convert output from VTK Node to Blender Particle System'''
+    bl_idname = 'BVTK_Node_VTKToBlenderParticlesType' # type name
+    bl_label  = 'VTK To Blender Particles' # label for nice name display
+
+    ob_name: bpy.props.StringProperty(name='Name', default='particles')
+    glyph_name: bpy.props.StringProperty(name='Glyph Name', default='glyph')
+    np: bpy.props.IntProperty(name='Particle Count', default=1000, min=1)
+    generate_material: bpy.props.BoolProperty(name='Generate Material', default=False)
+
+    # Data storage for point data from VTK
+    from typing import List
+    locs: List[float]
+    vecs: List[float]
+    sizes: List[float]
+    rots: List[float]
+    nParticles: float
+
+    def start_scan(self, context):
+        if not context:
+            return
+        if not self.auto_update:
+            return
+        bpy.ops.node.bvtk_auto_update_scan(
+            node_name=self.name,
+            tree_name=context.space_data.node_tree.name)
+
+    auto_update: bpy.props.BoolProperty(default=False, update=start_scan)
+
+    def m_properties(self):
+        return ['ob_name', 'glyph_name', 'np', 'generate_material']
+
+    def m_connections(self):
+        return (['input'],[],[],[])
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'ob_name')
+        layout.prop(self, 'glyph_name')
+        layout.prop(self, 'np')
+        warning_text = warn_if_not_exist_object(self.glyph_name)
+        if warning_text:
+            layout.label(text=warning_text)
+        layout.prop(self, 'generate_material')
+        layout.separator()
+        if not warning_text:
+            layout.operator("node.bvtk_initialize_particle_system", text="Initialize")
+            layout.operator("node.bvtk_node_update", text="Update").node_path = node_path(self)
+
+    def update_cb(self):
+        '''Update node color bar'''
+        input_node, vtkobj = self.get_input_node('input')
+        ramp = None
+        if input_node and input_node.bl_idname == 'BVTK_Node_ColorMapperType':
+            ramp = input_node
+            ramp.update()
+
+    def update_particle_system(self, depsgraph):
+        '''Updates Blender Particle System from point data in vtkPolyData'''
+        input_node, vtkobj = self.get_input_node('input')
+        l.debug("Updating Particle System for Object %r" % self.ob_name)
+        if vtkobj:
+            vtkdata = resolve_algorithm_output(vtkobj)
+            if not vtkdata:
+                l.error('No vtkdata!')
+                return
+            if not issubclass(vtkdata.__class__, vtk.vtkPolyData):
+                l.error('Data is not vtkPolyData!')
+                return
+
+            get_vtk_particle_data(self, vtkdata) # TODO more args
+            if not self.locs:
+                return
+            vtkdata_to_blender_particles(self, depsgraph)
+            update_3d_view()
+
+    def apply_properties(self, vtkobj):
+        pass
+
+
+def truncate_or_pad_list(slist, n):
+    '''Truncate or pad the argument list slist to contain exacly n entries'''
+
+    # Truncate
+    length = len(slist)
+    if length >= n:
+        return slist[0:n]
+
+    # Pad
+    if type(slist[0]) is list:
+        element = [0.0 * i for i in slist[0]]
+    elif type(slist[0]) is tuple:
+        element = tuple([0.0 * i for i in slist[0]])
+    else:
+        element = 0.0
+    newlist = list(slist)
+    for i in range(n - length):
+        newlist.append(element)
+    return newlist
+
+
+def get_vtk_particle_data(self, vtkdata, vec_name='U', size_name=None, rot_name=None):
+    '''Get lists of particle locations, direction vectors, sizes and
+    rotations from vtkPolyData and store those to self storage
+    variables.
+    '''
+
+    n = vtkdata.GetNumberOfPoints()
+
+    # Vertex locations
+    p = vtkdata.GetPoints()
+    locs = [p.GetPoint(i) for i in range(n)]
+    locs = truncate_or_pad_list(locs, self.np)
+    self.locs = [i for sublist in locs for i in sublist]
+
+    pdata=vtkdata.GetPointData()
+    narrays = pdata.GetNumberOfArrays()
+    if narrays == 0:
+        return
+    arraynum = 0
+    for i in range(narrays):
+        if pdata.GetArrayName(i) == vec_name:
+            arraynum = i
+    arrdata = pdata.GetArray(arraynum)
+
+    # Direction vectors
+    vecs = [arrdata.GetTuple3(i) for i in range(n)]
+    vecs = truncate_or_pad_list(vecs, self.np)
+    self.vecs = [i for sublist in vecs for i in sublist]
+
+    # Scaling sizes
+    sizes = [1.0 for i in range(n)] # TODO
+    sizes = truncate_or_pad_list(sizes, self.np)
+    self.sizes = sizes
+
+    # Rotations
+    rots = [[0.0, 0.0, 0.0] for i in range(n)] # TODO
+    rots = truncate_or_pad_list(rots, self.np)
+    self.rots = [i for sublist in rots for i in sublist]
+
+
+def vtkdata_to_blender_particles(self, depsgraph):
+    '''Populate Blender Particle System with data'''
+
+    obname = self.ob_name
+    ob = bpy.data.objects[obname]
+
+    particle_system = ob.evaluated_get(depsgraph).particle_systems[0]
+    particles = particle_system.particles
+
+    particles.foreach_set("location", self.locs)
+    particles.foreach_set("size", self.sizes)
+
+    return
+    # TODO: add the rest
+    # rotations
+    quatList = [(mathutils.Euler((0.0, radians(30.0), 0.0))).to_quaternion(),
+                (mathutils.Euler((radians(-30.0), 0.0, 0.0))).to_quaternion(),
+                (mathutils.Euler((0.0, 0.0, radians(30.0)))).to_quaternion(),
+    ]
+    quats = []
+    for q in quatList:
+        quats.append(q.w)
+        quats.append(q.x)
+        quats.append(q.y)
+        quats.append(q.z)
+
+        particles.foreach_set("rotation", quats)
+
+    # lifetime can be used for colors (or use vertex colors?)
+    lifetimes = [0,1.0,0.5]
+    particles.foreach_set("lifetime", lifetimes)
 
 
 # -----------------------------------------------------------------------------
@@ -301,6 +545,12 @@ def get_object(name, data):
     ob.data = data
     set_link(bpy.context.collection.objects, ob)
     return ob
+
+
+def warn_if_not_exist_object(name):
+    '''Return warning if argument object name does not exist'''
+    if not name in bpy.data.objects:
+        return "Object %r does not exist!" % name
 
 
 def texture_material(me, name, texture=None, texturetype='IMAGE'):
@@ -601,6 +851,9 @@ class BVTK_OT_NodeUpdate(bpy.types.Operator):
 TYPENAMES = []
 add_class(BVTK_Node_VTKToBlender)
 TYPENAMES.append('BVTK_Node_VTKToBlenderType')
+add_class(BVTK_OT_InitializeParticleSystem)
+add_class(BVTK_Node_VTKToBlenderParticles)
+TYPENAMES.append('BVTK_Node_VTKToBlenderParticlesType')
 menu_items = [NodeItem(x) for x in TYPENAMES]
 CATEGORIES.append(BVTK_NodeCategory("Converters", "Converters", items=menu_items))
 

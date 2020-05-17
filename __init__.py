@@ -148,7 +148,7 @@ def on_file_loaded(scene):
 
 
 @persistent
-def on_frame_change(scene):
+def on_frame_change(scene, depsgraph):
     '''Update nodes after frame changes by updating all VTK to Blender nodes'''
     for node_group in bpy.data.node_groups:
         for node in node_group.nodes:
@@ -162,6 +162,10 @@ def on_frame_change(scene):
             if node.bl_idname == 'BVTK_Node_VTKToBlenderType':
                 l.debug("calling no_queue_update")
                 update.no_queue_update(node, node.update_cb)
+
+            if node.bl_idname == 'BVTK_Node_VTKToBlenderParticlesType':
+                update.no_queue_update(node, node.update_cb)
+                node.update_particle_system(depsgraph)
 
 
 def custom_register_node_categories():
