@@ -224,15 +224,16 @@ class BVTK_Node_VTKToBlenderParticles(Node, BVTK_Node):
 
     ob_name: bpy.props.StringProperty(name='Name', default='particles')
     glyph_name: bpy.props.StringProperty(name='Glyph Name', default='glyph')
+    vec_name: bpy.props.StringProperty(name='Direction Vector Array Name', default='')
+    scale_name: bpy.props.StringProperty(name='Scale Array Name', default='')
     np: bpy.props.IntProperty(name='Particle Count', default=1000, min=1)
     generate_material: bpy.props.BoolProperty(name='Generate Material', default=False)
 
     # Data storage for point data from VTK
     from typing import List
     locs: List[float]
-    vecs: List[float]
-    sizes: List[float]
-    rots: List[float]
+    scales: List[float]
+    quats: List[float]
     nParticles: float
 
     def start_scan(self, context):
@@ -255,6 +256,8 @@ class BVTK_Node_VTKToBlenderParticles(Node, BVTK_Node):
     def draw_buttons(self, context, layout):
         layout.prop(self, 'ob_name')
         layout.prop(self, 'glyph_name')
+        layout.prop(self, 'vec_name')
+        layout.prop(self, 'scale_name')
         layout.prop(self, 'np')
         warning_text = warn_if_not_exist_object(self.glyph_name)
         if warning_text:
@@ -286,7 +289,7 @@ class BVTK_Node_VTKToBlenderParticles(Node, BVTK_Node):
                 l.error('Data is not vtkPolyData!')
                 return
 
-            get_vtk_particle_data(self, vtkdata) # TODO more args
+            get_vtk_particle_data(self, vtkdata)
             if not self.locs:
                 return
             vtkdata_to_blender_particles(self, depsgraph)
@@ -316,13 +319,25 @@ def truncate_or_pad_list(slist, n):
         newlist.append(element)
     return newlist
 
+def get_array_data(pointdata, array_name):
+    '''Return vtkArray from VTK point data for given array name'''
 
-def get_vtk_particle_data(self, vtkdata, vec_name='U', size_name=None, rot_name=None):
+    narrays = pointdata.GetNumberOfArrays()
+    if narrays == 0:
+        return None
+
+    array_names = [pointdata.GetArrayName(i) for i in range(narrays)]
+    if array_name not in array_names:
+        return None
+    arrdata = pointdata.GetArray(array_names.index(array_name))
+    return arrdata
+
+
+def get_vtk_particle_data(self, vtkdata):
     '''Get lists of particle locations, direction vectors, sizes and
     rotations from vtkPolyData and store those to self storage
     variables.
     '''
-
     n = vtkdata.GetNumberOfPoints()
 
     # Vertex locations
@@ -332,29 +347,42 @@ def get_vtk_particle_data(self, vtkdata, vec_name='U', size_name=None, rot_name=
     self.locs = [i for sublist in locs for i in sublist]
 
     pdata=vtkdata.GetPointData()
-    narrays = pdata.GetNumberOfArrays()
-    if narrays == 0:
-        return
-    arraynum = 0
-    for i in range(narrays):
-        if pdata.GetArrayName(i) == vec_name:
-            arraynum = i
-    arrdata = pdata.GetArray(arraynum)
 
     # Direction vectors
-    vecs = [arrdata.GetTuple3(i) for i in range(n)]
+    vecs_array = get_array_data(pdata, self.vec_name)
+    if not vecs_array:
+        vecs = n * [(1.0, 0.0, 0.0)]
+    else:
+        vecs = [vecs_array.GetTuple3(i) for i in range(n)]
     vecs = truncate_or_pad_list(vecs, self.np)
-    self.vecs = [i for sublist in vecs for i in sublist]
+
+    # Quaternion coefficients for rotating glyphs towards direction vectors
+    # https://stackoverflow.com/questions/1171849/finding-quaternion-representing-the-rotation-from-one-vector-to-another
+    from mathutils import Vector
+    from math import sqrt
+    quats = [] # List where to append quaternion coefficients w, x, y and z
+
+    # Assume glyph object points towards positive X axis
+    v1 = Vector((0.0, -1.0, 0.0))
+
+    for vec in vecs:
+        v2 = Vector(vec).normalized()
+        crossvec = v1.cross(v2)
+        w = 1.0 + v1.dot(v2)
+        quats.append(w)
+        quats.append(crossvec[0])
+        quats.append(crossvec[1])
+        quats.append(crossvec[2])
+    self.quats = quats
 
     # Scaling sizes
-    sizes = [1.0 for i in range(n)] # TODO
-    sizes = truncate_or_pad_list(sizes, self.np)
-    self.sizes = sizes
-
-    # Rotations
-    rots = [[0.0, 0.0, 0.0] for i in range(n)] # TODO
-    rots = truncate_or_pad_list(rots, self.np)
-    self.rots = [i for sublist in rots for i in sublist]
+    scales_array = get_array_data(pdata, self.scale_name)
+    if not scales_array:
+        scales = n * [1.0]
+    else:
+        scales = [scales_array.GetValue(i) for i in range(n)]
+    scales = truncate_or_pad_list(scales, self.np)
+    self.scales = scales
 
 
 def vtkdata_to_blender_particles(self, depsgraph):
@@ -367,23 +395,11 @@ def vtkdata_to_blender_particles(self, depsgraph):
     particles = particle_system.particles
 
     particles.foreach_set("location", self.locs)
-    particles.foreach_set("size", self.sizes)
+    particles.foreach_set("size", self.scales)
+    particles.foreach_set("rotation", self.quats)
 
     return
     # TODO: add the rest
-    # rotations
-    quatList = [(mathutils.Euler((0.0, radians(30.0), 0.0))).to_quaternion(),
-                (mathutils.Euler((radians(-30.0), 0.0, 0.0))).to_quaternion(),
-                (mathutils.Euler((0.0, 0.0, radians(30.0)))).to_quaternion(),
-    ]
-    quats = []
-    for q in quatList:
-        quats.append(q.w)
-        quats.append(q.x)
-        quats.append(q.y)
-        quats.append(q.z)
-
-        particles.foreach_set("rotation", quats)
 
     # lifetime can be used for colors (or use vertex colors?)
     lifetimes = [0,1.0,0.5]
