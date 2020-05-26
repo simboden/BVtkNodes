@@ -186,6 +186,14 @@ def zero_particle_system(node):
     bpy.ops.object.delete()
     bpy.data.meshes.remove(mesh)
 
+    # Reset material on glyph object, get material
+    matname = obname + "_material"
+    if node.generate_material:
+        glyph_ob = bpy.data.objects[node.glyph_name]
+        mat = reset_particle_material(glyph_ob, matname)
+    else:
+        mat = bpy.data.materials[matname]
+
     mesh_data = bpy.data.meshes.new(obname)
     ob = bpy.data.objects.new(obname, mesh_data)
     bpy.context.scene.collection.objects.link(ob)
@@ -196,6 +204,10 @@ def zero_particle_system(node):
     bpy.ops.object.mode_set(mode='EDIT')
     bpy.ops.mesh.primitive_cube_add(size=1e-6) # TODO: Improve
     bpy.ops.object.mode_set(mode='OBJECT')
+
+    # Set glyph material to particles object
+    bpy.ops.object.material_slot_add()
+    ob.active_material = mat
 
     # Add and parent particle system
     bpy.ops.object.particle_system_add()
@@ -226,6 +238,7 @@ class BVTK_Node_VTKToBlenderParticles(Node, BVTK_Node):
     glyph_name: bpy.props.StringProperty(name='Glyph Name', default='glyph')
     vec_name: bpy.props.StringProperty(name='Direction Vector Array Name', default='')
     scale_name: bpy.props.StringProperty(name='Scale Array Name', default='')
+    color_name: bpy.props.StringProperty(name='Color Value Array Name', default='')
     np: bpy.props.IntProperty(name='Particle Count', default=1000, min=1)
     generate_material: bpy.props.BoolProperty(name='Generate Material', default=False)
 
@@ -233,6 +246,7 @@ class BVTK_Node_VTKToBlenderParticles(Node, BVTK_Node):
     from typing import List
     locs: List[float]
     scales: List[float]
+    color_values: List[float]
     quats: List[float]
     nParticles: float
 
@@ -258,6 +272,7 @@ class BVTK_Node_VTKToBlenderParticles(Node, BVTK_Node):
         layout.prop(self, 'glyph_name')
         layout.prop(self, 'vec_name')
         layout.prop(self, 'scale_name')
+        layout.prop(self, 'color_name')
         layout.prop(self, 'np')
         warning_text = warn_if_not_exist_object(self.glyph_name)
         if warning_text:
@@ -332,11 +347,13 @@ def get_array_data(pointdata, array_name):
     arrdata = pointdata.GetArray(array_names.index(array_name))
     return arrdata
 
+def clamp(vals):
+    '''Clamps list of values to 0 < x < 1'''
+    return [min(1.0, max(0.0, v)) for v in vals]
 
 def get_vtk_particle_data(self, vtkdata):
-    '''Get lists of particle locations, direction vectors, sizes and
-    rotations from vtkPolyData and store those to self storage
-    variables.
+    '''Get lists of particle properties from vtkPolyData and store those
+    to self storage variables.
     '''
     n = vtkdata.GetNumberOfPoints()
 
@@ -344,6 +361,7 @@ def get_vtk_particle_data(self, vtkdata):
     p = vtkdata.GetPoints()
     locs = [p.GetPoint(i) for i in range(n)]
     locs = truncate_or_pad_list(locs, self.np)
+    # Flatten the list
     self.locs = [i for sublist in locs for i in sublist]
 
     pdata=vtkdata.GetPointData()
@@ -384,6 +402,16 @@ def get_vtk_particle_data(self, vtkdata):
     scales = truncate_or_pad_list(scales, self.np)
     self.scales = scales
 
+    # Color ramp values
+    color_values_array = get_array_data(pdata, self.color_name)
+    if not color_values_array:
+        color_values = n * [0.5]
+    else:
+        color_values = [color_values_array.GetValue(i) for i in range(n)]
+    color_values = clamp(color_values)
+    color_values = truncate_or_pad_list(color_values, self.np)
+    self.color_values = color_values
+
 
 def vtkdata_to_blender_particles(self, depsgraph):
     '''Populate Blender Particle System with data'''
@@ -398,13 +426,51 @@ def vtkdata_to_blender_particles(self, depsgraph):
     particles.foreach_set("size", self.scales)
     particles.foreach_set("rotation", self.quats)
 
-    return
-    # TODO: add the rest
+    # Use particle lifetime slot for color ramp value. If there is a
+    # better way to color Blender particles, please let me know.
+    # Note: Coloring shows up currently only in Cycles!
+    particles.foreach_set("lifetime", self.color_values)
 
-    # lifetime can be used for colors (or use vertex colors?)
-    lifetimes = [0,1.0,0.5]
-    particles.foreach_set("lifetime", lifetimes)
 
+def reset_particle_material(ob, matname):
+    '''Create default particle material setup for object.
+    '''
+
+    if matname in bpy.data.materials:
+        mat = bpy.data.materials[matname]
+    else:
+        mat = bpy.data.materials.new(name=matname)
+
+    if not mat.use_nodes:
+        mat.use_nodes = True
+    nodes = mat.node_tree.nodes
+    links = mat.node_tree.links
+
+    # Delete existing nodes
+    for i in nodes:
+        nodes.remove(i)
+
+    node1 = nodes.new('ShaderNodeOutputMaterial')
+    node1.location = (300, 300)
+
+    node2 = nodes.new('ShaderNodeBsdfPrincipled')
+    node2.location = (0, 300)
+    links.new(node2.outputs['BSDF'], node1.inputs['Surface'])
+
+    node3 = nodes.new('ShaderNodeValToRGB')
+    node3.location = (-300, 300)
+    links.new(node3.outputs['Color'], node2.inputs['Base Color'])
+
+    node4 = nodes.new('ShaderNodeParticleInfo')
+    node4.location = (-500, 300)
+    links.new(node4.outputs['Lifetime'], node3.inputs['Fac'])
+
+    # Assign material
+    if ob.data.materials:
+        ob.data.materials[0] = mat
+    else:
+        ob.data.materials.append(mat)
+    return mat
 
 # -----------------------------------------------------------------------------
 # Auto update scan functions
