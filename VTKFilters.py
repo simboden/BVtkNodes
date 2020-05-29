@@ -180,4 +180,50 @@ class VTKAppendFilter(Node, BVTK_Node):
 add_class(VTKAppendFilter)
 TYPENAMES.append('VTKAppendFilterType')
 
+# -----------------------------------------------------------------------------
 
+
+class VTKThreshold(Node, BVTK_Node):
+    '''Manually created node to provide vtkThreshold.
+    Provides just the ThresholdBetween(value1,value2) mode.
+    To do ThresholdByUpper set value1 to -inf.
+    To do ThresholdByLower set value2 to +inf.
+    User must specify the name and type (point or cell data)
+    of the input attribute.
+    '''
+    bl_idname = 'VTKThresholdType'
+    bl_label = 'vtkThreshold'
+
+    e_AttrType_items=[ (x,x,x) for x in ['PointData', 'CellData']]
+
+    m_Value1:     bpy.props.FloatProperty  (name='Low Value', default=float("-inf") )
+    m_Value2:     bpy.props.FloatProperty  (name='High Value', default=float("inf") )
+    m_AttrName:   bpy.props.StringProperty (name='Attribute Name', default='' )
+    e_AttrType:   bpy.props.EnumProperty   (name='Attribute Type', default='PointData', items=e_AttrType_items )
+
+    b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+
+    def m_properties(self):
+        return ['m_Value1', 'm_Value2', 'm_AttrName', 'e_AttrType']
+
+    def m_connections(self):
+        return (['input'], ['output'], [], [])
+
+    def apply_properties(self, vtkobj):
+        value1 = self.m_Value1
+        value2 = self.m_Value2
+        attr_name = self.m_AttrName
+        attr_type = vtk.vtkDataObject.FIELD_ASSOCIATION_POINTS
+        if self.e_AttrType == 'CellData':
+            attr_type = vtk.vtkDataObject.FIELD_ASSOCIATION_CELLS
+
+        vtkobj.ThresholdBetween(value1, value2)
+
+        # Previously in VTK, to get a threshold with respect to a given
+        # attribute you needed to place it as the current scalars.
+        # Nowadays user must indicate on which array the filter should operate.
+        # This idiom is becoming more and more used in VTK.
+        vtkobj.SetInputArrayToProcess(0, 0, 0, attr_type, attr_name)
+
+add_class(VTKThreshold)
+TYPENAMES.append('VTKThresholdType')
