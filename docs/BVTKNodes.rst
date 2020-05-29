@@ -384,6 +384,25 @@ the input, similar to *Multi Block Leaf* node::
   def get_first_block(input):
     return input.GetProducer().GetOutput(0).GetBlock(0)
 
+Here is another example of a *Custom Filter* which calls
+*vtkThreshold* with custom parameter values::
+
+  def myThreshold(input):
+    vtkobj = vtk.vtkThreshold()
+    vtkobj.SetInputData(input)
+    attr_name = "p" # Array name for thresholding
+    attr_type = vtk.vtkDataObject.FIELD_ASSOCIATION_CELLS
+    value1 = float("0.01") # min value
+    value2 = float("0.02") # max value
+    vtkobj.ThresholdBetween(value1, value2)
+    vtkobj.SetInputArrayToProcess(0, 0, 0, attr_type, attr_name)
+    vtkobj.Update()
+    return vtkobj.GetOutput()
+
+Note: Writing code for *Custom Filter* requires knowledge of
+VTK. Please refer to 
+`VTK documentation <https://vtk.org/doc/nightly/html/>`_
+for class specific information.
 
 Customization of Node Python Code
 ---------------------------------
