@@ -304,8 +304,8 @@ class BVTK_Node_VTKToBlenderParticles(Node, BVTK_Node):
                 l.error('Data is not vtkPolyData!')
                 return
 
-            get_vtk_particle_data(self, vtkdata)
-            if not self.locs:
+            npoints = get_vtk_particle_data(self, vtkdata)
+            if npoints == 0:
                 return
             vtkdata_to_blender_particles(self, depsgraph)
             update_3d_view()
@@ -365,6 +365,8 @@ def get_vtk_particle_data(self, vtkdata):
     to self storage variables.
     '''
     n = vtkdata.GetNumberOfPoints()
+    if n == 0:
+        return 0
 
     # Vertex locations
     p = vtkdata.GetPoints()
@@ -425,7 +427,7 @@ def get_vtk_particle_data(self, vtkdata):
     color_values = color_scale(color_values)
     color_values = truncate_or_pad_list(color_values, self.np)
     self.color_values = color_values
-
+    return n
 
 def vtkdata_to_blender_particles(self, depsgraph):
     '''Populate Blender Particle System with data'''
