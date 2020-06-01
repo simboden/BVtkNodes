@@ -45,7 +45,7 @@ def Update(node, cb, x=True):
     Sets color of node to reflect node run status. Finally updates this
     node and queues argument function cb() if argument x is True.
     '''
-    l.debug('on_update ' + node.name)
+    l.debug('Processing ' + node.name)
     if x:
         queue.add(log_check)
     ex_color = node.color.copy() # Current color
@@ -54,13 +54,18 @@ def Update(node, cb, x=True):
 
     vtkobj = node.get_vtkobj()
 
+    # Call update for input nodes
     queue.add(SetColor, node, inputs_color)
     for input_node in node.input_nodes():
         Update(input_node, None, False)
     queue.add(SetColor, node, execute_color)
+
+    # Update VTK object
     if vtkobj:
         queue.add(UpdateObj, node, vtkobj)
     queue.add(SetColor, node, ex_color)
+
+    # For special nodes, run update_cb
     if x:
         queue.add(SetColor, node, execute_color)
         queue.add(log_show)
@@ -76,12 +81,18 @@ def no_queue_update(node, cb, x=True):
     Finally updates this node by calling argument cb() if argument x
     is True, and VTK Update function otherwise.
     '''
-    l.debug('on_update ' + node.name)
+    l.debug('Processing ' + node.name)
     vtkobj = node.get_vtkobj()
+
+    # Call update for input nodes
     for input_node in node.input_nodes():
         no_queue_update(input_node, None, False)
+
+    # For special nodes, run update_cb
     if x:
         cb()
+
+    # Update VTK object
     else:
         if vtkobj:
             node.apply_properties(vtkobj)

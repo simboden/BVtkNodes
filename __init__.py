@@ -149,7 +149,9 @@ def on_file_loaded(scene):
 
 @persistent
 def on_frame_change(scene, depsgraph):
-    '''Update nodes after frame changes by updating all VTK to Blender nodes'''
+    '''Updates done after frame (time step) changes'''
+
+    # Update Time Selectors
     for node_group in bpy.data.node_groups:
         for node in node_group.nodes:
             # Set frame number directly from Blender timeline.
@@ -157,15 +159,35 @@ def on_frame_change(scene, depsgraph):
             # while this issue remains: https://developer.blender.org/T66392
             if node.bl_idname == 'BVTK_Node_TimeSelectorType':
                 node.time_step = bpy.context.scene.frame_current
-                l.debug("SET time_step %d" % node.time_step)
+                l.debug("TimeSelector time step %d" % node.time_step)
 
+    # Update mesh objects
+    for node_group in bpy.data.node_groups:
+        for node in node_group.nodes:
             if node.bl_idname == 'BVTK_Node_VTKToBlenderType':
-                l.debug("calling no_queue_update")
+                l.debug("VTKToBlender")
                 update.no_queue_update(node, node.update_cb)
 
+    # Update particle objects
+    for node_group in bpy.data.node_groups:
+        for node in node_group.nodes:
             if node.bl_idname == 'BVTK_Node_VTKToBlenderParticlesType':
+                l.debug("VTKToBlenderParticles")
                 update.no_queue_update(node, node.update_cb)
                 node.update_particle_system(depsgraph)
+
+
+@persistent
+def on_depsgraph_update(scene, depsgraph):
+    '''Updates done after depsgraph changes'''
+
+    # Update particle objects
+    for node_group in bpy.data.node_groups:
+        for node in node_group.nodes:
+            if node.bl_idname == 'BVTK_Node_VTKToBlenderParticlesType':
+                l.debug("VTKToBlenderParticles")
+                node.update_particle_system(depsgraph)
+
 
 
 def custom_register_node_categories():
@@ -215,6 +237,7 @@ def register():
     '''
     bpy.app.handlers.load_post.append(on_file_loaded)
     bpy.app.handlers.frame_change_post.append(on_frame_change)
+    bpy.app.handlers.depsgraph_update_post.append(on_depsgraph_update)
     core.check_b_properties() # delayed to here to allow class overriding
     for c in core.UI_CLASSES:
         try:

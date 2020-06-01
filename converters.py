@@ -42,7 +42,7 @@ class BVTK_Node_VTKToBlender(Node, BVTK_Node):
         layout.operator("node.bvtk_node_update", text="update").node_path = node_path(self)
 
     def update_cb(self):
-        '''Update node color bar'''
+        '''Update node color bar and update Blender object'''
         input_node, vtkobj = self.get_input_node('input')
         ramp = None
         if input_node and input_node.bl_idname == 'BVTK_Node_ColorMapperType':
@@ -177,14 +177,17 @@ def zero_particle_system(node):
     glyph_obname = node.glyph_name
     np = node.np
 
-    mesh, ob = mesh_and_object(obname)
-    bpy.ops.object.mode_set(mode='OBJECT')
-    bpy.ops.object.select_all(action='DESELECT')
-    bpy.data.objects[obname].select_set(True)
-    bpy.ops.object.particle_system_remove()
-    bpy.ops.object.parent_clear()
-    bpy.ops.object.delete()
-    bpy.data.meshes.remove(mesh)
+    # Delete existing any old object
+    if obname in bpy.data.objects:
+        bpy.context.view_layer.objects.active = bpy.data.objects[obname]
+        mesh = bpy.data.objects[obname].data
+        bpy.ops.object.mode_set(mode='OBJECT')
+        bpy.ops.object.select_all(action='DESELECT')
+        bpy.data.objects[obname].select_set(True)
+        bpy.ops.object.particle_system_remove()
+        bpy.ops.object.parent_clear()
+        bpy.ops.object.delete()
+        bpy.data.meshes.remove(mesh)
 
     # Reset material on glyph object, get material
     matname = obname + "_material"
@@ -211,6 +214,7 @@ def zero_particle_system(node):
 
     # Add and parent particle system
     bpy.ops.object.particle_system_add()
+    bpy.ops.object.select_all(action='DESELECT')
     bpy.data.objects[glyph_obname].select_set(True)
     bpy.ops.object.parent_set()
 
@@ -262,7 +266,7 @@ class BVTK_Node_VTKToBlenderParticles(Node, BVTK_Node):
     auto_update: bpy.props.BoolProperty(default=False, update=start_scan)
 
     def m_properties(self):
-        return ['ob_name', 'glyph_name', 'np', 'generate_material']
+        return ['ob_name', 'glyph_name', 'vec_name', 'scale_name', 'color_name', 'np', 'generate_material']
 
     def m_connections(self):
         return (['input'],[],[],[])
@@ -285,11 +289,7 @@ class BVTK_Node_VTKToBlenderParticles(Node, BVTK_Node):
 
     def update_cb(self):
         '''Update node color bar'''
-        input_node, vtkobj = self.get_input_node('input')
-        ramp = None
-        if input_node and input_node.bl_idname == 'BVTK_Node_ColorMapperType':
-            ramp = input_node
-            ramp.update()
+        pass
 
     def update_particle_system(self, depsgraph):
         '''Updates Blender Particle System from point data in vtkPolyData'''
@@ -334,6 +334,7 @@ def truncate_or_pad_list(slist, n):
         newlist.append(element)
     return newlist
 
+
 def get_array_data(pointdata, array_name):
     '''Return vtkArray from VTK point data for given array name'''
 
@@ -347,9 +348,11 @@ def get_array_data(pointdata, array_name):
     arrdata = pointdata.GetArray(array_names.index(array_name))
     return arrdata
 
+
 def clamp(vals):
-    '''Clamps list of values to 0 < x < 1'''
+    '''Clamps list of values to 0.0 <= x <= 1.0'''
     return [min(1.0, max(0.0, v)) for v in vals]
+
 
 def get_vtk_particle_data(self, vtkdata):
     '''Get lists of particle properties from vtkPolyData and store those
@@ -433,8 +436,7 @@ def vtkdata_to_blender_particles(self, depsgraph):
 
 
 def reset_particle_material(ob, matname):
-    '''Create default particle material setup for object.
-    '''
+    '''Create default particle material setup for object'''
 
     if matname in bpy.data.materials:
         mat = bpy.data.materials[matname]
@@ -460,6 +462,18 @@ def reset_particle_material(ob, matname):
     node3 = nodes.new('ShaderNodeValToRGB')
     node3.location = (-300, 300)
     links.new(node3.outputs['Color'], node2.inputs['Base Color'])
+
+    # Create a blue-to-red rainbow color ramp as a default
+    elems = node3.color_ramp.elements
+    elems[0].color = (0.0, 0.0, 1.0, 1.0)
+    elems[1].position = 0.25
+    elems[1].color = (0.0, 1.0, 1.0, 1.0)
+    a = elems.new(0.5)
+    a.color = (0.0, 1.0, 0.0, 1.0)
+    a = elems.new(0.75)
+    a.color = (1.0, 1.0, 0.0, 1.0)
+    a = elems.new(1.0)
+    a.color = (1.0, 0.0, 0.0, 1.0)
 
     node4 = nodes.new('ShaderNodeParticleInfo')
     node4.location = (-500, 300)
@@ -920,10 +934,11 @@ class BVTK_OT_NodeUpdate(bpy.types.Operator):
         check_cache()
         node = eval(self.node_path)
         if node:
-            l.debug('Updating from node: '+ node.name)
             if self.use_queue:
+                l.debug('Updating with queue from node: '+ node.name)
                 Update(node, node.update_cb)
             else:
+                l.debug('Updating without queue from node: '+ node.name)
                 no_queue_update(node, node.update_cb)
         self.use_queue = True
         return {'FINISHED'}

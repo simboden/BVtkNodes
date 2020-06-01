@@ -44,6 +44,7 @@ def node_created(node):
     # Ensure each node has a node_id
     if node.node_id == 0:
         node.node_id = NodesMaxId
+        l.debug("Initialize new node: %s, id %d" % (node.name, node.node_id))
         NodesMaxId += 1
         NodesMap[node.node_id] = node
         VTKCache[node.node_id] = None
@@ -72,7 +73,7 @@ def node_created(node):
         #
         #         exec('bpy.types.'+node.bl_idname+'.'+m_property+'=bpy.props.'+prop[0].__name__+'('+s+' description='+repr(prop_doc)+')')
     
-    l.debug("node_created " + node.bl_label + " " + str(node.node_id))
+        l.debug("Created VTK object of type " + node.bl_label + ", id " + str(node.node_id))
 
 
 def node_deleted(node):
@@ -106,7 +107,7 @@ def get_vtkobj(node):
         return None
 
     if not node.node_id in VTKCache:
-        l.debug("node_id not in cache " + str(node.node_id))
+        # l.debug("node %s (id %d) is not in cache" % (node.name, node.node_id))
         return None
 
     return VTKCache[node.node_id]
@@ -211,7 +212,7 @@ def run_custom_code(func):
                 if x.startswith("#"):
                     continue
                 cmd = 'vtkobj.' + x
-                l.debug("Running custom code: '%s'" % cmd)
+                l.debug("%s run %r" % (vtkobj.__vtkname__, cmd))
                 exec(cmd, globals(), locals())
             exec('vtkobj.Update()', globals(), locals())
         return value
