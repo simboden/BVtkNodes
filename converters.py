@@ -241,10 +241,10 @@ class BVTK_Node_VTKToBlenderParticles(Node, BVTK_Node):
     ob_name: bpy.props.StringProperty(name='Name', default='particles')
     glyph_name: bpy.props.StringProperty(name='Glyph Name', default='glyph')
     vec_name: bpy.props.StringProperty(name='Direction Vector Array Name', default='')
-    scale_name: bpy.props.StringProperty(name='Scale Array Name', default='')
+    scale_name: bpy.props.StringProperty(name='Scale Value or Name', default='')
     color_name: bpy.props.StringProperty(name='Color Value Array Name', default='')
     np: bpy.props.IntProperty(name='Particle Count', default=1000, min=1)
-    generate_material: bpy.props.BoolProperty(name='Generate Material', default=False)
+    generate_material: bpy.props.BoolProperty(name='Generate Material', default=True)
 
     # Data storage for point data from VTK
     from typing import List
@@ -349,9 +349,15 @@ def get_array_data(pointdata, array_name):
     return arrdata
 
 
-def clamp(vals):
-    '''Clamps list of values to 0.0 <= x <= 1.0'''
-    return [min(1.0, max(0.0, v)) for v in vals]
+def color_scale(vals):
+    '''Scale list of values to 0.0 <= x <= 1.0'''
+    minval = min(vals)
+    maxval = max(vals)
+    # Force a small difference to avoid div by zero
+    if maxval <= minval:
+        minval = 0.99999 * minval
+        maxval = 1.00001 * minval
+    return [(v - minval)/(maxval - minval) for v in vals]
 
 
 def get_vtk_particle_data(self, vtkdata):
@@ -399,7 +405,12 @@ def get_vtk_particle_data(self, vtkdata):
     # Scaling sizes
     scales_array = get_array_data(pdata, self.scale_name)
     if not scales_array:
-        scales = n * [1.0]
+        try:
+            # Check if Scale Name is a float
+            float_val = float(self.scale_name)
+        except:
+            float_val = 1.0
+        scales = n * [float_val]
     else:
         scales = [scales_array.GetValue(i) for i in range(n)]
     scales = truncate_or_pad_list(scales, self.np)
@@ -411,7 +422,7 @@ def get_vtk_particle_data(self, vtkdata):
         color_values = n * [0.5]
     else:
         color_values = [color_values_array.GetValue(i) for i in range(n)]
-    color_values = clamp(color_values)
+    color_values = color_scale(color_values)
     color_values = truncate_or_pad_list(color_values, self.np)
     self.color_values = color_values
 

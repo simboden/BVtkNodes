@@ -297,6 +297,52 @@ a Blender mesh.
   material is overwritten if enabled.
 - **Update** executes the node pipeline connected to this node.
 
+
+VTK To Blender Particles (Experimental!)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This node converts VTK point data (points of *vtkPolyData*) into a
+Blender Particle System. It allows use of Blender particle object
+instancing, which allows glyphing of point data (presentation of
+points with a mesh object). Since object instancing uses little
+memory, a large number of points can be visualized efficiently.
+
+- **Name** is the name of the particle object to be created.
+- **Glyph Name** is the name of the glyph object which is to be
+  instanced at point locations. For oriented glyphs, the glyph
+  should be 1 m in length, and point towards positive X axis.
+  **Note**: Node will not work correclty unless a glyph object is
+  specified.
+- **Direction Vector Array Name** (optional): Name of a VTK vector
+  data array, with which the glyph object will be aligned at point
+  locations.
+- **Scale Value or Name** (optional): A constant multiplier value or
+  name of a VTK scalar array used to scale the glyph object at point
+  locations.
+- **Color Value Array Name** (optional): Name of a VTK scalar array of
+  ramp values that will be used for coloring the object at point
+  locations.
+- **Particle Count** specifies the maximum number of particles which
+  will be converted into the Particle System.
+- **Generate Material** will generate a default colored diffuse
+  material which will be used for glyph object at particle locations.
+- **Initialize** operator will initialize the Blender Particle System
+  with the number of particles specified in *Particle Count*. This
+  operator must be run before node pipeline is updated.
+- **Update** executes the node pipeline connected to this node.
+
+**Usage**: First, create a glyph object. Then input the data in node
+fields, and run **Initialize**. After that, every change of frame
+number in Blender Timeline updates the particle data. Note:
+
+- Change of frame number in Blender Timeline is required to update
+  particle data correctly.
+- Particles may not show up updated in the 3D Viewport after
+  frame change, but they should be still rendered correctly.
+- Particle colors show up correctly only in Rendered Viewport Shading
+  mode, and only using Cycles Render Engine.
+
+
 Info
 ^^^^
 
