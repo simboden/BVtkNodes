@@ -298,8 +298,14 @@ a Blender mesh.
 - **Update** executes the node pipeline connected to this node.
 
 
-VTK To Blender Particles (Experimental!)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+VTK To Blender Particles
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. warning::
+
+   This node is experimental! There is an issue with rendering where
+   `render does not show particles and rendering hangs.
+   <https://github.com/tkeskita/BVtkNodes/issues/12>`_
 
 This node converts VTK point data (points of *vtkPolyData*) into a
 Blender Particle System. It allows use of Blender particle object

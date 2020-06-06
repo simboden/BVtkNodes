@@ -158,7 +158,7 @@ def on_frame_change(scene, depsgraph):
             # Note: This is a workaround to enable transient data traversal
             # while this issue remains: https://developer.blender.org/T66392
             if node.bl_idname == 'BVTK_Node_TimeSelectorType':
-                node.time_step = bpy.context.scene.frame_current
+                node.time_step = scene.frame_current
                 l.debug("TimeSelector time step %d" % node.time_step)
 
     # Update mesh objects
