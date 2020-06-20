@@ -327,7 +327,9 @@ memory, a large number of points can be visualized efficiently.
   locations.
 - **Color Value Array Name** (optional): Name of a VTK scalar array of
   ramp values that will be used for coloring the object at point
-  locations.
+  locations. Color ramp values are available via `Particle Info node
+  <https://docs.blender.org/manual/en/latest/render/shader_nodes/input/particle_info.html>`_'s
+  *lifetime* output (until a better access becomes possible).
 - **Particle Count** specifies the maximum number of particles which
   will be converted into the Particle System.
 - **Generate Material** will generate a default colored diffuse
@@ -347,6 +349,8 @@ number in Blender Timeline updates the particle data. Note:
   frame change, but they should be still rendered correctly.
 - Particle colors show up correctly only in Rendered Viewport Shading
   mode, and only using Cycles Render Engine.
+- It is not possible to modify particles in Blender. You need to do
+  all modifications on VTK side prior to using this node.
 
 
 Info
