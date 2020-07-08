@@ -3,6 +3,13 @@ from .core import l # Import logging
 from .core import *
 import bmesh
 
+try:
+    import pyopenvdb
+    with_pyopenvdb = True
+except ImportError:
+    l.warning("Couldn't import pyopenvdb, BVTK To Blender Volume unavailable.")
+    with_pyopenvdb = False
+
 # -----------------------------------------------------------------------------
 # Converters from VTK to Blender
 # -----------------------------------------------------------------------------
@@ -500,6 +507,113 @@ def reset_particle_material(ob, matname):
     return mat
 
 # -----------------------------------------------------------------------------
+# Blender Volume (OpenVDB) converter
+# -----------------------------------------------------------------------------
+
+class BVTK_Node_VTKToBlenderVolume(Node, BVTK_Node):
+    '''Convert output from VTK Node to Blender Volume Object'''
+    bl_idname = 'BVTK_Node_VTKToBlenderVolumeType'
+    bl_label  = 'VTK To Blender Volume'
+
+    ob_name: bpy.props.StringProperty(name='Name', default='volume')
+    density_name: bpy.props.StringProperty(name='Density Field Name', default='')
+    color_name: bpy.props.StringProperty(name='Color Field Name', default='')
+    flame_name: bpy.props.StringProperty(name='Flame Field Name', default='')
+    temperature_name: bpy.props.StringProperty(name='Temperature Field Name', default='')
+    generate_material: bpy.props.BoolProperty(name='Generate Material', default=True)
+
+    def start_scan(self, context):
+        if not context:
+            return
+        if not self.auto_update:
+            return
+        bpy.ops.node.bvtk_auto_update_scan(
+            node_name=self.name,
+            tree_name=context.space_data.node_tree.name)
+
+    auto_update: bpy.props.BoolProperty(default=False, update=start_scan)
+
+    def m_properties(self):
+        return ['ob_name', 'generate_material']
+
+    def m_connections(self):
+        return (['input'],[],[],[])
+
+    def draw_buttons(self, context, layout):
+        global with_pyopenvdb
+        if not with_pyopenvdb:
+            layout.label(text="Error: Missing pyopenvdb!")
+            layout.label(text="Please read node docs for more info")
+            return
+        layout.prop(self, 'ob_name')
+        layout.prop(self, 'density_name')
+        layout.prop(self, 'color_name')
+        layout.prop(self, 'flame_name')
+        layout.prop(self, 'temperature_name')
+        layout.prop(self, 'generate_material')
+        layout.separator()
+        layout.operator("node.bvtk_node_update", text="Update").node_path = node_path(self)
+
+    def update_volume(self):
+        '''Update Blender Volume data from vtkImageData'''
+        input_node, vtkobj = self.get_input_node('input')
+        l.debug("Updating Volume Object %r" % self.ob_name)
+        if vtkobj:
+            vtkdata = resolve_algorithm_output(vtkobj)
+            if not vtkdata:
+                l.error('No vtkdata!')
+                return
+            if not issubclass(vtkdata.__class__, vtk.vtkImageData):
+                l.error('Data is not vtkImageData!')
+                return
+
+            vtk_image_data_to_volume_object(self, vtkdata)
+            update_3d_view()
+
+    def update_cb(self):
+        self.update_volume()
+
+    def apply_properties(self, vtkobj):
+        pass
+
+def vtk_image_data_to_volume_object(node, imgdata):
+    '''Update Blender Volume data from vtkImageData'''
+    import numpy
+    from vtk.util import numpy_support
+    vdb = pyopenvdb
+
+    dims = imgdata.GetDimensions()
+    background_value = 0.0
+    tolerance = 1e-6
+
+    density_data = imgdata.GetPointData().GetScalars(node.density_name)
+    density_ndarray = numpy_support.vtk_to_numpy(density_data).reshape(dims)
+    density_grid = vdb.FloatGrid(background_value)
+    density_grid.gridClass = vdb.GridClass.FOG_VOLUME
+    density_grid.name = "density"
+
+    # Create grid from NumPy array. Something wrong in indexing?
+    #density_grid.copyFromArray(density_ndarray, tolerance=tolerance)
+
+    # Create grid from looping over points
+    acc = density_grid.getAccessor()
+    for i in range(dims[0]):
+        for j in range(dims[1]):
+            for k in range(dims[2]):
+                idx = i + j*dims[0] + k*dims[0]*dims[1];
+                value = density_data.GetTuple1(idx);
+                if value > background_value:
+                    acc.setValueOn((i, j, k), value)
+
+    filename = os.path.join(bpy.path.abspath('//'), node.ob_name + '.vdb')
+    vdb.write(filename, grids=[density_grid])
+    from numpy import prod
+    l.info("Saved %r (%d points)" % (filename, prod(dims)))
+
+    bpy.ops.object.volume_import(filepath=filename)
+
+
+# -----------------------------------------------------------------------------
 # Auto update scan functions
 # -----------------------------------------------------------------------------
 
@@ -964,6 +1078,8 @@ TYPENAMES.append('BVTK_Node_VTKToBlenderType')
 add_class(BVTK_OT_InitializeParticleSystem)
 add_class(BVTK_Node_VTKToBlenderParticles)
 TYPENAMES.append('BVTK_Node_VTKToBlenderParticlesType')
+add_class(BVTK_Node_VTKToBlenderVolume)
+TYPENAMES.append('BVTK_Node_VTKToBlenderVolumeType')
 menu_items = [NodeItem(x) for x in TYPENAMES]
 CATEGORIES.append(BVTK_NodeCategory("Converters", "Converters", items=menu_items))
 
