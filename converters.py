@@ -1003,11 +1003,11 @@ def imgdata_to_blender(data, name):
     if name in bpy.data.images:
         bpy.data.images.remove(bpy.data.images[name])
     img = bpy.data.images.new(name, dim[0], dim[1])
-    l = scalars.GetNumberOfTuples()
+    n_tuples = scalars.GetNumberOfTuples()
     p = []
     prog = 0
     l_prog = 1
-    for j in range(l):
+    for j in range(n_tuples):
         t = scalars.GetTuple(j)
         if len(t) == 1:
             p.extend([t[0] / 255, t[0] / 255, t[0] / 255, 1])
@@ -1015,14 +1015,14 @@ def imgdata_to_blender(data, name):
             alpha = 1 if len(t)<4 else t[3]/255
             p.extend([t[0]/255, t[1]/255, t[2]/255, alpha])
 
-        prog = int(j/l*100)
+        prog = int(j/n_tuples*100)
         if prog != l_prog:
             l_prog = prog
             wm.progress_update(prog)
             l.debug('Converting to img: ' + str(prog) + '%')
     img.pixels = p
     wm.progress_end()
-    l.info('Image data conversion succesful, num pixels = ' + str(l))
+    l.info('Image data conversion succesful, num pixels = ' + str(n_tuples))
 
     # Create plane mesh with UVs to show the image
     spacing = data.GetSpacing()
