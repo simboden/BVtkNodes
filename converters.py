@@ -521,6 +521,7 @@ class BVTK_Node_VTKToBlenderVolume(Node, BVTK_Node):
     flame_name: bpy.props.StringProperty(name='Flame Field Name', default='')
     temperature_name: bpy.props.StringProperty(name='Temperature Field Name', default='')
     generate_material: bpy.props.BoolProperty(name='Generate Material', default=True)
+    use_copy_from_array: bpy.props.BoolProperty(name='Use copyFromArray()', default=False)
 
     def start_scan(self, context):
         if not context:
@@ -550,6 +551,8 @@ class BVTK_Node_VTKToBlenderVolume(Node, BVTK_Node):
         layout.prop(self, 'color_name')
         layout.prop(self, 'flame_name')
         layout.prop(self, 'temperature_name')
+        # Do not expose use_copy_from_array - it's not working correctly
+        # layout.prop(self, 'use_copy_from_array')
         layout.prop(self, 'generate_material')
         layout.separator()
         layout.operator("node.bvtk_node_update", text="Update").node_path = node_path(self)
@@ -587,23 +590,27 @@ def vtk_image_data_to_volume_object(node, imgdata):
     tolerance = 1e-6
 
     density_data = imgdata.GetPointData().GetScalars(node.density_name)
-    density_ndarray = numpy_support.vtk_to_numpy(density_data).reshape(dims)
     density_grid = vdb.FloatGrid(background_value)
     density_grid.gridClass = vdb.GridClass.FOG_VOLUME
     density_grid.name = "density"
 
-    # Create grid from NumPy array. Something wrong in indexing?
-    #density_grid.copyFromArray(density_ndarray, tolerance=tolerance)
+    if node.use_copy_from_array:
+        # Create grid from NumPy array
+        # TODO: There's something strange going on in array shape or order..
+        density_ndarray = numpy_support.vtk_to_numpy(density_data).reshape(list(reversed(dims)))
+        density_grid.copyFromArray(density_ndarray, tolerance=tolerance)
 
-    # Create grid from looping over points
-    acc = density_grid.getAccessor()
-    for i in range(dims[0]):
-        for j in range(dims[1]):
-            for k in range(dims[2]):
-                idx = i + j*dims[0] + k*dims[0]*dims[1];
-                value = density_data.GetTuple1(idx);
-                if value > background_value:
-                    acc.setValueOn((i, j, k), value)
+    else:
+        # Create grid by looping over points with accessor
+        density_ndarray = numpy_support.vtk_to_numpy(density_data).reshape(dims)
+        acc = density_grid.getAccessor()
+        for i in range(dims[0]):
+            for j in range(dims[1]):
+                for k in range(dims[2]):
+                    idx = i + j*dims[0] + k*dims[0]*dims[1];
+                    value = density_data.GetTuple1(idx);
+                    if value > background_value:
+                        acc.setValueOn((i, j, k), value)
 
     filename = os.path.join(bpy.path.abspath('//'), node.ob_name + '.vdb')
     vdb.write(filename, grids=[density_grid])
@@ -611,7 +618,17 @@ def vtk_image_data_to_volume_object(node, imgdata):
     l.info("Saved %r (%d points)" % (filename, prod(dims)))
 
     bpy.ops.object.volume_import(filepath=filename)
+    ob = bpy.context.active_object
+    l.debug("Volume object: %s" % ob.name)
 
+    # Final object transforms
+    bbox = imgdata.GetBounds()
+    ob.location[0] = bbox[0]
+    ob.location[1] = bbox[2]
+    ob.location[2] = bbox[4]
+    ob.scale[0] = (bbox[1] - bbox[0]) / dims[0]
+    ob.scale[1] = (bbox[3] - bbox[2]) / dims[1]
+    ob.scale[2] = (bbox[5] - bbox[4]) / dims[2]
 
 # -----------------------------------------------------------------------------
 # Auto update scan functions
