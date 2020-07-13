@@ -588,6 +588,9 @@ def create_grid_from_data_array(imgdata, data_name, grid_name,
     from vtk.util import numpy_support
     vdb = pyopenvdb
 
+    if data_name == '':
+        return None
+
     data = imgdata.GetPointData().GetScalars(data_name)
     if not data:
         raise ValueError("Input data %r not found" % data_name)
@@ -634,9 +637,16 @@ def vtk_image_data_to_volume_object(node, imgdata):
     density_grid = create_grid_from_data_array( \
         imgdata, node.density_name, "density", \
         background_value, tolerance, node.use_copy_from_array)
+    flame_grid = create_grid_from_data_array( \
+        imgdata, node.flame_name, "flame", \
+        background_value, tolerance, node.use_copy_from_array)
+    temperature_grid = create_grid_from_data_array( \
+        imgdata, node.temperature_name, "temperature", \
+        background_value, tolerance, node.use_copy_from_array)
 
     filename = os.path.join(bpy.path.abspath('//'), node.ob_name + '.vdb')
-    grids = [density_grid]
+    grids = [density_grid, flame_grid, temperature_grid]
+    grids = [g for g in grids if g is not None]
     vdb.write(filename, grids=grids)
     l.info("Saved %r (%d active voxels)" % (filename, count_active_voxels(grids)))
 
