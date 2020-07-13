@@ -627,6 +627,32 @@ def count_active_voxels(grids):
     return n
 
 
+def import_volume_object(ob_name, filename, bounding_box=None, dims=None):
+    '''Import OpenVDB volume object from given file name into scene'''
+
+    # Delete old object
+    if ob_name in bpy.data.objects:
+        bpy.ops.object.select_all(action='DESELECT')
+        bpy.data.objects[ob_name].select_set(True)
+        bpy.ops.object.delete()
+
+    bpy.ops.object.volume_import(filepath=filename)
+    ob = bpy.context.active_object
+    l.debug("Imported volume object: %s" % ob.name)
+
+    # Final object transforms
+    bbox = bounding_box
+    if bbox:
+        ob.location[0] = bbox[0]
+        ob.location[1] = bbox[2]
+        ob.location[2] = bbox[4]
+    if bbox and dims:
+        ob.scale[0] = (bbox[1] - bbox[0]) / dims[0]
+        ob.scale[1] = (bbox[3] - bbox[2]) / dims[1]
+        ob.scale[2] = (bbox[5] - bbox[4]) / dims[2]
+    return ob
+
+
 def vtk_image_data_to_volume_object(node, imgdata):
     '''Update Blender Volume data from vtkImageData'''
 
@@ -650,19 +676,10 @@ def vtk_image_data_to_volume_object(node, imgdata):
     vdb.write(filename, grids=grids)
     l.info("Saved %r (%d active voxels)" % (filename, count_active_voxels(grids)))
 
-    bpy.ops.object.volume_import(filepath=filename)
-    ob = bpy.context.active_object
-    l.debug("Imported volume object: %s" % ob.name)
-
-    # Final object transforms
     bbox = imgdata.GetBounds()
-    ob.location[0] = bbox[0]
-    ob.location[1] = bbox[2]
-    ob.location[2] = bbox[4]
     dims = imgdata.GetDimensions()
-    ob.scale[0] = (bbox[1] - bbox[0]) / dims[0]
-    ob.scale[1] = (bbox[3] - bbox[2]) / dims[1]
-    ob.scale[2] = (bbox[5] - bbox[4]) / dims[2]
+    import_volume_object(node.ob_name, filename, bbox, dims)
+
 
 # -----------------------------------------------------------------------------
 # Auto update scan functions
