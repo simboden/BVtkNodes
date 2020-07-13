@@ -7,7 +7,7 @@ try:
     import pyopenvdb
     with_pyopenvdb = True
 except ImportError:
-    l.warning("Couldn't import pyopenvdb, BVTK To Blender Volume unavailable.")
+    l.warning("Import pyopenvdb failed, BVTK To Blender Volume is unavailable.")
     with_pyopenvdb = False
 
 # -----------------------------------------------------------------------------
@@ -548,7 +548,8 @@ class BVTK_Node_VTKToBlenderVolume(Node, BVTK_Node):
             return
         layout.prop(self, 'ob_name')
         layout.prop(self, 'density_name')
-        layout.prop(self, 'color_name')
+        # TODO: Test and expose color
+        # layout.prop(self, 'color_name')
         layout.prop(self, 'flame_name')
         layout.prop(self, 'temperature_name')
         # Do not expose use_copy_from_array - it's not working correctly
@@ -579,53 +580,76 @@ class BVTK_Node_VTKToBlenderVolume(Node, BVTK_Node):
     def apply_properties(self, vtkobj):
         pass
 
-def vtk_image_data_to_volume_object(node, imgdata):
-    '''Update Blender Volume data from vtkImageData'''
+def create_grid_from_data_array(imgdata, data_name, grid_name,
+                                background_value, tolerance, use_copy_from_array=False):
+    '''Return OpenVDB grid containing data copied from vtkImageData array'''
+
     import numpy
     from vtk.util import numpy_support
     vdb = pyopenvdb
 
+    data = imgdata.GetPointData().GetScalars(data_name)
+    if not data:
+        raise ValueError("Input data %r not found" % data_name)
+
+    grid = vdb.FloatGrid(background_value)
+    grid.gridClass = vdb.GridClass.FOG_VOLUME
+    grid.name = grid_name
     dims = imgdata.GetDimensions()
-    background_value = 0.0
-    tolerance = 1e-6
 
-    density_data = imgdata.GetPointData().GetScalars(node.density_name)
-    density_grid = vdb.FloatGrid(background_value)
-    density_grid.gridClass = vdb.GridClass.FOG_VOLUME
-    density_grid.name = "density"
-
-    if node.use_copy_from_array:
+    if use_copy_from_array:
         # Create grid from NumPy array
         # TODO: There's something strange going on in array shape or order..
-        density_ndarray = numpy_support.vtk_to_numpy(density_data).reshape(list(reversed(dims)))
-        density_grid.copyFromArray(density_ndarray, tolerance=tolerance)
+        ndarray = numpy_support.vtk_to_numpy(data).reshape(list(reversed(dims)))
+        grid.copyFromArray(ndarray, tolerance=tolerance)
 
     else:
         # Create grid by looping over points with accessor
-        density_ndarray = numpy_support.vtk_to_numpy(density_data).reshape(dims)
-        acc = density_grid.getAccessor()
+        ndarray = numpy_support.vtk_to_numpy(data).reshape(dims)
+        acc = grid.getAccessor()
         for i in range(dims[0]):
             for j in range(dims[1]):
                 for k in range(dims[2]):
                     idx = i + j*dims[0] + k*dims[0]*dims[1];
-                    value = density_data.GetTuple1(idx);
+                    value = data.GetTuple1(idx);
                     if value > background_value:
                         acc.setValueOn((i, j, k), value)
+    return grid
+
+def count_active_voxels(grids):
+    '''Counts the number of active voxels in list of OpenVDB grids'''
+    n = 0
+    for grid in grids:
+        n += grid.activeVoxelCount()
+    return n
+
+
+def vtk_image_data_to_volume_object(node, imgdata):
+    '''Update Blender Volume data from vtkImageData'''
+
+    vdb = pyopenvdb
+    background_value = 0.0 # Zero value for OpenVDB grid
+    tolerance = 1e-6 # Tolerance for value being zero
+
+    density_grid = create_grid_from_data_array( \
+        imgdata, node.density_name, "density", \
+        background_value, tolerance, node.use_copy_from_array)
 
     filename = os.path.join(bpy.path.abspath('//'), node.ob_name + '.vdb')
-    vdb.write(filename, grids=[density_grid])
-    from numpy import prod
-    l.info("Saved %r (%d points)" % (filename, prod(dims)))
+    grids = [density_grid]
+    vdb.write(filename, grids=grids)
+    l.info("Saved %r (%d active voxels)" % (filename, count_active_voxels(grids)))
 
     bpy.ops.object.volume_import(filepath=filename)
     ob = bpy.context.active_object
-    l.debug("Volume object: %s" % ob.name)
+    l.debug("Imported volume object: %s" % ob.name)
 
     # Final object transforms
     bbox = imgdata.GetBounds()
     ob.location[0] = bbox[0]
     ob.location[1] = bbox[2]
     ob.location[2] = bbox[4]
+    dims = imgdata.GetDimensions()
     ob.scale[0] = (bbox[1] - bbox[0]) / dims[0]
     ob.scale[1] = (bbox[3] - bbox[2]) / dims[1]
     ob.scale[2] = (bbox[5] - bbox[4]) / dims[2]
