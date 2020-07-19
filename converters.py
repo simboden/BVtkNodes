@@ -548,8 +548,7 @@ class BVTK_Node_VTKToBlenderVolume(Node, BVTK_Node):
             return
         layout.prop(self, 'ob_name')
         layout.prop(self, 'density_name')
-        # TODO: Test and expose color
-        # layout.prop(self, 'color_name')
+        layout.prop(self, 'color_name')
         layout.prop(self, 'flame_name')
         layout.prop(self, 'temperature_name')
         # Do not expose use_copy_from_array - it's not working correctly
@@ -580,8 +579,10 @@ class BVTK_Node_VTKToBlenderVolume(Node, BVTK_Node):
     def apply_properties(self, vtkobj):
         pass
 
+
 def create_grid_from_data_array(imgdata, data_name, grid_name,
-                                background_value, tolerance, use_copy_from_array=False):
+                                background_value, tolerance,
+                                use_copy_from_array=False, atype='scalar'):
     '''Return OpenVDB grid containing data copied from vtkImageData array'''
 
     import numpy
@@ -591,14 +592,24 @@ def create_grid_from_data_array(imgdata, data_name, grid_name,
     if data_name == '':
         return None
 
-    data = imgdata.GetPointData().GetScalars(data_name)
-    if not data:
-        raise ValueError("Input data %r not found" % data_name)
+    dims = list(imgdata.GetDimensions())
 
-    grid = vdb.FloatGrid(background_value)
+    if atype == 'scalar':
+        data = imgdata.GetPointData().GetScalars(data_name)
+        if not data:
+            raise ValueError("Input data %r not found" % data_name)
+        grid = vdb.FloatGrid(background_value)
+    elif atype == 'vector':
+        data = imgdata.GetPointData().GetVectors(data_name)
+        if not data:
+            raise ValueError("Input data %r not found" % data_name)
+        grid = vdb.Vec3SGrid()
+        dims.append(3)
+    else:
+        raise TypeError("unknown type %s" % str(atype))
+
     grid.gridClass = vdb.GridClass.FOG_VOLUME
     grid.name = grid_name
-    dims = imgdata.GetDimensions()
 
     if use_copy_from_array:
         # Create grid from NumPy array
@@ -614,10 +625,15 @@ def create_grid_from_data_array(imgdata, data_name, grid_name,
             for j in range(dims[1]):
                 for k in range(dims[2]):
                     idx = i + j*dims[0] + k*dims[0]*dims[1];
-                    value = data.GetTuple1(idx);
-                    if value > background_value:
+                    if atype == 'scalar':
+                        value = data.GetTuple1(idx);
+                        if value > background_value:
+                            acc.setValueOn((i, j, k), value)
+                    elif atype == 'vector':
+                        value = data.GetTuple3(idx);
                         acc.setValueOn((i, j, k), value)
     return grid
+
 
 def count_active_voxels(grids):
     '''Counts the number of active voxels in list of OpenVDB grids'''
@@ -662,16 +678,19 @@ def vtk_image_data_to_volume_object(node, imgdata):
 
     density_grid = create_grid_from_data_array( \
         imgdata, node.density_name, "density", \
-        background_value, tolerance, node.use_copy_from_array)
+        background_value, tolerance, node.use_copy_from_array, 'scalar')
+    color_grid = create_grid_from_data_array( \
+        imgdata, node.color_name, "color", \
+        background_value, tolerance, node.use_copy_from_array, 'vector')
     flame_grid = create_grid_from_data_array( \
         imgdata, node.flame_name, "flame", \
-        background_value, tolerance, node.use_copy_from_array)
+        background_value, tolerance, node.use_copy_from_array, 'scalar')
     temperature_grid = create_grid_from_data_array( \
         imgdata, node.temperature_name, "temperature", \
-        background_value, tolerance, node.use_copy_from_array)
+        background_value, tolerance, node.use_copy_from_array, 'scalar')
 
     filename = os.path.join(bpy.path.abspath('//'), node.ob_name + '.vdb')
-    grids = [density_grid, flame_grid, temperature_grid]
+    grids = [density_grid, color_grid, flame_grid, temperature_grid]
     grids = [g for g in grids if g is not None]
     vdb.write(filename, grids=grids)
     l.info("Saved %r (%d active voxels)" % (filename, count_active_voxels(grids)))
