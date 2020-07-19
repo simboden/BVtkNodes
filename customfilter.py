@@ -226,6 +226,10 @@ class BVTK_Node_MultiBlockLeaf(Node, BVTK_Node):
         return None
 
 
+# ----------------------------------------------------------------
+# Time Selector
+# ----------------------------------------------------------------
+
 def update_timestep_in_filename(filename, time_step):
     '''Return file name, where time definition integer string (assumed to
     be located just before dot at end of file name) has been replaced
@@ -360,6 +364,47 @@ class BVTK_Node_TimeSelector(Node, BVTK_Node):
         return resolve_algorithm_output(out_port)
 
 
+# ----------------------------------------------------------------
+# Image Data Object Source
+# ----------------------------------------------------------------
+
+class BVTK_Node_ImageDataObjectSource(Node, BVTK_Node):
+    '''BVTK node to generate a new vtkImageData object'''
+    bl_idname = 'BVTK_Node_ImageDataObjectSourceType'
+    bl_label = 'VtkImageData Object Source'
+
+    origin: bpy.props.FloatVectorProperty(name='Origin', default=[0.0, 0.0, 0.0], size=3)
+    dimensions: bpy.props.IntVectorProperty(name='Dimensions', default=[10, 10, 10], size=3)
+    spacing: bpy.props.FloatVectorProperty(name='Spacing', default=[0.1, 0.1, 0.1], size=3)
+    multiplier: bpy.props.FloatProperty(name='Multiplier', default=1.0)
+
+    def m_properties(self):
+        return ['origin', 'dimensions', 'spacing', 'multiplier']
+
+    def m_connections(self):
+        return ([], [], [], ['output'])
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'origin')
+        layout.prop(self, 'dimensions')
+        layout.prop(self, 'spacing')
+        layout.prop(self, 'multiplier')
+
+    def apply_properties(self, vtkobj):
+        pass
+
+    def get_output(self, socketname):
+        '''Generate a new vtkImageData object'''
+        from mathutils import Vector
+        img = vtk.vtkImageData()
+        img.SetOrigin(self.origin)
+        c = self.multiplier
+        img.SetDimensions([round(c * dim) for dim in self.dimensions])
+        img.SetSpacing(Vector(self.spacing) / c)
+        return img
+
+
+
 # Add classes and menu items
 TYPENAMES = []
 add_class(BVTK_Node_CustomFilter)
@@ -369,6 +414,8 @@ add_class(BVTK_Node_MultiBlockLeaf)
 TYPENAMES.append('BVTK_Node_MultiBlockLeafType')
 add_class(BVTK_Node_TimeSelector)
 TYPENAMES.append('BVTK_Node_TimeSelectorType')
+add_class(BVTK_Node_ImageDataObjectSource)
+TYPENAMES.append('BVTK_Node_ImageDataObjectSourceType')
 
 menu_items = [NodeItem(x) for x in TYPENAMES]
 CATEGORIES.append(BVTK_NodeCategory("Custom", "Custom", items=menu_items))
