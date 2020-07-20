@@ -535,7 +535,8 @@ class BVTK_Node_VTKToBlenderVolume(Node, BVTK_Node):
     auto_update: bpy.props.BoolProperty(default=False, update=start_scan)
 
     def m_properties(self):
-        return ['ob_name', 'generate_material']
+        return ['ob_name', 'density_name', 'color_name', 'flame_name',
+                'temperature_name', 'generate_material', 'use_copy_from_array']
 
     def m_connections(self):
         return (['input'],[],[],[])
@@ -643,7 +644,8 @@ def count_active_voxels(grids):
     return n
 
 
-def import_volume_object(ob_name, filename, bounding_box=None, dims=None):
+def import_volume_object(ob_name, filename, bounding_box=None,
+                         dims=None, generate_material=False):
     '''Import OpenVDB volume object from given file name into scene'''
 
     # Delete old object
@@ -666,7 +668,53 @@ def import_volume_object(ob_name, filename, bounding_box=None, dims=None):
         ob.scale[0] = (bbox[1] - bbox[0]) / dims[0]
         ob.scale[1] = (bbox[3] - bbox[2]) / dims[1]
         ob.scale[2] = (bbox[5] - bbox[4]) / dims[2]
+
+    # Volume material
+    matname = ob_name + "_material"
+    if generate_material:
+        reset_volume_material(ob, matname)
+    else:
+        mat = bpy.data.materials[matname]
+        ob.data.materials.append(mat)
     return ob
+
+
+def reset_volume_material(ob, matname):
+    '''Reset volume material to a default'''
+
+    if matname in bpy.data.materials:
+        mat = bpy.data.materials[matname]
+    else:
+        mat = bpy.data.materials.new(name=matname)
+
+    if not mat.use_nodes:
+        mat.use_nodes = True
+    nodes = mat.node_tree.nodes
+    links = mat.node_tree.links
+
+    # Delete existing nodes
+    for i in nodes:
+        nodes.remove(i)
+
+    node1 = nodes.new('ShaderNodeOutputMaterial')
+    node1.location = (300, 300)
+
+    node2 = nodes.new('ShaderNodeVolumePrincipled')
+    node2.location = (0, 300)
+    links.new(node2.outputs['Volume'], node1.inputs['Volume'])
+
+    node3 = nodes.new('ShaderNodeVolumeInfo')
+    node3.location = (-300, 300)
+    links.new(node3.outputs['Color'], node2.inputs['Color'])
+    links.new(node3.outputs['Density'], node2.inputs['Density'])
+    links.new(node3.outputs['Flame'], node2.inputs['Emission Strength'])
+
+    # Assign material
+    if ob.data.materials:
+        ob.data.materials[0] = mat
+    else:
+        ob.data.materials.append(mat)
+    return mat
 
 
 def vtk_image_data_to_volume_object(node, imgdata):
@@ -701,7 +749,7 @@ def vtk_image_data_to_volume_object(node, imgdata):
 
     bbox = imgdata.GetBounds()
     dims = imgdata.GetDimensions()
-    import_volume_object(node.ob_name, filename, bbox, dims)
+    import_volume_object(node.ob_name, filename, bbox, dims, node.generate_material)
 
 
 # -----------------------------------------------------------------------------
