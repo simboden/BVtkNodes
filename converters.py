@@ -692,8 +692,12 @@ def vtk_image_data_to_volume_object(node, imgdata):
     filename = os.path.join(bpy.path.abspath('//'), node.ob_name + '.vdb')
     grids = [density_grid, color_grid, flame_grid, temperature_grid]
     grids = [g for g in grids if g is not None]
+    nvoxels = count_active_voxels(grids)
+    if nvoxels == 0:
+        l.info("No voxel data found, no volume exports or imports done.")
+        return
     vdb.write(filename, grids=grids)
-    l.info("Saved %r (%d active voxels)" % (filename, count_active_voxels(grids)))
+    l.info("Saved %r (%d active voxels)" % (filename, nvoxels))
 
     bbox = imgdata.GetBounds()
     dims = imgdata.GetDimensions()
