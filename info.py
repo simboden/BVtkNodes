@@ -54,10 +54,14 @@ class BVTK_Node_Info(Node, BVTK_Node):
                 d = data[k]
                 for i in range(d.GetNumberOfArrays()):
                     arr = d.GetArray(i)
+                    data_type_name = arr.GetDataTypeAsString()
+                    n_comps = arr.GetNumberOfComponents()
                     r = arr.GetRange()
                     name = arr.GetName()
                     row = layout.row()
-                    row.label(text = k + '[' + str(i) + ']: \'' + name + '\': ' \
+                    row.label(text = k + '[' + str(i) + '] (' \
+                              + str(data_type_name) + str(n_comps) \
+                              + '): \'' + name + '\': ' \
                               + fs.format(r[0]) +' - ' + fs.format(r[1]))
 
         layout.separator()
