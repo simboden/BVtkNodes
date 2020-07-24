@@ -552,7 +552,7 @@ class BVTK_Node_VTKToBlenderVolume(Node, BVTK_Node):
         layout.prop(self, 'color_name')
         layout.prop(self, 'flame_name')
         layout.prop(self, 'temperature_name')
-        # Do not expose use_copy_from_array - it's not working correctly
+        # Do not expose use_copy_from_array - it's not working correctly. TODO: Why?
         # layout.prop(self, 'use_copy_from_array')
         layout.prop(self, 'generate_material')
         layout.separator()

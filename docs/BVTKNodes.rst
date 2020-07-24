@@ -353,6 +353,63 @@ number in Blender Timeline updates the particle data. Note:
   all modifications on VTK side prior to using this node.
 
 
+.. _VTKToBlenderVolume:
+
+VTK To Blender Volume (OpenVDB)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. warning::
+
+   This node is experimental! Currently it requires a
+   `custom build of Blender dependency libraries
+   <https://devtalk.blender.org/t/build-pyopenvdb-as-part-of-make-deps/14148>`_
+   to enable `pyopenvdb` in Blender. If Blender installation does not
+   include `pyopenvdb`, the node shows an error message instead of the
+   options listed below.
+
+   If you would like instructions on how to build such a
+   custom Blender on Linux,
+   `please like this post <https://blenderartists.org/t/bvtknodes-gallery/1161079/52>`_.
+
+This node converts 3D VTK image data (*vtkImageData*) into
+OpenVDB grids, saves them to a **.vdb** file at the location
+of the Blender file, and finally imports the **.vdb** file
+into Blender as a Volume Object.
+
+- **Name** is the name of the Volume Object and OpenVDB file to be
+  created.
+- **Density Field Name** specifies the field name of scalar array to
+  be used for the *Density* output of Volume Info node in Blender
+  Shader Editor.
+- **Color Field Name** is used for 3D vector array as *Color* output
+  in Volume Info node.
+- **Flame Field Name** is scalar field exposed as *Flame* output in
+  Volume Info node. It can be used for specifying e.g. emission
+  strength.
+- **Temperature Field Name** is a scalar field shown as *Temperature*
+  output in Volume Info node.
+- **Generate Material** if enabled, will overwrite or generate a
+  default shader material for the volume object using Principled
+  Volume Shader.
+
+**Hint**: Add Math or Vector Math nodes in the Shader Editor to modify
+array values to obtain wanted visual results, instead of adding the
+mathematical manipulation of the arrays in BVTKNodes. See
+:ref:`volumetric_rendering` example.
+
+
+VTKImageData Object Source
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This node creates an empty 3D VTK image data (*vtkImageData*) object.
+
+- **Origin** is the origin coordinates of the image data.
+- **Dimensions** set the number of voxels in each primary axis.
+- **Spacing** specify voxel side lengths in the three axes.
+- **Multiplier** scales both all *Dimensions* and all *Spacing* values
+  while (approximately) retaining image bounding box size.
+
+
 Info
 ^^^^
 
@@ -365,7 +422,7 @@ it shows:
 - Number of points and cells in VTK data.
   *Note:* "cell" in VTK terminology can refer to a face or a 3D cell.
 - X, Y and Z coordinate ranges of the data.
-- Point and cell data (with names and value ranges) included in the
+- Point and cell data (with names, type and value ranges) included in the
   pipeline.
 
 Color Mapper

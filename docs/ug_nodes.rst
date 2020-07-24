@@ -245,3 +245,24 @@ Here is the result in 3D Viewport shown in Material Preview Mode:
 
 .. image:: images/ug_stream_tracers_result.png
 
+
+.. _volumetric_rendering:
+
+Volumetric Rendering
+--------------------
+
+Volumetric rendering of 3D *vtkImageData* is possible by using the
+experimental :ref:`VTKToBlenderVolume` node. You can use a custom
+*VTKImageData Object Source* node in conjunction with *vtkProbeFilter*
+to convert e.g. unstructured grid data into *vtkImageData* voxel data
+required by the volumetric conversion.
+
+.. image:: images/ug_volumetrics_nodesetup.png
+
+Edit the generated volumetric material in Shader Editor, node setup is
+shown below. Here is the result of the example data viewed from above,
+when lit only by an added Sun lamp with strength value 10. Color is
+manipulated in the material by two Vector Math nodes to add red color
+to velocity X component and blue color to velocity Z component.
+
+.. image:: images/ug_volumetrics_result.png
