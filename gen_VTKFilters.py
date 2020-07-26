@@ -121,12 +121,11 @@ class VTKBoxClipDataSet(Node, BVTK_Node):
     m_GenerateClipScalars  : bpy.props.BoolProperty( name='GenerateClipScalars',   default=True )
     m_GenerateClippedOutput: bpy.props.BoolProperty( name='GenerateClippedOutput', default=True )
     m_Orientation          : bpy.props.IntProperty ( name='Orientation',           default=1 )
-    m_BoxClip              : bpy.props.FloatVectorProperty ( name='BoxClip',          default=[0.,1.0,0.,1.0,0.0,1.0], size=6)
-
-    b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    
+    b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_GenerateClipScalars','m_GenerateClippedOutput','m_Orientation','m_BoxClip',]
+        return ['m_GenerateClipScalars','m_GenerateClippedOutput','m_Orientation',]
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1'], [], []) 
     

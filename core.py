@@ -330,11 +330,6 @@ class BVTK_Node:
             # SetX(self.Y)
             else:
                 cmd = 'vtkobj.Set'+x[2:]+'(self.'+x+')'
-                
-            # SetX(*self.Y)
-            if 'BoxClip' in x:
-                cmd = 'vtkobj.Set'+x[2:]+'(*self.'+x+')'
-                
             exec(cmd, globals(), locals())
 
     def input_nodes(self):
