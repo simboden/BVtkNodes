@@ -252,10 +252,16 @@ class VTKBoxClipDataSet(Node, BVTK_Node):
     def apply_properties(self, vtkobj):
         m_properties=self.m_properties()
         for x in [m_properties[i] for i in range(len(m_properties)) if self.b_properties[i]]:
+            # Skip setting any empty values
+            inputval = getattr(self, x)
+            if len(str(inputval)) == 0:
+                continue
             # SetX(*self.Y)
             if 'BoxClip' in x:
                 cmd = 'vtkobj.Set'+x[2:]+'(*self.'+x+')'
-                
+            # SetX(self.Y)
+            else:
+                cmd = 'vtkobj.Set'+x[2:]+'(self.'+x+')'
             exec(cmd, globals(), locals())
 
 
