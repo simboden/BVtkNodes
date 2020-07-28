@@ -167,6 +167,9 @@ def on_frame_change(scene, depsgraph):
             if node.bl_idname == 'BVTK_Node_VTKToBlenderType':
                 l.debug("VTKToBlender")
                 update.no_queue_update(node, node.update_cb)
+            if node.bl_idname == 'BVTK_Node_VTKToBlenderVolumeType':
+                l.debug("VTKToBlenderVolume")
+                update.no_queue_update(node, node.update_cb)
 
     # Update particle objects
     for node_group in bpy.data.node_groups:
