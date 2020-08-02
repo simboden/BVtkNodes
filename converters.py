@@ -522,6 +522,7 @@ class BVTK_Node_VTKToBlenderVolume(Node, BVTK_Node):
     temperature_name: bpy.props.StringProperty(name='Temperature Field Name', default='')
     generate_material: bpy.props.BoolProperty(name='Generate Material', default=True)
     use_copy_from_array: bpy.props.BoolProperty(name='Use copyFromArray()', default=False)
+    export_file_sequence: bpy.props.BoolProperty(name='Export File Sequence', default=False)
 
     def start_scan(self, context):
         if not context:
@@ -555,6 +556,7 @@ class BVTK_Node_VTKToBlenderVolume(Node, BVTK_Node):
         # Do not expose use_copy_from_array - it's not working correctly. TODO: Why?
         # layout.prop(self, 'use_copy_from_array')
         layout.prop(self, 'generate_material')
+        layout.prop(self, 'export_file_sequence')
         layout.separator()
         layout.operator("node.bvtk_node_update", text="Update").node_path = node_path(self)
 
@@ -644,18 +646,31 @@ def count_active_voxels(grids):
     return n
 
 
+def delete_objects_startswith(ob_name):
+    '''Deletes object(s) whose name starts with argument object name'''
+
+    bpy.ops.object.select_all(action='DESELECT')
+    objects = [ob for ob in bpy.data.objects if ob.name.startswith(ob_name)]
+    for ob in objects:
+        ob.select_set(True)
+        l.debug("Selected object %r" % ob.name)
+    bpy.ops.object.delete(confirm=False)
+
+
 def import_volume_object(ob_name, filename, bounding_box=None,
                          dims=None, generate_material=False):
     '''Import OpenVDB volume object from given file name into scene'''
 
-    # Delete old object
-    if ob_name in bpy.data.objects:
-        bpy.ops.object.select_all(action='DESELECT')
-        bpy.data.objects[ob_name].select_set(True)
-        bpy.ops.object.delete()
-
     bpy.ops.object.volume_import(filepath=filename)
-    ob = bpy.context.active_object
+    objects = [ob for ob in bpy.data.objects if ob.name.startswith(ob_name)]
+
+    if len(objects) == 0:
+        l.error("OpenVDB import failed for %r" % filename)
+        return None
+    elif len(objects) > 1:
+        l.warning("Several objects name starts with %r, using last." % ob_name)
+
+    ob = objects[-1]
     l.debug("Imported volume object: %s" % ob.name)
 
     # Final object transforms
@@ -673,7 +688,7 @@ def import_volume_object(ob_name, filename, bounding_box=None,
     matname = ob_name + "_material"
     if generate_material:
         reset_volume_material(ob, matname)
-    else:
+    elif matname in bpy.data.materials:
         mat = bpy.data.materials[matname]
         ob.data.materials.append(mat)
     return ob
@@ -737,7 +752,13 @@ def vtk_image_data_to_volume_object(node, imgdata):
         imgdata, node.temperature_name, "temperature", \
         background_value, tolerance, node.use_copy_from_array, 'scalar')
 
-    filename = os.path.join(bpy.path.abspath('//'), node.ob_name + '.vdb')
+    if not node.export_file_sequence:
+        basename = node.ob_name + '.vdb'
+    else:
+        seq = "_%05d" % bpy.context.scene.frame_current
+        basename = node.ob_name + seq + '.vdb'
+
+    filename = os.path.join(bpy.path.abspath('//'), basename)
     grids = [density_grid, color_grid, flame_grid, temperature_grid]
     grids = [g for g in grids if g is not None]
     nvoxels = count_active_voxels(grids)
@@ -749,6 +770,7 @@ def vtk_image_data_to_volume_object(node, imgdata):
 
     bbox = imgdata.GetBounds()
     dims = imgdata.GetDimensions()
+    delete_objects_startswith(node.ob_name)
     import_volume_object(node.ob_name, filename, bbox, dims, node.generate_material)
 
 

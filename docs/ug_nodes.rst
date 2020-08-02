@@ -37,7 +37,10 @@ Blender Timeline Editor.
 
 You need to select correct reader node depending on your data type. Note
 that you may need to adjust reader settings and/or add *Custom Code*
-to some readers, depending on your case and data.
+to some readers, depending on your case and data. For example, to force
+the parallel OpenFOAM reader *vtkPOpenFOAMReader* to read the decomposed
+case files instead of reconstructed serial case files, you must add
+custom code `SetCaseType(0)` to the reader node.
 
 * *vtkXMLUnstructuredGridReader* for **.vtu** files
 * *vtkPolyDataReader* for some **.vtk** files

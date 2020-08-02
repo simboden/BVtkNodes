@@ -371,6 +371,7 @@ VTK To Blender Volume (OpenVDB)
    custom Blender on Linux,
    `please like this post <https://blenderartists.org/t/bvtknodes-gallery/1161079/52>`_.
 
+
 This node converts 3D VTK image data (*vtkImageData*) into
 OpenVDB grids, saves them to a **.vdb** file at the location
 of the Blender file, and finally imports the **.vdb** file
@@ -391,6 +392,17 @@ into Blender as a Volume Object.
 - **Generate Material** if enabled, will overwrite or generate a
   default shader material for the volume object using Principled
   Volume Shader.
+- **Export File Sequence** if enabled, will add frame number to the
+  exported OpenVDB file name and object name. This allows generation of
+  series of OpenVDB files, which can be imported afterwards as a
+  sequence into Blender for separate rendering.
+
+.. warning::
+
+   Currently there seems to be a bug in Blender which prohibits
+   concurrent volume object generation and rendering. Please use Export
+   File Sequence option to first generate volume data files,
+   then render them in separate animation.
 
 **Hint**: Add Math or Vector Math nodes in the Shader Editor to modify
 array values to obtain wanted visual results, instead of adding the

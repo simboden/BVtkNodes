@@ -169,6 +169,7 @@ def on_frame_change(scene, depsgraph):
                 update.no_queue_update(node, node.update_cb)
             if node.bl_idname == 'BVTK_Node_VTKToBlenderVolumeType':
                 l.debug("VTKToBlenderVolume")
+                converters.delete_objects_startswith(node.ob_name)
                 update.no_queue_update(node, node.update_cb)
 
     # Update particle objects

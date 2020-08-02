@@ -128,11 +128,12 @@ class BVTK_FunctionsQueue:
             return
         f = self.functions[i]
         if i not in self.executed:
-            try:
-                f[0](*f[1])
-            except Exception as e:
-                l.critical("i=" + str(i) + ", f[0] = " + str(f[0]) + \
-                           " got exception: " + str(e))
+            f[0](*f[1])
+            #try:
+            #    f[0](*f[1])
+            #except Exception as e:
+            #    l.critical("i=" + str(i) + ", f[0] = " + str(f[0]) + \
+            #               " got exception: " + str(e))
             self.executed.append(i)
             self.i += 1
 
