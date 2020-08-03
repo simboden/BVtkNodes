@@ -10,12 +10,14 @@ BVTKNodes is an addon for
 `Blender (an open source 3D content creation and visualization tool) <https://www.blender.org/>`_.
 This addon makes it possible to create and execute VTK pipelines
 configured in Blender Node Editor, to produce surface mesh objects,
-which can be then modified and visualized in Blender.
+which can be then modified and visualized in Blender. Support for
+particle systems and volumetric objects have been added (experimental
+feature!).
 
-BVTKNodes provides Blender users access to data readers for many
+BVTKNodes provides Blender users with access to data readers for many
 scientific data formats, along with capability to convert VTK data
 into a Blender mesh. For VTK users, the add-on provides access to high
-quality and photorealistic rendering and many kinds of mesh editing tools.
+quality photorealistic rendering and many kinds of mesh editing tools.
 The add-on was first presented at
 `Blender Conference 2018 <https://www.youtube.com/watch?v=KcF4LBTTyvk>`_.
 You can see more examples in
@@ -28,7 +30,7 @@ Target Use and Users
 --------------------
 
 BVTKNodes integrates VTK's data processing capabilities with Blender's
-powerful visualization features. It allows creation of photorealistic
+powerful visualization features. It allows creation of **photorealistic**
 images and animations from scientific data.
 
 Use of BVTKNodes requires both Blender and VTK skills. User needs to
