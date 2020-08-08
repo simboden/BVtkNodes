@@ -209,6 +209,7 @@ class VTKThreshold(Node, BVTK_Node):
     def m_connections(self):
         return (['input'], ['output'], [], [])
 
+    @run_custom_code
     def apply_properties(self, vtkobj):
         value1 = self.m_Value1
         value2 = self.m_Value2
@@ -249,6 +250,7 @@ class VTKBoxClipDataSet(Node, BVTK_Node):
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1'], [], []) 
     
+    @run_custom_code
     def apply_properties(self, vtkobj):
         m_properties=self.m_properties()
         for x in [m_properties[i] for i in range(len(m_properties)) if self.b_properties[i]]:
