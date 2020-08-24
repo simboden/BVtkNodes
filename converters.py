@@ -93,6 +93,11 @@ def vtkdata_to_blender(data, name, ramp=None, smooth=False, generate_material=Fa
         # Error is raised if a face already exists. Count errors.
         try:
             face_verts = [verts[data_pi.GetId(x)] for x in range(data_pi.GetNumberOfIds())]
+
+            # Remove last vert if it is same as first vert
+            if face_verts[-1] == face_verts[0]:
+                face_verts = face_verts[0:-1]
+
             if len(face_verts) == 2:
                 e = bm.edges.new(face_verts)
             else:
