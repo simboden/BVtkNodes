@@ -27,7 +27,7 @@ is located in docs directory of the sources and is viewable online at
 https://bvtknodes.readthedocs.io. Please view the documentation for
 installation and usage instructions.
 
-- **Tested version**: Blender version 2.82 and VTK library version 8.1.2.
+- **Tested version**: Latest stable Blender version (2.83) and VTK library version 8.1.2.
 - **License**: [GPL v3](http://www.gnu.org/licenses/quick-guide-gplv3.html)
 - **Contributors**: Silvano Imboden (s.imboden@cineca.it), Lorenzo Celli,
   Paul McManus, Tuomo Keskitalo

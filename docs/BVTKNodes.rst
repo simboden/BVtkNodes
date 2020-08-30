@@ -103,8 +103,8 @@ This version was demonstrated in the
 2. `tkeskita/bvtknodes <https://github.com/tkeskita/BVtkNodes>`_
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Upgraded and developed version for Blender 2.80 (or newer) using VTK
-8.1.2. Please use latest released version of Blender for this version.
+Upgraded and developed version for Blender 2.8 series using VTK
+8.1.2. Please use latest stable version of Blender for this version.
 
 .. note::
    
@@ -141,7 +141,7 @@ Installation
 
 - Install Blender (if needed, see `instructions <https://docs.blender.org/manual/en/latest/getting_started/installing/index.html>`_).
 - Install VTK to Blender Python as instructed above in `Installation of VTK for Blender`_.
-- Download appropriate BVTKNodes add-on ZIP file (see options in `Available Versions of BVTKNodes addon`_). To download add-on from Github, Select “Clone or download”, then “Download ZIP”.
+- Download appropriate BVTKNodes add-on ZIP file (see options in `Available Versions of BVTKNodes addon`_). To download add-on from Github, Select “Code”, then “Download ZIP”.
 - Start Blender, go to “Edit” –> “Preferences” –> “Add-ons” –> “Install” –> open the add-on zip file.
 - Activate the “BVTKNodes” add-on in Preferences by clicking on the checkbox. Add-on is located in Node category, "Community" level of Blender add-ons.
 - **For Blender 2.79:** User Settings are located in File menu, and it is suggested to **Save User Settings** before closing settings.
