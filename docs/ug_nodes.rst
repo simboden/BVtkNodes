@@ -37,6 +37,7 @@ Blender Timeline Editor.
 
 You need to select correct reader node depending on your data type. Note
 that you may need to adjust reader settings and/or add *Custom Code*
+(see :ref:`custom_code`)
 to some readers, depending on your case and data. For example, to force
 the parallel OpenFOAM reader *vtkPOpenFOAMReader* to read the decomposed
 case files instead of reconstructed serial case files, you must add
@@ -50,6 +51,7 @@ connected to some data source which produces *vtkUnstructuredGrid*
 with data for 3D cells, such as the output of *Multi Block Leaf* node
 in example above.
 
+.. _extract_boundary_surfaces:
 
 Extract Boundary Surfaces
 -------------------------
@@ -63,6 +65,7 @@ If you want to extract a single boundary patch for OpenFOAM case, you
 need to
 
 * Add **EnableAllPatchArrays()** Custom Code to *vtkOpenFOAMReader*
+  (see :ref:`custom_code`).
 * Add two *Multi Block Leaf* nodes in series to select patches and the
   wanted patch, before connecting to *vtkGeometryFilter*.
 
@@ -78,7 +81,7 @@ You can use
 * **Optional**: Add first *vtkPassArrays* if you want to discard other
   data arrays except the ones you use in calculations.
   You can specify which cell or point data fields
-  will be operated on, by adding Custom Code commands like::
+  will be operated on, by :ref:`custom_code` commands like::
   
     AddArray(vtk.vtkDataObject.CELL, "U")
     AddArray(vtk.vtkDataObject.POINT, "")
@@ -156,6 +159,14 @@ how to color glyphs by velocity magnitude.
    you can use *vtkArrayCalculator* upstream to generate it, see
    `Field Data Calculations`_.
 
+.. note::
+
+   If the glyphs are all incorrectly aligned along the positive X-axis
+   even when *Orient* is on, you need to add *vtkAssignAttribute* node
+   e.g. before *vtkMaskPoints*. You need to add Custom Code (see
+   :ref:`custom_code`) to specify a data array to be activated, e.g.
+   ``Assign("U", vtk.vtkDataSetAttributes.VECTORS, vtk.vtkAssignAttribute.POINT_DATA)``
+
 .. image:: images/ug_glyphs_nodesetup.png
 
 Here is the result in 3D Viewport shown in Material Preview Mode:
@@ -168,16 +179,9 @@ Contours
 
 Contours can be generated with *vtkContourFilter*:
 
-* First add *vtkAssignAttribute* node and add Custom Code to
+* First add *vtkAssignAttribute* node and add Custom Code (see :ref:`custom_code`) to
   specify a point data array to be used for contouring, e.g.
   ``Assign("p", vtk.vtkDataSetAttributes.SCALARS, vtk.vtkAssignAttribute.POINT_DATA)``
-
-.. note::
-
-   Some VTK operations require use of *vtkPassArrays*, *vtkAssignAttribute*
-   or a node specific function to activate arrays to operate on, even
-   if there is only one array in input.
-
 * Add *vtkContourFilter*, and add wanted contour values by pressing
   the plus icon and then input three values: 0.017, 0.02, 0.023.
   Disable **GenerateTriangles** to retain polyhedrons.

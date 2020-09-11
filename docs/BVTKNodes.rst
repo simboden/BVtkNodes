@@ -16,7 +16,7 @@ feature!).
 
 BVTKNodes provides Blender users with access to data readers for many
 scientific data formats, along with capability to convert VTK data
-into a Blender mesh. For VTK users, the add-on provides access to high
+into Blender objects. For VTK users, the add-on provides access to high
 quality photorealistic rendering and many kinds of mesh editing tools.
 The add-on was first presented at
 `Blender Conference 2018 <https://www.youtube.com/watch?v=KcF4LBTTyvk>`_.
@@ -62,7 +62,7 @@ BVTKNodes includes many custom made nodes that make it possible to
 access VTK time step data, multi block data, and to color surfaces
 according to a customizable color ramp. For nodes which have not yet
 been fully customized for use in Blender, it is possible to add Custom
-Code (commands in `Properties`_ Tab) for VTK objects. This is often needed,
+Code for VTK objects. This is often needed,
 since many VTK objects require custom input from user to work
 correctly.
 
@@ -70,13 +70,7 @@ When update of the node tree is triggered, each parameter and value
 shown in the node is set to the VTK object represented by the node,
 unless the value is empty. It is not possible to affect the order in
 which values are set, which may result in unwanted behavior. In this
-case, please add Custom Code to node, which is always run at last.
-
-Some VTK classes include several overlapping methods to specify
-values, e.g. *vtkConeSource* has options for Angle, Height and Radius,
-two of which is enough to specify (third property can be hidden in
-Properties tab to disable it). If all are specified, then the latter
-values take precedence.
+case, please see :ref:`custom_code`. Custom code is always run at last.
 
 .. warning::
 
@@ -145,6 +139,15 @@ Installation
 - Start Blender, go to “Edit” –> “Preferences” –> “Add-ons” –> “Install” –> open the add-on zip file.
 - Activate the “BVTKNodes” add-on in Preferences by clicking on the checkbox. Add-on is located in Node category, "Community" level of Blender add-ons.
 - **For Blender 2.79:** User Settings are located in File menu, and it is suggested to **Save User Settings** before closing settings.
+
+Removal and Upgrading
+---------------------
+
+Before installation of an updated version of BVTKNodes add-on, you should first remove the old version:
+
+- Go to “Edit” –> “Preferences” –> “Add-ons” –> "BVTKNodes" -> Remove
+- Close Blender and open again. Make sure BVTKNodes is not listed in the list of available add-ons.
+- Follow Installation Instructions above.
 
 
 Workspace Setup
@@ -277,8 +280,58 @@ Node tree related operations.
   try out.
 
 
+VTK Nodes
+---------
+
+All node names that start with lower case text 'vtk' using
+`camel case naming convention <https://en.wikipedia.org/wiki/Camel_case>`_
+represent the `VTK classes <https://vtk.org/doc/nightly/html/classes.html>`_
+directly, for example *vtkArrowSource*. Other nodes are additional
+special nodes for BVTKNodes discussed below.
+
+Some VTK classes include several overlapping methods to specify
+values, e.g. *vtkConeSource* has options for Angle, Height and Radius,
+two of which is enough to specify (third property can be hidden in
+Properties tab to disable it). If all are specified, then the latter
+values take precedence. You can hide unwanted properties (see
+*Properties* tab). Hidden properties are ignored during updates.
+
+Some VTK operations require use of *vtkPassArrays*,
+*vtkAssignAttribute* or a node specific function to activate arrays to
+operate on to get correct result, even if there is only one array in
+input. See examples in :ref:`ug_nodes`.
+
+
+.. _custom_code:
+
+Addition of Custom Code to VTK Nodes
+------------------------------------
+
+Many VTK nodes require special input from the user, depending on the
+node, to work correctly. For any VTK node, it is possible to add a
+*Custom Code* block for special input commands. Each line of code must
+be a command that can be run directly for the VTK object (e.g. set a
+value or call an object method). You can select a VTK node, and then
+use **Online Documentation** operator in *Inspect* Panel to find out
+about VTK specific commands and values. Lines starting with `#` are
+ignored as comment lines. Custom Code is run after the settings shown
+on the node have been set to the VTK object, so it is possible to
+overwrite settings with Custom Code.
+
+Editing of Custom Code is done using Blender Text Editor:
+
+- Select a VTK node in BVTK Node Tree
+- In *Properties* Tab, run **Edit Custom Code**
+- Go to Blender Text Editor, and add/edit code in **BVTK** text block.
+- To save edited text to active node, run **Save Custom Code** in
+  *Properties* Tab. Updated code is shown on the node bottom when mouse
+  cursor enters BVTK Node Tree area (see bottom example in
+  :ref:`extract_boundary_surfaces`, *vtkOpenFoamReader* node)
+
+
 Special Nodes
 -------------
+
 
 VTK To Blender
 ^^^^^^^^^^^^^^
@@ -423,6 +476,7 @@ This node creates an empty 3D VTK image data (*vtkImageData*) object.
 - **Multiplier** scales both all *Dimensions* and all *Spacing* values
   while (approximately) retaining image bounding box size.
 
+.. _info-node:
 
 Info
 ^^^^
@@ -531,6 +585,7 @@ VTK. Please refer to
 `VTK documentation <https://vtk.org/doc/nightly/html/>`_
 for class specific information.
 
+
 Customization of Node Python Code
 ---------------------------------
 
@@ -541,8 +596,8 @@ used for getting points or cells for which a field value is between a
 lower and an upper threshold value. The automatically generated code
 (see *class VTKThreshold* in source file *gen_VTKFilters1.py*) does
 not support specification of array name, ranges and data type for
-thresholding. It is always possible to provide these as Custom Code
-(see commands in `Properties`_ Tab), but to make the node easier to
+thresholding. It is always possible to provide these as Custom Code,
+but to make the node easier to
 use, the code for *class VTKThreshold* was copied to file
 *VTKFilters.py*, modified and commented, and *add_class* and
 *TYPENAMES.append* commands needed for registering were added. The
@@ -550,12 +605,36 @@ main work is done in the function *apply_properties*. Please feel free
 to submit such node code customizations at `github issues page`_!
 
 
+Debug Messages
+--------------
+
+Please use :ref:`info-node` node for viewing pipeline contents.
+
+BVTKNodes additionally uses Python Logging module, which prints out
+debug messages to the terminal where Blender is started, but only when
+Python Logging is configured properly (see Configuring Logging chapter
+in `Logging from Python code in Blender
+<https://code.blender.org/2016/05/logging-from-python-code-in-blender/>`_).
+These messages may be helpful for debugging purposes.  In the simplest
+case on Linux, you can create a text file
+``$HOME/.config/blender/{version}/scripts/startup/setup_logging.py``
+with contents
+
+.. code:: python
+
+  import logging
+  logging.basicConfig(format='%(funcName)s: %(message)s', level=logging.DEBUG)
+
+
 Other Resources
 ---------------
 
 - There are some examples in `Blenderartists BVTKNodes gallery discussion thread <https://blenderartists.org/t/bvtknodes-gallery/1161079/21>`_.
 
-- You are free to ask and give advice for specific use cases at `github issues page <https://github.com/tkeskita/BVtkNodes/issues>`_.
+- You are free to ask and give advice for specific use cases at
+  `github issues page <https://github.com/tkeskita/BVtkNodes/issues>`_.
+  Please check closed and open issues first, in case your problem has
+  been mentioned already!
 
 
 Special Use Cases
