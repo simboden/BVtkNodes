@@ -160,6 +160,241 @@ def vtkdata_to_blender(data, name, ramp=None, smooth=False, generate_material=Fa
     #    bpy.ops.object.origin_set(type='GEOMETRY_ORIGIN')
 
 
+class BVTK_Node_VTKToBlenderMesh(Node, BVTK_Node):
+    '''Convert output from VTK Node to Blender Mesh Object'''
+    bl_idname = 'BVTK_Node_VTKToBlenderMeshType' # type name
+    bl_label  = 'VTK To Blender Mesh' # label for nice name display
+
+    m_Name: bpy.props.StringProperty(name='Name', default='mesh')
+    smooth: bpy.props.BoolProperty(name='Smooth', default=False)
+    generate_material: bpy.props.BoolProperty(name='Generate Material', default=False)
+
+    def start_scan(self, context):
+        if context:
+            if self.auto_update:
+                bpy.ops.node.bvtk_auto_update_scan(
+                    node_name=self.name,
+                    tree_name=context.space_data.node_tree.name)
+
+    auto_update: bpy.props.BoolProperty(default=False, update=start_scan)
+
+    def m_properties(self):
+        return ['m_Name', 'smooth', 'generate_material']
+
+    def m_connections(self):
+        return ( ['input'],[],[],[] )
+
+    def draw_buttons(self, context, layout):
+        layout.label(text="WARNING: WIP!")
+        layout.prop(self, 'm_Name')
+        layout.prop(self, 'auto_update', text='Auto update')
+        layout.prop(self, 'smooth', text='Smooth')
+        layout.prop(self, 'generate_material')
+        layout.separator()
+        layout.operator("node.bvtk_node_update", text="update").node_path = node_path(self)
+
+    def update_cb(self):
+        '''Update node color bar and update Blender object'''
+        input_node, vtkobj = self.get_input_node('input')
+        ramp = None
+        if input_node and input_node.bl_idname == 'BVTK_Node_ColorMapperType':
+            ramp = input_node
+            ramp.update()    # setting auto range
+            input_node, vtkobj = input_node.get_input_node('input')
+        if vtkobj:
+            vtkobj = resolve_algorithm_output(vtkobj)
+            vtkdata_to_blender_mesh (vtkobj, self.m_Name)
+            update_3d_view()
+
+    def apply_properties(self, vtkobj):
+        pass
+
+
+def map_elements(vals, slist):
+    '''Create list of elements (possibly recursing into embedded lists)
+    with same structure as index list slist, where each element has
+    been mapped to a value in vals.
+    '''
+    dlist = []
+    for elem in slist:
+        if isinstance(elem, list):
+            dlist.append(map_elements(vals, elem))
+        else:
+            dlist.append(vals[elem])
+    return dlist
+
+
+def vtk_cell_to_edges_and_faces(cell_type, vert_ids):
+    '''Create lists of edge vertices and face vertices from argument VTK
+    cell type and VTK vertex ids.
+    '''
+
+    # List of VTK cell types:
+    # https://vtk.org/doc/nightly/html/vtkCellType_8h_source.html
+    # https://lorensen.github.io/VTKExamples/site/VTKFileFormats/
+
+    if cell_type < 3: # VTK_VERTEX or VTK_POLY_VERTEX are ignored
+        return [None], [None]
+
+    elif cell_type == 3: # VTK_LINE
+        return [vert_ids], [None]
+
+    elif cell_type == 4: # VTK_POLY_LINE
+        edgelist = [[vert_ids[i], vert_ids[i+1]] for i in range(len(vert_ids) - 1)]
+        return edgelist, [None]
+
+    elif cell_type == 5: # VTK_TRIANGLE
+        return [None], [None]
+
+    elif cell_type == 6: # VTK_TRIANGLE_STRIP
+        return [None], [None]
+
+    elif cell_type == 7: # VTK_POLYGON
+        return [None], [None]
+
+    elif cell_type == 8: # VTK_PIXEL
+        return [None], [None]
+
+    elif cell_type == 9: # VTK_QUAD
+        return [None], [None]
+
+    elif cell_type == 10: # VTK_TETRA
+        fis = [[0,2,1], [0,1,3], [1,2,3], [0,3,2]]
+        facelist = map_elements(vert_ids, fis)
+        return [None], facelist
+
+    elif cell_type == 11: # VTK_VOXEL
+        return [None], [None]
+
+    elif cell_type == 12: # VTK_HEXAHEDRON
+        return [None], [None]
+
+    elif cell_type == 13: # VTK_WEDGE
+        return [None], [None]
+
+    elif cell_type == 14: # VTK_PYRAMID
+        return [None], [None]
+
+    elif cell_type == 15: # VTK_PENTAGONAL_PRISM
+        return [None], [None]
+
+    elif cell_type == 16: # VTK_HEXAGONAL_PRISM
+        return [None], [None]
+
+    elif cell_type == 42: # VTK_POLYHEDRON
+        return [None], [None]
+
+    else:
+        raise ValueError("Unsupported VTK cell type %d" % cell_type)
+
+
+def process_cell_edge(edges, verts):
+    '''Add argument cell edge verts to edges dictionary'''
+
+    key = str(sorted(verts))
+    edges[key] = verts
+    return edges
+
+
+def process_cell_face(faces, verts):
+    '''Add (or remove) argument cell face verts to (from) faces dictionary'''
+
+    # First make sure first vertex is not repeated at end
+    if verts[0] == verts[-1]:
+        verts = verts[0:-1]
+
+    key = str(sorted(verts))
+    if key not in faces:
+        faces[key] = verts
+    else:
+        faces.pop(key)
+    return faces
+
+
+def edges_and_faces_to_bmesh(edges, faces, vcoords, bm):
+    '''Add argument edges and faces using vertex coordinates vcoords to bmesh bm'''
+
+    verts = {} # dictionary to map from VTK vertex index to BMVert
+
+    def add_vert(vi, verts, vcoords, bm):
+        '''Add vertex index vi to bmesh if vertex is not there already'''
+        if vi not in verts:
+            v = bm.verts.new(vcoords[vi])
+            verts[vi] = v
+
+    # Create BMEdges
+    for vi1, vi2 in edges.values():
+        add_vert(vi1, verts, vcoords, bm)
+        add_vert(vi2, verts, vcoords, bm)
+        bm.edges.new([verts[vi1], verts[vi2]])
+
+    # Create BMFaces
+    for vis in faces.values():
+        for vi in vis:
+            add_vert(vi, verts, vcoords, bm)
+        bm.faces.new(map_elements(verts, vis))
+
+
+def vtkdata_to_blender_mesh(data, name, create_all_verts=False,
+                            create_edges=True, create_faces=True,
+                            ramp=None, smooth=False,
+                            generate_material=False):
+    '''Convert linear and polyhedron VTK cells into a boundary Blender
+    surface mesh object.
+    '''
+    if not data:
+        l.error('no data!')
+        return
+    if issubclass(data.__class__, vtk.vtkImageData):
+        imgdata_to_blender(data, name)
+        return
+    me, ob = mesh_and_object(name)
+    if me.is_editmode:
+        bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
+
+    # Get all VTK vertex coordinates
+    data_p = data.GetPoints()
+    vcoords = [data_p.GetPoint(i) for i in range(data.GetNumberOfPoints())]
+
+    faces = {} # dictionary of boundary face vertices to be created
+    edges = {} # dictionary of non-face edges to be created
+
+    # Process all VTK cells
+    for i in range(data.GetNumberOfCells()):
+        data_pi = data.GetCell(i).GetPointIds()
+        vert_ids = [data_pi.GetId(x) for x in range(data_pi.GetNumberOfIds())]
+        cell_type = data.GetCell(i).GetCellType()
+        edge_vis, face_vis = vtk_cell_to_edges_and_faces(cell_type, vert_ids)
+        l.debug("cell %d: edge_vis: %s" % (i, str(edge_vis))
+                + " face_vis: %s" % str(face_vis))
+
+        for vis in edge_vis:
+            if vis == None:
+                continue
+            edges = process_cell_edge(edges, vis)
+
+        for vis in face_vis:
+            if vis == None:
+                continue
+            faces = process_cell_face(faces, vis)
+
+    # Create mesh from remaining faces
+    bm = bmesh.new()
+    edges_and_faces_to_bmesh(edges, faces, vcoords, bm)
+
+    # Generate default material if wanted
+    if generate_material and ramp and ramp.color_by:
+        create_material(ob, texture.name)
+    elif generate_material:
+        create_material(ob, None)
+
+    bm.to_mesh(me)
+
+    l.info('conversion successful, verts:%d' % len(bm.verts)
+           + ' edges:%d' % len(bm.edges)
+           + ' faces:%d' % len(bm.faces))
+
+
 # -----------------------------------------------------------------------------
 # Particle converter
 # -----------------------------------------------------------------------------
@@ -1241,6 +1476,8 @@ class BVTK_OT_NodeUpdate(bpy.types.Operator):
 TYPENAMES = []
 add_class(BVTK_Node_VTKToBlender)
 TYPENAMES.append('BVTK_Node_VTKToBlenderType')
+add_class(BVTK_Node_VTKToBlenderMesh)
+TYPENAMES.append('BVTK_Node_VTKToBlenderMeshType')
 add_class(BVTK_OT_InitializeParticleSystem)
 add_class(BVTK_Node_VTKToBlenderParticles)
 TYPENAMES.append('BVTK_Node_VTKToBlenderParticlesType')
