@@ -65,6 +65,39 @@ class BVTK_Node_VTKToBlender(Node, BVTK_Node):
         pass
 
 
+def unwrap_and_color_the_mesh(ob, data, name, ramp, bm, generate_material):
+    '''Create UV unwrap corresponding to a generated color image to color
+    the mesh. Also generates material if needed.
+    '''
+
+    # Set colors and color legend
+    if ramp and ramp.color_by:
+        texture = ramp.get_texture()
+        l.debug("color_ramp is " + str(texture.color_ramp))
+        if ramp.texture_type == 'IMAGE':
+            image_width = 1000
+            img = image_from_ramp(texture.color_ramp, texture.name, image_width)
+
+        # Color legend
+        vrange = (ramp.min, ramp.max)
+        if ramp.lut:
+            create_lut(name, vrange, 6, texture, h=ramp.height)
+
+        # Generate UV maps to get coloring either by points or faces
+        bm.verts.index_update()
+        bm.faces.index_update()
+        if ramp.color_by[0] == 'P':
+            bm = point_unwrap(bm, data, int(ramp.color_by[1:]), vrange)
+        else:
+            bm = face_unwrap(bm, data, int(ramp.color_by[1:]), vrange)
+
+    # Generate default material if wanted
+    if generate_material and ramp and ramp.color_by:
+        create_material(ob, texture.name)
+    elif generate_material:
+        create_material(ob, None)
+
+
 def vtkdata_to_blender(data, name, ramp=None, smooth=False, generate_material=False):
     '''Convert VTK data to Blender mesh object, using optionally
     given color ramp and normal smoothing. Optionally generates default
@@ -120,44 +153,9 @@ def vtkdata_to_blender(data, name, ramp=None, smooth=False, generate_material=Fa
             verts[i].normal = point_normals.GetTuple(i)
 
     # Set colors and color legend
-    if ramp and ramp.color_by:
-        texture = ramp.get_texture()
-        l.debug("color_ramp is " + str(texture.color_ramp))
-        if ramp.texture_type == 'IMAGE':
-            image_width = 1000
-            img = image_from_ramp(texture.color_ramp, texture.name, image_width)
-            # TODO: Remove commented lines below
-            # texture = get_item(bpy.data.textures, texture.name+'IMAGE', 'IMAGE')
-            # texture.image = img
-        # texture_material(me, 'VTK'+name, texture)
-
-        # Color legend
-        vrange = (ramp.min, ramp.max)
-        if ramp.lut:
-            create_lut(name, vrange, 6, texture, h=ramp.height)
-
-        # Generate UV maps to get coloring either by points or faces
-        bm.verts.index_update()
-        bm.faces.index_update()
-        if ramp.color_by[0] == 'P':
-            bm = point_unwrap(bm, data, int(ramp.color_by[1:]), vrange)
-        else:
-            bm = face_unwrap(bm, data, int(ramp.color_by[1:]), vrange)
-
-    # Generate default material if wanted
-    if generate_material and ramp and ramp.color_by:
-        create_material(ob, texture.name)
-    elif generate_material:
-        create_material(ob, None)
-
+    unwrap_and_color_the_mesh(ob, data, name, ramp, bm, generate_material)
     bm.to_mesh(me)  # store bmesh to mesh
-
     l.info('conversion successful, verts = ' + str(len(verts)))
-
-    #if (autoCenter):
-    #    bpy.data.objects[me.name].select = True
-    #    context.scene.objects.active = bpy.data.objects[me.name]
-    #    bpy.ops.object.origin_set(type='GEOMETRY_ORIGIN')
 
 
 class BVTK_Node_VTKToBlenderMesh(Node, BVTK_Node):
@@ -206,7 +204,8 @@ class BVTK_Node_VTKToBlenderMesh(Node, BVTK_Node):
         if vtkobj:
             vtkobj = resolve_algorithm_output(vtkobj)
             vtkdata_to_blender_mesh (vtkobj, self.m_Name, smooth=self.smooth,
-                                     generate_material=self.generate_material)
+                                     generate_material=self.generate_material,
+                                     ramp=ramp)
             update_3d_view()
 
     def apply_properties(self, vtkobj):
@@ -440,13 +439,7 @@ def vtkdata_to_blender_mesh(data, name, create_all_verts=False,
     # Create mesh from remaining faces
     bm = bmesh.new()
     edges_and_faces_to_bmesh(edges, faces, vcoords, smooth, bm)
-
-    # Generate default material if wanted
-    if generate_material and ramp and ramp.color_by:
-        create_material(ob, texture.name)
-    elif generate_material:
-        create_material(ob, None)
-
+    unwrap_and_color_the_mesh(ob, data, name, ramp, bm, generate_material)
     bm.to_mesh(me)
 
     l.info('conversion successful, verts:%d' % len(bm.verts)
