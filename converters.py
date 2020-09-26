@@ -205,7 +205,8 @@ class BVTK_Node_VTKToBlenderMesh(Node, BVTK_Node):
             input_node, vtkobj = input_node.get_input_node('input')
         if vtkobj:
             vtkobj = resolve_algorithm_output(vtkobj)
-            vtkdata_to_blender_mesh (vtkobj, self.m_Name)
+            vtkdata_to_blender_mesh (vtkobj, self.m_Name, smooth=self.smooth,
+                                     generate_material=self.generate_material)
             update_3d_view()
 
     def apply_properties(self, vtkobj):
@@ -355,7 +356,7 @@ def process_cell_face(faces, verts):
     return faces
 
 
-def edges_and_faces_to_bmesh(edges, faces, vcoords, bm):
+def edges_and_faces_to_bmesh(edges, faces, vcoords, smooth, bm):
     '''Add argument edges and faces using vertex coordinates vcoords to bmesh bm'''
 
     verts = {} # dictionary to map from VTK vertex index to BMVert
@@ -373,10 +374,14 @@ def edges_and_faces_to_bmesh(edges, faces, vcoords, bm):
         bm.edges.new([verts[vi1], verts[vi2]])
 
     # Create BMFaces
+    bmfaces = []
     for vis in faces.values():
         for vi in vis:
             add_vert(vi, verts, vcoords, bm)
-        bm.faces.new(map_elements(verts, vis))
+        f = bm.faces.new(map_elements(verts, vis))
+        f.smooth = smooth
+        bmfaces.append(f)
+    bmesh.ops.recalc_face_normals(bm, faces=bmfaces)
 
 
 def vtkdata_to_blender_mesh(data, name, create_all_verts=False,
@@ -434,7 +439,7 @@ def vtkdata_to_blender_mesh(data, name, create_all_verts=False,
 
     # Create mesh from remaining faces
     bm = bmesh.new()
-    edges_and_faces_to_bmesh(edges, faces, vcoords, bm)
+    edges_and_faces_to_bmesh(edges, faces, vcoords, smooth, bm)
 
     # Generate default material if wanted
     if generate_material and ramp and ramp.color_by:
