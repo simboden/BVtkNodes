@@ -13,7 +13,7 @@ except ImportError:
 # -----------------------------------------------------------------------------
 # Converters from VTK to Blender
 # -----------------------------------------------------------------------------
-# Mesh Converter
+# Mesh Converters
 # -----------------------------------------------------------------------------
 
 class BVTK_Node_VTKToBlender(Node, BVTK_Node):
@@ -161,7 +161,9 @@ def vtkdata_to_blender(data, name, ramp=None, smooth=False, generate_material=Fa
 
 
 class BVTK_Node_VTKToBlenderMesh(Node, BVTK_Node):
-    '''Convert output from VTK Node to Blender Mesh Object'''
+    '''New surface mesh coverter node. Convert output from a VTK Node to a
+    Blender Mesh Object.
+    '''
     bl_idname = 'BVTK_Node_VTKToBlenderMeshType' # type name
     bl_label  = 'VTK To Blender Mesh' # label for nice name display
 
@@ -224,65 +226,107 @@ def map_elements(vals, slist):
     return dlist
 
 
-def vtk_cell_to_edges_and_faces(cell_type, vert_ids):
+def vtk_cell_to_edges_and_faces(cell_type, vis, polyfacelist):
     '''Create lists of edge vertices and face vertices from argument VTK
-    cell type and VTK vertex ids.
+    cell type and VTK vertex ids. Polyfacelist is face stream for polyhedrons.
     '''
 
     # List of VTK cell types:
     # https://vtk.org/doc/nightly/html/vtkCellType_8h_source.html
     # https://lorensen.github.io/VTKExamples/site/VTKFileFormats/
 
-    if cell_type < 3: # VTK_VERTEX or VTK_POLY_VERTEX are ignored
+    def get_polyhedron_fis(polyfacelist):
+        '''Generate face vertex indices (fis) from argument polyhedron face
+        stream list
+        '''
+        # https://vtk.org/Wiki/VTK/Polyhedron_Support
+        next_number_is_vertex_count = True
+        fis = [] # list of vertex index lists, to be generated here
+        for n in polyfacelist[1:]:
+            if next_number_is_vertex_count:
+                numVerts = n
+                next_number_is_vertex_count = False
+                vertlist = []
+            else:
+                vertlist.append(n)
+            if len(vertlist) == numVerts:
+                fis.append(vertlist)
+                next_number_is_vertex_count = True
+        return fis
+
+    # Generate edge vertex lists and face vertex lists for each cell type
+    if cell_type < 3: # VTK_VERTEX or VTK_POLY_VERTEX are ignored here
         return [None], [None]
 
     elif cell_type == 3: # VTK_LINE
-        return [vert_ids], [None]
+        return [vis], [None]
 
     elif cell_type == 4: # VTK_POLY_LINE
-        edgelist = [[vert_ids[i], vert_ids[i+1]] for i in range(len(vert_ids) - 1)]
+        edgelist = [[vis[i], vis[i+1]] for i in range(len(vis) - 1)]
         return edgelist, [None]
 
     elif cell_type == 5: # VTK_TRIANGLE
-        return [None], [None]
+        return [None], [vis]
 
     elif cell_type == 6: # VTK_TRIANGLE_STRIP
-        return [None], [None]
+        facelist = []
+        from math import floor
+        # Pairwise triangle generation to get correct normal directions
+        for i in range(0, floor(len(vis)/2), 2):
+            facelist.append([vis[i], vis[i+1], vis[i+2]])
+            facelist.append([vis[i+1], vis[i+3], vis[i+2]])
+        # Last odd triangle
+        if len(vis) % 2 == 1:
+            facelist.append([vis[-3], vis[-2], vis[-1]])
+        return [None], facelist
 
     elif cell_type == 7: # VTK_POLYGON
-        return [None], [None]
+        return [None], [vis]
 
     elif cell_type == 8: # VTK_PIXEL
-        return [None], [None]
+        return [None], [[vis[0], vis[1], vis[3], vis[2]]]
 
     elif cell_type == 9: # VTK_QUAD
-        return [None], [None]
+        return [None], [vis]
 
     elif cell_type == 10: # VTK_TETRA
         fis = [[0,2,1], [0,1,3], [1,2,3], [0,3,2]]
-        facelist = map_elements(vert_ids, fis)
+        facelist = map_elements(vis, fis)
         return [None], facelist
 
     elif cell_type == 11: # VTK_VOXEL
-        return [None], [None]
+        fis = [[0,1,5,4], [0,4,6,2], [4,5,7,6], [1,3,7,5], [0,2,3,1], [6,7,3,2]]
+        facelist = map_elements(vis, fis)
+        return [None], facelist
 
     elif cell_type == 12: # VTK_HEXAHEDRON
-        return [None], [None]
+        fis = [[0,3,2,1], [0,1,5,4], [1,2,6,5], [2,3,7,6], [3,0,4,7], [7,4,5,6]]
+        facelist = map_elements(vis, fis)
+        return [None], facelist
 
-    elif cell_type == 13: # VTK_WEDGE
-        return [None], [None]
+    elif cell_type == 13: # VTK_WEDGE (=prism)
+        fis = [[0,1,2], [0,3,4,1], [1,4,5,2], [2,5,3,0], [3,5,4]]
+        facelist = map_elements(vis, fis)
+        return [None], facelist
 
     elif cell_type == 14: # VTK_PYRAMID
-        return [None], [None]
+        fis = [[0,3,2,1], [0,4,3], [3,4,2], [2,4,1], [1,4,0]]
+        facelist = map_elements(vis, fis)
+        return [None], facelist
 
     elif cell_type == 15: # VTK_PENTAGONAL_PRISM
-        return [None], [None]
+        fis = [[0,1,2,3,4], [0,5,6,1], [1,6,7,2], [2,7,8,3], [3,8,9,4], [4,9,5,0], [9,8,7,6,5]]
+        facelist = map_elements(vis, fis)
+        return [None], facelist
 
     elif cell_type == 16: # VTK_HEXAGONAL_PRISM
-        return [None], [None]
+        fis = [[0,1,2,3,4,5], [0,6,7,1], [1,7,8,2], [2,8,9,3], [3,9,10,4], [4,10,11,5], [5,11,6,0], [11,10,9,8,7,6]]
+        facelist = map_elements(vis, fis)
+        return [None], facelist
 
     elif cell_type == 42: # VTK_POLYHEDRON
-        return [None], [None]
+        facelist = get_polyhedron_fis(polyfacelist)
+        return [None], facelist
 
     else:
         raise ValueError("Unsupported VTK cell type %d" % cell_type)
@@ -364,9 +408,19 @@ def vtkdata_to_blender_mesh(data, name, create_all_verts=False,
         data_pi = data.GetCell(i).GetPointIds()
         vert_ids = [data_pi.GetId(x) for x in range(data_pi.GetNumberOfIds())]
         cell_type = data.GetCell(i).GetCellType()
-        edge_vis, face_vis = vtk_cell_to_edges_and_faces(cell_type, vert_ids)
-        l.debug("cell %d: edge_vis: %s" % (i, str(edge_vis))
-                + " face_vis: %s" % str(face_vis))
+        polyfacelist = []
+
+        # Polyhedrons need additional polyfacelist (face stream in VTK terminology)
+        # https://vtk.org/Wiki/VTK/Polyhedron_Support
+        if cell_type == 42:
+            fs = vtk.vtkIdList()
+            data.GetFaceStream(i, fs)
+            polyfacelist = [fs.GetId(ind) for ind in range(fs.GetNumberOfIds())]
+
+        edge_vis, face_vis = vtk_cell_to_edges_and_faces(cell_type, vert_ids, polyfacelist)
+
+        #l.debug("cell %d: edge_vis: %s" % (i, str(edge_vis))
+        #        + " face_vis: %s" % str(face_vis))
 
         for vis in edge_vis:
             if vis == None:
