@@ -389,7 +389,11 @@ def edges_and_faces_to_bmesh(edges, faces, vcoords, smooth, bm):
         f = bm.faces.new(map_elements(verts, vis))
         f.smooth = smooth
         bmfaces.append(f)
-    bmesh.ops.recalc_face_normals(bm, faces=bmfaces)
+
+    # Only recalculate face normals if smoothing is required, because
+    # this operation discards original face orientations.
+    if smooth:
+        bmesh.ops.recalc_face_normals(bm, faces=bmfaces)
 
 
 def vtkdata_to_blender_mesh(data, name, create_all_verts=False,
