@@ -336,8 +336,13 @@ Special Nodes
 VTK To Blender
 ^^^^^^^^^^^^^^
 
-This is the main node, which converts VTK surface mesh data into
-a Blender mesh.
+This is the original main node, which converts VTK surface mesh data
+into a Blender mesh. It creates faces directly out of VTK cell vertex
+lists, without any pre-processing. This works well when VTK data
+consists of simple cells with ordered vertices as input, such as
+e.g. trigonal or quadrigonal boundary faces generated with
+*vtkGeometryFilter*. Direct conversion of 3D cells or polygons does
+not work correctly.
 
 - **Name** specifies the object and mesh names for the Blender object
   which will be created. Note: Any pre-existing mesh will be deleted
@@ -347,10 +352,40 @@ a Blender mesh.
   run **Update** operator manually to update Blender object and mesh
   after changes.
 - **Smooth** will set surface normal smoothing on for the mesh if enabled.
+
+  **Note**: You may need to visit *Edit Mode* for the object in order
+  to show correct shading in the 3D Viewport after running *Update*
+  with this option enabled.
+
 - **Generate Material** will generate an white diffuse default
   material and assign it to this object. Warning: Any existing
   material is overwritten if enabled.
 - **Update** executes the node pipeline connected to this node.
+
+
+VTK To Blender Mesh
+^^^^^^^^^^^^^^^^^^^
+
+This is the new main node for exporting vertices, edges and boundary
+faces directly from VTK objects into a Blender mesh object, without
+need for any additional pre-processing nodes. Conversion is carried
+out for all
+`linear VTK cell types <https://lorensen.github.io/VTKExamples/site/VTKFileFormats/>`_
+as well as `polyhedrons <https://vtk.org/Wiki/VTK/Polyhedron_Support>`_.
+The node contains same basic options as `VTK To Blender`_ node with
+following additions:
+
+- **Recalculate Normals**: This option will automatically compute and
+  set "outward" normals for faces, regardless of original face normal
+  directions.
+- **Create All Verts**: If disabled, only boundary vertices (vertices
+  part of boundary faces and edges) are created. If enabled, all
+  vertices (including internal and unconnected vertices) are exported.
+- **Create Edges**: If enabled, exports also wires (edges that are not
+  part of any face).
+- **Create Faces**: If enabled, creates boundary faces (faces used by
+  only one cell) out of 3D cells. Internal faces (faces shared by two
+  cells) are not exported.
 
 
 VTK To Blender Particles
