@@ -29,7 +29,7 @@ author = u'Silvano Imboden, Lorenzo Celli, Paul McManus, Tuomo Keskitalo'
 # The short X.Y version
 version = u''
 # The full version, including alpha/beta/rc tags
-release = u'0.4'
+release = u'0.5'
 
 
 # -- General configuration ---------------------------------------------------
