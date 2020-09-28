@@ -173,6 +173,7 @@ class BVTK_Node_VTKToBlenderMesh(Node, BVTK_Node):
     create_edges: bpy.props.BoolProperty(name='Create Edges', default=True)
     create_faces: bpy.props.BoolProperty(name='Create Faces', default=True)
     smooth: bpy.props.BoolProperty(name='Smooth', default=False)
+    recalc_norms: bpy.props.BoolProperty(name='Recalculate Normals', default=False)
     generate_material: bpy.props.BoolProperty(name='Generate Material', default=False)
 
     def start_scan(self, context):
@@ -185,19 +186,20 @@ class BVTK_Node_VTKToBlenderMesh(Node, BVTK_Node):
     auto_update: bpy.props.BoolProperty(default=False, update=start_scan)
 
     def m_properties(self):
-        return ['m_Name', 'smooth', 'generate_material']
+        return ['m_Name', 'create_all_verts', 'create_edges', 'create_faces',
+                'smooth', 'recalc_norms', 'generate_material']
 
     def m_connections(self):
         return ( ['input'],[],[],[] )
 
     def draw_buttons(self, context, layout):
-        layout.label(text="WARNING: WIP!")
         layout.prop(self, 'm_Name')
         layout.prop(self, 'create_all_verts')
         layout.prop(self, 'create_edges')
         layout.prop(self, 'create_faces')
         layout.prop(self, 'auto_update', text='Auto update')
         layout.prop(self, 'smooth', text='Smooth')
+        layout.prop(self, 'recalc_norms')
         layout.prop(self, 'generate_material')
         layout.separator()
         layout.operator("node.bvtk_node_update", text="update").node_path = node_path(self)
@@ -216,6 +218,7 @@ class BVTK_Node_VTKToBlenderMesh(Node, BVTK_Node):
                                      create_all_verts=self.create_all_verts,
                                      create_edges=self.create_edges,
                                      create_faces=self.create_faces,
+                                     recalc_norms=self.recalc_norms,
                                      generate_material=self.generate_material,
                                      ramp=ramp)
             update_3d_view()
@@ -374,7 +377,8 @@ def process_cell_face(faces, verts):
 
 
 def edges_and_faces_to_bmesh(edges, faces, vcoords, smooth, bm,
-                             create_all_verts, create_edges, create_faces):
+                             create_all_verts, create_edges, create_faces,
+                             recalc_norms):
     '''Add argument verts, edges and faces using vertex coordinates
     vcoords to bmesh bm.
     '''
@@ -411,15 +415,13 @@ def edges_and_faces_to_bmesh(edges, faces, vcoords, smooth, bm,
     if not create_edges and not create_faces:
         bmesh.ops.delete(bm, geom=bm.edges, context='EDGES_FACES')
 
-    # Only recalculate face normals if smoothing is required, because
-    # this operation discards original face orientations.
-    if smooth:
+    if recalc_norms:
         bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
 
 
 def vtkdata_to_blender_mesh(data, name, create_all_verts=False,
                             create_edges=True, create_faces=True,
-                            ramp=None, smooth=False,
+                            ramp=None, smooth=False, recalc_norms=False,
                             generate_material=False):
     '''Convert linear and polyhedron VTK cells into a boundary Blender
     surface mesh object.
@@ -473,7 +475,7 @@ def vtkdata_to_blender_mesh(data, name, create_all_verts=False,
     # Create mesh from remaining faces
     bm = bmesh.new()
     edges_and_faces_to_bmesh(edges, faces, vcoords, smooth, bm, create_all_verts,
-                             create_edges, create_faces)
+                             create_edges, create_faces, recalc_norms)
     unwrap_and_color_the_mesh(ob, data, name, ramp, bm, generate_material)
     bm.to_mesh(me)
 
