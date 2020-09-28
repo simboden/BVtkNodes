@@ -73,7 +73,6 @@ def unwrap_and_color_the_mesh(ob, data, name, ramp, bm, generate_material):
     # Set colors and color legend
     if ramp and ramp.color_by:
         texture = ramp.get_texture()
-        l.debug("color_ramp is " + str(texture.color_ramp))
         if ramp.texture_type == 'IMAGE':
             image_width = 1000
             img = image_from_ramp(texture.color_ramp, texture.name, image_width)
@@ -102,6 +101,10 @@ def vtkdata_to_blender(data, name, ramp=None, smooth=False, generate_material=Fa
     '''Convert VTK data to Blender mesh object, using optionally
     given color ramp and normal smoothing. Optionally generates default
     material, which includes also color information if ramp is given.
+
+    Note: This is the original implementation and does not consider
+    VTK cell types (vertex semantics) in conversion, so it works best
+    with polygon generators like vtkGeometryFilter.
     '''
     if not data:
         l.error('no data!')
@@ -160,7 +163,7 @@ def vtkdata_to_blender(data, name, ramp=None, smooth=False, generate_material=Fa
 
 class BVTK_Node_VTKToBlenderMesh(Node, BVTK_Node):
     '''New surface mesh coverter node. Convert output from a VTK Node to a
-    Blender Mesh Object.
+    Blender Mesh Object. Converts linear VTK cell types into a boundary mesh.
     '''
     bl_idname = 'BVTK_Node_VTKToBlenderMeshType' # type name
     bl_label  = 'VTK To Blender Mesh' # label for nice name display
@@ -346,6 +349,12 @@ def process_cell_face(faces, verts):
     # First make sure first vertex is not repeated at end
     if verts[0] == verts[-1]:
         verts = verts[0:-1]
+
+    # Discard face if same vertices are used many times.
+    # At least vtkContourFilter can produce such bad triangles.
+    if not (sorted(verts) == sorted(set(verts))):
+        l.warning("Discarding illegal face (verts %s)" % str(verts))
+        return faces
 
     key = str(sorted(verts))
     if key not in faces:
