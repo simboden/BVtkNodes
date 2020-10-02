@@ -1,4 +1,4 @@
-BVKTNodes Addon for Blender
+BVTKNodes Addon for Blender
 ===========================
 
 Introduction
@@ -9,7 +9,7 @@ source library for scientific data processing and visualization.
 BVTKNodes is an addon for 
 `Blender (an open source 3D content creation and visualization tool) <https://www.blender.org/>`_.
 This addon makes it possible to create and execute VTK pipelines
-configured in Blender Node Editor, to produce surface mesh objects,
+configured in Blender Node Editor, to produce objects like surface meshes,
 which can be then modified and visualized in Blender. Support for
 particle systems and volumetric objects have been added (experimental
 feature!).
@@ -296,10 +296,13 @@ Properties tab to disable it). If all are specified, then the latter
 values take precedence. You can hide unwanted properties (see
 *Properties* tab). Hidden properties are ignored during updates.
 
-Some VTK operations require use of *vtkPassArrays*,
-*vtkAssignAttribute* or a node specific function to activate arrays to
-operate on to get correct result, even if there is only one array in
-input. See examples in :ref:`ug_nodes`.
+
+.. note::
+
+   Some VTK operations require use of *vtkPassArrays*,
+   *vtkAssignAttribute* or a node specific function to activate arrays to
+   operate on to get correct result, even if there is only one array in
+   input. See examples in :ref:`ug_nodes`.
 
 
 .. _custom_code:
@@ -312,7 +315,7 @@ node, to work correctly. For any VTK node, it is possible to add a
 *Custom Code* block for special input commands. Each line of code must
 be a command that can be run directly for the VTK object (e.g. set a
 value or call an object method). You can select a VTK node, and then
-use **Online Documentation** operator in *Inspect* Panel to find out
+use **Online Documentation** operator in *Inspect* Tab to find out
 about VTK specific commands and values. Lines starting with `#` are
 ignored as comment lines. Custom Code is run after the settings shown
 on the node have been set to the VTK object, so it is possible to
@@ -345,17 +348,16 @@ e.g. trigonal or quadrigonal boundary faces generated with
 not work correctly.
 
 - **Name** specifies the object and mesh names for the Blender object
-  which will be created. Note: Any pre-existing mesh will be deleted
+  which will be created. **Note:** Any pre-existing mesh will be deleted
   upon update.
 - **Auto update**: If enabled, the node tree will be updated immediately
   whenever a value in a node is changed. If not enabled, the user must
   run **Update** operator manually to update Blender object and mesh
   after changes.
 - **Smooth** will set surface normal smoothing on for the mesh if enabled.
-
   **Note**: You may need to visit *Edit Mode* for the object in order
   to show correct shading in the 3D Viewport after running *Update*
-  with this option enabled.
+  with *Smooth* option enabled.
 
 - **Generate Material** will generate an white diffuse default
   material and assign it to this object. Warning: Any existing
@@ -384,8 +386,8 @@ following additions:
 - **Create Edges**: If enabled, exports also wires (edges that are not
   part of any face).
 - **Create Faces**: If enabled, creates boundary faces (faces used by
-  only one cell) out of 3D cells. Internal faces (faces shared by two
-  cells) are not exported.
+  only one VTK cell). Internal faces (faces shared by two
+  3D cells) are not exported.
 
 
 VTK To Blender Particles
