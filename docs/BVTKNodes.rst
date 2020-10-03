@@ -345,7 +345,8 @@ lists, without any pre-processing. This works well when VTK data
 consists of simple cells with ordered vertices as input, such as
 e.g. trigonal or quadrigonal boundary faces generated with
 *vtkGeometryFilter*. Direct conversion of 3D cells or polygons does
-not work correctly.
+not work correctly. In those cases, please use `VTK To Blender Mesh`_
+node without *vtkGeometryFilter* instead.
 
 - **Name** specifies the object and mesh names for the Blender object
   which will be created. **Note:** Any pre-existing mesh will be deleted
@@ -388,6 +389,8 @@ following additions:
 - **Create Faces**: If enabled, creates boundary faces (faces used by
   only one VTK cell). Internal faces (faces shared by two
   3D cells) are not exported.
+
+.. image:: images/vtk_to_blender_mesh_node.png
 
 
 VTK To Blender Particles

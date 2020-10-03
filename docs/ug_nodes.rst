@@ -30,7 +30,7 @@ data read in:
 
 When data is read in correctly, the *Info* node shows number of
 points/cells, and fields read in. Set **Time Step** value to **5** in
-*Time Selector* node either manually or by changing frame number in
+*Time Selector* node by changing frame number in
 Blender Timeline Editor.
 
 .. image:: images/ug_reader_nodesetup.png
@@ -41,7 +41,7 @@ that you may need to adjust reader settings and/or add *Custom Code*
 to some readers, depending on your case and data. For example, to force
 the parallel OpenFOAM reader *vtkPOpenFOAMReader* to read the decomposed
 case files instead of reconstructed serial case files, you must add
-custom code `SetCaseType(0)` to the reader node.
+custom code ``SetCaseType(0)`` to the reader node.
 
 * *vtkXMLUnstructuredGridReader* for **.vtu** files
 * *vtkPolyDataReader* for some **.vtk** files
@@ -56,18 +56,23 @@ in example above.
 Extract Boundary Surfaces
 -------------------------
 
-*vtkGeometryFilter* followed by *VTK To Blender* extracts all boundary
-surfaces.
+*VTK To Blender Mesh* node extracts all boundary surfaces.
+
+.. image:: images/vtk_to_blender_mesh_node.png
+
+Alternatively you can use *vtkGeometryFilter* followed by the legacy
+*VTK To Blender* node.
+**Note**: This may not produce correct results for polyhedron meshes.
 
 .. image:: images/ug_boundary_nodesetup.png
 
 If you want to extract a single boundary patch for OpenFOAM case, you
 need to
 
-* Add **EnableAllPatchArrays()** Custom Code to *vtkOpenFOAMReader*
+* Add ``EnableAllPatchArrays()`` Custom Code to *vtkOpenFOAMReader*
   (see :ref:`custom_code`).
 * Add two *Multi Block Leaf* nodes in series to select patches and the
-  wanted patch, before connecting to *vtkGeometryFilter*.
+  wanted patch, before connecting to *VTK To Blender Mesh*.
 
 .. image:: images/ug_extract_boundary_patch_nodesetup.png
 
@@ -115,11 +120,11 @@ Use *vtkCutter* in combination with a geometry generator (like
   *vtkCutter* node.
 * Connect *Color Ramp* to the **lookuptable** connector in the *Color
   Mapper* node.
-* In the *VTK To Blender* node, you must enable **Generate Material**,
+* In the *VTK To Blender Mesh* node, you must enable **Generate Material**,
   so that result colors will be shown after final Update. Note: 3D
   Viewport must be in *Material Preview* or *Rendered* mode to see the
   colors.
-* Run *Update* on the *VTK To Blender* node, then select the correct
+* Run *Update* on the *VTK To Blender Mesh* node, then select the correct
   field for **color by** in *Color Mapper* node, fix range min and max
   if required, and click *Update* again.
 
@@ -147,7 +152,7 @@ how to color glyphs by velocity magnitude.
 * Add *vtkGlyph3D* node, and set **ScaleFactor** to 20, and
   **ColorMode** to ColorByVector.
 * Connect *vtkArrowSource* to **input 1**, and add *Color Mapper*,
-  *Color Ramp*, and *VTK To Blender* (with Generate Material enabled).
+  *Color Ramp*, and *VTK To Blender Mesh* (with Generate Material enabled).
 * Run *Update*, select *Vector Magnitude* in *Color Mapper* node, and
   run *Update* again.
 
@@ -185,12 +190,10 @@ Contours can be generated with *vtkContourFilter*:
 * Add *vtkContourFilter*, and add wanted contour values by pressing
   the plus icon and then input three values: 0.017, 0.02, 0.023.
   Disable **GenerateTriangles** to retain polyhedrons.
-* **Optional:** Add *vtkGeometryFilter* and modify minimum values if you
-  want to test first to get only a small part of a large domain.
-* Add *Color Mapper*, *Color Ramp* and *VTK To Blender* nodes. In *VTK
-  To Blender* node, select both **Generate Material** and **Smooth**
+* Add *Color Mapper*, *Color Ramp* and *VTK To Blender Mesh* nodes. In *VTK
+  To Blender Mesh* node, select both **Generate Material** and **Smooth**
   to get smoothened face normals.
-* Run *Update* on the *VTK To Blender* node, select appropriate
+* Run *Update* on the *VTK To Blender Mesh* node, select appropriate
   coloring in *Color Mapper*, and rerun *Update*.
 
 .. image:: images/ug_contour_nodesetup.png
@@ -241,9 +244,9 @@ e.g. *vtkTubeFilter* using this node setup:
   **Radius**.
 * *vtkPolyDataNormals* (without **FlipNormals**) is needed to get good
   face normals for the result.
-* Finally add *Color Mapper*, *Color Ramp* and *VTK To Blender* with
+* Finally add *Color Mapper*, *Color Ramp* and *VTK To Blender Mesh* with
   **Generate Material** and **Smooth** on.
-* Run *Update* on the *VTK To Blender* node, select appropriate
+* Run *Update* on the *VTK To Blender Mesh* node, select appropriate
   coloring in *Color Mapper*, and rerun *Update*.
 
 .. image:: images/ug_stream_tracers_nodesetup.png
