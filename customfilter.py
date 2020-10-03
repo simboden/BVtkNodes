@@ -371,7 +371,7 @@ class BVTK_Node_TimeSelector(Node, BVTK_Node):
 class BVTK_Node_ImageDataObjectSource(Node, BVTK_Node):
     '''BVTK node to generate a new vtkImageData object'''
     bl_idname = 'BVTK_Node_ImageDataObjectSourceType'
-    bl_label = 'VtkImageData Object Source'
+    bl_label = 'VTKImageData Object Source'
 
     origin: bpy.props.FloatVectorProperty(name='Origin', default=[0.0, 0.0, 0.0], size=3)
     dimensions: bpy.props.IntVectorProperty(name='Dimensions', default=[10, 10, 10], size=3)
