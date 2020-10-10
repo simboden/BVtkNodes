@@ -450,8 +450,8 @@ number in Blender Timeline updates the particle data. Note:
 
 .. _VTKToBlenderVolume:
 
-VTK To Blender Volume (OpenVDB)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+VTK To Blender Volume
+^^^^^^^^^^^^^^^^^^^^^
 
 .. warning::
 
@@ -503,6 +503,52 @@ into Blender as a Volume Object.
 array values to obtain wanted visual results, instead of adding the
 mathematical manipulation of the arrays in BVTKNodes. See
 :ref:`volumetric_rendering` example.
+
+
+
+VTK To OpenVDB Exporter
+^^^^^^^^^^^^^^^^^^^^^^^
+
+This node is similar to `VTK To Blender Volume`_ node, but it only
+exports selected field data (density, color, flame and temperature
+inputs) into a JSON file, which can be then converted into OpenVDB
+(.vdb) file format externally. This is essentially a workaround node,
+meant to be used with an external OpenVDB conversion using an external
+installation of *pyopenvdb*. This node is provided until such a time
+that *pyopenvdb* can be included easily in Blender for direct use of
+`VTK To Blender Volume`_ node.
+
+Upon running **Export**, the node creates a file like
+``volume_00001.json`` (format is name + frame number) into the folder
+where the blender file is saved.  If node input is not a data suitable
+for exporting (VTK 3D Image Data or Structured Points Data), the node
+shows an error message, otherwise data dimensions are shown.
+
+To convert JSON file to OpenVDB, the user must run a Python script
+``convert_to_vdb.py`` located in the add-on source directory
+*utils*. You can also `download script directly from github
+<https://raw.githubusercontent.com/tkeskita/BVtkNodes/master/utils/convert_to_vdb.py>`_.
+Example usage of command::
+
+  python3 convert_to_vdb.py volume_00001.json
+
+.. note::
+
+   If you receive error like:
+       "libjemalloc.so.2: cannot allocate memory in static TLS block"
+   then prepend command with *LD_PRELOAD* with correct path to *libjemalloc.so.2*, e.g.:
+       ``LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2 python3 convert_to_vdb.py volume_00001.json``
+
+Running *convert_to_vdb.py* requires that *pyopenvdb* module is
+available to Python. *pyopenvdb* can be provided externally, depending
+on your system:
+
+* **Ubuntu Linux** : install system package:
+  ``sudo apt-get install python3-openvdb``
+* **Windows**: ???
+
+If you find out free packages that provide *pyopenvdb*,
+`please comment here <https://github.com/tkeskita/BVtkNodes/issues/25>`_.
 
 
 VTKImageData Object Source
