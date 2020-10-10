@@ -866,7 +866,8 @@ class BVTK_Node_VTKToBlenderVolume(Node, BVTK_Node):
 
     def m_properties(self):
         return ['ob_name', 'density_name', 'color_name', 'flame_name',
-                'temperature_name', 'generate_material', 'use_copy_from_array']
+                'temperature_name', 'generate_material', 'use_copy_from_array',
+                'export_file_sequence']
 
     def m_connections(self):
         return (['input'],[],[],[])
@@ -1101,6 +1102,132 @@ def vtk_image_data_to_volume_object(node, imgdata):
     dims = imgdata.GetDimensions()
     delete_objects_startswith(node.ob_name)
     import_volume_object(node.ob_name, filename, bbox, dims, node.generate_material)
+
+
+class BVTK_Node_VTKToOpenVDBExporter(Node, BVTK_Node):
+    '''Convert image data from VTK Node to OpenVDB Exporter JSON file'''
+    bl_idname = 'BVTK_Node_VTKToOpenVDBExporterType'
+    bl_label  = 'VTK To OpenVDB Exporter'
+
+    ob_name: bpy.props.StringProperty(name='Name', default='volume')
+    density_name: bpy.props.StringProperty(name='Density Field Name', default='')
+    color_name: bpy.props.StringProperty(name='Color Field Name', default='')
+    flame_name: bpy.props.StringProperty(name='Flame Field Name', default='')
+    temperature_name: bpy.props.StringProperty(name='Temperature Field Name', default='')
+    result_message: bpy.props.StringProperty(name='Error Message', default='')
+
+    def m_properties(self):
+        return ['ob_name', 'density_name', 'color_name', 'flame_name',
+                'temperature_name', 'result_message']
+
+    def m_connections(self):
+        return (['input'],[],[],[])
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'ob_name')
+        layout.prop(self, 'density_name')
+        layout.prop(self, 'color_name')
+        layout.prop(self, 'flame_name')
+        layout.prop(self, 'temperature_name')
+        layout.separator()
+        layout.operator("node.bvtk_node_update", text="Export").node_path = node_path(self)
+        if self.result_message:
+            layout.label(text="Last Result Message:")
+            box = layout.box()
+            box.label(text=self.result_message)
+
+    def update_export(self):
+        '''Update Blender Volume data from vtkImageData'''
+        input_node, vtkobj = self.get_input_node('input')
+        l.debug("Updating Volume Object %r" % self.ob_name)
+        if vtkobj:
+            vtkdata = resolve_algorithm_output(vtkobj)
+            if not vtkdata:
+                self.result_message = 'Error: No VTK Data!'
+                l.error(self.result_message)
+                return
+            if not issubclass(vtkdata.__class__, vtk.vtkImageData):
+                self.result_message = 'Error: Data Type is not vtkImageData!'
+                l.error(self.result_message)
+                return
+            dims = vtk_image_data_to_openvdb_export(self, vtkdata)
+            self.result_message = 'Done. Dimensions %s' % str(dims)
+            update_3d_view()
+
+    def update_cb(self):
+        self.update_export()
+
+    def apply_properties(self, vtkobj):
+        pass
+
+
+def vtk_image_data_to_openvdb_export(node, imgdata):
+    '''Create text export files from vtkImageData for convert_to_vdb.py script'''
+
+    background_value = 0.0 # Zero value for OpenVDB grid
+
+    density_data = create_data_from_data_array( \
+        imgdata, node.density_name, background_value, 'scalar')
+    color_data = create_data_from_data_array( \
+        imgdata, node.color_name, background_value, 'vector')
+    flame_data = create_data_from_data_array( \
+        imgdata, node.flame_name, background_value, 'scalar')
+    temperature_data = create_data_from_data_array( \
+        imgdata, node.temperature_name, background_value, 'scalar')
+
+    seq = "_%05d" % bpy.context.scene.frame_current
+    basename = node.ob_name + seq + '.json'
+    filepath = os.path.join(bpy.path.abspath('//'), basename)
+    dims = list(imgdata.GetDimensions())
+    export_vdb_data(filepath, background_value, dims, \
+        density_data, color_data, flame_data, temperature_data)
+    l.info("Saved %r (dims %s)" % (filepath, str(dims)))
+    return dims
+
+
+def create_data_from_data_array(imgdata, data_name, background_value, atype):
+    '''Return array values from vtkImageData'''
+
+    if data_name == '':
+        return None
+
+    dims = list(imgdata.GetDimensions())
+
+    if atype == 'scalar':
+        data = imgdata.GetPointData().GetScalars(data_name)
+        if not data:
+            raise ValueError("Input data %r not found" % data_name)
+    elif atype == 'vector':
+        data = imgdata.GetPointData().GetVectors(data_name)
+        if not data:
+            raise ValueError("Input data %r not found" % data_name)
+    else:
+        raise TypeError("unknown type %s" % str(atype))
+
+    # Create grid by looping over points with accessor
+    vals = []
+    for idx in range(dims[0] * dims[1] * dims[2]):
+        if atype == 'scalar':
+            value = data.GetTuple1(idx);
+            if value > background_value:
+                vals.append(value)
+            else:
+                vals.append(None)
+        elif atype == 'vector':
+            value = data.GetTuple3(idx);
+            vals.append(value)
+    return vals
+
+
+def export_vdb_data(filepath, background_value, dims, density_data,
+                    color_data, flame_data, temperature_data):
+    """Exports data objects to JSON file."""
+
+    import json
+    data = (background_value, dims, density_data, color_data,
+            flame_data, temperature_data)
+    with open(filepath, "w") as outfile:
+        json.dump(data, outfile)
 
 
 # -----------------------------------------------------------------------------
@@ -1572,6 +1699,8 @@ add_class(BVTK_Node_VTKToBlenderParticles)
 TYPENAMES.append('BVTK_Node_VTKToBlenderParticlesType')
 add_class(BVTK_Node_VTKToBlenderVolume)
 TYPENAMES.append('BVTK_Node_VTKToBlenderVolumeType')
+add_class(BVTK_Node_VTKToOpenVDBExporter)
+TYPENAMES.append('BVTK_Node_VTKToOpenVDBExporterType')
 menu_items = [NodeItem(x) for x in TYPENAMES]
 CATEGORIES.append(BVTK_NodeCategory("Converters", "Converters", items=menu_items))
 
