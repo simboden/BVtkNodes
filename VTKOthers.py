@@ -29,14 +29,14 @@ class BVTK_ImplicitFunction:
         '''Set drawing style to wire mode'''
         if self.object in bpy.data.objects:
             if value:
-                bpy.data.objects[self.object].draw_type = 'WIRE'
+                bpy.data.objects[self.object].display_type = 'WIRE'
             else:
-                bpy.data.objects[self.object].draw_type = 'SOLID'
+                bpy.data.objects[self.object].display_type = 'SOLID'
 
     def is_wire(self):
         '''Check if drawing style is wire mode'''
         if self.object in bpy.data.objects:
-            return bpy.data.objects[self.object].draw_type == 'WIRE'
+            return bpy.data.objects[self.object].display_type == 'WIRE'
         return False
 
     draw_wire: bpy.props.BoolProperty(set=set_wire, get=is_wire)
@@ -53,7 +53,8 @@ class BVTK_ImplicitFunction:
         if self.using_object:
             self.link_object()
 
-    using_object: bpy.props.BoolProperty(default=False, update=update_object)
+    using_object: bpy.props.BoolProperty(default=False, update=update_object, \
+        description="Get Normal and Origin from Blender Object")
 
     def link_object(self):
         '''Link object to node'''
@@ -68,6 +69,19 @@ class BVTK_ImplicitFunction:
 
     @show_custom_code
     def draw_buttons(self, context, layout):
+        # Options to get orientation from a Blender Object
+        row = layout.row(align=True)
+        row.label(text="Orientation Object:")
+        row = layout.row(align=True)
+        row2 = row.row(align=True)
+        row2.enabled = not self.using_object
+        row2.prop(self, 'object', text='')
+        if self.using_object and hasattr(self, 'use_wire'):
+            row.prop(self, 'draw_wire', text='', icon='MOD_WIREFRAME', toggle=True)
+        text = 'Unlink Object' if self.using_object else 'Link Object'
+        row.prop(self, 'using_object', text=text, toggle=True)
+
+        # Show properties
         m_properties = self.m_properties()
         for i in range(len(m_properties)):
             if self.b_properties[i]:
@@ -75,14 +89,6 @@ class BVTK_ImplicitFunction:
                 row.enabled = not self.using_object
                 row.prop(self, m_properties[i])
 
-        row = layout.row(align=True)
-        row2 = row.row(align=True)
-        row2.enabled = not self.using_object
-        row2.prop(self, 'object', text='')
-        if self.using_object and hasattr(self, 'use_wire'):
-            row.prop(self, 'draw_wire', text='', icon='WIRE', toggle=True)
-        text = 'unlink' if self.using_object else 'link'
-        row.prop(self, 'using_object', text=text, toggle=True)
 
     @run_custom_code
     def apply_properties(self,vtkobj):
@@ -181,7 +187,7 @@ class VTKPlane(BVTK_ImplicitFunction, Node, BVTK_Node):
         return ([], [], ['Transform'], ['self'])
 
     def new_object(self):
-        bpy.ops.mesh.primitive_plane_add(radius=5)
+        bpy.ops.mesh.primitive_plane_add(size=5)
 
     def objects_list(self, context):
         '''Return all planes and empties names. Obj is considered
@@ -190,13 +196,12 @@ class VTKPlane(BVTK_ImplicitFunction, Node, BVTK_Node):
         i = 0
         for ob in bpy.data.objects:
             if ob.type == 'EMPTY':
-                if ob.empty_draw_type == 'IMAGE' or ob.empty_draw_type == 'PLAIN_AXES':
-                    items.append((ob.name, ob.name, ob.name, 'OUTLINER_OB_EMPTY', i))
-                    i += 1
+                items.append((ob.name, ob.name, ob.name, 'OUTLINER_OB_EMPTY', i))
+                i += 1
             elif hasattr(ob.data, 'vertices') and len(ob.data.vertices) == 4:
                 items.append((ob.name, ob.name, ob.name, 'MESH_PLANE', i))
                 i += 1
-        items.append(('New plane', 'New plane', 'New plane', '', i))
+        items.append(('New Plane', 'New Plane', 'New Plane', '', i))
         useless_list[self.name] = items
         return items
 
@@ -213,7 +218,7 @@ class VTKPlane(BVTK_ImplicitFunction, Node, BVTK_Node):
         else:
             loc, rot, sca = mat.decompose()
             v = mathutils.Vector((0,0,1))
-            self.m_Normal = rot*v
+            self.m_Normal = rot @ v
             self.m_Origin = ob.location
 
 add_class(VTKPlane)
