@@ -286,8 +286,8 @@ VTK Nodes
 All node names that start with lower case text 'vtk' using
 `camel case naming convention <https://en.wikipedia.org/wiki/Camel_case>`_
 represent the `VTK classes <https://vtk.org/doc/nightly/html/classes.html>`_
-directly, for example *vtkArrowSource*. Other nodes are additional
-special nodes for BVTKNodes discussed below.
+directly, for example *vtkArrowSource*. All other nodes are
+`special nodes`_ for BVTKNodes.
 
 Some VTK classes include several overlapping methods to specify
 values, e.g. *vtkConeSource* has options for Angle, Height and Radius,
@@ -330,6 +330,24 @@ Editing of Custom Code is done using Blender Text Editor:
   *Properties* Tab. Updated code is shown on the node bottom when mouse
   cursor enters BVTK Node Tree area (see bottom example in
   :ref:`extract_boundary_surfaces`, *vtkOpenFoamReader* node)
+
+
+Customized VTK Nodes
+--------------------
+
+Various VTK nodes have been customized to ease use in Blender
+(see `Customization of Node Python Code`_):
+
+vtkPlane
+^^^^^^^^
+
+This node specifies an infinite plane suitable for e.g. slicing 3D VTK
+cell data (see example :ref:`cutting_field_data`). Plane can be
+specified by manual input of **Normal** and **Origin** vectors, or by
+selecting an existing Blender Object or New Plane from the dropdown
+menu and then run **Link Object**. When linked, the location and
+rotation of the Blender Object is used to calculate Normal and Origin
+for *vtkPlane*. Run **Unlink Object** to remove link.
 
 
 Special Nodes
