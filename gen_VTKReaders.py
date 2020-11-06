@@ -382,7 +382,7 @@ class VTKDICOMImageReader(Node, BVTK_Node):
     
     m_FileLowerLeft           : bpy.props.BoolProperty       ( name='FileLowerLeft',            default=True )
     m_SwapBytes               : bpy.props.BoolProperty       ( name='SwapBytes',                default=True )
-    m_DirectoryName           : bpy.props.StringProperty     ( name='DirectoryName',            default="" )
+    m_DirectoryName           : bpy.props.StringProperty     ( name='DirectoryName',            default="", subtype='DIR_PATH' )
     m_FileName                : bpy.props.StringProperty     ( name='FileName',                 default="", subtype='FILE_PATH' )
     m_FilePattern             : bpy.props.StringProperty     ( name='FilePattern',              default="%s.%d" )
     m_FilePrefix              : bpy.props.StringProperty     ( name='FilePrefix',               default="" )
