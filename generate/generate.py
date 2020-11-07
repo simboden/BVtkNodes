@@ -186,6 +186,9 @@ def generate(group):
             if ptype == 'StringProperty' and 'FileName' in name :
                 items_arg = ", subtype='FILE_PATH'"
 
+            if ptype == 'StringProperty' and 'DirectoryName' in name :
+                items_arg = ", subtype='DIR_PATH'"
+
             # Declaration row
             P['decl'] = "{}{}: bpy.props.{}( name={} default={}{}{} )".format(
                 prefix,
