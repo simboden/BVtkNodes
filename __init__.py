@@ -167,6 +167,9 @@ def on_frame_change(scene, depsgraph):
             if node.bl_idname == 'BVTK_Node_VTKToBlenderType':
                 l.debug("VTKToBlender")
                 update.no_queue_update(node, node.update_cb)
+            if node.bl_idname == 'BVTK_Node_VTKToBlenderMeshType':
+                l.debug("VTKToBlenderMesh")
+                update.no_queue_update(node, node.update_cb)
             if node.bl_idname == 'BVTK_Node_VTKToBlenderVolumeType':
                 l.debug("VTKToBlenderVolume")
                 converters.delete_objects_startswith(node.ob_name)
