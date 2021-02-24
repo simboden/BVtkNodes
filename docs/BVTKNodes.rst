@@ -45,6 +45,7 @@ To learn Blender, see resources at `blender.org <https://www.blender.org/>`_
 To learn VTK, see `VTK wiki <https://vtk.org/Wiki/VTK/Learning_VTK>`_,
 `the VTK Textbook <https://vtk.org/vtk-textbook/>`_
 and view `VTK discourse forum <https://discourse.vtk.org/>`_.
+For BVTKNodes, see :ref:`help`.
 
 
 Technical Details and Limitations
@@ -83,6 +84,7 @@ case, please see :ref:`custom_code`. Custom code is always run at last.
    reviewed critically for bugs. There is no guarantee: you use the
    addon at your own risk.
 
+.. _available_versions:
 
 Available Versions of BVTKNodes addon
 -------------------------------------
@@ -733,12 +735,37 @@ with contents
 Other Resources
 ---------------
 
-- There are some examples in `Blenderartists BVTKNodes gallery discussion thread <https://blenderartists.org/t/bvtknodes-gallery/1161079/21>`_.
+There are some examples in `Blenderartists BVTKNodes gallery discussion thread <https://blenderartists.org/t/bvtknodes-gallery/1161079/21>`_.
 
-- You are free to ask and give advice for specific use cases at
-  `github issues page <https://github.com/tkeskita/BVtkNodes/issues>`_.
-  Please check closed and open issues first, in case your problem has
-  been mentioned already!
+.. _help:
+
+Help with Issues
+----------------
+
+You are free to ask and give advice for specific use cases at
+`github issues page <https://github.com/tkeskita/BVtkNodes/issues>`_.
+Please check this list first though:
+
+* Read through these docs first, and view examples in :ref:`ug_nodes`.
+* Check the `list of both open and closed issues
+  <https://github.com/tkeskita/BVtkNodes/issues?q=is%3Aissue>`_, 
+  in case your problem has been mentioned already.
+* Check that you use a supported VTK version, see
+  :ref:`available_versions`. You can see VTK version in Blender Python
+  Console (by default located in the Scripting workspace ) with commands
+
+  .. code:: python
+
+    import vtk
+    vtk.vtkVersion().GetVTKVersion()
+
+* Please provide an image of your node setup with a resolution high
+  enough to read the node contents.
+* Please include output of an :ref:`info-node` node in an image, so it
+  is clear what data your pipeline contains. Info node can be attached
+  after a Time Selector node, a Multi Block Leaf node (if you use
+  one), or directly after a data reader node.
+* If possible, please provide a small example data file.
 
 
 Special Use Cases
