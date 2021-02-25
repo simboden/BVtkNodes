@@ -99,7 +99,7 @@ This version was demonstrated in the
 2. `tkeskita/bvtknodes <https://github.com/tkeskita/BVtkNodes>`_
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Upgraded and developed version for Blender 2.8 series using VTK
+Upgraded and developed version for Blender 2.83 LTS series using VTK
 8.1.2. Please use latest stable version of Blender for this version.
 
 .. note::
@@ -482,10 +482,6 @@ VTK To Blender Volume
    include `pyopenvdb`, the node shows an error message instead of the
    options listed below.
 
-   If you would like instructions on how to build such a
-   custom Blender on Linux,
-   `please like this post <https://blenderartists.org/t/bvtknodes-gallery/1161079/52>`_.
-
 
 This node converts 3D VTK image data (*vtkImageData*) into
 OpenVDB grids, saves them to a **.vdb** file at the location
@@ -735,7 +731,7 @@ with contents
 Other Resources
 ---------------
 
-There are some examples in `Blenderartists BVTKNodes gallery discussion thread <https://blenderartists.org/t/bvtknodes-gallery/1161079/21>`_.
+There are some examples in `Blenderartists BVTKNodes gallery discussion thread <https://blenderartists.org/t/bvtknodes-gallery/1161079>`_.
 
 .. _help:
 
