@@ -1,5 +1,5 @@
 # Generated definitions for VTK class group: Transform
-# VTK version: 8.1.2
+# VTK version: 9.0.1
 
 from .core import *    
 TYPENAMES = []
@@ -197,6 +197,23 @@ add_class( VTKPerspectiveTransform )
 TYPENAMES.append('VTKPerspectiveTransformType' )
 
 #--------------------------------------------------------------
+class VTKSMPTransform(Node, BVTK_Node):
+
+    bl_idname = 'VTKSMPTransformType'
+    bl_label  = 'vtkSMPTransform'
+    
+    
+    b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+
+    def m_properties( self ):
+        return []
+    def m_connections( self ):
+        return ([], [], ['Input'], ['self']) 
+    
+add_class( VTKSMPTransform )        
+TYPENAMES.append('VTKSMPTransformType' )
+
+#--------------------------------------------------------------
 class VTKSphericalTransform(Node, BVTK_Node):
 
     bl_idname = 'VTKSphericalTransformType'
@@ -222,15 +239,16 @@ class VTKThinPlateSplineTransform(Node, BVTK_Node):
     bl_label  = 'vtkThinPlateSplineTransform'
     e_Basis_items=[ (x,x,x) for x in ['R', 'R2LogR']]
     
-    m_InverseIterations: bpy.props.IntProperty  ( name='InverseIterations', default=500 )
-    m_InverseTolerance : bpy.props.FloatProperty( name='InverseTolerance',  default=0.001 )
-    m_Sigma            : bpy.props.FloatProperty( name='Sigma',             default=1.0 )
-    e_Basis            : bpy.props.EnumProperty ( name='Basis',             default="R2LogR", items=e_Basis_items )
+    m_RegularizeBulkTransform: bpy.props.BoolProperty ( name='RegularizeBulkTransform', default=True )
+    m_InverseIterations      : bpy.props.IntProperty  ( name='InverseIterations',       default=500 )
+    m_InverseTolerance       : bpy.props.FloatProperty( name='InverseTolerance',        default=0.001 )
+    m_Sigma                  : bpy.props.FloatProperty( name='Sigma',                   default=1.0 )
+    e_Basis                  : bpy.props.EnumProperty ( name='Basis',                   default="R2LogR", items=e_Basis_items )
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_InverseIterations','m_InverseTolerance','m_Sigma','e_Basis',]
+        return ['m_RegularizeBulkTransform','m_InverseIterations','m_InverseTolerance','m_Sigma','e_Basis',]
     def m_connections( self ):
         return ([], [], ['Inverse', 'SourceLandmarks', 'TargetLandmarks'], ['self']) 
     

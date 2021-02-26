@@ -1,5 +1,5 @@
 # Generated definitions for VTK class group: ParametricFunc
-# VTK version: 8.1.2
+# VTK version: 9.0.1
 
 from .core import *    
 TYPENAMES = []

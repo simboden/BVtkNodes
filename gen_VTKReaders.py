@@ -1,5 +1,5 @@
 # Generated definitions for VTK class group: Reader
-# VTK version: 8.1.2
+# VTK version: 9.0.1
 
 from .core import *    
 TYPENAMES = []
@@ -83,6 +83,44 @@ class VTKAMRFlashReader(Node, BVTK_Node):
     
 add_class( VTKAMRFlashReader )        
 TYPENAMES.append('VTKAMRFlashReaderType' )
+
+#--------------------------------------------------------------
+class VTKAMReXGridReader(Node, BVTK_Node):
+
+    bl_idname = 'VTKAMReXGridReaderType'
+    bl_label  = 'vtkAMReXGridReader'
+    
+    m_EnableCaching: bpy.props.BoolProperty  ( name='EnableCaching', default=True )
+    m_FileName     : bpy.props.StringProperty( name='FileName',      default="", subtype='FILE_PATH' )
+    
+    b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+
+    def m_properties( self ):
+        return ['m_EnableCaching','m_FileName',]
+    def m_connections( self ):
+        return ([], ['output'], [], []) 
+    
+add_class( VTKAMReXGridReader )        
+TYPENAMES.append('VTKAMReXGridReaderType' )
+
+#--------------------------------------------------------------
+class VTKAMReXParticlesReader(Node, BVTK_Node):
+
+    bl_idname = 'VTKAMReXParticlesReaderType'
+    bl_label  = 'vtkAMReXParticlesReader'
+    
+    m_ParticleType: bpy.props.StringProperty( name='ParticleType', default="particles" )
+    m_PlotFileName: bpy.props.StringProperty( name='PlotFileName', default="", subtype='FILE_PATH' )
+    
+    b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+
+    def m_properties( self ):
+        return ['m_ParticleType','m_PlotFileName',]
+    def m_connections( self ):
+        return ([], ['output'], [], []) 
+    
+add_class( VTKAMReXParticlesReader )        
+TYPENAMES.append('VTKAMReXParticlesReaderType' )
 
 #--------------------------------------------------------------
 class VTKAVSucdReader(Node, BVTK_Node):
@@ -318,6 +356,27 @@ class VTKChacoReader(Node, BVTK_Node):
     
 add_class( VTKChacoReader )        
 TYPENAMES.append('VTKChacoReaderType' )
+
+#--------------------------------------------------------------
+class VTKCityGMLReader(Node, BVTK_Node):
+
+    bl_idname = 'VTKCityGMLReaderType'
+    bl_label  = 'vtkCityGMLReader'
+    
+    m_UseTransparencyAsOpacity: bpy.props.BoolProperty  ( name='UseTransparencyAsOpacity', default=True )
+    m_FileName                : bpy.props.StringProperty( name='FileName',                 default="", subtype='FILE_PATH' )
+    m_LOD                     : bpy.props.IntProperty   ( name='LOD',                      default=3 )
+    m_NumberOfBuildings       : bpy.props.IntProperty   ( name='NumberOfBuildings',        default=1000000000 )
+    
+    b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+
+    def m_properties( self ):
+        return ['m_UseTransparencyAsOpacity','m_FileName','m_LOD','m_NumberOfBuildings',]
+    def m_connections( self ):
+        return ([], ['output'], [], []) 
+    
+add_class( VTKCityGMLReader )        
+TYPENAMES.append('VTKCityGMLReaderType' )
 
 #--------------------------------------------------------------
 class VTKCompositeDataReader(Node, BVTK_Node):
@@ -700,7 +759,9 @@ class VTKExodusIIReader(Node, BVTK_Node):
     m_GenerateImplicitNodeIdArray   : bpy.props.BoolProperty  ( name='GenerateImplicitNodeIdArray',    default=True )
     m_GenerateObjectIdCellArray     : bpy.props.BoolProperty  ( name='GenerateObjectIdCellArray',      default=True )
     m_HasModeShapes                 : bpy.props.BoolProperty  ( name='HasModeShapes',                  default=True )
+    m_IgnoreFileTime                : bpy.props.BoolProperty  ( name='IgnoreFileTime',                 default=False )
     m_SqueezePoints                 : bpy.props.BoolProperty  ( name='SqueezePoints',                  default=True )
+    m_UseLegacyBlockNames           : bpy.props.BoolProperty  ( name='UseLegacyBlockNames',            default=False )
     m_FileName                      : bpy.props.StringProperty( name='FileName',                       default="", subtype='FILE_PATH' )
     m_XMLFileName                   : bpy.props.StringProperty( name='XMLFileName',                    default="", subtype='FILE_PATH' )
     m_DisplayType                   : bpy.props.IntProperty   ( name='DisplayType',                    default=0 )
@@ -710,10 +771,10 @@ class VTKExodusIIReader(Node, BVTK_Node):
     m_DisplacementMagnitude         : bpy.props.FloatProperty ( name='DisplacementMagnitude',          default=1.0 )
     m_ModeShapeTime                 : bpy.props.FloatProperty ( name='ModeShapeTime',                  default=-1.0 )
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=18, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=20, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AnimateModeShapes','m_ApplyDisplacements','m_GenerateFileIdArray','m_GenerateGlobalElementIdArray','m_GenerateGlobalNodeIdArray','m_GenerateImplicitElementIdArray','m_GenerateImplicitNodeIdArray','m_GenerateObjectIdCellArray','m_HasModeShapes','m_SqueezePoints','m_FileName','m_XMLFileName','m_DisplayType','m_FileId','m_TimeStep','m_CacheSize','m_DisplacementMagnitude','m_ModeShapeTime',]
+        return ['m_AnimateModeShapes','m_ApplyDisplacements','m_GenerateFileIdArray','m_GenerateGlobalElementIdArray','m_GenerateGlobalNodeIdArray','m_GenerateImplicitElementIdArray','m_GenerateImplicitNodeIdArray','m_GenerateObjectIdCellArray','m_HasModeShapes','m_IgnoreFileTime','m_SqueezePoints','m_UseLegacyBlockNames','m_FileName','m_XMLFileName','m_DisplayType','m_FileId','m_TimeStep','m_CacheSize','m_DisplacementMagnitude','m_ModeShapeTime',]
     def m_connections( self ):
         return ([], ['output'], [], []) 
     
@@ -837,6 +898,27 @@ class VTKGESignaReader(Node, BVTK_Node):
     
 add_class( VTKGESignaReader )        
 TYPENAMES.append('VTKGESignaReaderType' )
+
+#--------------------------------------------------------------
+class VTKGLTFReader(Node, BVTK_Node):
+
+    bl_idname = 'VTKGLTFReaderType'
+    bl_label  = 'vtkGLTFReader'
+    
+    m_ApplyDeformationsToGeometry: bpy.props.BoolProperty  ( name='ApplyDeformationsToGeometry', default=True )
+    m_FileName                   : bpy.props.StringProperty( name='FileName',                    default="", subtype='FILE_PATH' )
+    m_CurrentScene               : bpy.props.IntProperty   ( name='CurrentScene',                default=0 )
+    m_FrameRate                  : bpy.props.IntProperty   ( name='FrameRate',                   default=60 )
+    
+    b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+
+    def m_properties( self ):
+        return ['m_ApplyDeformationsToGeometry','m_FileName','m_CurrentScene','m_FrameRate',]
+    def m_connections( self ):
+        return ([], ['output'], [], []) 
+    
+add_class( VTKGLTFReader )        
+TYPENAMES.append('VTKGLTFReaderType' )
 
 #--------------------------------------------------------------
 class VTKGaussianCubeReader(Node, BVTK_Node):
@@ -965,6 +1047,43 @@ class VTKGraphReader(Node, BVTK_Node):
     
 add_class( VTKGraphReader )        
 TYPENAMES.append('VTKGraphReaderType' )
+
+#--------------------------------------------------------------
+class VTKHDRReader(Node, BVTK_Node):
+
+    bl_idname = 'VTKHDRReaderType'
+    bl_label  = 'vtkHDRReader'
+    e_DataByteOrder_items=[ (x,x,x) for x in ['BigEndian', 'LittleEndian']]
+    e_DataScalarType_items=[ (x,x,x) for x in ['Char', 'UnsignedChar', 'Short', 'UnsignedShort', 'Int', 'UnsignedInt', 'Float', 'Double', 'SignedChar']]
+    
+    m_FileLowerLeft           : bpy.props.BoolProperty       ( name='FileLowerLeft',            default=True )
+    m_SwapBytes               : bpy.props.BoolProperty       ( name='SwapBytes',                default=True )
+    m_FileName                : bpy.props.StringProperty     ( name='FileName',                 default="", subtype='FILE_PATH' )
+    m_FilePattern             : bpy.props.StringProperty     ( name='FilePattern',              default="%s.%d" )
+    m_FilePrefix              : bpy.props.StringProperty     ( name='FilePrefix',               default="" )
+    m_ScalarArrayName         : bpy.props.StringProperty     ( name='ScalarArrayName',          default="ImageFile" )
+    m_DataMask                : bpy.props.IntProperty        ( name='DataMask',                 default=1000000000 )
+    m_FileDimensionality      : bpy.props.IntProperty        ( name='FileDimensionality',       default=2 )
+    m_FileNameSliceOffset     : bpy.props.IntProperty        ( name='FileNameSliceOffset',      default=0 )
+    m_FileNameSliceSpacing    : bpy.props.IntProperty        ( name='FileNameSliceSpacing',     default=1 )
+    m_HeaderSize              : bpy.props.IntProperty        ( name='HeaderSize',               default=0 )
+    m_MemoryBufferLength      : bpy.props.IntProperty        ( name='MemoryBufferLength',       default=0 )
+    m_NumberOfScalarComponents: bpy.props.IntProperty        ( name='NumberOfScalarComponents', default=1 )
+    e_DataByteOrder           : bpy.props.EnumProperty       ( name='DataByteOrder',            default="LittleEndian", items=e_DataByteOrder_items )
+    e_DataScalarType          : bpy.props.EnumProperty       ( name='DataScalarType',           default="Short", items=e_DataScalarType_items )
+    m_DataVOI                 : bpy.props.IntVectorProperty  ( name='DataVOI',                  default=[0, 0, 0, 0, 0, 0], size=6 )
+    m_DataOrigin              : bpy.props.FloatVectorProperty( name='DataOrigin',               default=[0.0, 0.0, 0.0], size=3 )
+    m_DataSpacing             : bpy.props.FloatVectorProperty( name='DataSpacing',              default=[1.0, 1.0, 1.0], size=3 )
+    
+    b_properties: bpy.props.BoolVectorProperty(name="", size=18, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+
+    def m_properties( self ):
+        return ['m_FileLowerLeft','m_SwapBytes','m_FileName','m_FilePattern','m_FilePrefix','m_ScalarArrayName','m_DataMask','m_FileDimensionality','m_FileNameSliceOffset','m_FileNameSliceSpacing','m_HeaderSize','m_MemoryBufferLength','m_NumberOfScalarComponents','e_DataByteOrder','e_DataScalarType','m_DataVOI','m_DataOrigin','m_DataSpacing',]
+    def m_connections( self ):
+        return ([], ['output'], ['Transform'], []) 
+    
+add_class( VTKHDRReader )        
+TYPENAMES.append('VTKHDRReaderType' )
 
 #--------------------------------------------------------------
 class VTKISIReader(Node, BVTK_Node):
@@ -1371,6 +1490,25 @@ add_class( VTKMetaImageReader )
 TYPENAMES.append('VTKMetaImageReaderType' )
 
 #--------------------------------------------------------------
+class VTKMotionFXCFGReader(Node, BVTK_Node):
+
+    bl_idname = 'VTKMotionFXCFGReaderType'
+    bl_label  = 'vtkMotionFXCFGReader'
+    
+    m_FileName      : bpy.props.StringProperty( name='FileName',       default="", subtype='FILE_PATH' )
+    m_TimeResolution: bpy.props.IntProperty   ( name='TimeResolution', default=100 )
+    
+    b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+
+    def m_properties( self ):
+        return ['m_FileName','m_TimeResolution',]
+    def m_connections( self ):
+        return ([], ['output'], [], []) 
+    
+add_class( VTKMotionFXCFGReader )        
+TYPENAMES.append('VTKMotionFXCFGReaderType' )
+
+#--------------------------------------------------------------
 class VTKMultiBlockPLOT3DReader(Node, BVTK_Node):
 
     bl_idname = 'VTKMultiBlockPLOT3DReaderType'
@@ -1626,6 +1764,44 @@ add_class( VTKOBJReader )
 TYPENAMES.append('VTKOBJReaderType' )
 
 #--------------------------------------------------------------
+class VTKOMETIFFReader(Node, BVTK_Node):
+
+    bl_idname = 'VTKOMETIFFReaderType'
+    bl_label  = 'vtkOMETIFFReader'
+    e_DataByteOrder_items=[ (x,x,x) for x in ['BigEndian', 'LittleEndian']]
+    e_DataScalarType_items=[ (x,x,x) for x in ['Char', 'UnsignedChar', 'Short', 'UnsignedShort', 'Int', 'UnsignedInt', 'Float', 'Double', 'SignedChar']]
+    
+    m_FileLowerLeft           : bpy.props.BoolProperty       ( name='FileLowerLeft',            default=True )
+    m_IgnoreColorMap          : bpy.props.BoolProperty       ( name='IgnoreColorMap',           default=False )
+    m_OriginSpecifiedFlag     : bpy.props.BoolProperty       ( name='OriginSpecifiedFlag',      default=False )
+    m_SpacingSpecifiedFlag    : bpy.props.BoolProperty       ( name='SpacingSpecifiedFlag',     default=False )
+    m_SwapBytes               : bpy.props.BoolProperty       ( name='SwapBytes',                default=True )
+    m_FileName                : bpy.props.StringProperty     ( name='FileName',                 default="", subtype='FILE_PATH' )
+    m_FilePattern             : bpy.props.StringProperty     ( name='FilePattern',              default="%s.%d" )
+    m_FilePrefix              : bpy.props.StringProperty     ( name='FilePrefix',               default="" )
+    m_FileDimensionality      : bpy.props.IntProperty        ( name='FileDimensionality',       default=2 )
+    m_FileNameSliceOffset     : bpy.props.IntProperty        ( name='FileNameSliceOffset',      default=0 )
+    m_FileNameSliceSpacing    : bpy.props.IntProperty        ( name='FileNameSliceSpacing',     default=1 )
+    m_HeaderSize              : bpy.props.IntProperty        ( name='HeaderSize',               default=0 )
+    m_MemoryBufferLength      : bpy.props.IntProperty        ( name='MemoryBufferLength',       default=0 )
+    m_NumberOfScalarComponents: bpy.props.IntProperty        ( name='NumberOfScalarComponents', default=1 )
+    m_OrientationType         : bpy.props.IntProperty        ( name='OrientationType',          default=1 )
+    e_DataByteOrder           : bpy.props.EnumProperty       ( name='DataByteOrder',            default="LittleEndian", items=e_DataByteOrder_items )
+    e_DataScalarType          : bpy.props.EnumProperty       ( name='DataScalarType',           default="Short", items=e_DataScalarType_items )
+    m_DataOrigin              : bpy.props.FloatVectorProperty( name='DataOrigin',               default=[0.0, 0.0, 0.0], size=3 )
+    m_DataSpacing             : bpy.props.FloatVectorProperty( name='DataSpacing',              default=[1.0, 1.0, 1.0], size=3 )
+    
+    b_properties: bpy.props.BoolVectorProperty(name="", size=19, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+
+    def m_properties( self ):
+        return ['m_FileLowerLeft','m_IgnoreColorMap','m_OriginSpecifiedFlag','m_SpacingSpecifiedFlag','m_SwapBytes','m_FileName','m_FilePattern','m_FilePrefix','m_FileDimensionality','m_FileNameSliceOffset','m_FileNameSliceSpacing','m_HeaderSize','m_MemoryBufferLength','m_NumberOfScalarComponents','m_OrientationType','e_DataByteOrder','e_DataScalarType','m_DataOrigin','m_DataSpacing',]
+    def m_connections( self ):
+        return ([], ['output'], [], []) 
+    
+add_class( VTKOMETIFFReader )        
+TYPENAMES.append('VTKOMETIFFReaderType' )
+
+#--------------------------------------------------------------
 class VTKOpenFOAMReader(Node, BVTK_Node):
 
     bl_idname = 'VTKOpenFOAMReaderType'
@@ -1633,6 +1809,7 @@ class VTKOpenFOAMReader(Node, BVTK_Node):
     
     m_AddDimensionsToArrayNames : bpy.props.BoolProperty  ( name='AddDimensionsToArrayNames',  default=True )
     m_CacheMesh                 : bpy.props.BoolProperty  ( name='CacheMesh',                  default=True )
+    m_CopyDataToCellZones       : bpy.props.BoolProperty  ( name='CopyDataToCellZones',        default=False )
     m_CreateCellToPoint         : bpy.props.BoolProperty  ( name='CreateCellToPoint',          default=True )
     m_DecomposePolyhedra        : bpy.props.BoolProperty  ( name='DecomposePolyhedra',         default=True )
     m_ListTimeStepsByControlDict: bpy.props.BoolProperty  ( name='ListTimeStepsByControlDict', default=True )
@@ -1643,10 +1820,10 @@ class VTKOpenFOAMReader(Node, BVTK_Node):
     m_Use64BitLabels            : bpy.props.BoolProperty  ( name='Use64BitLabels',             default=False )
     m_FileName                  : bpy.props.StringProperty( name='FileName',                   default="", subtype='FILE_PATH' )
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=11, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=12, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AddDimensionsToArrayNames','m_CacheMesh','m_CreateCellToPoint','m_DecomposePolyhedra','m_ListTimeStepsByControlDict','m_PositionsIsIn13Format','m_ReadZones','m_SkipZeroTime','m_Use64BitFloats','m_Use64BitLabels','m_FileName',]
+        return ['m_AddDimensionsToArrayNames','m_CacheMesh','m_CopyDataToCellZones','m_CreateCellToPoint','m_DecomposePolyhedra','m_ListTimeStepsByControlDict','m_PositionsIsIn13Format','m_ReadZones','m_SkipZeroTime','m_Use64BitFloats','m_Use64BitLabels','m_FileName',]
     def m_connections( self ):
         return ([], ['output'], [], []) 
     
@@ -1719,12 +1896,15 @@ class VTKPLYReader(Node, BVTK_Node):
     bl_idname = 'VTKPLYReaderType'
     bl_label  = 'vtkPLYReader'
     
-    m_FileName: bpy.props.StringProperty( name='FileName', default="", subtype='FILE_PATH' )
+    m_DuplicatePointsForFaceTexture: bpy.props.BoolProperty  ( name='DuplicatePointsForFaceTexture', default=True )
+    m_ReadFromInputString          : bpy.props.BoolProperty  ( name='ReadFromInputString',           default=False )
+    m_FileName                     : bpy.props.StringProperty( name='FileName',                      default="", subtype='FILE_PATH' )
+    m_FaceTextureTolerance         : bpy.props.FloatProperty ( name='FaceTextureTolerance',          default=9.999999974752427e-07 )
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_FileName',]
+        return ['m_DuplicatePointsForFaceTexture','m_ReadFromInputString','m_FileName','m_FaceTextureTolerance',]
     def m_connections( self ):
         return ([], ['output'], [], []) 
     
@@ -1811,6 +1991,7 @@ class VTKPOpenFOAMReader(Node, BVTK_Node):
     
     m_AddDimensionsToArrayNames : bpy.props.BoolProperty  ( name='AddDimensionsToArrayNames',  default=True )
     m_CacheMesh                 : bpy.props.BoolProperty  ( name='CacheMesh',                  default=True )
+    m_CopyDataToCellZones       : bpy.props.BoolProperty  ( name='CopyDataToCellZones',        default=False )
     m_CreateCellToPoint         : bpy.props.BoolProperty  ( name='CreateCellToPoint',          default=True )
     m_DecomposePolyhedra        : bpy.props.BoolProperty  ( name='DecomposePolyhedra',         default=True )
     m_ListTimeStepsByControlDict: bpy.props.BoolProperty  ( name='ListTimeStepsByControlDict', default=True )
@@ -1821,36 +2002,15 @@ class VTKPOpenFOAMReader(Node, BVTK_Node):
     m_Use64BitLabels            : bpy.props.BoolProperty  ( name='Use64BitLabels',             default=False )
     m_FileName                  : bpy.props.StringProperty( name='FileName',                   default="", subtype='FILE_PATH' )
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=11, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=12, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AddDimensionsToArrayNames','m_CacheMesh','m_CreateCellToPoint','m_DecomposePolyhedra','m_ListTimeStepsByControlDict','m_PositionsIsIn13Format','m_ReadZones','m_SkipZeroTime','m_Use64BitFloats','m_Use64BitLabels','m_FileName',]
+        return ['m_AddDimensionsToArrayNames','m_CacheMesh','m_CopyDataToCellZones','m_CreateCellToPoint','m_DecomposePolyhedra','m_ListTimeStepsByControlDict','m_PositionsIsIn13Format','m_ReadZones','m_SkipZeroTime','m_Use64BitFloats','m_Use64BitLabels','m_FileName',]
     def m_connections( self ):
         return ([], ['output'], [], []) 
     
 add_class( VTKPOpenFOAMReader )        
 TYPENAMES.append('VTKPOpenFOAMReaderType' )
-
-#--------------------------------------------------------------
-class VTKPSLACReader(Node, BVTK_Node):
-
-    bl_idname = 'VTKPSLACReaderType'
-    bl_label  = 'vtkPSLACReader'
-    
-    m_ReadExternalSurface: bpy.props.BoolProperty  ( name='ReadExternalSurface', default=True )
-    m_ReadInternalVolume : bpy.props.BoolProperty  ( name='ReadInternalVolume',  default=True )
-    m_ReadMidpoints      : bpy.props.BoolProperty  ( name='ReadMidpoints',       default=True )
-    m_MeshFileName       : bpy.props.StringProperty( name='MeshFileName',        default="", subtype='FILE_PATH' )
-    
-    b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
-
-    def m_properties( self ):
-        return ['m_ReadExternalSurface','m_ReadInternalVolume','m_ReadMidpoints','m_MeshFileName',]
-    def m_connections( self ):
-        return ([], ['output 0', 'output 1'], [], []) 
-    
-add_class( VTKPSLACReader )        
-TYPENAMES.append('VTKPSLACReaderType' )
 
 #--------------------------------------------------------------
 class VTKPTSReader(Node, BVTK_Node):
@@ -2067,6 +2227,43 @@ add_class( VTKRectilinearGridReader )
 TYPENAMES.append('VTKRectilinearGridReaderType' )
 
 #--------------------------------------------------------------
+class VTKSEPReader(Node, BVTK_Node):
+
+    bl_idname = 'VTKSEPReaderType'
+    bl_label  = 'vtkSEPReader'
+    e_DataByteOrder_items=[ (x,x,x) for x in ['BigEndian', 'LittleEndian']]
+    e_DataScalarType_items=[ (x,x,x) for x in ['Char', 'UnsignedChar', 'Short', 'UnsignedShort', 'Int', 'UnsignedInt', 'Float', 'Double', 'SignedChar']]
+    
+    m_FileLowerLeft           : bpy.props.BoolProperty       ( name='FileLowerLeft',            default=True )
+    m_SwapBytes               : bpy.props.BoolProperty       ( name='SwapBytes',                default=True )
+    m_FileName                : bpy.props.StringProperty     ( name='FileName',                 default="", subtype='FILE_PATH' )
+    m_FilePattern             : bpy.props.StringProperty     ( name='FilePattern',              default="%s.%d" )
+    m_FilePrefix              : bpy.props.StringProperty     ( name='FilePrefix',               default="" )
+    m_ScalarArrayName         : bpy.props.StringProperty     ( name='ScalarArrayName',          default="ImageFile" )
+    m_DataMask                : bpy.props.IntProperty        ( name='DataMask',                 default=1000000000 )
+    m_FileDimensionality      : bpy.props.IntProperty        ( name='FileDimensionality',       default=2 )
+    m_FileNameSliceOffset     : bpy.props.IntProperty        ( name='FileNameSliceOffset',      default=0 )
+    m_FileNameSliceSpacing    : bpy.props.IntProperty        ( name='FileNameSliceSpacing',     default=1 )
+    m_HeaderSize              : bpy.props.IntProperty        ( name='HeaderSize',               default=0 )
+    m_MemoryBufferLength      : bpy.props.IntProperty        ( name='MemoryBufferLength',       default=0 )
+    m_NumberOfScalarComponents: bpy.props.IntProperty        ( name='NumberOfScalarComponents', default=1 )
+    e_DataByteOrder           : bpy.props.EnumProperty       ( name='DataByteOrder',            default="LittleEndian", items=e_DataByteOrder_items )
+    e_DataScalarType          : bpy.props.EnumProperty       ( name='DataScalarType',           default="Short", items=e_DataScalarType_items )
+    m_DataVOI                 : bpy.props.IntVectorProperty  ( name='DataVOI',                  default=[0, 0, 0, 0, 0, 0], size=6 )
+    m_DataOrigin              : bpy.props.FloatVectorProperty( name='DataOrigin',               default=[0.0, 0.0, 0.0], size=3 )
+    m_DataSpacing             : bpy.props.FloatVectorProperty( name='DataSpacing',              default=[1.0, 1.0, 1.0], size=3 )
+    
+    b_properties: bpy.props.BoolVectorProperty(name="", size=18, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+
+    def m_properties( self ):
+        return ['m_FileLowerLeft','m_SwapBytes','m_FileName','m_FilePattern','m_FilePrefix','m_ScalarArrayName','m_DataMask','m_FileDimensionality','m_FileNameSliceOffset','m_FileNameSliceSpacing','m_HeaderSize','m_MemoryBufferLength','m_NumberOfScalarComponents','e_DataByteOrder','e_DataScalarType','m_DataVOI','m_DataOrigin','m_DataSpacing',]
+    def m_connections( self ):
+        return ([], ['output'], ['Transform'], []) 
+    
+add_class( VTKSEPReader )        
+TYPENAMES.append('VTKSEPReaderType' )
+
+#--------------------------------------------------------------
 class VTKSLACParticleReader(Node, BVTK_Node):
 
     bl_idname = 'VTKSLACParticleReaderType'
@@ -2177,6 +2374,31 @@ add_class( VTKSTLReader )
 TYPENAMES.append('VTKSTLReaderType' )
 
 #--------------------------------------------------------------
+class VTKSegYReader(Node, BVTK_Node):
+
+    bl_idname = 'VTKSegYReaderType'
+    bl_label  = 'vtkSegYReader'
+    e_XYCoordMode_items=[ (x,x,x) for x in ['Source', 'CDP', 'Custom']]
+    
+    m_Force2D       : bpy.props.BoolProperty  ( name='Force2D',        default=False )
+    m_StructuredGrid: bpy.props.BoolProperty  ( name='StructuredGrid', default=True )
+    m_FileName      : bpy.props.StringProperty( name='FileName',       default="", subtype='FILE_PATH' )
+    m_VerticalCRS   : bpy.props.IntProperty   ( name='VerticalCRS',    default=0 )
+    m_XCoordByte    : bpy.props.IntProperty   ( name='XCoordByte',     default=73 )
+    m_YCoordByte    : bpy.props.IntProperty   ( name='YCoordByte',     default=77 )
+    e_XYCoordMode   : bpy.props.EnumProperty  ( name='XYCoordMode',    default="Source", items=e_XYCoordMode_items )
+    
+    b_properties: bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+
+    def m_properties( self ):
+        return ['m_Force2D','m_StructuredGrid','m_FileName','m_VerticalCRS','m_XCoordByte','m_YCoordByte','e_XYCoordMode',]
+    def m_connections( self ):
+        return ([], ['output'], [], []) 
+    
+add_class( VTKSegYReader )        
+TYPENAMES.append('VTKSegYReaderType' )
+
+#--------------------------------------------------------------
 class VTKSimplePointsReader(Node, BVTK_Node):
 
     bl_idname = 'VTKSimplePointsReaderType'
@@ -2269,6 +2491,7 @@ class VTKTIFFReader(Node, BVTK_Node):
     e_DataScalarType_items=[ (x,x,x) for x in ['Char', 'UnsignedChar', 'Short', 'UnsignedShort', 'Int', 'UnsignedInt', 'Float', 'Double', 'SignedChar']]
     
     m_FileLowerLeft           : bpy.props.BoolProperty       ( name='FileLowerLeft',            default=True )
+    m_IgnoreColorMap          : bpy.props.BoolProperty       ( name='IgnoreColorMap',           default=False )
     m_OriginSpecifiedFlag     : bpy.props.BoolProperty       ( name='OriginSpecifiedFlag',      default=False )
     m_SpacingSpecifiedFlag    : bpy.props.BoolProperty       ( name='SpacingSpecifiedFlag',     default=False )
     m_SwapBytes               : bpy.props.BoolProperty       ( name='SwapBytes',                default=True )
@@ -2281,16 +2504,16 @@ class VTKTIFFReader(Node, BVTK_Node):
     m_HeaderSize              : bpy.props.IntProperty        ( name='HeaderSize',               default=0 )
     m_MemoryBufferLength      : bpy.props.IntProperty        ( name='MemoryBufferLength',       default=0 )
     m_NumberOfScalarComponents: bpy.props.IntProperty        ( name='NumberOfScalarComponents', default=1 )
-    m_OrientationType         : bpy.props.IntProperty        ( name='OrientationType',          default=4 )
+    m_OrientationType         : bpy.props.IntProperty        ( name='OrientationType',          default=1 )
     e_DataByteOrder           : bpy.props.EnumProperty       ( name='DataByteOrder',            default="LittleEndian", items=e_DataByteOrder_items )
     e_DataScalarType          : bpy.props.EnumProperty       ( name='DataScalarType',           default="Short", items=e_DataScalarType_items )
     m_DataOrigin              : bpy.props.FloatVectorProperty( name='DataOrigin',               default=[0.0, 0.0, 0.0], size=3 )
     m_DataSpacing             : bpy.props.FloatVectorProperty( name='DataSpacing',              default=[1.0, 1.0, 1.0], size=3 )
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=18, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=19, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_FileLowerLeft','m_OriginSpecifiedFlag','m_SpacingSpecifiedFlag','m_SwapBytes','m_FileName','m_FilePattern','m_FilePrefix','m_FileDimensionality','m_FileNameSliceOffset','m_FileNameSliceSpacing','m_HeaderSize','m_MemoryBufferLength','m_NumberOfScalarComponents','m_OrientationType','e_DataByteOrder','e_DataScalarType','m_DataOrigin','m_DataSpacing',]
+        return ['m_FileLowerLeft','m_IgnoreColorMap','m_OriginSpecifiedFlag','m_SpacingSpecifiedFlag','m_SwapBytes','m_FileName','m_FilePattern','m_FilePrefix','m_FileDimensionality','m_FileNameSliceOffset','m_FileNameSliceSpacing','m_HeaderSize','m_MemoryBufferLength','m_NumberOfScalarComponents','m_OrientationType','e_DataByteOrder','e_DataScalarType','m_DataOrigin','m_DataSpacing',]
     def m_connections( self ):
         return ([], ['output'], [], []) 
     
@@ -2371,6 +2594,47 @@ class VTKTecplotTableReader(Node, BVTK_Node):
     
 add_class( VTKTecplotTableReader )        
 TYPENAMES.append('VTKTecplotTableReaderType' )
+
+#--------------------------------------------------------------
+class VTKTemporalDelimitedTextReader(Node, BVTK_Node):
+
+    bl_idname = 'VTKTemporalDelimitedTextReaderType'
+    bl_label  = 'vtkTemporalDelimitedTextReader'
+    
+    m_AddTabFieldDelimiter                  : bpy.props.BoolProperty  ( name='AddTabFieldDelimiter',                   default=False )
+    m_DetectNumericColumns                  : bpy.props.BoolProperty  ( name='DetectNumericColumns',                   default=True )
+    m_ForceDouble                           : bpy.props.BoolProperty  ( name='ForceDouble',                            default=False )
+    m_GeneratePedigreeIds                   : bpy.props.BoolProperty  ( name='GeneratePedigreeIds',                    default=True )
+    m_HaveHeaders                           : bpy.props.BoolProperty  ( name='HaveHeaders',                            default=False )
+    m_MergeConsecutiveDelimiters            : bpy.props.BoolProperty  ( name='MergeConsecutiveDelimiters',             default=False )
+    m_OutputPedigreeIds                     : bpy.props.BoolProperty  ( name='OutputPedigreeIds',                      default=False )
+    m_ReadFromInputString                   : bpy.props.BoolProperty  ( name='ReadFromInputString',                    default=False )
+    m_RemoveTimeStepColumn                  : bpy.props.BoolProperty  ( name='RemoveTimeStepColumn',                   default=True )
+    m_TrimWhitespacePriorToNumericConversion: bpy.props.BoolProperty  ( name='TrimWhitespacePriorToNumericConversion', default=False )
+    m_UseStringDelimiter                    : bpy.props.BoolProperty  ( name='UseStringDelimiter',                     default=True )
+    m_FieldDelimiterCharacters              : bpy.props.StringProperty( name='FieldDelimiterCharacters',               default="," )
+    m_FileName                              : bpy.props.StringProperty( name='FileName',                               default="", subtype='FILE_PATH' )
+    m_PedigreeIdArrayName                   : bpy.props.StringProperty( name='PedigreeIdArrayName',                    default="id" )
+    m_TimeColumnName                        : bpy.props.StringProperty( name='TimeColumnName',                         default="" )
+    m_UTF8FieldDelimiters                   : bpy.props.StringProperty( name='UTF8FieldDelimiters',                    default="," )
+    m_UTF8RecordDelimiters                  : bpy.props.StringProperty( name='UTF8RecordDelimiters',                   default="\n" )
+    m_UTF8StringDelimiters                  : bpy.props.StringProperty( name='UTF8StringDelimiters',                   default="" )
+    m_UnicodeCharacterSet                   : bpy.props.StringProperty( name='UnicodeCharacterSet',                    default="" )
+    m_DefaultIntegerValue                   : bpy.props.IntProperty   ( name='DefaultIntegerValue',                    default=0 )
+    m_MaxRecords                            : bpy.props.IntProperty   ( name='MaxRecords',                             default=0 )
+    m_ReplacementCharacter                  : bpy.props.IntProperty   ( name='ReplacementCharacter',                   default=120 )
+    m_TimeColumnId                          : bpy.props.IntProperty   ( name='TimeColumnId',                           default=-1 )
+    m_DefaultDoubleValue                    : bpy.props.FloatProperty ( name='DefaultDoubleValue',                     default=0.0 )
+    
+    b_properties: bpy.props.BoolVectorProperty(name="", size=24, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+
+    def m_properties( self ):
+        return ['m_AddTabFieldDelimiter','m_DetectNumericColumns','m_ForceDouble','m_GeneratePedigreeIds','m_HaveHeaders','m_MergeConsecutiveDelimiters','m_OutputPedigreeIds','m_ReadFromInputString','m_RemoveTimeStepColumn','m_TrimWhitespacePriorToNumericConversion','m_UseStringDelimiter','m_FieldDelimiterCharacters','m_FileName','m_PedigreeIdArrayName','m_TimeColumnName','m_UTF8FieldDelimiters','m_UTF8RecordDelimiters','m_UTF8StringDelimiters','m_UnicodeCharacterSet','m_DefaultIntegerValue','m_MaxRecords','m_ReplacementCharacter','m_TimeColumnId','m_DefaultDoubleValue',]
+    def m_connections( self ):
+        return ([], ['output'], ['StringDelimiter', 'UnicodeFieldDelimiters', 'UnicodeRecordDelimiters', 'UnicodeStringDelimiters'], []) 
+    
+add_class( VTKTemporalDelimitedTextReader )        
+TYPENAMES.append('VTKTemporalDelimitedTextReaderType' )
 
 #--------------------------------------------------------------
 class VTKTreeReader(Node, BVTK_Node):
@@ -2493,6 +2757,24 @@ add_class( VTKVASPTessellationReader )
 TYPENAMES.append('VTKVASPTessellationReaderType' )
 
 #--------------------------------------------------------------
+class VTKVeraOutReader(Node, BVTK_Node):
+
+    bl_idname = 'VTKVeraOutReaderType'
+    bl_label  = 'vtkVeraOutReader'
+    
+    m_FileName: bpy.props.StringProperty( name='FileName', default="", subtype='FILE_PATH' )
+    
+    b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+
+    def m_properties( self ):
+        return ['m_FileName',]
+    def m_connections( self ):
+        return ([], ['output'], [], []) 
+    
+add_class( VTKVeraOutReader )        
+TYPENAMES.append('VTKVeraOutReaderType' )
+
+#--------------------------------------------------------------
 class VTKVolume16Reader(Node, BVTK_Node):
 
     bl_idname = 'VTKVolume16ReaderType'
@@ -2527,7 +2809,7 @@ class VTKWindBladeReader(Node, BVTK_Node):
     bl_label  = 'vtkWindBladeReader'
     
     m_Filename : bpy.props.StringProperty   ( name='Filename',  default="" )
-    m_SubExtent: bpy.props.IntVectorProperty( name='SubExtent', default=[163131584, 32699, 163188880, 32699, 1000000000, 707404601], size=6 )
+    m_SubExtent: bpy.props.IntVectorProperty( name='SubExtent', default=[1000000000, 1000000000, 678717033, 1000000000, 539784289, 1000000000], size=6 )
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -2624,6 +2906,28 @@ add_class( VTKXMLHierarchicalDataReader )
 TYPENAMES.append('VTKXMLHierarchicalDataReaderType' )
 
 #--------------------------------------------------------------
+class VTKXMLHyperTreeGridReader(Node, BVTK_Node):
+
+    bl_idname = 'VTKXMLHyperTreeGridReaderType'
+    bl_label  = 'vtkXMLHyperTreeGridReader'
+    
+    m_ReadFromInputString: bpy.props.BoolProperty     ( name='ReadFromInputString', default=False )
+    m_FileName           : bpy.props.StringProperty   ( name='FileName',            default="", subtype='FILE_PATH' )
+    m_FixedLevel         : bpy.props.IntProperty      ( name='FixedLevel',          default=1000000000 )
+    m_TimeStep           : bpy.props.IntProperty      ( name='TimeStep',            default=0 )
+    m_TimeStepRange      : bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
+    
+    b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+
+    def m_properties( self ):
+        return ['m_ReadFromInputString','m_FileName','m_FixedLevel','m_TimeStep','m_TimeStepRange',]
+    def m_connections( self ):
+        return ([], ['output'], ['ReaderErrorObserver'], []) 
+    
+add_class( VTKXMLHyperTreeGridReader )        
+TYPENAMES.append('VTKXMLHyperTreeGridReaderType' )
+
+#--------------------------------------------------------------
 class VTKXMLImageDataReader(Node, BVTK_Node):
 
     bl_idname = 'VTKXMLImageDataReaderType'
@@ -2688,6 +2992,27 @@ class VTKXMLMultiGroupDataReader(Node, BVTK_Node):
     
 add_class( VTKXMLMultiGroupDataReader )        
 TYPENAMES.append('VTKXMLMultiGroupDataReaderType' )
+
+#--------------------------------------------------------------
+class VTKXMLPHyperTreeGridReader(Node, BVTK_Node):
+
+    bl_idname = 'VTKXMLPHyperTreeGridReaderType'
+    bl_label  = 'vtkXMLPHyperTreeGridReader'
+    
+    m_ReadFromInputString: bpy.props.BoolProperty     ( name='ReadFromInputString', default=False )
+    m_FileName           : bpy.props.StringProperty   ( name='FileName',            default="", subtype='FILE_PATH' )
+    m_TimeStep           : bpy.props.IntProperty      ( name='TimeStep',            default=0 )
+    m_TimeStepRange      : bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
+    
+    b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+
+    def m_properties( self ):
+        return ['m_ReadFromInputString','m_FileName','m_TimeStep','m_TimeStepRange',]
+    def m_connections( self ):
+        return ([], ['output'], ['ReaderErrorObserver'], []) 
+    
+add_class( VTKXMLPHyperTreeGridReader )        
+TYPENAMES.append('VTKXMLPHyperTreeGridReaderType' )
 
 #--------------------------------------------------------------
 class VTKXMLPImageDataReader(Node, BVTK_Node):
@@ -2814,6 +3139,50 @@ class VTKXMLPUnstructuredGridReader(Node, BVTK_Node):
     
 add_class( VTKXMLPUnstructuredGridReader )        
 TYPENAMES.append('VTKXMLPUnstructuredGridReaderType' )
+
+#--------------------------------------------------------------
+class VTKXMLPartitionedDataSetCollectionReader(Node, BVTK_Node):
+
+    bl_idname = 'VTKXMLPartitionedDataSetCollectionReaderType'
+    bl_label  = 'vtkXMLPartitionedDataSetCollectionReader'
+    
+    m_ReadFromInputString: bpy.props.BoolProperty     ( name='ReadFromInputString', default=False )
+    m_FileName           : bpy.props.StringProperty   ( name='FileName',            default="", subtype='FILE_PATH' )
+    m_PieceDistribution  : bpy.props.IntProperty      ( name='PieceDistribution',   default=0 )
+    m_TimeStep           : bpy.props.IntProperty      ( name='TimeStep',            default=0 )
+    m_TimeStepRange      : bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
+    
+    b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+
+    def m_properties( self ):
+        return ['m_ReadFromInputString','m_FileName','m_PieceDistribution','m_TimeStep','m_TimeStepRange',]
+    def m_connections( self ):
+        return ([], ['output'], ['ReaderErrorObserver'], []) 
+    
+add_class( VTKXMLPartitionedDataSetCollectionReader )        
+TYPENAMES.append('VTKXMLPartitionedDataSetCollectionReaderType' )
+
+#--------------------------------------------------------------
+class VTKXMLPartitionedDataSetReader(Node, BVTK_Node):
+
+    bl_idname = 'VTKXMLPartitionedDataSetReaderType'
+    bl_label  = 'vtkXMLPartitionedDataSetReader'
+    
+    m_ReadFromInputString: bpy.props.BoolProperty     ( name='ReadFromInputString', default=False )
+    m_FileName           : bpy.props.StringProperty   ( name='FileName',            default="", subtype='FILE_PATH' )
+    m_PieceDistribution  : bpy.props.IntProperty      ( name='PieceDistribution',   default=0 )
+    m_TimeStep           : bpy.props.IntProperty      ( name='TimeStep',            default=0 )
+    m_TimeStepRange      : bpy.props.IntVectorProperty( name='TimeStepRange',       default=[0, 0], size=2 )
+    
+    b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+
+    def m_properties( self ):
+        return ['m_ReadFromInputString','m_FileName','m_PieceDistribution','m_TimeStep','m_TimeStepRange',]
+    def m_connections( self ):
+        return ([], ['output'], ['ReaderErrorObserver'], []) 
+    
+add_class( VTKXMLPartitionedDataSetReader )        
+TYPENAMES.append('VTKXMLPartitionedDataSetReaderType' )
 
 #--------------------------------------------------------------
 class VTKXMLPolyDataReader(Node, BVTK_Node):
