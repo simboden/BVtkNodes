@@ -707,6 +707,35 @@ main work is done in the function *apply_properties*. Please feel free
 to submit such node code customizations at `github issues page`_!
 
 
+Error Messages
+--------------
+
+It is normal to occasionally see pop-up of *vtkInformation* errors
+from *vtkCompositeDataPipeline*, like the following, often repeated
+many times. These occur during pipeline execution when input of a VTK
+node is either missing or empty. You need to run **Update** on the
+final *VTK To Blender (Mesh)* node to force update of preceding
+nodes. No new error messages should appear when the pipeline is
+up-to-date and values in nodes are correct. Typical error message::
+
+  vtkCompositeDataPipeline (0x7f0,5d2,f02,f40): Algorithm vtkPassArrays(0x7f0,5d3,c37,420) returned failure for request: vtkInformation (0x7f0,5d3,58d,980)
+    Debug: Off
+    Modified Time: 28215
+    Reference Count: 1
+    Registered Events: (none)
+    Request: REQUEST_DATA_OBJECT
+    ALGORITHM_AFTER_FORWARD: 1
+    FORWARD_DIRECTION: 0
+
+Another common warning shown in the terminal is
+*pyrna_enum_to_py*. These warnings occur when a selection list is
+empty, which happens when the pipeline in not up-to-date,
+e.g. immediately after loading a Blender file. Running **Update**
+should clear these as well::
+
+  WARN (bpy.rna): /home/sources/buildbot-worker-linux_centos7/linux_lts_283/blender.git/source/blender/python/intern/bpy_rna.c:1479 pyrna_enum_to_py: current value '4' matches no enum in 'BVTK_Node_ColorMapperType', 'Color Mapper', 'color_by'
+
+
 Debug Messages
 --------------
 
