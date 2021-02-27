@@ -100,7 +100,7 @@ This version was demonstrated in the
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Upgraded and developed version for Blender 2.83 LTS series using VTK
-8.1.2. Please use latest stable version of Blender for this version.
+9.0.1.
 
 .. note::
    

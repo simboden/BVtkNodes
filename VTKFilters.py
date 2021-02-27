@@ -151,12 +151,14 @@ class VTKAppendFilter(Node, BVTK_Node):
     bl_idname = 'VTKAppendFilterType'
     bl_label = 'vtkAppendFilter'
 
-    m_MergePoints: bpy.props.BoolProperty(name='MergePoints', default=True)
+    m_MergePoints        : bpy.props.BoolProperty ( name='MergePoints',         default=True )
+    m_ToleranceIsAbsolute: bpy.props.BoolProperty ( name='ToleranceIsAbsolute', default=True )
+    m_Tolerance          : bpy.props.FloatProperty( name='Tolerance',           default=0.0 )
 
-    b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties(self):
-        return ['m_MergePoints', ]
+        return ['m_MergePoints', 'm_ToleranceIsAbsolute', 'm_Tolerance']
 
     def m_connections(self):
         return (['input'], ['output'], [], [])

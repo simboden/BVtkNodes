@@ -8,9 +8,9 @@ Run CMD.EXE as administrator and run commands
 ```
 cd C:\Program Files\Blender Foundation\Blender\2.8x\python\bin
 python.exe -m ensurepip
-python.exe -m pip install vtk==8.1.2
+python.exe -m pip install vtk==9.0.1
 ```
-or if you need to install newest version of vtk, replace last command with
+or if you need to install newest (possibly unsupported) version of vtk, replace last command with
 ```
 python.exe -m pip install vtk
 ```
@@ -21,9 +21,9 @@ Run on normal terminal commands
 ```
 cd /path/to/blender-2.8x/2.8x/python/bin
 ./python3.7m -m ensurepip
-./python3.7m -m pip install vtk==8.1.2
+./python3.7m -m pip install vtk==9.0.1
 ```
-or if you need to install newest version of vtk, replace last command with
+or if you need to install newest (possibly unsupported) version of vtk, replace last command with
 ```
 ./python3.7m -m pip install vtk
 ```
