@@ -417,6 +417,13 @@ def edges_and_faces_to_bmesh(edges, faces, vcoords, smooth, bm,
 
     if recalc_norms:
         bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    else:
+        # Force normal updates. Without normal updates use of smooth
+        # option will result in surfaces being rendered as black.
+        for f in bm.faces:
+            f.normal_update()
+        for v in bm.verts:
+            v.normal_update()
 
 
 def vtkdata_to_blender_mesh(data, name, create_all_verts=False,
@@ -1206,10 +1213,11 @@ def create_data_from_data_array(imgdata, data_name, background_value, atype):
 
     # Create grid by looping over points with accessor
     vals = []
+    MAXVAL = 9.999999e+37
     for idx in range(dims[0] * dims[1] * dims[2]):
         if atype == 'scalar':
             value = data.GetTuple1(idx);
-            if value > background_value:
+            if value > background_value and value < MAXVAL:
                 vals.append(value)
             else:
                 vals.append(None)
