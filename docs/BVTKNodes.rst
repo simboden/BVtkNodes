@@ -743,6 +743,10 @@ You are free to ask and give advice for specific use cases at
 Please check this list first though:
 
 * Read through these docs first, and view examples in :ref:`ug_nodes`.
+* Run **Update** on the final *VTK To Blender* node to update the
+  preceding nodes.
+* For time dependent data, try to change frame number in Blender
+  Timeline Editor.
 * Check the `list of both open and closed issues
   <https://github.com/tkeskita/BVtkNodes/issues?q=is%3Aissue>`_, 
   in case your problem has been mentioned already.
