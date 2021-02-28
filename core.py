@@ -214,7 +214,6 @@ def run_custom_code(func):
                 cmd = 'vtkobj.' + x
                 l.debug("%s run %r" % (vtkobj.__vtkname__, cmd))
                 exec(cmd, globals(), locals())
-            exec('vtkobj.Update()', globals(), locals())
         return value
     return run_custom_code_wrapper
 
