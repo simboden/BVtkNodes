@@ -29,43 +29,44 @@ class BVTK_Node_Info(Node, BVTK_Node):
         else:
             vtkobj = resolve_algorithm_output(vtkobj)
             if not vtkobj:
-                return
+                layout.label(text='Failed to resolve algorithm ouput (try updating)')
+            else:
 
-            layout.label(text='Type: ' + vtkobj.__class__.__name__)
+                layout.label(text='Type: ' + vtkobj.__class__.__name__)
 
-            layout.label(text='Points: ' + str(vtkobj.GetNumberOfPoints()))
-            if hasattr(vtkobj, 'GetNumberOfCells'):
-                layout.label(text='Cells: ' + str(vtkobj.GetNumberOfCells()))
-            if hasattr(vtkobj, 'GetBounds'):
-                layout.label(text='X range: ' + fs.format(vtkobj.GetBounds()[0]) + \
-                             ' - ' + fs.format(vtkobj.GetBounds()[1]))
-                layout.label(text='Y range: ' + fs.format(vtkobj.GetBounds()[2]) + \
-                             ' - ' + fs.format(vtkobj.GetBounds()[3]))
-                layout.label(text='Z range: ' + fs.format(vtkobj.GetBounds()[4]) + \
-                             ' - ' + fs.format(vtkobj.GetBounds()[5]))
-            data = {}
-            if hasattr(vtkobj, 'GetPointData'):
-                data['Point data '] = vtkobj.GetPointData()
-            if hasattr(vtkobj, 'GetCellData'):
-                data['Cell data '] = vtkobj.GetCellData()
-            if hasattr(vtkobj, 'GetFieldData'):
-                data['Field data '] = vtkobj.GetFieldData()
-            for k in data:
-                d = data[k]
-                for i in range(d.GetNumberOfArrays()):
-                    arr = d.GetArray(i)
-                    data_type_name = arr.GetDataTypeAsString()
-                    n_comps = arr.GetNumberOfComponents()
-                    name = arr.GetName()
-                    range_text = ''
-                    for n in range(n_comps):
-                        r = arr.GetRange(n)
-                        range_text += '[' + fs.format(r[0]) +', ' + fs.format(r[1]) + ']  '
-                    row = layout.row()
-                    row.label(text = k + '[' + str(i) + '] (' \
-                              + str(data_type_name) + str(n_comps) \
-                              + '): \'' + name + '\': ' \
-                              + range_text)
+                layout.label(text='Points: ' + str(vtkobj.GetNumberOfPoints()))
+                if hasattr(vtkobj, 'GetNumberOfCells'):
+                    layout.label(text='Cells: ' + str(vtkobj.GetNumberOfCells()))
+                if hasattr(vtkobj, 'GetBounds'):
+                    layout.label(text='X range: ' + fs.format(vtkobj.GetBounds()[0]) + \
+                                ' - ' + fs.format(vtkobj.GetBounds()[1]))
+                    layout.label(text='Y range: ' + fs.format(vtkobj.GetBounds()[2]) + \
+                                ' - ' + fs.format(vtkobj.GetBounds()[3]))
+                    layout.label(text='Z range: ' + fs.format(vtkobj.GetBounds()[4]) + \
+                                ' - ' + fs.format(vtkobj.GetBounds()[5]))
+                data = {}
+                if hasattr(vtkobj, 'GetPointData'):
+                    data['Point data '] = vtkobj.GetPointData()
+                if hasattr(vtkobj, 'GetCellData'):
+                    data['Cell data '] = vtkobj.GetCellData()
+                if hasattr(vtkobj, 'GetFieldData'):
+                    data['Field data '] = vtkobj.GetFieldData()
+                for k in data:
+                    d = data[k]
+                    for i in range(d.GetNumberOfArrays()):
+                        arr = d.GetArray(i)
+                        data_type_name = arr.GetDataTypeAsString()
+                        n_comps = arr.GetNumberOfComponents()
+                        name = arr.GetName()
+                        range_text = ''
+                        for n in range(n_comps):
+                            r = arr.GetRange(n)
+                            range_text += '[' + fs.format(r[0]) +', ' + fs.format(r[1]) + ']  '
+                        row = layout.row()
+                        row.label(text = k + '[' + str(i) + '] (' \
+                                + str(data_type_name) + str(n_comps) \
+                                + '): \'' + name + '\': ' \
+                                + range_text)
 
         layout.separator()
         row = layout.row()
