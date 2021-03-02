@@ -249,6 +249,9 @@ class BVTK_Node:
         vtkobj = self.get_vtkobj()
         if not vtkobj:
             return None
+        # Verify input connections have been initialized before giving any output ports
+        if not len(self.m_connections()[0]) == vtkobj.GetTotalNumberOfInputConnections():
+            return None
         if socketname == 'self':
             return vtkobj
         if socketname == 'output' or socketname == 'output 0':
