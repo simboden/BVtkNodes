@@ -249,20 +249,23 @@ class BVTK_Node:
         vtkobj = self.get_vtkobj()
         if not vtkobj:
             return None
-        # Verify input connections have been initialized before giving any output ports
-        if not len(self.m_connections()[0]) == vtkobj.GetTotalNumberOfInputConnections():
-            return None
+        
         if socketname == 'self':
             return vtkobj
-        if socketname == 'output' or socketname == 'output 0':
-            return vtkobj.GetOutputPort()
-        if socketname == 'output 1':
-            return vtkobj.GetOutputPort(1)
-        else:
-            l.error("bad output link name " + socketname)
-            return None
-        # TODO: handle output 2,3,....
+        # Make sure object is of type vtkAlgorithm
+        if isinstance(vtkobj, vtk.vtkAlgorithm):
+            # Verify input connections have been initialized before giving any output ports
+            if not len(self.m_connections()[0]) == vtkobj.GetTotalNumberOfInputConnections():
+                return None    
+            if socketname == 'output' or socketname == 'output 0':
+                return vtkobj.GetOutputPort()
+            if socketname == 'output 1':
+                return vtkobj.GetOutputPort(1)
+            # TODO: handle output 2,3,....
 
+        l.error("bad output link name " + socketname)
+        return None
+        
     def get_input_nodes(self, name):
         '''Return inputs of a node. Name argument specifies the type of inputs: 
         'self'                 -> input_node.get_vtkobj()
