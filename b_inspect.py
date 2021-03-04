@@ -1,6 +1,7 @@
 import bpy
 import bpy.utils.previews
 from .core import *
+from .cache import BVTKCache
 
 # -----------------------------------------------------------------------------
 # Dubug panel and node documentation panel (information about
@@ -147,7 +148,7 @@ class BVTK_OT_UpdateObj(bpy.types.Operator):
     prop: bpy.props.StringProperty()
 
     def execute(self, context):
-        check_cache()
+        BVTKCache.check_cache()
         active_node = context.active_node
         vtkobj = active_node.get_vtkobj()
         log_check()
