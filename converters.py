@@ -1,6 +1,7 @@
 from .update import *
 from .core import l # Import logging
 from .core import *
+from .cache import BVTKCache
 import bmesh
 
 try:
@@ -1329,7 +1330,7 @@ class BVTK_OT_AutoUpdateScan(bpy.types.Operator):
                 props, conn = differences(actual_map, self.last_map)
                 if props or conn:
                     self.last_map = actual_map
-                    check_cache()
+                    BVTKCache.check_cache()
                     try:
                         no_queue_update(self.node, self.node.update_cb)
                     except Exception as e:
@@ -1683,7 +1684,7 @@ class BVTK_OT_NodeUpdate(bpy.types.Operator):
     use_queue: bpy.props.BoolProperty(default = True)
 
     def execute(self, context):
-        check_cache()
+        BVTKCache.check_cache()
         node = eval(self.node_path)
         if node:
             if self.use_queue:

@@ -73,6 +73,7 @@ if need_reloading:
 
     importlib.reload(update)
     importlib.reload(core)
+    importlib.reload(cache)
     importlib.reload(b_properties)
     importlib.reload(showhide_properties)
     importlib.reload(tree)
@@ -112,6 +113,7 @@ else:
     from   nodeitems_utils import NodeItem
 
     from . import core
+    from . import cache
     from . import b_properties
     from . import showhide_properties
     from . import b_inspect
@@ -144,7 +146,7 @@ l.info("VTK base path: " + vtk.__file__)
 @persistent
 def on_file_loaded(scene):
     '''Initialize cache after a blender file open'''
-    core.init_cache()
+    cache.BVTKCache.init()
 
 
 @persistent

@@ -3,6 +3,7 @@
 # -----------------------------------------------------------------------------
 
 from .core import *
+from .cache import BVTKCache
 
 def get_default_texture(name):
     '''Create and return a new color ramp BLEND type brush texture'''
@@ -118,7 +119,7 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
         if self.default_texture:
             if self.default_texture in bpy.data.textures:
                 bpy.data.texures.remove(bpy.data.textures[self.default_texture])
-        node_deleted(self)
+        BVTKCache.unmap_node(self)
 
     def draw_buttons(self, context, layout):
         in_node, vtkobj = self.get_input_node('input')
@@ -192,7 +193,7 @@ class BVTK_Node_ColorRamp(Node, BVTK_Node):
     def free(self):
         if self.my_texture in bpy.data.textures:
             bpy.data.textures.remove(bpy.data.textures[self.my_texture])
-        node_deleted(self)
+        BVTKCache.unmap_node(self)
 
     def draw_buttons(self, context, layout):
         if self.my_texture in bpy.data.textures.keys():
