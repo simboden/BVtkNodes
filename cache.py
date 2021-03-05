@@ -10,11 +10,12 @@ nodesIdMap:dict = {}  # node_id -> node
 vtkCache:dict = {}  # node_id -> vtkobj
 
 class BVTKCache:
-
+    '''Class for accessing vtkCache and nodemap
+    '''
     @classmethod
     def init(cls):
-        """ Initialzed cache/node ids
-        """
+        ''' Initialzed cache/node ids
+        '''
         global nodeMaxId, nodesIdMap, vtkCache
 
         nodeMaxId = 1
@@ -43,8 +44,9 @@ class BVTKCache:
         for nt in bpy.data.node_groups:
             if nt.bl_idname == 'BVTK_NodeTreeType':
                 for n in nt.nodes:
-                    if cls.get_vtkobj(n) == None or n.node_id == 0:
+                    if n.node_id == 0:
                         cls.map_node(n)
+                    if cls.get_vtkobj(n) == None:
                         cls.init_vtkobj(n)
 
     @classmethod
@@ -66,7 +68,7 @@ class BVTKCache:
 
     @classmethod
     def map_node(cls, node, force=False):
-        '''Adds node to node map and intializes its vtkcache object.
+        '''Assigned new node its unique ID and adds node to node map.
         Called when building the cache
         '''
         global nodeMaxId, nodesIdMap, vtkCache
@@ -80,12 +82,12 @@ class BVTKCache:
 
     @classmethod
     def unmap_node(cls, node):
-        '''Remove node from Node Cache. To be called from node.free().
+        '''Remove node from cache. To be called from node.free().
         Remove node from NodesMap and its vtkobj from VTKCache
         '''
         global nodesIdMap, vtkCache
 
-        if node.node_id in NodesMap:
+        if node.node_id in nodesIdMap:
             del nodesIdMap[node.node_id]
 
         if node.node_id in vtkCache:
@@ -116,6 +118,6 @@ class BVTKCache:
             return None
 
         if not node.node_id in vtkCache:
-            return vtkCache
+            return None
 
         return vtkCache[node.node_id]

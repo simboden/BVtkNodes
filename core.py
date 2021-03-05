@@ -116,7 +116,9 @@ class BVTK_Node:
         return ntree.bl_idname == 'BVTK_NodeTreeType'
 
     def free(self):
-        BVTKCache.node_deleted(self)
+        '''Clean up node on removal
+        '''
+        BVTKCache.unmap_node(self)
 
     def get_output(self, socketname):
         '''Get output object. Return an object depending on socket
@@ -171,8 +173,12 @@ class BVTK_Node:
         return (0,0)
 
     def get_vtkobj(self):
-        '''Shortcut to get vtkobj'''
+        '''Accessor of nodes vtkobj from cache'''
         return BVTKCache.get_vtkobj(self)
+
+    def reset_vtkobj(self):
+        '''Resets node's vtkobj'''
+        return BVTKCache.init_vtkobj(self)
 
     @show_custom_code
     def draw_buttons(self, context, layout):
