@@ -33,10 +33,9 @@ class BVTK_Node_Info(Node, BVTK_Node):
             if not vtkobj:
                 layout.label(text='Failed to resolve algorithm ouput (try updating)')
             else:
-
                 layout.label(text='Type: ' + vtkobj.__class__.__name__)
-
-                layout.label(text='Points: ' + str(vtkobj.GetNumberOfPoints()))
+                if hasattr(vtkobj, 'GetNumberOfPoints'):
+                    layout.label(text='Points: ' + str(vtkobj.GetNumberOfPoints()))
                 if hasattr(vtkobj, 'GetNumberOfCells'):
                     layout.label(text='Cells: ' + str(vtkobj.GetNumberOfCells()))
                 if hasattr(vtkobj, 'GetBounds'):

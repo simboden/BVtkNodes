@@ -24,130 +24,7 @@ import functools # for decorators
 from . import b_properties # Boolean properties
 b_path = b_properties.__file__ # Boolean properties config file path
 from .update import *
-
-# -----------------------------------------------------------------------------
-# Node Cache and related functions
-# -----------------------------------------------------------------------------
-NodesMaxId = 1   # Maximum node id number. 0 means invalid
-NodesMap   = {}  # node_id -> node
-VTKCache   = {}  # node_id -> vtkobj
-
-
-def node_created(node):
-    '''Add node to Node Cache. Called from node.init() and from
-    check_cache. Give the node a unique node_id, then add it in
-    NodesMap, and finally instantiate it's vtkobj and store it in
-    VTKCache.
-    '''
-    global NodesMaxId, NodesMap, VTKCache  
-
-    # Ensure each node has a node_id
-    if node.node_id == 0:
-        node.node_id = NodesMaxId
-        l.debug("Initialize new node: %s, id %d" % (node.name, node.node_id))
-        NodesMaxId += 1
-        NodesMap[node.node_id] = node
-        VTKCache[node.node_id] = None
-
-    # create the node vtk_obj if needed
-    if node.bl_label.startswith('vtk'):
-        vtk_class = getattr(vtk, node.bl_label, None)
-        if vtk_class is None:
-            l.error("bad classname " + node.bl_label)
-            return
-        VTKCache[node.node_id] = vtk_class() # make an instance of node.vtk_class
-
-        # setting properties tips
-        # if hasattr(node,'m_properties'):
-        #     for m_property in node.m_properties():
-        #         prop=getattr(getattr(bpy.types, node.bl_idname), m_property)
-        #         prop_doc=getattr(node.get_vtkobj(), m_property.replace('m_','Set'), 'Doc not found')
-        #
-        #         if prop_doc!='Doc not found':
-        #             prop_doc=prop_doc.__doc__
-        #
-        #         s=''
-        #         for a in prop[1].keys():
-        #             if a!='attr' and a!='description':
-        #                 s+=a+'='+repr(prop[1][a])+', '
-        #
-        #         exec('bpy.types.'+node.bl_idname+'.'+m_property+'=bpy.props.'+prop[0].__name__+'('+s+' description='+repr(prop_doc)+')')
-    
-        l.debug("Created VTK object of type " + node.bl_label + ", id " + str(node.node_id))
-
-
-def node_deleted(node):
-    '''Remove node from Node Cache. To be called from node.free().
-    Remove node from NodesMap and its vtkobj from VTKCache
-    '''
-    global NodesMap, VTKCache  
-    if node.node_id in NodesMap:
-        del NodesMap[node.node_id]
-
-    if node.node_id in VTKCache:
-        obj = VTKCache[node.node_id]
-        # if obj: 
-        #     obj.UnRegister(obj)  # vtkObjects have no Delete in Python -- maybe is not needed
-        del VTKCache[node.node_id]
-    l.debug("deleted " + node.bl_label + " " + str(node.node_id))
-
-
-def get_node(node_id):
-    '''Get node corresponding to node_id.'''
-    node = NodesMap.get(node_id)
-    if node is None:
-        l.error("not found node_id " + node_id)
-    return node
-
-
-def get_vtkobj(node):
-    '''Get the VTK object associated to a node'''
-    if node is None:
-        l.error("bad node " + str(node))
-        return None
-
-    if not node.node_id in VTKCache:
-        # l.debug("node %s (id %d) is not in cache" % (node.name, node.node_id))
-        return None
-
-    return VTKCache[node.node_id]
-
-
-def init_cache():
-    '''Initialize Node Cache'''
-    global NodesMaxId, NodesMap, VTKCache  
-    l.debug("Initializing")
-    NodesMaxId = 1
-    NodesMap   = {}
-    VTKCache   = {}
-    check_cache()
-    print_nodes()
-
-
-def check_cache():
-    '''Rebuild Node Cache. Called by all operators. Cache is out of sync
-    if an operator is called and at the same time NodesMaxId=1.
-    This happens after reloading addons. Cache is rebuilt, and the
-    operator must be interrupted, but the next operator call will work
-    OK.
-    '''
-    global NodesMaxId
-
-    # After F8 or FileOpen VTKCache is empty and NodesMaxId == 1
-    # any previous node_id must be invalidated
-    if NodesMaxId == 1:
-        for nt in bpy.data.node_groups:
-            if nt.bl_idname == 'BVTK_NodeTreeType':
-                for n in nt.nodes:
-                    n.node_id = 0
-
-    # For each node check if it has a node_id
-    # and if it has a vtk_obj associated
-    for nt in bpy.data.node_groups:
-        if nt.bl_idname == 'BVTK_NodeTreeType':
-            for n in nt.nodes:
-                if get_vtkobj(n) == None or n.node_id == 0:
-                    node_created(n)
+from .cache import BVTKCache
 
 
 # -----------------------------------------------------------------------------
@@ -214,7 +91,6 @@ def run_custom_code(func):
                 cmd = 'vtkobj.' + x
                 l.debug("%s run %r" % (vtkobj.__vtkname__, cmd))
                 exec(cmd, globals(), locals())
-            exec('vtkobj.Update()', globals(), locals())
         return value
     return run_custom_code_wrapper
 
@@ -240,7 +116,9 @@ class BVTK_Node:
         return ntree.bl_idname == 'BVTK_NodeTreeType'
 
     def free(self):
-        node_deleted(self)
+        '''Clean up node on removal
+        '''
+        BVTKCache.unmap_node(self)
 
     def get_output(self, socketname):
         '''Get output object. Return an object depending on socket
@@ -250,16 +128,22 @@ class BVTK_Node:
         vtkobj = self.get_vtkobj()
         if not vtkobj:
             return None
+        
         if socketname == 'self':
             return vtkobj
-        if socketname == 'output' or socketname == 'output 0':
-            return vtkobj.GetOutputPort()
-        if socketname == 'output 1':
-            return vtkobj.GetOutputPort(1)
-        else:
-            l.error("bad output link name " + socketname)
-            return None
-        # TODO: handle output 2,3,....
+        # Make sure object is of type vtkAlgorithm
+        if isinstance(vtkobj, vtk.vtkAlgorithm):
+            # Verify input connections have been initialized before giving any output ports
+            if not len(self.m_connections()[0]) == vtkobj.GetTotalNumberOfInputConnections():
+                return None    
+            if socketname == 'output' or socketname == 'output 0':
+                return vtkobj.GetOutputPort()
+            if socketname == 'output 1':
+                return vtkobj.GetOutputPort(1)
+            # TODO: handle output 2,3,....
+
+        l.error("bad output link name " + socketname)
+        return None
 
     def get_input_nodes(self, name):
         '''Return inputs of a node. Name argument specifies the type of inputs: 
@@ -289,8 +173,12 @@ class BVTK_Node:
         return (0,0)
 
     def get_vtkobj(self):
-        '''Shortcut to get vtkobj'''
-        return get_vtkobj(self)
+        '''Accessor of nodes vtkobj from cache'''
+        return BVTKCache.get_vtkobj(self)
+
+    def reset_vtkobj(self):
+        '''Resets node's vtkobj'''
+        return BVTKCache.init_vtkobj(self)
 
     @show_custom_code
     def draw_buttons(self, context, layout):
@@ -305,7 +193,7 @@ class BVTK_Node:
     def copy(self, node):
         '''Copies setup from another node'''
         self.node_id = 0
-        check_cache()
+        BVTKCache.check_cache()
         if hasattr(self, 'copy_setup'):
             # some nodes need to set properties (such as color ramp elements)
             # after being copied
@@ -364,7 +252,7 @@ class BVTK_Node:
         self.width = 200
         self.use_custom_color = True
         self.color = 0.5,0.5,0.5
-        check_cache()
+        BVTKCache.check_cache()
         input_ports, output_ports, extra_input, extra_output = self.m_connections()
         input_ports.extend(extra_input)
         output_ports.extend(extra_output)
@@ -415,7 +303,7 @@ class BVTK_OT_NodeWrite(bpy.types.Operator):
     id: bpy.props.IntProperty()
 
     def execute(self, context):
-        check_cache()
+        BVTKCache.check_cache()
         node = get_node(self.id)  # TODO: change node_id to node_path?
         if node:
             def cb():
