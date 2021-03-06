@@ -6,6 +6,8 @@ class BVTK_Node_Info(Node, BVTK_Node):
     bl_idname = 'BVTK_Node_InfoType'
     bl_label  = 'Info'
 
+    arr_string = '{k} [{i}] ({data_type_name}{n_comps}): \'{name}\': {range_text}'
+
     def m_properties(self):
         return []
 
@@ -46,11 +48,11 @@ class BVTK_Node_Info(Node, BVTK_Node):
                                 ' - ' + fs.format(vtkobj.GetBounds()[5]))
                 data = {}
                 if hasattr(vtkobj, 'GetPointData'):
-                    data['Point data '] = vtkobj.GetPointData()
+                    data['Point data'] = vtkobj.GetPointData()
                 if hasattr(vtkobj, 'GetCellData'):
-                    data['Cell data '] = vtkobj.GetCellData()
+                    data['Cell data'] = vtkobj.GetCellData()
                 if hasattr(vtkobj, 'GetFieldData'):
-                    data['Field data '] = vtkobj.GetFieldData()
+                    data['Field data'] = vtkobj.GetFieldData()
                 for k in data:
                     d = data[k]
                     for i in range(d.GetNumberOfArrays()):
@@ -58,15 +60,18 @@ class BVTK_Node_Info(Node, BVTK_Node):
                         data_type_name = arr.GetDataTypeAsString()
                         n_comps = arr.GetNumberOfComponents()
                         name = arr.GetName()
+                        
+                    if name is None or data_type_name is None or n_comps is None:
+                        l.warning("Invalid array encountered...")
+                        #continue
+
                         range_text = ''
                         for n in range(n_comps):
                             r = arr.GetRange(n)
                             range_text += '[' + fs.format(r[0]) +', ' + fs.format(r[1]) + ']  '
                         row = layout.row()
-                        row.label(text = k + '[' + str(i) + '] (' \
-                                + str(data_type_name) + str(n_comps) \
-                                + '): \'' + name + '\': ' \
-                                + range_text)
+                        row.label(text = self.arr_string.format(k=k, i=i, data_type_name=data_type_name, 
+                            n_comps=n_comps, name=name, range_text=range_text))
 
         layout.separator()
         row = layout.row()

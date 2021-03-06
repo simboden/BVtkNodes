@@ -123,12 +123,12 @@ else:
     from . import update
     from . import converters
 
-    from . import VTKSources
-    from . import VTKReaders
-    from . import VTKWriters
-    from . import VTKFilters
+    from .custom_nodes import VTKSources
+    from .custom_nodes import VTKReaders
+    from .custom_nodes import VTKWriters
+    from .custom_nodes import VTKFilters
     
-    from . import VTKOthers
+    from .custom_nodes import VTKOthers
 
 from .core import l # Import logging
 
