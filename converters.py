@@ -1604,7 +1604,7 @@ def create_lut(name, vrange, n_div, texture, b=0.5, h=5.5, x=5, y=0, z=0, fontsi
 
     # Add labels as texts
     for i in range(int(math.floor((max-start)/step))+1):
-        t = text(name+'_lab'+str(i), '{:.15}'.format(start+i*step))
+        t = text(name+'_lab'+str(i), '{:.15}'.format(float(start+i*step)))
         t.data.size = fontsize
         t.rotation_mode = 'XYZ'
         t.rotation_euler = (1.5707963705062866, 0.0, 0.0)

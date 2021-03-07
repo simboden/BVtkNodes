@@ -136,6 +136,9 @@ Here is the result in 3D Viewport shown in Material Preview Mode:
 
 .. image:: images/ug_cut_plane_result.png
 
+Note that the *Color Ramp* now features several presets, exported from `matplotlib <https://matplotlib.org/stable/tutorials/colors/colormaps.html>`_.
+The number of color values determine how closely the *Color Ramp* will match the underlying colormap (up to 32 samples are possible).
+Together with constant interpolation mode, this can create a contour-like effect on the surface.
 
 
 Vector Glyphs
