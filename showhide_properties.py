@@ -1,6 +1,7 @@
 from .core import l # Import logging
 from . import core
 import bpy
+from .cache import BVTKCache
 
 class BVTK_PT_ShowHide_Properties(bpy.types.Panel):
     '''BVTK Show/hide properties panel'''
@@ -47,9 +48,20 @@ class BVTK_OT_Edit_Custom_Code(bpy.types.Operator):
     '''Edit Custom Code text string for Active Node in Text Editor'''
     bl_idname = "node.bvtk_custom_code_edit"
     bl_label = "Edit Custom Code"
+    node_id: bpy.props.IntProperty(default=0) # Used to save node button press is from
 
     def execute(self, context):
-        active_node = context.active_node
+        if self.node_id == 0: # Call from properities panel
+            active_node = context.active_node
+        else: # Call from node
+            # Get node based on node_id tag and make it active
+            BVTKCache.check_cache()
+            active_node = BVTKCache.get_node(self.node_id)
+            active_node.select = True
+            
+            nt = BVTKCache.get_tree(self.node_id)
+            nt.nodes.active = active_node
+
         name = 'BVTK'
         if name not in bpy.data.texts.keys():
             text = bpy.data.texts.new(name)
@@ -75,9 +87,20 @@ class BVTK_OT_Save_Custom_Code(bpy.types.Operator):
     '''Save Custom Code text from Text Editor to Active Node'''
     bl_idname = "node.bvtk_custom_code_save"
     bl_label = "Save Custom Code"
+    node_id: bpy.props.IntProperty(default=0) # Used to save node button press is from
 
     def execute(self, context):
-        active_node = context.active_node
+        if self.node_id == 0: # Call from properities panel
+            active_node = context.active_node
+        else: # Call from node
+            # Get node based on node_id tag and make it active
+            BVTKCache.check_cache()
+            active_node = BVTKCache.get_node(self.node_id)
+            active_node.select = True
+            
+            nt = BVTKCache.get_tree(self.node_id)
+            nt.nodes.active = active_node
+
         name = 'BVTK'
         if name not in bpy.data.texts.keys():
             self.report({'ERROR'}, "No %r text found in text editor!" % name)

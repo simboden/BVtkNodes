@@ -74,8 +74,10 @@ def show_custom_code(func):
         if self.expanded:
             col = layout.column(align=True)
             row = col.row()
-            row.operator('node.bvtk_custom_code_edit', text="Edit", icon="TEXT")
-            row.operator('node.bvtk_custom_code_save', text="Save", icon="FILE_TICK")
+            op = row.operator('node.bvtk_custom_code_edit', text="Edit", icon="TEXT")
+            op.node_id = self.node_id # Set node id in operator
+            op = row.operator('node.bvtk_custom_code_save', text="Save", icon="FILE_TICK")
+            op.node_id = self.node_id # Set node id in operator
             if len(self.custom_code) > 0:
                     box = layout.box()
                     col = box.column()
