@@ -1,9 +1,9 @@
 import logging
 import bpy
 import vtk
+import functools
 
 l = logging.getLogger(__name__)
-
 
 nodeMaxId:int = 1   # Maximum node id number. 0 means invalid
 nodesIdMap:dict = {}  # node_id -> node
@@ -12,17 +12,24 @@ vtkCache:dict = {}  # node_id -> vtkobj
 class BVTKCache:
     '''Class for accessing vtkCache and nodemap
     '''
+
     @classmethod
     def init(cls):
         ''' Initialzed cache/node ids
+        '''
+        cls.reload()
+        cls.check_cache()
+
+    @classmethod
+    def reload(cls):
+        '''Resets the caches to be recreated from scratch
         '''
         global nodeMaxId, nodesIdMap, vtkCache
 
         nodeMaxId = 1
         nodesIdMap = {}
         vtkCache = {}
-        cls.check_cache()
-    
+
     @classmethod
     def check_cache(cls):
         '''Rebuild Node Cache. Called by all operators. Cache is out of sync

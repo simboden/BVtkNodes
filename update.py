@@ -52,6 +52,9 @@ def Update(node, cb, x=True):
     inputs_color = 0.84, 0.84, 0.73 # Input color
     execute_color = 0.85, 0.6, 0.2 # Execution color
 
+    # Reset vtkobj before executing update stack
+    node.reset_vtkobj()
+
     vtkobj = node.get_vtkobj()
 
     # Call update for input nodes
@@ -142,7 +145,6 @@ class BVTK_FunctionsQueue:
 
 # Global functions queue
 queue = BVTK_FunctionsQueue()
-
 
 class BVTK_OT_FunctionQueue(bpy.types.Operator):
     '''Operator to call a function in functions queue. 

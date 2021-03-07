@@ -65,14 +65,23 @@ def show_custom_code(func):
         # Call function first
         value = func(self, context, layout)
         # Then show Custom Code
-        if len(self.custom_code) > 0:
-            row = layout.row()
-            row.label(text="Custom Code:")
-            box = layout.box()
-            col = box.column()
-            for text in self.custom_code.splitlines():
-                row = col.row()
-                row.label(text=text)
+        row = layout.row()
+        row.label(text="Custom Code:")
+        row.prop(self, "expanded",
+            icon="TRIA_DOWN" if self.expanded else "TRIA_LEFT",
+            icon_only=True, emboss=False)
+
+        if self.expanded:
+            col = layout.column(align=True)
+            row = col.row()
+            row.operator('node.bvtk_custom_code_edit', text="Edit", icon="TEXT")
+            row.operator('node.bvtk_custom_code_save', text="Save", icon="FILE_TICK")
+            if len(self.custom_code) > 0:
+                    box = layout.box()
+                    col = box.column()
+                    for text in self.custom_code.splitlines():
+                        row = col.row()
+                        row.label(text=text)
         return value
     return show_custom_code_wrapper
 
@@ -110,6 +119,8 @@ class BVTK_Node:
         default="",
         maxlen=0,
     )
+
+    expanded: bpy.props.BoolProperty(name="Show Code", default=False)
 
     @classmethod
     def poll(cls, ntree):
@@ -342,7 +353,6 @@ def check_b_properties():
 add_class(BVTK_NodeTree)
 add_class(BVTK_NodeSocket)
 add_ui_class(BVTK_OT_NodeWrite)
-
 
 # -----------------------------------------------------------------------------
 # VTK Node Category
