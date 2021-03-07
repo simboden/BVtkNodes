@@ -60,9 +60,9 @@ class BVTK_Node_Info(Node, BVTK_Node):
                         n_comps = arr.GetNumberOfComponents()
                         name = arr.GetName()
                         
-                    if name is None or data_type_name is None or n_comps is None:
-                        l.warning("Invalid array encountered...")
-                        #continue
+                        if name is None or data_type_name is None or n_comps is None:
+                            l.warning("Invalid array encountered...")
+                            #continue
 
                         range_text = ''
                         for n in range(n_comps):
