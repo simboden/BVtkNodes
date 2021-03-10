@@ -65,14 +65,33 @@ def show_custom_code(func):
         # Call function first
         value = func(self, context, layout)
         # Then show Custom Code
-        if len(self.custom_code) > 0:
-            row = layout.row()
+        row = layout.row()
+        if self.expanded:
             row.label(text="Custom Code:")
-            box = layout.box()
-            col = box.column()
-            for text in self.custom_code.splitlines():
-                row = col.row()
-                row.label(text=text)
+        elif len(self.custom_code) > 0:
+            pseudo_code = self.custom_code[:self.custom_code.find('(')]
+            row.label(text="Custom Code: "+pseudo_code+"...")
+        else:
+            row.label(text="Custom Code: None")
+        # Expand button
+        # TODO: Make proper expandable menu with triangle icon and text
+        row.prop(self, "expanded",
+            icon="HIDE_OFF" if self.expanded else "HIDE_ON",
+            icon_only=True, emboss=False, expand=True)
+        
+        if self.expanded:
+            col = layout.column(align=True)
+            row = col.row()
+            op = row.operator('node.bvtk_custom_code_edit', text="Edit", icon="TEXT")
+            op.node_id = self.node_id # Set node id in operator
+            op = row.operator('node.bvtk_custom_code_save', text="Save", icon="FILE_TICK")
+            op.node_id = self.node_id # Set node id in operator
+            if len(self.custom_code) > 0:
+                    box = layout.box()
+                    col = box.column()
+                    for text in self.custom_code.splitlines():
+                        row = col.row()
+                        row.label(text=text)
         return value
     return show_custom_code_wrapper
 
@@ -110,6 +129,8 @@ class BVTK_Node:
         default="",
         maxlen=0,
     )
+
+    expanded: bpy.props.BoolProperty(name="Show Code", default=False)
 
     @classmethod
     def poll(cls, ntree):
@@ -342,7 +363,6 @@ def check_b_properties():
 add_class(BVTK_NodeTree)
 add_class(BVTK_NodeSocket)
 add_ui_class(BVTK_OT_NodeWrite)
-
 
 # -----------------------------------------------------------------------------
 # VTK Node Category

@@ -1,28 +1,37 @@
 import logging
 import bpy
 import vtk
+import functools
 
 l = logging.getLogger(__name__)
 
-
 nodeMaxId:int = 1   # Maximum node id number. 0 means invalid
 nodesIdMap:dict = {}  # node_id -> node
+treeIdMap:dict = {}  # node_id -> node
 vtkCache:dict = {}  # node_id -> vtkobj
 
 class BVTKCache:
     '''Class for accessing vtkCache and nodemap
     '''
+
     @classmethod
     def init(cls):
         ''' Initialzed cache/node ids
+        '''
+        cls.reload()
+        cls.check_cache()
+
+    @classmethod
+    def reload(cls):
+        '''Resets the caches to be recreated from scratch
         '''
         global nodeMaxId, nodesIdMap, vtkCache
 
         nodeMaxId = 1
         nodesIdMap = {}
+        treeIdMap = {}
         vtkCache = {}
-        cls.check_cache()
-    
+
     @classmethod
     def check_cache(cls):
         '''Rebuild Node Cache. Called by all operators. Cache is out of sync
@@ -45,7 +54,7 @@ class BVTKCache:
             if nt.bl_idname == 'BVTK_NodeTreeType':
                 for n in nt.nodes:
                     if n.node_id == 0:
-                        cls.map_node(n)
+                        cls.map_node(n, tree=nt)
                     if cls.get_vtkobj(n) == None:
                         cls.init_vtkobj(n)
 
@@ -67,17 +76,18 @@ class BVTKCache:
             vtkCache[node.node_id] = None
 
     @classmethod
-    def map_node(cls, node, force=False):
+    def map_node(cls, node, tree=None, force=False):
         '''Assigned new node its unique ID and adds node to node map.
         Called when building the cache
         '''
-        global nodeMaxId, nodesIdMap, vtkCache
+        global nodeMaxId, nodesIdMap, treeIdMap, vtkCache
 
         if node.node_id == 0 or force:
             node.node_id = nodeMaxId
             l.debug("Initialize new node: %s, id %d" % (node.name, node.node_id))
             vtkCache[node.node_id] = None
             nodesIdMap[node.node_id] = node
+            treeIdMap[node.node_id] = tree
             nodeMaxId += 1 # Index node id for next created node
 
     @classmethod
@@ -98,14 +108,25 @@ class BVTKCache:
         l.debug("deleted " + node.bl_label + " " + str(node.node_id))
 
     @classmethod
-    def get_node(cls, node_id):
+    def get_node(cls, node_id:int):
         '''Get node corresponding to node_id. Called by BVTK_OT_NodeWrite'''
         global nodesIdMap
 
         if node_id in nodesIdMap:
             return nodesIdMap[node_id]
         else:
-            l.error("not found node_id " + node_id)
+            l.error("not found node_id " + str(node_id))
+            return None
+
+    @classmethod
+    def get_tree(cls, node_id:int):
+        '''Get node tree corresponding to node_id. Called in BVTK_OT_Edit_Custom_Code'''
+        global treeIdMap
+
+        if node_id in treeIdMap:
+            return treeIdMap[node_id]
+        else:
+            l.error("not found node_id " + str(node_id))
             return None
 
     @classmethod
