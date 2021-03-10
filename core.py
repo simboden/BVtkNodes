@@ -66,11 +66,19 @@ def show_custom_code(func):
         value = func(self, context, layout)
         # Then show Custom Code
         row = layout.row()
-        row.label(text="Custom Code:")
+        if self.expanded:
+            row.label(text="Custom Code:")
+        elif len(self.custom_code) > 0:
+            pseudo_code = self.custom_code[:self.custom_code.find('(')]
+            row.label(text="Custom Code: "+pseudo_code+"...")
+        else:
+            row.label(text="Custom Code: None")
+        # Expand button
+        # TODO: Make proper expandable menu with triangle icon and text
         row.prop(self, "expanded",
-            icon="TRIA_DOWN" if self.expanded else "TRIA_LEFT",
-            icon_only=True, emboss=False)
-
+            icon="HIDE_OFF" if self.expanded else "HIDE_ON",
+            icon_only=True, emboss=False, expand=True)
+        
         if self.expanded:
             col = layout.column(align=True)
             row = col.row()

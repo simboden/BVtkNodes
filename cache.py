@@ -115,7 +115,7 @@ class BVTKCache:
         if node_id in nodesIdMap:
             return nodesIdMap[node_id]
         else:
-            l.error("not found node_id " + node_id)
+            l.error("not found node_id " + str(node_id))
             return None
 
     @classmethod
@@ -126,7 +126,7 @@ class BVTKCache:
         if node_id in treeIdMap:
             return treeIdMap[node_id]
         else:
-            l.error("not found node_id " + node_id)
+            l.error("not found node_id " + str(node_id))
             return None
 
     @classmethod
