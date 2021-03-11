@@ -246,7 +246,8 @@ def node_to_dict(node):
                   'mute',
                   'show_options',
                   'show_preview',
-                  'width'
+                  'width',
+                  'custom_code'
                   ])
     for prop in props:
         attr = getattr(node, prop)
