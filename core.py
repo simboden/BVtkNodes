@@ -120,17 +120,28 @@ def run_custom_code(func):
 class BVTK_Node:
     '''Base class for VTK Nodes'''
 
-    node_id: bpy.props.IntProperty(default=0)
-
+    node_id: bpy.props.IntProperty(
+        name="Node ID Number",
+        description="Node ID Number",
+        default=0,
+    )
+    node_status: bpy.props.StringProperty(
+        name="Node Status",
+        description="Status of Node's VTK Object",
+        default="",
+        maxlen=0
+    )
     custom_code: bpy.props.StringProperty(
         name="Custom Code",
-        description="Custom Python Code to Run for This VTK Object." \
-        + " Use semicolon without spaces as separator",
+        description="Custom Python Code to Run for This VTK Object",
         default="",
         maxlen=0,
     )
-
-    expanded: bpy.props.BoolProperty(name="Show Code", default=False)
+    expanded: bpy.props.BoolProperty(
+        name="Show Code",
+        description="Boolean to Show/Hide Custom Code Panel",
+        default=False,
+    )
 
     @classmethod
     def poll(cls, ntree):
