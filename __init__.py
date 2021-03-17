@@ -85,26 +85,26 @@ if need_reloading:
     importlib.reload(favorites)
     importlib.reload(converters)
 
-    importlib.reload(gen_VTKSources)
-    importlib.reload(VTKSources)
+    importlib.reload(generated_nodes.gen_VTKSources)
+    importlib.reload(custom_nodes.VTKSources)
 
-    importlib.reload(gen_VTKReaders)
-    importlib.reload(VTKReaders)
+    importlib.reload(generated_nodes.gen_VTKReaders)
+    importlib.reload(custom_nodes.VTKReaders)
 
-    importlib.reload(gen_VTKWriters)
-    importlib.reload(VTKWriters)
+    importlib.reload(generated_nodes.gen_VTKWriters)
+    importlib.reload(custom_nodes.VTKWriters)
     
-    importlib.reload(gen_VTKFilters1)
-    importlib.reload(gen_VTKFilters2)
-    importlib.reload(gen_VTKFilters)
-    importlib.reload(VTKFilters)
+    importlib.reload(generated_nodes.gen_VTKFilters1)
+    importlib.reload(generated_nodes.gen_VTKFilters2)
+    importlib.reload(generated_nodes.gen_VTKFilters)
+    importlib.reload(custom_nodes.VTKFilters)
 
-    importlib.reload(gen_VTKTransform)
-    importlib.reload(gen_VTKImplicitFunc)
-    importlib.reload(gen_VTKParametricFunc)
-    importlib.reload(gen_VTKIntegrator)
+    importlib.reload(generated_nodes.gen_VTKTransform)
+    importlib.reload(generated_nodes.gen_VTKImplicitFunc)
+    importlib.reload(generated_nodes.gen_VTKParametricFunc)
+    importlib.reload(generated_nodes.gen_VTKIntegrator)
 
-    importlib.reload(VTKOthers)
+    importlib.reload(custom_nodes.VTKOthers)
 
 else:
     import bpy
