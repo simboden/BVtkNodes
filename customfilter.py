@@ -1,5 +1,7 @@
 from .core import l # Import logging
 from .core import *
+from .time.animation import AnimationHelper
+from .cache import PersistentStorageUser
 
 # -----------------------------------------------------------------------------
 # Custom filter
@@ -284,14 +286,24 @@ class BVTK_Node_TimeSelector(Node, BVTK_Node):
                         # Hack for time unaware readers: If file name of reader
                         # node contains number string at end, update it
                         else:
-                            filename = in_node.m_FileName
-                            newname = update_timestep_in_filename(filename, self.time_step)
-                            in_node.m_FileName = newname
+                            try:
+                                filename = in_node.m_FileName
+                                newname = update_timestep_in_filename(filename, self.time_step)
+                                in_node.m_FileName = newname
+                            except Exception as ex:
+                                pass
+
+    def activate_scene_time(self, context):
+        if self.use_scene_time:
+            self.time_step = context.scene.frame_current
+            self.check_range(context)
 
     time_step: bpy.props.IntProperty(update=check_range)
+    use_scene_time: bpy.props.BoolProperty(name="Use Scene Time", default=True, update=activate_scene_time)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties(self):
-        return []
+        return ['time_step', 'use_scene_time']
 
     def m_connections(self):
         return (['input'], [], [], ['output'])
@@ -316,6 +328,8 @@ class BVTK_Node_TimeSelector(Node, BVTK_Node):
             if time_steps:
                 row = layout.row()
                 row.prop(self, 'time_step', text="Time Step")
+                row = layout.row()
+                row.prop(self, 'use_scene_time')
                 row = layout.row()
                 size = len(time_steps)
                 row.label(text="Max Steps: "+str(size-1))
@@ -403,6 +417,160 @@ class BVTK_Node_ImageDataObjectSource(Node, BVTK_Node):
         img.SetSpacing(Vector(self.spacing) / c)
         return img
 
+# ----------------------------------------------------------------
+# Global Time Keeper
+# ----------------------------------------------------------------
+class BVTK_Node_GlobalTimeKeeper(PersistentStorageUser, AnimationHelper, Node, BVTK_Node):
+    '''Global VTK time management node for time variant data. This is used to change
+    the speed of the global VTK simulation, updating all Time selectors across the node
+    tree according to the currently displayed global time. The VTK time is currently linearly linked
+    to the scene time.
+    '''
+    bl_idname = 'BVTK_Node_GlobalTimeKeeperType'
+    bl_label = 'Global Time Keeper'
+
+    def update_time(self, context):
+        self.get_persistent_storage()["updated_nodes"] = self.update_animated_properties(context.scene)
+        self.get_persistent_storage()["animated_properties"] = self.animated_properties
+        self.get_persistent_storage()["interpolation_modes"] = self.interpolation_modes
+        self.get_persistent_storage()["animated_values"] = self.animated_values
+
+    def recalculate_steps(self, context):
+        pass
+
+    global_time: bpy.props.IntProperty(update=update_time, name="Global Time")
+    vtk_speed: bpy.props.FloatProperty(update=recalculate_steps, name="VTK Speed", default=1.0)
+    #update_modulo: bpy.props.FloatProperty(update=recalculate_steps)
+    #use_scene_time: bpy.props.BoolProperty(name="Use Scene Time", default=True, update=update_time)
+    invalid: bpy.props.BoolProperty(name="Is Node Valid")
+
+    #interpolation_items = [(x, x, x) for x in ["BEZIER", "LINEAR"]]
+    #interpolation_type: bpy.props.EnumProperty(name="", items=interpolation_items)
+    #b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+
+    #def m_properties(self):
+    #    return ['global_time', 'vtk_speed', 'use_scene_time', 'invalid'] #, 'animated_properties']
+
+    def compute_vtk_time(self):
+        return self.global_time * self.vtk_speed
+
+    def m_connections(self):
+        return ([], [], [], [])
+
+    def draw_buttons(self, context, layout):
+        if self.invalid:
+            row = layout.row()
+            row.label(text="You already have a global time keeper")
+            return
+
+        #row = layout.row()
+        #row.prop(self, 'use_scene_time')
+        row = layout.row()
+        #(row.prop(self, 'global_time') if self.use_scene_time else row.label(text="Global Time: {}".format(self.global_time)))
+        row.label(text="Global Time: {}".format(self.global_time))
+        row = layout.row()
+        row.prop(self, 'vtk_speed')
+        row = layout.row()
+        row.label(text="VTK-Time: {:2f}".format(self.compute_vtk_time()))
+        storage = self.get_persistent_storage()
+        if "animated_properties" in storage:
+            #self.update_animated_properties(bpy.context.scene)
+            #storage["animated_properties"] = self.animated_properties
+
+            animated_properties = storage["animated_properties"]
+
+            if animated_properties is not None and len(animated_properties) > 0:
+                row = layout.row()
+                row.label(text="Animated properties: ")
+                row = layout.row()
+                row.label(text="Node")
+                row.label(text="Attr.")
+                row.label(text="Keyframes")
+                row.label(text="Keyframe Vals")
+                row.label(text="Current Val")
+                row.label(text="Interpol. Mode")
+                modes = storage["interpolation_modes"]
+                animated_values = storage["animated_values"]
+
+                for elem in animated_properties.values():
+                    row = layout.row()
+                    [row.label(text=str(val)) for val in elem[:3]]
+                    row.label(text="(%s)" % [",".join(("%.2f" % (single_val)) for single_val in val) for val in elem[3]])
+                    row.label(text="(%s)" % ",".join(["%.2f" % (val) for val in elem[4]]))
+                    row.label(text=elem[-1])
+                    #self.interpolation_type = elem[-1]
+                    #row.prop(self, 'interpolation_type')
+                #for prop, vals, mode in zip(animated_properties, animated_values, modes):
+                #    row = layout.row()
+                #    row.label(text=prop)
+                #    row.label(text=", ".join(["{:.2f}".format(val) for val in vals]))
+                #    #row.label(text=mode)
+
+        row = layout.row()
+        row.separator()
+        row.separator()
+        row.separator()
+        row.separator()
+        row.operator("node.bvtk_node_update", text="update").node_path = node_path(self)
+        return
+
+    def apply_properties(self, vtkobj):
+        pass
+
+    def apply_inputs(self, vtkobj):
+        pass
+
+    def update_cb(self):
+        self.update_time(bpy.context)
+
+    def set_new_time(self, frame):
+        self.global_time = frame
+        return self.get_persistent_storage()["updated_nodes"]
+        #self.update_animated_properties(bpy.context.scene)
+
+    def get_output(self, socketname):
+        '''Check if the input is valid and if the time step can be set.
+        If tests pass the time step is updated and the input object is returned,
+        otherwise None is returned.
+        '''
+        in_node, out_port = self.get_input_node('input')
+        if not in_node or not out_port:
+            return None
+        if not out_port.IsA('vtkAlgorithmOutput'):
+            return None
+
+        prod = out_port.GetProducer()
+        executive = prod.GetExecutive()
+        out_info = prod.GetOutputInformation(out_port.GetIndex())
+        if hasattr(executive, "TIME_STEPS"):
+            time_steps = out_info.Get(executive.TIME_STEPS())
+            if time_steps:
+                size = len(time_steps)
+                if -size <= self.time_step < size:
+                    if hasattr(prod, "UpdateTimeStep"):
+                        prod.UpdateTimeStep(time_steps[self.time_step])
+                    else:
+                        l.error(prod.__class__.__name__+" does not have 'UpdateTimeStep' method.")
+                        l.error("If you can, please document this case and report it to the developers.")
+                else:
+                    l.error('Index out of time steps range')
+        return resolve_algorithm_output(out_port)
+
+    def setup(self):
+        if self.bl_label in persistent_storage["nodes"]:
+            self.invalid = True
+            raise BVTKException("A Global Time Keeper already exists. There can be only one Global Time Keeper per scene")
+
+        AnimationHelper.setup(self)
+        assert(self.name == self.bl_label)
+        self.bl_label
+        persistent_storage["nodes"][self.bl_label] = {} #pass
+        self.invalid = False
+
+    def copy(self, node):
+        self.setup()
+
+
 
 
 # Add classes and menu items
@@ -414,6 +582,8 @@ add_class(BVTK_Node_MultiBlockLeaf)
 TYPENAMES.append('BVTK_Node_MultiBlockLeafType')
 add_class(BVTK_Node_TimeSelector)
 TYPENAMES.append('BVTK_Node_TimeSelectorType')
+add_class(BVTK_Node_GlobalTimeKeeper)
+TYPENAMES.append('BVTK_Node_GlobalTimeKeeperType')
 add_class(BVTK_Node_ImageDataObjectSource)
 TYPENAMES.append('BVTK_Node_ImageDataObjectSourceType')
 

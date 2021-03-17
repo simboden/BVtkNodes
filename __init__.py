@@ -179,10 +179,31 @@ def compareGeneratedAndCurrentVTKVersion():
 
 compareGeneratedAndCurrentVTKVersion()
 
+converters_list = ['BVTK_Node_VTKToBlenderType', 'BVTK_Node_VTKToBlenderMeshType', 
+        'BVTK_Node_VTKToBlenderVolumeType', 'BVTK_Node_VTKToBlenderParticlesType']
+
+def backtrack_converter_nodes(root_node):
+    '''Searches all converter nodes and returns a list of them
+    '''
+    all_outputs = root_node.outputs
+
+    found_converter_nodes = []
+    for output in all_outputs:
+        links = output.links
+        for link in links:
+            output_node = link.to_socket.node
+            if output_node.bl_idname in converters_list:
+                found_converter_nodes += [output_node]
+            else:
+                found_converter_nodes += backtrack_converter_nodes(output_node)
+
+    return found_converter_nodes
 
 @persistent
 def on_frame_change(scene, depsgraph):
     '''Updates done after frame (time step) changes'''
+
+    nodes_2b_updated = set()
 
     # Update Time Selectors
     for node_group in bpy.data.node_groups:
@@ -190,31 +211,51 @@ def on_frame_change(scene, depsgraph):
             # Set frame number directly from Blender timeline.
             # Note: This is a workaround to enable transient data traversal
             # while this issue remains: https://developer.blender.org/T66392
-            if node.bl_idname == 'BVTK_Node_TimeSelectorType':
+            if node.bl_idname == 'BVTK_Node_TimeSelectorType' and node.use_scene_time:
                 node.time_step = scene.frame_current
                 l.debug("TimeSelector time step %d" % node.time_step)
+                connected_converter_nodes = backtrack_converter_nodes(node)
+                #Append, ignoring duplicates
+                nodes_2b_updated = nodes_2b_updated.union(set(connected_converter_nodes))
+
+            elif node.bl_idname == 'BVTK_Node_GlobalTimeKeeperType':
+                updated_nodes = node.set_new_time(scene.frame_current)
+                connected_converter_nodes = [backtrack_converter_nodes(node) for node in updated_nodes]
+                l.debug("Global Time Keeper time step %d" % node.global_time)
+
+                #Append, ignoring duplicates
+                for conv_nodes in connected_converter_nodes:
+                    nodes_2b_updated = nodes_2b_updated.union(set(conv_nodes))
 
     # Update mesh objects
-    for node_group in bpy.data.node_groups:
-        for node in node_group.nodes:
+    for node in nodes_2b_updated:
+        try:
             if node.bl_idname == 'BVTK_Node_VTKToBlenderType':
-                l.debug("VTKToBlender")
+                l.debug("Animation: Updating VTKToBlender")
                 update.no_queue_update(node, node.update_cb)
-            if node.bl_idname == 'BVTK_Node_VTKToBlenderMeshType':
-                l.debug("VTKToBlenderMesh")
+            elif node.bl_idname == 'BVTK_Node_VTKToBlenderMeshType':
+                l.debug("Animation: Updating VTKToBlenderMesh")
                 update.no_queue_update(node, node.update_cb)
-            if node.bl_idname == 'BVTK_Node_VTKToBlenderVolumeType':
-                l.debug("VTKToBlenderVolume")
+            elif node.bl_idname == 'BVTK_Node_VTKToBlenderVolumeType':
+                l.debug("Animation: Updating VTKToBlenderVolume")
                 converters.delete_objects_startswith(node.ob_name)
                 update.no_queue_update(node, node.update_cb)
 
-    # Update particle objects
-    for node_group in bpy.data.node_groups:
-        for node in node_group.nodes:
-            if node.bl_idname == 'BVTK_Node_VTKToBlenderParticlesType':
+            # Update particle objects
+            elif node.bl_idname == 'BVTK_Node_VTKToBlenderParticlesType':
                 l.debug("VTKToBlenderParticles")
                 update.no_queue_update(node, node.update_cb)
                 node.update_particle_system(depsgraph)
+            
+            else:
+                l.warning("on_frame_change: Converter nodes " + str(node) + " was found during backtracking but was not updated")
+        except Exception as ex:
+            #An error message will be logged, but we can't display an error here in the UI
+            err_str = "Animation: Update of %s failed with ex: %s" % (node, ex)
+            l.error(err_str)
+
+
+
 
 
 @persistent
