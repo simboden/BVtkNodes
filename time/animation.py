@@ -86,10 +86,7 @@ class AnimationHelper():
 
     def update_animated_properties(self, scene):
         current_frame = scene.frame_current
-        #if not hasattr(self, 'current_frame') or self.current_frame != current_frame:
-        #    self.current_frame = current_frame
         AnimationHelper.current_frame = current_frame
-        AnimationHelper.vtk_time = current_frame * self.vtk_speed
 
         self.animated_properties = []
         self.animated_properties_info = []
@@ -103,7 +100,6 @@ class AnimationHelper():
                 #Skip unrelated node trees
                 if node_tree_name + "Action" in key:
                     self.f_curves = bpy.data.actions["NodeTreeAction"].fcurves
-                    #updated_prop_paths = {}
                     updated_nodes = set()
 
                     for f_curve in self.f_curves:
@@ -166,33 +162,9 @@ class AnimationHelper():
 
                             updated_node = eval(prop_path[:delimiter_index], {"nodes": node_group.nodes})
                             updated_nodes = updated_nodes.union(set([updated_node]))
-                            #if prop_path in updated_prop_paths:
-                            #    updated_prop_paths[prop_path] += (new_val,)
-                            #else:
-                            #    updated_prop_paths[prop_path] = (new_val,)
                         except Exception as ex:
                             l.error("Could not update property " + prop_path + ". Error: " + str(ex))
 
                     #This helps in better displaying vectors by concatenating into a list of tuples
-                    self.animated_properties = self.get_animated_property_list() #[self.animated_values[prop_path] for prop_path in self.animated_properties]
+                    self.animated_properties = self.get_animated_property_list()
                     return updated_nodes
-
-
-
-
-#  [kf.co for kf in bpy.data.actions["NodeTreeAction"].fcurves[2].keyframe_points]
-# Remove:
-# tmp =  bpy.data.actions["NodeTreeAction"].fcurves[0] 
-# bpy.data.actions["NodeTreeAction"].fcurves.remove(tmp)
-# Evaluate (automatically handles ints):
-# f_curve.evaluate(scene.frame_current)
-# Interpolation mode:
-# [kf.interpolation for kf in f_curve.keyframe_points]
-# Property:
-# f_curve.data_path
-# Property index:
-# f_curve.array_index
-# Access:
-# eval(f_curve.data_path, {"nodes": node_group.nodes})
-# Change:
-# exec(f_curve.data_path + " = {}".format(f_curve.evaluate(scene.frame_current)), {"nodes": node_group.nodes})
