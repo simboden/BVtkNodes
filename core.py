@@ -143,6 +143,17 @@ class BVTK_Node:
         default=False,
     )
 
+    def m_properties(self):
+        '''Return list of node specific properties. Implement this for each node class.'''
+        return []
+
+    def m_connections(self):
+        '''Return lists of node specific connections: input_ports,
+        output_ports, extra_input, and extra_output. Implement this
+        for each node class.
+        '''
+        return([], [], [], [])
+
     @classmethod
     def poll(cls, ntree):
         return ntree.bl_idname == 'BVTK_NodeTreeType'
