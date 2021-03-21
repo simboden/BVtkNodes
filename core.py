@@ -120,15 +120,35 @@ def run_custom_code(func):
 class BVTK_Node:
     '''Base class for VTK Nodes'''
 
-    node_id: bpy.props.IntProperty(
-        name="Node ID Number",
-        description="Node ID Number",
-        default=0,
-    )
-    node_status: bpy.props.StringProperty(
-        name="Node Status",
+    vtk_status: bpy.props.EnumProperty(
+        name="VTK Status",
         description="Status of Node's VTK Object",
-        default="",
+        items={
+            # no VTK object exists for this node
+            ('none', 'none', 'none', 0),
+
+            # VTK object exists but no values / commands for it has been run yet
+            ('uninitialized', 'uninitialized', 'uninitialized', 1),
+
+            # setting value/running a command has failed, execution stopped
+            ('error', 'error', 'error', 2),
+
+            # a change has been made to an upstream node, may need to update
+            ('upstream-changed', 'upstream-changed', 'upstream-changed', 3),
+
+            # a change has been made to this node, may need to run update
+            ('out-of-date', 'out-of-date', 'out-of-date', 4),
+
+            # input node(s) are running an update
+            ('waiting-for-upstream', 'waiting-for-upstream', 'waiting-for-upstream', 5),
+
+            # setting values / running commands for this node
+            ('updating', 'updating', 'updating', 6),
+
+            # finished running commands for this node
+            ('up-to-date', 'up-to-date', 'up-to-date', 7),
+        },
+        default='none',
         maxlen=0
     )
     custom_code: bpy.props.StringProperty(
@@ -294,11 +314,14 @@ class BVTK_Node:
                     exec(cmd, globals(), locals())
 
     def init(self, context):
-        '''Initialize node'''
+        '''Create and initialize a new BVTKNode'''
+
+        # Node properties
         self.width = 200
         self.use_custom_color = True
-        self.color = 0.5,0.5,0.5
-        BVTKCache.check_cache()
+        self.color = 0.5, 0.5, 0.5
+
+        # Create sockets to node
         input_ports, output_ports, extra_input, extra_output = self.m_connections()
         input_ports.extend(extra_input)
         output_ports.extend(extra_output)
@@ -306,9 +329,13 @@ class BVTK_Node:
             self.inputs.new('BVTK_NodeSocketType', x)
         for x in output_ports:
             self.outputs.new('BVTK_NodeSocketType', x)
+
         # Some nodes need to set properties (such as link limit) after creation
         if hasattr(self, 'setup'):
             self.setup()
+
+        # Create VTK object and add to cache maps
+        BVTKCache.add_new_node(self)
 
     def get_b(self):
         '''Get list of booleans to show/hide boolean properties'''
