@@ -70,12 +70,8 @@ def unwrap_and_color_the_mesh(ob, data, name, ramp, bm, generate_material):
     '''Create UV unwrap corresponding to a generated color image to color
     the mesh. Also generates material if needed.
     '''
-    # If the color mapper currently has an error
-    if len(ramp.color_by) == 0 or ramp.color_by[0] == 'E':
-        return
-
     # Set colors and color legend
-    if ramp and ramp.color_by:
+    if ramp and ramp.color_by and not ramp.color_by[0] == 'E':
         texture = ramp.get_texture()
         if ramp.texture_type == 'IMAGE':
             image_width = 1000
@@ -95,7 +91,7 @@ def unwrap_and_color_the_mesh(ob, data, name, ramp, bm, generate_material):
             bm = face_unwrap(bm, data, int(ramp.color_by[1:]), vrange)
 
     # Generate default material if wanted
-    if generate_material and ramp and ramp.color_by:
+    if generate_material and ramp and ramp.color_by and not ramp.color_by[0] == 'E':
         create_material(ob, texture.name)
     elif generate_material:
         create_material(ob, None)

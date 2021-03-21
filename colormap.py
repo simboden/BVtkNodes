@@ -180,7 +180,7 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
     def free(self):
         if self.default_texture:
             if self.default_texture in bpy.data.textures:
-                bpy.data.texures.remove(bpy.data.textures[self.default_texture])
+                bpy.data.textures.remove(bpy.data.textures[self.default_texture])
         BVTKCache.unmap_node(self)
 
     def draw_buttons(self, context, layout):
