@@ -27,7 +27,7 @@ class BVTK_Node_Info(Node, BVTK_Node):
         if not in_node:
             layout.label(text='Connect a node')
         elif not vtkobj:
-            layout.label(text='Input has not vtkobj (try updating)')
+            layout.label(text='Input has no vtkobj (try updating)')
         else:
             vtkobj = resolve_algorithm_output(vtkobj)
             if not vtkobj:

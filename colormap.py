@@ -105,17 +105,27 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
             # Color by point data or cell data
             if self.color_by[0] == 'P':
                 d = vtkobj.GetPointData()
-            else:
+            elif self.color_by[0] == 'C':
                 d = vtkobj.GetCellData()
+            else:
+                d = None
             if d:
                 range = d.GetArray(int(self.color_by[1:])).GetRange()
                 self.max = range[1]
                 self.min = range[0]
+            else:
+                self.max = 0
+                self.min = 0
 
     def color_arrays(self, context):
-        '''Generate array items available for coloring'''
+        '''Generate array items available for coloring
+        
+        TODO: Look into resetting the selected item on new color array.
+        Can access the property via self.bl_rna.properties['color_by']
+        '''
         items = []
         vtkobj = self.get_input_node('input')[1]
+        # self.bl_rna.properties['color_by'].get = self.get_enum
         if vtkobj:
             vtkobj = resolve_algorithm_output(vtkobj)
             if hasattr(vtkobj, 'GetCellData'):
@@ -129,8 +139,12 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
                 for i in range(c_data.GetNumberOfArrays()):
                     arr_name = str(c_data.GetArrayName(i))
                     items.append(('C'+str(i), arr_name, c_descr+arr_name+' array', 'FACESEL', len(items)))
-        if not len(items):
-            items.append(('', '', ''))
+            # If there is no data fields
+            if len(items) == 0:
+                items.append(('E', 'No cell or point data', 'error', 'ERROR', 0))
+        else:
+            # Need to populate enum prop even if no vtkobj to avoid blender warning
+            items.append(('E', 'Input has no vtkobj (try updating)', 'error', 'ERROR', 0))
         return items
 
     # Must define these annotations here after function defs
@@ -166,15 +180,16 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
     def free(self):
         if self.default_texture:
             if self.default_texture in bpy.data.textures:
-                bpy.data.texures.remove(bpy.data.textures[self.default_texture])
+                bpy.data.textures.remove(bpy.data.textures[self.default_texture])
         BVTKCache.unmap_node(self)
 
     def draw_buttons(self, context, layout):
+
         in_node, vtkobj = self.get_input_node('input')
         if not in_node:
             layout.label(text='Connect a node')
         elif not vtkobj:
-            layout.label(text='Input has not vtkobj (try updating)')
+            layout.label(text='Input has no vtkobj (try updating)')
         else:
             vtkobj = resolve_algorithm_output(vtkobj)
             if hasattr(vtkobj, 'GetPointData'):
