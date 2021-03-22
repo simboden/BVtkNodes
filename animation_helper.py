@@ -3,9 +3,9 @@ This file is responsible for helping in animating properties until
 https://developer.blender.org/T66392
 is resolved.
 '''
-from ..core import *
-from ..core import l
-from ..errors.bvtk_errors import assert_bvtk
+from .core import *
+from .core import l
+from .core import assert_bvtk
 import bpy
 import numpy as np
 
@@ -17,7 +17,7 @@ class AnimationHelper():
     current_frame = invalid_frame
     vtk_time = invalid_vtk_time
     def setup(self):
-        self.current_frame = int(-1e6)
+        self.current_frame = invalid_frame
         self.animated_properties = None
 
     def get_animated_property_list(self):
@@ -32,10 +32,15 @@ class AnimationHelper():
                 #Skip unrelated node trees
                 if node_tree_name + "Action" in key:
                     for f_curve in self.f_curves:
+                        #Extract the complete data path from the f-curve
                         prop_path = f_curve.data_path
+
+                        #Split the data path into parent and component (i.e. vtkTransformFilter.m_Rotation -> vtkTransformFilter, m_Rotation)
                         delimiter_index = prop_path.rindex(".")
                         node_name = prop_path[7:delimiter_index-2]
                         attribute_name = prop_path[delimiter_index+1:]
+
+                        #Properties can be arrays (e.g. rotation is a 3D vector)
                         arr_ind = f_curve.array_index
                         interpolation_modes = [kf.interpolation for kf in f_curve.keyframe_points]
                         keyframes = [int(kf.co[0]) for kf in f_curve.keyframe_points]
@@ -108,7 +113,13 @@ class AnimationHelper():
                         node_name = prop_path[7:delimiter_index-2]
                         attribute_name = prop_path[delimiter_index+1:]
                         arr_ind = f_curve.array_index
+
                         try:
+                            #Time Selector nodes will not be updated if they use the scene time
+                            node = node_group.nodes[node_name]
+                            if node.bl_idname == 'BVTK_Node_TimeSelectorType' and node.use_scene_time:
+                                continue
+
                             try:
                                 current_val = eval(f_curve.data_path + "[{}]".format(arr_ind), 
                                         {"nodes": node_group.nodes})

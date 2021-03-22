@@ -444,3 +444,7 @@ def node_path(node):
 def node_prop_path(node, propname):
     '''Return node property path'''
     return node_path(node)+'.'+propname
+
+def assert_bvtk(condition, message):
+    if not condition:
+        raise(AssertionError(message))
