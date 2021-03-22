@@ -43,7 +43,4 @@ The add-on was first presented at [Blender Conference 2018](https://www.youtube.
 - Pull Requests: New features and bug fixes are welcome!
 - GitHub Issues: Bug reports, new feature ideas, install issues, thoughts, etc. Please check the [docs](https://bvtknodes.readthedocs.io/en/latest/BVTKNodes.html#help-with-issues) first for help with reoccurring issues.
 
-#### Contributors
-Active: Tuomo Keskitalo
-
-Legacy: Silvano Imboden, Lorenzo Celli, Paul Mc Manus
+List of contributors can be found in [CONTRIBUTORS.md](https://github.com/tkeskita/BVtkNodes/blob/master/CONTRIBUTORS.md).
