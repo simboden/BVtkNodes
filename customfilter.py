@@ -495,9 +495,13 @@ class BVTK_Node_GlobalTimeKeeper(PersistentStorageUser, AnimationHelper, Node, B
         return self.get_persistent_storage()["updated_nodes"]
 
     def setup(self):
-        if self.bl_label in persistent_storage["nodes"]:
+        if self.name != self.bl_label:
             self.invalid = True
             raise RuntimeError("A Global Time Keeper already exists. There can be only one Global Time Keeper per scene")
+
+        #Cleanup procedure if the old Global Time Keeper tree was not properly deleted
+        elif self.name in persistent_storage["nodes"]:
+            del persistent_storage["nodes"][self.name]
 
         AnimationHelper.setup(self)
         assert(self.name == self.bl_label)
