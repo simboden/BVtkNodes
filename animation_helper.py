@@ -69,6 +69,10 @@ class AnimationHelper():
 
     def get_animated_property_list(self):
         '''Fetches the animated properties in a presentable way'''
+
+        if "NodeTreeAction" not in bpy.data.actions:
+            return {}
+
         self.f_curves = bpy.data.actions["NodeTreeAction"].fcurves
 
         animated_properties = {}
@@ -96,15 +100,18 @@ class AnimationHelper():
         return animated_properties
 
     def update_animated_properties(self, scene):
-        current_frame = scene.frame_current
-        AnimationHelper.current_frame = current_frame
-        self.f_curves = bpy.data.actions["NodeTreeAction"].fcurves
 
         self.animated_properties = []
         self.animated_properties_info = []
         self.interpolation_modes = []
-
         self.animated_values = {}
+
+        if "NodeTreeAction" not in bpy.data.actions:
+            return []
+
+        current_frame = scene.frame_current
+        AnimationHelper.current_frame = current_frame
+        self.f_curves = bpy.data.actions["NodeTreeAction"].fcurves
         updated_nodes = set()
         for items in iterate_f_curves(self.f_curves):
             #(f_curve, node_group, prop_path, node_name, attribute_name, arr_ind, keyframes, keyframe_values, current_val, interpolation_modes, interpolation_mode) = items

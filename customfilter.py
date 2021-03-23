@@ -497,7 +497,7 @@ class BVTK_Node_GlobalTimeKeeper(PersistentStorageUser, AnimationHelper, Node, B
     def setup(self):
         if self.bl_label in persistent_storage["nodes"]:
             self.invalid = True
-            raise BVTKException("A Global Time Keeper already exists. There can be only one Global Time Keeper per scene")
+            raise RuntimeError("A Global Time Keeper already exists. There can be only one Global Time Keeper per scene")
 
         AnimationHelper.setup(self)
         assert(self.name == self.bl_label)
