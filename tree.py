@@ -270,7 +270,7 @@ def node_to_dict(node):
 # -----------------------------------------------------------------------------
 # Import export operators
 # -----------------------------------------------------------------------------
-
+node_tree_name = 'NodeTree'
 
 class BVTK_OT_Tree_Import(bpy.types.Operator):
     '''Import VTK Node Tree'''
@@ -284,7 +284,7 @@ class BVTK_OT_Tree_Import(bpy.types.Operator):
         node_tree = context.space_data.node_tree
 
         if node_tree is None:
-            node_tree = bpy.data.node_groups.new('NodeTree', 'BVTK_NodeTreeType')
+            node_tree = bpy.data.node_groups.new(node_tree_name, 'BVTK_NodeTreeType')
             context.space_data.node_tree = node_tree
 
         if self.confirm and node_tree.nodes:

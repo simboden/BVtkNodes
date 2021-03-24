@@ -10,6 +10,19 @@ nodesIdMap:dict = {}  # node_id -> node
 treeIdMap:dict = {}  # node_id -> node
 vtkCache:dict = {}  # node_id -> vtkobj
 
+persistent_storage = {"nodes": {}}
+
+#It is sometimes not possible to save instance variables in a class, which is why we use this node
+class PersistentStorageUser():
+    def free(self):
+        if self.name in persistent_storage["nodes"]:
+            del persistent_storage["nodes"][self.name]
+
+    def get_persistent_storage(self):
+        if self.name not in persistent_storage["nodes"]:
+            persistent_storage["nodes"][self.name] = {}
+        return persistent_storage["nodes"][self.name]
+
 class BVTKCache:
     '''Class for accessing vtkCache and nodemap
     '''

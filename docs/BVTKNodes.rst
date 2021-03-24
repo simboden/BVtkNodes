@@ -632,7 +632,8 @@ This node can be connected immediately after a VTK Reader node to
 control which time point of transient (time dependent) data is to be
 processed.
 
-Note: Time can be controlled via Blender Timeline Editor. If frame in
+Note: If `Use Scene Time` is set to true, time is directly controlled via the 
+Blender Timeline Editor. If the frame in
 the Timeline is changed, the Time Step in the Time Selector node is
 automatically updated to correspond that frame number. This allows
 rendering of animations directly from Blender.
@@ -644,6 +645,32 @@ frame number. This allows animation of time series data for readers
 that are not aware of time (e.g. vtkPolyDataReader, which can read
 point and surface data from .vtk files).
 
+Global Time Keeper
+^^^^^^^^^^^^^^^^^^
+
+The Global Time Keeper node is a special node that aims to reimplement keyframe functionality, 
+`not available in custom node trees currently <https://github.com/tkeskita/BVtkNodes/issues/3>`_.
+Keyframe handling in BVTK is similar to the rest of Blender, i.e. keyframes can be inserted on properties
+by pressing `I` on your keyboard when hovering over a property that is animatable. Alternatively, you can
+right-click and use `Insert Keyframe`, or `Clear Keyframes` to edit the keyframes. For more information,
+please read the `official Blender documentation <https://docs.blender.org/manual/en/latest/animation/keyframes/index.html>`_.
+
+In order for BVTK to actually update the values of the keyframed properties, the Global Time Keeper node need to be inserted
+into the node tree. After pressing update and each frame change, it will query and update all keyframed properties with
+the current value. It also shows all properties in the node tree that currently have keyframes along
+with the keyframe values. 
+
+.. image:: images/global_time_keeper.png
+
+On each frame change, the Global Time Keeper first updates all keyframed properties, if their value has changed, and 
+later updates all conversion nodes that are connected to the keyframed nodes.
+
+.. note::
+  Since this implementation is an unofficial reimplementation of the animation feature, 
+  it does not support all features:
+
+  * The keyframes are not accessible over the `Dope Sheet` or `Graph Editor`
+  * Interpolation mode is always set to linear for all properties
 
 Python Interaction and Custom Filter
 ------------------------------------
