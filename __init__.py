@@ -18,6 +18,18 @@ bl_info = {
     "category": "Node",
     }
 
+# Nomenclature
+# ============
+# (BVTK) node = a Blender node object in BVTK node tree
+# generated node = VTK node which has been automatically generated
+# custom node = customized version of a generated node
+# VTK node = a generated or a custom node which implements a VTK class
+# special node = all other nodes in BVTK node tree
+# socket = Blender socket in a node
+# VTK object = instance of vtkObject class
+# VTK connection = instance of vtkAlgorithmOutput class
+
+
 # Note: See core.py on how to set up Python Logging to see debug messages
 
 # OPEN ISSUES
