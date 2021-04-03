@@ -24,8 +24,7 @@ import functools # for decorators
 from . import b_properties # Boolean properties
 b_path = b_properties.__file__ # Boolean properties config file path
 from .update import *
-from .cache import BVTKCache
-
+# from .cache import BVTKCache
 
 # -----------------------------------------------------------------------------
 # BVTK_NodeTree
@@ -99,16 +98,16 @@ def show_custom_code(func):
 def run_custom_code(func):
     '''Decorator to run custom code. Used in apply_properties().'''
     @functools.wraps(func)
-    def run_custom_code_wrapper(self, vtkobj):
+    def run_custom_code_wrapper(self):
         # Call function first
-        value = func(self, vtkobj)
+        value = func(self)
         # Then run Custom Code
-        if len(self.custom_code) > 0:
+        if self.vtk_obj and len(self.custom_code) > 0:
             for x in self.custom_code.splitlines():
                 if x.startswith("#"):
                     continue
-                cmd = 'vtkobj.' + x
-                l.debug("%s run %r" % (vtkobj.__vtkname__, cmd))
+                cmd = 'self.vtk_obj.' + x
+                l.debug("%s run %r" % (vtk_obj.__vtkname__, cmd))
                 exec(cmd, globals(), locals())
         return value
     return run_custom_code_wrapper
@@ -120,7 +119,9 @@ def run_custom_code(func):
 class BVTK_Node:
     '''Base class for VTK nodes and special nodes'''
 
-    vtk_obj: object # node's VTK object (or None)
+    # node's VTK object (or None)
+    vtk_obj: object # This does not work
+    # vtk_obj: bpy.props.PointerProperty(type=object) # This is not allowed
 
     vtk_status: bpy.props.EnumProperty(
         name="VTK Status",
@@ -205,7 +206,9 @@ class BVTK_Node:
             self.outputs.new('BVTK_NodeSocketType', x)
 
         self.vtk_obj = None
-        self.initialize_vtk()
+        self.init_vtk()
+        l.debug("initialized " + str(self))
+
 
 #    def reset_vtkobj(self, update_id):
 #        '''Resets node's vtkobj'''
@@ -214,12 +217,15 @@ class BVTK_Node:
 #        if update_necessary:
 #            BVTKCache.init_vtkobj(self)
 
-    def initialize_vtk(self):
+    def init_vtk(self):
         '''Initialize a VTK object for the node and set initial status.
         This is a general implementation for VTK nodes.
         Special nodes need to implement their own initialization.
         '''
+        if hasattr(self, 'vtk_obj'):
+            del self.vtk_obj
         vtk_class = getattr(vtk, self.bl_label, None)
+        l.debug("initializing " + self.bl_label)
         if vtk_class is None:
             self.vtk_status = 'none'
             l.error("Bad VTK class name " + self.bl_label)
@@ -230,16 +236,31 @@ class BVTK_Node:
         self.vtk_obj = vtk_obj
         self.vtk_status = 'uninitialized'
 
+    @classmethod
+    def init_vtk_for_existing_nodes(cls):
+        '''Call init_vtk for all nodes in all BVTK node trees.
+        Called after loading Blender file to initialize VTK objects.
+        '''
+        for nodetree in bpy.data.node_groups:
+            if not nodetree.bl_idname == 'BVTK_NodeTreeType':
+                continue
+            for node in nodetree.nodes:
+                node.init_vtk()
+
     def free(self):
         '''Function to delete VTK object and clean up node on removal.
         '''
-        if self.vtk_obj:
+        if hasattr(self, 'vtk_obj'):
             del self.vtk_obj
 
     @show_custom_code
     def draw_buttons(self, context, layout):
         '''Show properties in the node. General implementation for VTK nodes.
         '''
+        # Debug
+        row = layout.row()
+        row.label(text="status: " + str(self.vtk_status))
+
         # Get properties and show visible ones
         m_properties = self.m_properties()
         for i in range(len(m_properties)):
@@ -281,11 +302,11 @@ class BVTK_Node:
         output socket name of this node. General implementation for VTK nodes.
         '''
         # Apply inputs and properties if needed. TODO: Extract to own function.
-        if self.status != 'up-to-date':
-            self.status = 'updating'
+        if self.vtk_status != 'up-to-date':
+            self.vtk_status = 'updating'
             self.apply_inputs()
-            self.apply_propeties()
-            self.status = 'up-to-date'
+            self.apply_properties()
+            self.vtk_status = 'up-to-date'
 
         vtk_obj = self.vtk_obj
         if not vtk_obj:
