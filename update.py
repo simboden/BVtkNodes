@@ -20,6 +20,7 @@ def UpdateObj(node, vtkobj):
     '''Update node corresponding to vtkobj by applying properties, inputs
     and call to VTK Update()
     '''
+    raise Exception("To be removed")
     #time.sleep(1)
     node.apply_properties(vtkobj)
     node.apply_inputs(vtkobj)

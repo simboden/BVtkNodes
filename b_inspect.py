@@ -61,9 +61,9 @@ class BVTK_HT_Console(bpy.types.Header):
             o = row.operator("console.insert", text="Get Node")
             o.text = "x=bpy.data.node_groups['" + node_tree + "'].nodes.active"
             o = row.operator("console.insert", text="Get VTK Object")
-            o.text = "x=bpy.data.node_groups['" + node_tree + "'].nodes.active.get_vtkobj()"
+            o.text = "x=bpy.data.node_groups['" + node_tree + "'].nodes.active.get_vtk_obj()"
             o = row.operator("console.insert", text="Get Node Output")
-            o.text = "x=bpy.data.node_groups['" + node_tree + "'].nodes.active.get_vtkobj().GetOutput()"
+            o.text = "x=bpy.data.node_groups['" + node_tree + "'].nodes.active.get_vtk_obj().GetOutput()"
 
 
 # -----------------------------------------------------------------------------

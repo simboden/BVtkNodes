@@ -24,7 +24,7 @@ import functools # for decorators
 from . import b_properties # Boolean properties
 b_path = b_properties.__file__ # Boolean properties config file path
 from .update import *
-# from .cache import BVTKCache
+from .cache import BVTKCache
 
 # -----------------------------------------------------------------------------
 # BVTK_NodeTree
@@ -102,13 +102,17 @@ def run_custom_code(func):
         # Call function first
         value = func(self)
         # Then run Custom Code
-        if self.vtk_obj and len(self.custom_code) > 0:
+        vtk_obj = BVTKCache.get_vtk_obj(self.node_id)
+        if vtk_obj and len(self.custom_code) > 0:
             for x in self.custom_code.splitlines():
                 if x.startswith("#"):
                     continue
-                cmd = 'self.vtk_obj.' + x
+                cmd = 'vtk_obj.' + x
                 l.debug("%s run %r" % (vtk_obj.__vtkname__, cmd))
                 exec(cmd, globals(), locals())
+        # Finally call Update()
+        if hasattr(vtk_obj, "Update"):
+            vtk_obj.Update()
         return value
     return run_custom_code_wrapper
 
@@ -119,10 +123,11 @@ def run_custom_code(func):
 class BVTK_Node:
     '''Base class for VTK nodes and special nodes'''
 
-    # node's VTK object (or None)
-    vtk_obj: object # This does not work
-    # vtk_obj: bpy.props.PointerProperty(type=object) # This is not allowed
-
+    node_id: bpy.props.IntProperty(
+        name="Node ID Number",
+        description="Node ID Number for mapping VTK objects in BVTKcache",
+        default=0,
+    )
     vtk_status: bpy.props.EnumProperty(
         name="VTK Status",
         description="Status of BVTK node",
@@ -205,9 +210,9 @@ class BVTK_Node:
         for x in outputs:
             self.outputs.new('BVTK_NodeSocketType', x)
 
-        self.vtk_obj = None
-        self.init_vtk()
-        l.debug("initialized " + str(self))
+        vtk_obj = self.init_vtk()
+        BVTKCache.map_node(self, vtk_obj) # Add VTK object to cache
+        l.debug("Init done for node: %s, id %d" % (self.name, self.node_id))
 
 
 #    def reset_vtkobj(self, update_id):
@@ -218,12 +223,10 @@ class BVTK_Node:
 #            BVTKCache.init_vtkobj(self)
 
     def init_vtk(self):
-        '''Initialize a VTK object for the node and set initial status.
+        '''Initialize and return a VTK object for the node.
         This is a general implementation for VTK nodes.
         Special nodes need to implement their own initialization.
         '''
-        if hasattr(self, 'vtk_obj'):
-            del self.vtk_obj
         vtk_class = getattr(vtk, self.bl_label, None)
         l.debug("initializing " + self.bl_label)
         if vtk_class is None:
@@ -233,25 +236,14 @@ class BVTK_Node:
         vtk_obj = vtk_class()
         if not vtk_obj:
             raise Exception("Could not create" + self.bl_label)
-        self.vtk_obj = vtk_obj
         self.vtk_status = 'uninitialized'
-
-    @classmethod
-    def init_vtk_for_existing_nodes(cls):
-        '''Call init_vtk for all nodes in all BVTK node trees.
-        Called after loading Blender file to initialize VTK objects.
-        '''
-        for nodetree in bpy.data.node_groups:
-            if not nodetree.bl_idname == 'BVTK_NodeTreeType':
-                continue
-            for node in nodetree.nodes:
-                node.init_vtk()
+        l.debug("Init VTK done for node: %s, id %d" % (self.name, self.node_id))
+        return vtk_obj
 
     def free(self):
-        '''Function to delete VTK object and clean up node on removal.
+        '''Clean up node information upon removal.
         '''
-        if hasattr(self, 'vtk_obj'):
-            del self.vtk_obj
+        BVTKCache.unmap_node(self)
 
     @show_custom_code
     def draw_buttons(self, context, layout):
@@ -259,7 +251,7 @@ class BVTK_Node:
         '''
         # Debug
         row = layout.row()
-        row.label(text="status: " + str(self.vtk_status))
+        row.label(text="node_id %d: %r" % (self.node_id, str(self.vtk_status)))
 
         # Get properties and show visible ones
         m_properties = self.m_properties()
@@ -276,8 +268,9 @@ class BVTK_Node:
         '''Set properties from node to VTK object based on property name.
         General implementation for VTK nodes.
         '''
-        if not self.vtk_obj:
-            raise Exception("No vtk_obj for" + self.bl_label)
+        vtk_obj = BVTKCache.get_vtk_obj(self.node_id)
+        if not vtk_obj:
+            raise Exception("No vtk_obj for " + self.bl_label)
 
         m_properties = self.m_properties()
         for x in [m_properties[i] for i in range(len(m_properties)) if self.b_properties[i]]:
@@ -288,14 +281,20 @@ class BVTK_Node:
             # SetXFileName(Y) only if attribute is a string
             if 'FileName' in x and isinstance(inputval, str):
                 value = os.path.realpath(bpy.path.abspath(inputval))
-                cmd = 'self.vtk_obj.Set' + x[2:] + '(value)'
+                cmd = 'vtk_obj.Set' + x[2:] + '(value)'
             # SetXToY()
             elif x.startswith('e_'):
-                cmd = 'self.vtk_obj.Set'+x[2:]+'To'+inputval+'()'
+                cmd = 'vtk_obj.Set'+x[2:]+'To'+inputval+'()'
             # SetX(self.Y)
             else:
-                cmd = 'self.vtk_obj.Set'+x[2:]+'(self.'+x+')'
+                cmd = 'vtk_obj.Set'+x[2:]+'(self.'+x+')'
             exec(cmd, globals(), locals())
+
+    def get_vtk_obj(self):
+        '''Return only the VTK object of this node.
+        '''
+        vtk_obj, dummy = self.get_vtk_obj_and_connection()
+        return vtk_obj
 
     def get_vtk_obj_and_connection(self, socketname='output'):
         '''Return VTK object and VTK output connection object for argument
@@ -308,7 +307,7 @@ class BVTK_Node:
             self.apply_properties()
             self.vtk_status = 'up-to-date'
 
-        vtk_obj = self.vtk_obj
+        vtk_obj = BVTKCache.get_vtk_obj(self.node_id)
         if not vtk_obj:
             raise Exception("No vtk_obj" + self.bl_label)
 
@@ -385,11 +384,6 @@ class BVTK_Node:
             socket_name = input.links[0].from_socket.name
             socket_names.append(socket_name)
         return nodes, socket_names
-
-    def get_vtkobj(self):
-        '''Accessor of nodes vtkobj from cache'''
-        raise Exception("shouldn't be called")
-        return BVTKCache.get_vtkobj(self)
 
     def reset_vtkobj(self):
         '''Resets node's vtkobj'''

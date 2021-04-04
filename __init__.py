@@ -157,9 +157,8 @@ l.info("VTK base path: " + vtk.__file__)
 
 @persistent
 def on_file_loaded(scene):
-    '''Initialize VTK objects after a Blender file open'''
-    # cache.BVTKCache.init()
-    core.BVTK_Node.init_vtk_for_existing_nodes()
+    '''Initialize cache and VTK objects after Blender file has been opened'''
+    cache.BVTKCache.init()
 
 @persistent
 def compareGeneratedAndCurrentVTKVersion():
