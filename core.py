@@ -298,14 +298,9 @@ class BVTK_Node:
 
     def get_vtk_obj_and_connection(self, socketname='output'):
         '''Return VTK object and VTK output connection object for argument
-        output socket name of this node. General implementation for VTK nodes.
+        output socket name of this node. Assumes VTK object is up-to-date.
+        General implementation for VTK nodes.
         '''
-        # Apply inputs and properties if needed. TODO: Extract to own function.
-        if self.vtk_status != 'up-to-date':
-            self.vtk_status = 'updating'
-            self.apply_inputs()
-            self.apply_properties()
-            self.vtk_status = 'up-to-date'
 
         vtk_obj = BVTKCache.get_vtk_obj(self.node_id)
         if not vtk_obj:
@@ -385,6 +380,11 @@ class BVTK_Node:
             socket_names.append(socket_name)
         return nodes, socket_names
 
+    def get_output_nodes(self):
+        '''Return list of all output nodes from this node.
+        '''
+        return self.outputs
+
     def reset_vtkobj(self):
         '''Resets node's vtkobj'''
         raise Exception("shouldn't be called")
@@ -425,6 +425,32 @@ class BVTK_Node:
         txt += "}\n"
         open(b_path,'w').write(txt)
 
+    def notify_downstream(self, origin_node=True):
+        '''Make status changes in downstream nodes, to advertise update made
+        in this node.
+        '''
+        # Recursively call for downstream nodes
+        for node in self.get_output_nodes():
+            node.notify_downstream(origin_node=False)
+        # Keep out-of-date status, otherwise upstream-changed
+        if self.status != 'out-of-date':
+            self.status = 'upstream-changed'
+        if origin_node:
+            self.status = 'out-of-date'
+
+    def update_vtk(self):
+        '''Recursively update upstream nodes and this node if not up-to-date.
+        '''
+        # Recursively call for upstream nodes
+        for node in self.get_input_nodes_and_socketnames():
+            node.update_vtk(self)
+        # Update this node's inputs and properties if needed. TODO: Extract to own function.
+        if self.vtk_status != 'up-to-date':
+            self.vtk_status = 'updating'
+            self.apply_inputs()
+            self.apply_properties()
+            self.notify_downstream()
+            self.vtk_status = 'up-to-date'
 
 
 # -----------------------------------------------------------------------------
