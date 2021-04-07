@@ -9,6 +9,7 @@ nodeMaxId:int = 1   # Maximum node id number. 0 means invalid
 nodesIdMap:dict = {}  # node_id -> node
 treeIdMap:dict = {}  # node_id -> node
 vtkCache:dict = {}  # node_id -> vtkobj
+last_update_id:dict = {} # node_id -> last update ID
 
 persistent_storage = {"nodes": {}}
 
@@ -38,12 +39,13 @@ class BVTKCache:
     def reload(cls):
         '''Resets the caches to be recreated from scratch
         '''
-        global nodeMaxId, nodesIdMap, vtkCache
+        global nodeMaxId, nodesIdMap, vtkCache, last_update_id
 
         nodeMaxId = 1
         nodesIdMap = {}
         treeIdMap = {}
         vtkCache = {}
+        last_update_id = {}
 
     @classmethod
     def check_cache(cls):
@@ -70,6 +72,17 @@ class BVTKCache:
                         cls.map_node(n, tree=nt)
                     if cls.get_vtkobj(n) == None:
                         cls.init_vtkobj(n)
+
+    @classmethod
+    def update_necessary(cls, node, update_id):
+        global last_update_id
+        node_id = node.node_id
+        return (not node_id in last_update_id or update_id != last_update_id[node_id])
+
+    @classmethod
+    def update_id(cls, node, update_iter):
+        global last_update_id
+        last_update_id[node.node_id] = update_iter
 
     @classmethod
     def init_vtkobj(cls, node):

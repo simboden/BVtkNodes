@@ -40,7 +40,7 @@ def SetInputObj(vtkobj, name, input_obj):
     exec(cmd, globals(), locals())
 
 
-def Update(node, cb, x=True):
+def Update(node, cb, update_id, x=True):
     '''Update the input functions of this node using the function queue.
     Sets color of node to reflect node run status. Finally updates this
     node and queues argument function cb() if argument x is True.
@@ -53,14 +53,14 @@ def Update(node, cb, x=True):
     execute_color = 0.85, 0.6, 0.2 # Execution color
 
     # Reset vtkobj before executing update stack
-    node.reset_vtkobj()
+    node.reset_vtkobj(update_id)
 
     vtkobj = node.get_vtkobj()
 
     # Call update for input nodes
     queue.add(SetColor, node, inputs_color)
     for input_node in node.input_nodes():
-        Update(input_node, None, False)
+        Update(input_node, None, update_id, False)
     queue.add(SetColor, node, execute_color)
 
     # Update VTK object

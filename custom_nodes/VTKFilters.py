@@ -172,11 +172,22 @@ class VTKAppendFilter(Node, BVTK_Node):
         for node, in_obj in self.get_input_nodes('input'):
             toadd.append(in_obj)
             if in_obj not in added:
-                vtkobj.AddInputConnection(in_obj)
+                if in_obj.IsA('vtkAlgorithmOutput'):
+                    vtkobj.AddInputConnection(in_obj)
+                else:
+                    vtkobj.AddInputData(in_obj)
 
         for obj in added:
             if obj not in toadd:
-                vtkobj.RemoveInputConnection(0, obj)
+                if in_obj.IsA('vtkAlgorithmOutput'):
+                    vtkobj.RemoveInputConnection(0, in_obj)
+                else:
+                    vtkobj.RemoveInputData(in_obj)
+
+    def get_output(self, socketname):
+        vtkobj = self.get_vtkobj()
+        if not vtkobj in [None, 0] and hasattr(vtkobj, 'GetOutput'):
+            return vtkobj.GetOutput()
 
 
 add_class(VTKAppendFilter)
