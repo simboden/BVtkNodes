@@ -1,0 +1,248 @@
+{
+"links": [
+{
+"from_node_name": "vtkConeSource",
+"from_socket_identifier": "output",
+"to_node_name": "vtkElevationFilter",
+"to_socket_identifier": "input"
+},
+{
+"from_node_name": "vtkElevationFilter",
+"from_socket_identifier": "output",
+"to_node_name": "Color Mapper",
+"to_socket_identifier": "input"
+},
+{
+"from_node_name": "Color Mapper",
+"from_socket_identifier": "output",
+"to_node_name": "VTK To Blender",
+"to_socket_identifier": "input"
+},
+{
+"from_node_name": "Color Ramp",
+"from_socket_identifier": "lookupTable",
+"to_node_name": "Color Mapper",
+"to_socket_identifier": "lookuptable"
+}
+],
+"nodes": [
+{
+"bl_idname": "BVTK_Node_VTKToBlenderType",
+"color": [
+0.5,
+0.5,
+0.5
+],
+"custom_code": "",
+"generate_material": true,
+"height": 100.0,
+"hide": false,
+"label": "",
+"location": [
+300.0,
+300.0
+],
+"m_Name": "mesh",
+"mute": false,
+"name": "VTK To Blender",
+"show_options": true,
+"show_preview": false,
+"smooth": false,
+"width": 200.0
+},
+{
+"bl_idname": "VTKConeSourceType",
+"color": [
+0.5,
+0.5,
+0.5
+],
+"custom_code": "",
+"height": 100.0,
+"hide": false,
+"label": "",
+"location": [
+-500.0,
+300.0
+],
+"m_Angle": 26.565052032470703,
+"m_Capping": true,
+"m_Center": [
+0.0,
+0.0,
+0.0
+],
+"m_Direction": [
+1.0,
+0.0,
+0.0
+],
+"m_Height": 1.0,
+"m_Radius": 0.5,
+"m_Resolution": 6,
+"mute": false,
+"name": "vtkConeSource",
+"show_options": true,
+"show_preview": false,
+"width": 200.0
+},
+{
+"bl_idname": "VTKElevationFilterType",
+"color": [
+0.5,
+0.5,
+0.5
+],
+"custom_code": "",
+"height": 100.0,
+"hide": false,
+"label": "",
+"location": [
+-250.0,
+300.0
+],
+"m_HighPoint": [
+0.0,
+0.0,
+1.0
+],
+"m_LowPoint": [
+0.0,
+0.0,
+-1.0
+],
+"m_ScalarRange": [
+0.0,
+1.0
+],
+"mute": false,
+"name": "vtkElevationFilter",
+"show_options": true,
+"show_preview": false,
+"width": 200.0
+},
+{
+"auto_range": true,
+"bl_idname": "BVTK_Node_ColorMapperType",
+"color": [
+0.5,
+0.5,
+0.5
+],
+"color_by": "E",
+"custom_code": "",
+"height": 5.5,
+"hide": false,
+"label": "",
+"location": [
+0.0,
+300.0
+],
+"lut": false,
+"max": 0.0,
+"min": 0.0,
+"mute": false,
+"name": "Color Mapper",
+"show_options": true,
+"show_preview": false,
+"texture_type": "IMAGE",
+"width": 200.0
+},
+{
+"additional_properties": {
+"elements": [
+[
+[
+0.03921568766236305,
+0.03921568766236305,
+0.7058823704719543,
+1.0
+],
+0.05000000074505806
+],
+[
+[
+0.5529412031173706,
+0.6901960968971252,
+0.9960784316062927,
+1.0
+],
+0.42500001192092896
+],
+[
+[
+0.8666666746139526,
+0.8666666746139526,
+0.8666666746139526,
+1.0
+],
+0.5
+],
+[
+[
+0.9529411792755127,
+0.5803921818733215,
+0.4588235318660736,
+1.0
+],
+0.574999988079071
+],
+[
+[
+0.7058823704719543,
+0.03921568766236305,
+0.0784313753247261,
+1.0
+],
+0.949999988079071
+]
+]
+},
+"bl_idname": "BVTK_Node_ColorRampType",
+"cm_nr_values": 8,
+"cm_preset": "custom",
+"color": [
+0.5,
+0.5,
+0.5
+],
+"custom_code": "",
+"height": 100.0,
+"hide": false,
+"label": "",
+"location": [
+-250.0,
+100.0
+],
+"mute": false,
+"name": "Color Ramp",
+"show_options": true,
+"show_preview": false,
+"width": 200.0
+},
+{
+"bl_idname": "BVTK_Node_UpdateAllType",
+"color": [
+0.5,
+0.5,
+0.5
+],
+"custom_code": "",
+"error_count": 0,
+"height": 100.0,
+"hide": false,
+"label": "",
+"location": [
+-102.10497283935547,
+495.8902587890625
+],
+"mute": false,
+"name": "Update All",
+"show_options": true,
+"show_preview": false,
+"update_all_converters": true,
+"update_all_writers": true,
+"width": 200.0
+}
+]
+}

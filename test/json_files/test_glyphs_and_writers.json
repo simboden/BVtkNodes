@@ -1,0 +1,417 @@
+{
+"links": [
+{
+"from_node_name": "vtkAssignAttribute",
+"from_socket_identifier": "output",
+"to_node_name": "vtkMaskPoints",
+"to_socket_identifier": "input"
+},
+{
+"from_node_name": "vtkArrowSource",
+"from_socket_identifier": "output",
+"to_node_name": "vtkGlyph3D",
+"to_socket_identifier": "input 1"
+},
+{
+"from_node_name": "vtkMaskPoints",
+"from_socket_identifier": "output",
+"to_node_name": "vtkGlyph3D",
+"to_socket_identifier": "input 0"
+},
+{
+"from_node_name": "Color Ramp",
+"from_socket_identifier": "lookupTable",
+"to_node_name": "Color Mapper",
+"to_socket_identifier": "lookuptable"
+},
+{
+"from_node_name": "Color Mapper",
+"from_socket_identifier": "output",
+"to_node_name": "VTK To Blender Mesh",
+"to_socket_identifier": "input"
+},
+{
+"from_node_name": "vtkGlyph3D",
+"from_socket_identifier": "output",
+"to_node_name": "Color Mapper",
+"to_socket_identifier": "input"
+},
+{
+"from_node_name": "vtkGlyph3D",
+"from_socket_identifier": "output",
+"to_node_name": "vtkPassSelectedArrays",
+"to_socket_identifier": "input"
+},
+{
+"from_node_name": "vtkPassSelectedArrays",
+"from_socket_identifier": "output",
+"to_node_name": "vtkXMLPolyDataWriter",
+"to_socket_identifier": "input"
+},
+{
+"from_node_name": "vtkStructuredGridReader",
+"from_socket_identifier": "output",
+"to_node_name": "vtkAssignAttribute",
+"to_socket_identifier": "input"
+}
+],
+"nodes": [
+{
+"bl_idname": "VTKAssignAttributeType",
+"color": [
+0.5,
+0.5,
+0.5
+],
+"custom_code": "Assign(\"vectors\", vtk.vtkDataSetAttributes.VECTORS, vtk.vtkAssignAttribute.POINT_DATA)",
+"height": 100.0,
+"hide": false,
+"label": "",
+"location": [
+-240.0,
+320.0
+],
+"mute": false,
+"name": "vtkAssignAttribute",
+"show_options": true,
+"show_preview": false,
+"width": 200.0
+},
+{
+"bl_idname": "VTKArrowSourceType",
+"color": [
+0.5,
+0.5,
+0.5
+],
+"custom_code": "",
+"height": 100.0,
+"hide": false,
+"label": "",
+"location": [
+-240.0,
+-20.0
+],
+"m_Invert": false,
+"m_ShaftRadius": 0.029999999329447746,
+"m_ShaftResolution": 4,
+"m_TipLength": 0.3499999940395355,
+"m_TipRadius": 0.10000000149011612,
+"m_TipResolution": 4,
+"mute": false,
+"name": "vtkArrowSource",
+"show_options": true,
+"show_preview": false,
+"width": 200.0
+},
+{
+"bl_idname": "VTKMaskPointsType",
+"color": [
+0.5,
+0.5,
+0.5
+],
+"custom_code": "",
+"height": 100.0,
+"hide": false,
+"label": "",
+"location": [
+0.0,
+320.0
+],
+"m_GenerateVertices": true,
+"m_MaximumNumberOfPoints": 1000000000,
+"m_Offset": 0,
+"m_OnRatio": 257,
+"m_ProportionalMaximumNumberOfPoints": true,
+"m_RandomMode": false,
+"m_RandomModeType": 0,
+"m_SingleVertexPerCell": true,
+"mute": false,
+"name": "vtkMaskPoints",
+"show_options": true,
+"show_preview": false,
+"width": 200.0
+},
+{
+"additional_properties": {
+"elements": [
+[
+[
+0.03921568766236305,
+0.03921568766236305,
+0.7058823704719543,
+1.0
+],
+0.05000000074505806
+],
+[
+[
+0.5529412031173706,
+0.6901960968971252,
+0.9960784316062927,
+1.0
+],
+0.42500001192092896
+],
+[
+[
+0.8666666746139526,
+0.8666666746139526,
+0.8666666746139526,
+1.0
+],
+0.5
+],
+[
+[
+0.9529411792755127,
+0.5803921818733215,
+0.4588235318660736,
+1.0
+],
+0.574999988079071
+],
+[
+[
+0.7058823704719543,
+0.03921568766236305,
+0.0784313753247261,
+1.0
+],
+0.949999988079071
+]
+]
+},
+"bl_idname": "BVTK_Node_ColorRampType",
+"cm_nr_values": 8,
+"cm_preset": "custom",
+"color": [
+0.5,
+0.5,
+0.5
+],
+"custom_code": "",
+"height": 100.0,
+"hide": false,
+"label": "",
+"location": [
+517.1136474609375,
+74.17079162597656
+],
+"mute": false,
+"name": "Color Ramp",
+"show_options": true,
+"show_preview": false,
+"width": 200.0
+},
+{
+"auto_range": true,
+"bl_idname": "BVTK_Node_ColorMapperType",
+"color": [
+0.5,
+0.5,
+0.5
+],
+"color_by": "E",
+"custom_code": "",
+"height": 5.5,
+"hide": false,
+"label": "",
+"location": [
+837.2816772460938,
+271.9111022949219
+],
+"lut": false,
+"max": 0.6381971836090088,
+"min": -3.8662168979644775,
+"mute": false,
+"name": "Color Mapper",
+"show_options": true,
+"show_preview": false,
+"texture_type": "IMAGE",
+"width": 200.0
+},
+{
+"bl_idname": "BVTK_Node_VTKToBlenderMeshType",
+"color": [
+0.5,
+0.5,
+0.5
+],
+"create_all_verts": false,
+"create_edges": true,
+"create_faces": true,
+"custom_code": "",
+"generate_material": false,
+"height": 100.0,
+"hide": false,
+"label": "",
+"location": [
+1103.4736328125,
+274.0221862792969
+],
+"m_Name": "glyphs",
+"mute": false,
+"name": "VTK To Blender Mesh",
+"recalc_norms": false,
+"show_options": true,
+"show_preview": false,
+"smooth": false,
+"width": 200.0
+},
+{
+"bl_idname": "BVTK_Node_UpdateAllType",
+"color": [
+0.5,
+0.5,
+0.5
+],
+"custom_code": "",
+"error_count": 0,
+"height": 100.0,
+"hide": false,
+"label": "",
+"location": [
+280.0,
+580.0
+],
+"mute": false,
+"name": "Update All",
+"show_options": true,
+"show_preview": false,
+"update_all_converters": true,
+"update_all_writers": true,
+"width": 200.0
+},
+{
+"bl_idname": "VTKGlyph3DType",
+"color": [
+0.5,
+0.5,
+0.5
+],
+"custom_code": "",
+"e_ColorMode": "ColorByScale",
+"e_IndexMode": "Off",
+"e_ScaleMode": "ScaleByVector",
+"e_VectorMode": "UseVector",
+"height": 100.0,
+"hide": false,
+"label": "",
+"location": [
+280.0,
+320.0
+],
+"m_Clamping": true,
+"m_FillCellData": true,
+"m_GeneratePointIds": true,
+"m_Orient": true,
+"m_PointIdsName": "InputPointIds",
+"m_Range": [
+0.0,
+1.0
+],
+"m_ScaleFactor": 2.5,
+"m_Scaling": true,
+"mute": false,
+"name": "vtkGlyph3D",
+"show_options": true,
+"show_preview": false,
+"width": 200.0
+},
+{
+"bl_idname": "VTKPassSelectedArraysType",
+"color": [
+0.5,
+0.5,
+0.5
+],
+"custom_code": "",
+"height": 100.0,
+"hide": false,
+"label": "",
+"location": [
+560.0,
+441.6208801269531
+],
+"m_Enabled": true,
+"mute": false,
+"name": "vtkPassSelectedArrays",
+"show_options": true,
+"show_preview": false,
+"width": 200.0
+},
+{
+"bl_idname": "VTKXMLPolyDataWriterType",
+"color": [
+0.5,
+0.5,
+0.5
+],
+"custom_code": "",
+"e_ByteOrder": "LittleEndian",
+"e_DataMode": "Ascii",
+"e_HeaderType": "UInt32",
+"e_IdType": "Int64",
+"height": 100.0,
+"hide": false,
+"label": "",
+"location": [
+1270.76904296875,
+760.0
+],
+"m_BlockSize": 32768,
+"m_CompressionLevel": 5,
+"m_EncodeAppendedData": true,
+"m_FileName": "//../output/test_glyphs_and_writers.vtp",
+"m_GhostLevel": 0,
+"m_NumberOfPieces": 1,
+"m_NumberOfTimeSteps": 1,
+"m_WritePiece": -1,
+"m_WriteToOutputString": false,
+"mute": false,
+"name": "vtkXMLPolyDataWriter",
+"show_options": true,
+"show_preview": false,
+"width": 200.0
+},
+{
+"bl_idname": "VTKStructuredGridReaderType",
+"color": [
+0.5,
+0.5,
+0.5
+],
+"custom_code": "",
+"height": 100.0,
+"hide": false,
+"label": "",
+"location": [
+-522.4086303710938,
+328.2127380371094
+],
+"m_FieldDataName": "",
+"m_FileName": "//../../examples_data/office.binary.vtk",
+"m_LookupTableName": "",
+"m_NormalsName": "",
+"m_ReadAllColorScalars": true,
+"m_ReadAllFields": true,
+"m_ReadAllNormals": true,
+"m_ReadAllScalars": true,
+"m_ReadAllTCoords": true,
+"m_ReadAllTensors": true,
+"m_ReadAllVectors": true,
+"m_ReadFromInputString": false,
+"m_ScalarsName": "",
+"m_TCoordsName": "",
+"m_TensorsName": "",
+"m_VectorsName": "",
+"mute": false,
+"name": "vtkStructuredGridReader",
+"show_options": true,
+"show_preview": false,
+"width": 200.0
+}
+]
+}
