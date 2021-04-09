@@ -197,9 +197,12 @@ class BVTK_Node:
         '''Accessor of nodes vtkobj from cache'''
         return BVTKCache.get_vtkobj(self)
 
-    def reset_vtkobj(self):
+    def reset_vtkobj(self, update_id):
         '''Resets node's vtkobj'''
-        return BVTKCache.init_vtkobj(self)
+        update_necessary = BVTKCache.update_necessary(self, update_id)
+        BVTKCache.update_id(self, update_id)
+        if update_necessary:
+            BVTKCache.init_vtkobj(self)
 
     @show_custom_code
     def draw_buttons(self, context, layout):
@@ -315,7 +318,7 @@ class BVTK_Node:
 # -----------------------------------------------------------------------------
 # VTK Node Write
 # -----------------------------------------------------------------------------
-
+update_id = 0
 class BVTK_OT_NodeWrite(bpy.types.Operator):
     '''Operator to call VTK Write() for a node'''
     bl_idname = "node.bvtk_node_write"
@@ -324,12 +327,14 @@ class BVTK_OT_NodeWrite(bpy.types.Operator):
     id: bpy.props.IntProperty()
 
     def execute(self, context):
+        global update_id
+        update_id += 1
         BVTKCache.check_cache()
-        node = get_node(self.id)  # TODO: change node_id to node_path?
+        node = BVTKCache.get_node(self.id)  # TODO: change node_id to node_path?
         if node:
             def cb():
                 node.get_vtkobj().Write()
-            Update(node, cb)
+            Update(node, cb, update_id)
 
         return {'FINISHED'}
 

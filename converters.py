@@ -1,5 +1,6 @@
 from .update import *
 from .core import l # Import logging
+from .core import update_id
 from .core import *
 from .cache import BVTKCache
 import bmesh
@@ -1683,12 +1684,14 @@ class BVTK_OT_NodeUpdate(bpy.types.Operator):
     use_queue: bpy.props.BoolProperty(default = True)
 
     def execute(self, context):
+        global update_id
+        update_id += 1
         BVTKCache.check_cache()
         node = eval(self.node_path)
         if node:
             if self.use_queue:
                 l.debug('Updating with queue from node: '+ node.name)
-                Update(node, node.update_cb)
+                Update(node, node.update_cb, update_id)
             else:
                 l.debug('Updating without queue from node: '+ node.name)
                 no_queue_update(node, node.update_cb)
