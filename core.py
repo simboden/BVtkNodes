@@ -118,6 +118,16 @@ def run_custom_code(func):
 
 # -----------------------------------------------------------------------------
 # base class for all BVTK_Nodes
+#
+# General implementation for VTK nodes below. Special nodes likely
+# need to provide own versions of following methods:
+# - m_properties() - names of node properties
+# - m_connections() - names of node connections
+# - draw_buttons() - node UI contents
+# - init_vtk() - creation and initialization of VTK object
+# - apply_inputs() - update input connections to VTK object
+# - apply_properties() - set properties from node to VTK object, and
+#                        update VTK object to provide updated output
 # -----------------------------------------------------------------------------
 
 class BVTK_Node:
@@ -214,7 +224,6 @@ class BVTK_Node:
         BVTKCache.map_node(self, vtk_obj) # Add VTK object to cache
         l.debug("Init done for node: %s, id %d" % (self.name, self.node_id))
 
-
 #    def reset_vtkobj(self, update_id):
 #        '''Resets node's vtkobj'''
 #        update_necessary = BVTKCache.update_necessary(self, update_id)
@@ -263,6 +272,10 @@ class BVTK_Node:
         if self.bl_idname.endswith('WriterType'):
             layout.operator('node.bvtk_node_write').id = self.node_id
 
+        # Update button
+        row = layout.row()
+        row.operator("node.bvtk_node_update").node_path = node_path(self)
+
     @run_custom_code
     def apply_properties(self):
         '''Set properties from node to VTK object based on property name.
@@ -297,14 +310,14 @@ class BVTK_Node:
         return vtk_obj
 
     def get_vtk_obj_and_connection(self, socketname='output'):
-        '''Return VTK object and VTK output connection object for argument
-        output socket name of this node. Assumes VTK object is up-to-date.
-        General implementation for VTK nodes.
+        '''Return existing cached VTK object and VTK output connection object
+        for argument output socket name of this node. Assumes VTK
+        object is up-to-date. General implementation for VTK nodes.
         '''
 
         vtk_obj = BVTKCache.get_vtk_obj(self.node_id)
         if not vtk_obj:
-            raise Exception("No vtk_obj" + self.bl_label)
+            return None, None
 
         # VTK Nodes are derived from vtkAlgorithm, which implements VTK connections
         if not isinstance(vtk_obj, vtk.vtkAlgorithm):
@@ -335,7 +348,6 @@ class BVTK_Node:
             if vtk_obj.IsA('vtkAlgorithmOutput'):
                 vtk_obj.SetInputConnection(i, vtk_connection)
             else:
-                # needed for custom filter, TODO: remove
                 vtk_obj.SetInputData(i, vtk_connection)
 
         # Extra connections (call method SetX(vtk_obj))
@@ -351,39 +363,51 @@ class BVTK_Node:
         '''Return input node, it's VTK object and the VTK output connection of
         the node which is connected to this node's argument input socket name.
         '''
-        input_node, socketname = self.get_input_node_and_socketname(input_socket_name)
-        vtk_obj, vtk_connection = input_node.get_vtk_output(socketname)
+        input_node, from_socket_name = self.get_input_node_and_socketname(input_socket_name)
+        if not input_node:
+            return None, None, None
+        vtk_obj, vtk_connection = input_node.get_vtk_obj_and_connection(from_socket_name)
         return input_node, vtk_obj, vtk_connection
 
     def get_input_node_and_socketname(self, input_socket_name='input'):
         '''Get one input node and it's output socket name using this nodes'
         input socket name.
         '''
-        nodes, socket_names = self.get_input_nodes_and_socketnames()
-        for node, socket_name in zip(nodes, socket_names):
-            if node.name == input_socket_name:
-                return node, socket_name
+        nodes, from_socket_names, to_socket_names = self.get_input_nodes_and_socketnames()
+        for node, from_socket_name, to_socket_name in zip(nodes, from_socket_names, to_socket_names):
+            if to_socket_name == input_socket_name:
+                return node, from_socket_name
         return None, None
 
+    def get_input_nodes(self):
+        '''Return list of all input nodes.
+        '''
+        nodes, dummy1, dummy2 = self.get_input_nodes_and_socketnames()
+        return nodes
+
     def get_input_nodes_and_socketnames(self):
-        '''Return list of all input nodes and each input node's output socket
-        names leading to this node.
+        '''Return list of all input nodes of this node, node socket names in
+        this node, and node socket names in input node.
         '''
         nodes = []
-        socket_names = []
+        from_socket_names = []
+        to_socket_names = []
         # Get all input nodes
-        for input in self.inputs:
-            nodes.append(input)
-            if len(input.links) != 1:
-                raise Exception("Number of inputs != 1" + self.bl_label)
-            socket_name = input.links[0].from_socket.name
-            socket_names.append(socket_name)
-        return nodes, socket_names
+        for socket in self.inputs:
+            for link in socket.links:
+                nodes.append(link.from_node)
+                from_socket_names.append(link.from_socket.name)
+                to_socket_names.append(link.to_socket.name)
+        return nodes, from_socket_names, to_socket_names
 
     def get_output_nodes(self):
         '''Return list of all output nodes from this node.
         '''
-        return self.outputs
+        output_nodes = []
+        for socket in self.outputs:
+            for link in socket.links:
+                output_nodes.append(link.to_node)
+        return output_nodes
 
     def reset_vtkobj(self):
         '''Resets node's vtkobj'''
@@ -433,20 +457,21 @@ class BVTK_Node:
         for node in self.get_output_nodes():
             node.notify_downstream(origin_node=False)
         # Keep out-of-date status, otherwise upstream-changed
-        if self.status != 'out-of-date':
-            self.status = 'upstream-changed'
+        if self.vtk_status != 'out-of-date':
+            self.vtk_status = 'upstream-changed'
         if origin_node:
-            self.status = 'out-of-date'
+            self.vtk_status = 'out-of-date'
 
     def update_vtk(self):
         '''Recursively update upstream nodes and this node if not up-to-date.
         '''
         # Recursively call for upstream nodes
-        for node in self.get_input_nodes_and_socketnames():
-            node.update_vtk(self)
-        # Update this node's inputs and properties if needed. TODO: Extract to own function.
+        for node in self.get_input_nodes():
+            node.update_vtk()
+        # Update this node's inputs and properties only if needed.
         if self.vtk_status != 'up-to-date':
             self.vtk_status = 'updating'
+            l.debug("Updating " + self.name)
             self.apply_inputs()
             self.apply_properties()
             self.notify_downstream()

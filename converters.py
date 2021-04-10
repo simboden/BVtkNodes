@@ -1679,23 +1679,27 @@ class BVTK_OT_NodeUpdate(bpy.types.Operator):
     '''Node Update Operator'''
     bl_idname = "node.bvtk_node_update"
     bl_label = "Update Node"
+    # TODO: Move to core.py
 
     node_path: bpy.props.StringProperty()
-    use_queue: bpy.props.BoolProperty(default = True)
+    #use_queue: bpy.props.BoolProperty(default = True)
 
     def execute(self, context):
-        global update_id
-        update_id += 1
-        BVTKCache.check_cache()
         node = eval(self.node_path)
-        if node:
-            if self.use_queue:
-                l.debug('Updating with queue from node: '+ node.name)
-                Update(node, node.update_cb, update_id)
-            else:
-                l.debug('Updating without queue from node: '+ node.name)
-                no_queue_update(node, node.update_cb)
-        self.use_queue = True
+        node.update_vtk()
+
+        # old implementation:
+        # BVTKCache.check_cache()
+        # node = eval(self.node_path)
+        # if node:
+        #     if self.use_queue:
+        #         l.debug('Updating with queue from node: '+ node.name)
+        #         Update(node, node.update_cb)
+        #     else:
+        #         l.debug('Updating without queue from node: '+ node.name)
+        #         no_queue_update(node, node.update_cb)
+        # self.use_queue = True
+
         return {'FINISHED'}
 
 

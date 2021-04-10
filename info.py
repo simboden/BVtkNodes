@@ -14,63 +14,58 @@ class BVTK_Node_Info(Node, BVTK_Node):
     def m_connections(self):
         return (['input'],[],[],['output'])
 
-    def update_cb(self):
-        l.debug('tree updated')
-
-    def update(self):
-        # Make info node wider to show all text
-        self.width = 300
-
     def draw_buttons(self, context, layout):
-        fs="{:.5g}" # Format string
-        in_node, vtkobj = self.get_input_node('input')
-        if not in_node:
-            layout.label(text='Connect a node')
-        elif not vtkobj:
-            layout.label(text='Input has no vtkobj (try updating)')
-        else:
-            vtkobj = resolve_algorithm_output(vtkobj)
-            if not vtkobj:
-                layout.label(text='Failed to resolve algorithm ouput (try updating)')
-            else:
-                layout.label(text='Type: ' + vtkobj.__class__.__name__)
-                if hasattr(vtkobj, 'GetNumberOfPoints'):
-                    layout.label(text='Points: ' + str(vtkobj.GetNumberOfPoints()))
-                if hasattr(vtkobj, 'GetNumberOfCells'):
-                    layout.label(text='Cells: ' + str(vtkobj.GetNumberOfCells()))
-                if hasattr(vtkobj, 'GetBounds'):
-                    layout.label(text='X range: ' + fs.format(vtkobj.GetBounds()[0]) + \
-                                ' - ' + fs.format(vtkobj.GetBounds()[1]))
-                    layout.label(text='Y range: ' + fs.format(vtkobj.GetBounds()[2]) + \
-                                ' - ' + fs.format(vtkobj.GetBounds()[3]))
-                    layout.label(text='Z range: ' + fs.format(vtkobj.GetBounds()[4]) + \
-                                ' - ' + fs.format(vtkobj.GetBounds()[5]))
-                data = {}
-                if hasattr(vtkobj, 'GetPointData'):
-                    data['Point data'] = vtkobj.GetPointData()
-                if hasattr(vtkobj, 'GetCellData'):
-                    data['Cell data'] = vtkobj.GetCellData()
-                if hasattr(vtkobj, 'GetFieldData'):
-                    data['Field data'] = vtkobj.GetFieldData()
-                for k in data:
-                    d = data[k]
-                    for i in range(d.GetNumberOfArrays()):
-                        arr = d.GetArray(i)
-                        data_type_name = arr.GetDataTypeAsString()
-                        n_comps = arr.GetNumberOfComponents()
-                        name = arr.GetName()
-                        
-                        if name is None or data_type_name is None or n_comps is None:
-                            l.warning("Invalid array encountered...")
-                            #continue
+        # Debug
+        row = layout.row()
+        row.label(text="node_id %d: %r" % (self.node_id, str(self.vtk_status)))
 
-                        range_text = ''
-                        for n in range(n_comps):
-                            r = arr.GetRange(n)
-                            range_text += '[' + fs.format(r[0]) +', ' + fs.format(r[1]) + ']  '
-                        row = layout.row()
-                        row.label(text = self.arr_string.format(k=k, i=i, data_type_name=data_type_name, 
-                            n_comps=n_comps, name=name, range_text=range_text))
+        fs="{:.5g}" # Format string
+        in_node, vtk_obj, vtk_connection = self.get_input_node_and_vtk_objects('input')
+        if not in_node:
+            layout.label(text='No node connected to input')
+        elif not vtk_obj:
+            layout.label(text='Input has no VTK object')
+        elif not vtk_connection:
+            layout.label(text='Input has no VTK connection')
+        else:
+            vtk_output_obj = resolve_algorithm_output(vtk_connection)
+            layout.label(text='Type: ' + vtk_output_obj.__class__.__name__)
+            if hasattr(vtk_output_obj, 'GetNumberOfPoints'):
+                layout.label(text='Points: ' + str(vtk_output_obj.GetNumberOfPoints()))
+            if hasattr(vtk_output_obj, 'GetNumberOfCells'):
+                layout.label(text='Cells: ' + str(vtk_output_obj.GetNumberOfCells()))
+            if hasattr(vtk_output_obj, 'GetBounds'):
+                layout.label(text='X range: ' + fs.format(vtk_output_obj.GetBounds()[0]) + \
+                             ' - ' + fs.format(vtk_output_obj.GetBounds()[1]))
+                layout.label(text='Y range: ' + fs.format(vtk_output_obj.GetBounds()[2]) + \
+                             ' - ' + fs.format(vtk_output_obj.GetBounds()[3]))
+                layout.label(text='Z range: ' + fs.format(vtk_output_obj.GetBounds()[4]) + \
+                             ' - ' + fs.format(vtk_output_obj.GetBounds()[5]))
+            data = {}
+            if hasattr(vtk_output_obj, 'GetPointData'):
+                data['Point data'] = vtk_output_obj.GetPointData()
+            if hasattr(vtk_output_obj, 'GetCellData'):
+                data['Cell data'] = vtk_output_obj.GetCellData()
+            if hasattr(vtk_output_obj, 'GetFieldData'):
+                data['Field data'] = vtk_output_obj.GetFieldData()
+            for k in data:
+                d = data[k]
+                for i in range(d.GetNumberOfArrays()):
+                    arr = d.GetArray(i)
+                    data_type_name = arr.GetDataTypeAsString()
+                    n_comps = arr.GetNumberOfComponents()
+                    name = arr.GetName()
+                        
+                    if name is None or data_type_name is None or n_comps is None:
+                        l.warning("Invalid array encountered...")
+
+                    range_text = ''
+                    for n in range(n_comps):
+                        r = arr.GetRange(n)
+                        range_text += '[' + fs.format(r[0]) +', ' + fs.format(r[1]) + ']  '
+                    row = layout.row()
+                    row.label(text = self.arr_string.format(k=k, i=i, data_type_name=data_type_name,
+                                                            n_comps=n_comps, name=name, range_text=range_text))
 
         layout.separator()
         row = layout.row()
@@ -78,17 +73,21 @@ class BVTK_Node_Info(Node, BVTK_Node):
         row.separator()
         row.separator()
         row.separator()
-        row.operator("node.bvtk_node_update", text="update").node_path = node_path(self)
+        row.operator("node.bvtk_node_update").node_path = node_path(self)
         row.separator()
         row.separator()
         row.separator()
         row.separator()
 
-    def apply_properties(self, vtkobj):
-        pass
+    def init_vtk(self):
+        return None
 
-    def get_output(self, socketname):
-        return self.get_input_node('input')[1]
+    def apply_inputs(self):
+        return None
+
+    def apply_properties(self):
+        # TODO
+        return None
 
 TYPENAMES = []
 add_class(BVTK_Node_Info)
