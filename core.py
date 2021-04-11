@@ -138,6 +138,11 @@ class BVTK_Node:
         description="Node ID Number for mapping VTK objects in BVTKcache",
         default=0,
     )
+    number_of_connected_inputs: bpy.props.IntProperty(
+        name="Number of Connected Inputs",
+        description="Number of connected inputs for triggering status change in update()",
+        default=0,
+    )
     vtk_status: bpy.props.EnumProperty(
         name="VTK Status",
         description="Status of BVTK node",
@@ -450,6 +455,19 @@ class BVTK_Node:
         property value is changed in UI.
         '''
         self.notify_downstream()
+
+    def update(self):
+        '''Update routine triggered on node UI topology changes (adding or
+        removing nodes and links).
+        '''
+        # Check if number of node input links has changed. If yes,
+        # then set VTK status to out-of-date and notify downstream.
+
+        n_links =[len(socket.links) for socket in self.inputs]
+        n_inputs = sum(n_links)
+        if self.number_of_connected_inputs != n_inputs:
+            self.number_of_connected_inputs = n_inputs
+            self.notify_downstream()
 
     def notify_downstream(self, origin_node=True):
         '''Make status changes in downstream nodes, to advertise update made

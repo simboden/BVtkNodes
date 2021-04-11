@@ -78,8 +78,11 @@ class BVTK_Node_Info(Node, BVTK_Node):
     def apply_inputs(self):
         # Assign upstream VTK object to this node's VTK object to provide output
         upstream_node, dummy = self.get_input_node_and_socketname()
-        upstream_vtk_obj = BVTKCache.get_vtk_obj(upstream_node.node_id)
-        BVTKCache.map_node(self, upstream_vtk_obj)
+        if not upstream_node:
+            BVTKCache.map_node(self, None)
+        else:
+            upstream_vtk_obj = BVTKCache.get_vtk_obj(upstream_node.node_id)
+            BVTKCache.map_node(self, upstream_vtk_obj)
 
     def apply_properties(self):
         return None
