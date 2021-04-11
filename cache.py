@@ -141,11 +141,11 @@ class BVTKCache:
                 continue
             for n in nodetree.nodes:
                 # Uninitialized node
-                if n.node_id == 0:
+                if n.node_id == 0 or BVTKCache.get_vtk_obj(n.node_id) == None:
                     vtk_obj = n.init_vtk()
                     cls.map_node(n, vtk_obj)
                 # Update nodeMaxId if needed
-                elif n.node_id > nodeMaxId:
+                if n.node_id > nodeMaxId:
                     nodeMaxId = n.node_id
 >>>>>>> WIP: Restore node_id, streamline cache, updates to node code
 
@@ -219,4 +219,4 @@ class BVTKCache:
         if node_id in vtkCache:
             return vtkCache[node_id]
         else:
-            raise Exception("not found node_id:" + str(node_id))
+            return None

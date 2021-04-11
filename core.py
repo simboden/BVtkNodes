@@ -138,10 +138,10 @@ class BVTK_Node:
         description="Node ID Number for mapping VTK objects in BVTKcache",
         default=0,
     )
-    number_of_connected_inputs: bpy.props.IntProperty(
-        name="Number of Connected Inputs",
-        description="Number of connected inputs for triggering status change in update()",
-        default=0,
+    connected_input_names: bpy.props.StringProperty(
+        name="Names of Connected Input Nodes",
+        description="Names of connected input nodes, used for triggering status change in update()",
+        default="",
     )
     vtk_status: bpy.props.EnumProperty(
         name="VTK Status",
@@ -227,7 +227,7 @@ class BVTK_Node:
 
         vtk_obj = self.init_vtk()
         BVTKCache.map_node(self, vtk_obj) # Add VTK object to cache
-        l.debug("Init done for node: %s, id %d" % (self.name, self.node_id))
+        l.debug("Init done for node: %s, id #%d" % (self.name, self.node_id))
 
 #    def reset_vtkobj(self, update_id):
 #        '''Resets node's vtkobj'''
@@ -242,16 +242,16 @@ class BVTK_Node:
         Special nodes need to implement their own initialization.
         '''
         vtk_class = getattr(vtk, self.bl_label, None)
-        l.debug("initializing " + self.bl_label)
+        l.debug("Initializing " + self.bl_label)
         if vtk_class is None:
             self.vtk_status = 'none'
             l.error("Bad VTK class name " + self.bl_label)
             return None
         vtk_obj = vtk_class()
         if not vtk_obj:
-            raise Exception("Could not create" + self.bl_label)
+            raise Exception("Could not create " + self.bl_label)
         self.vtk_status = 'uninitialized'
-        l.debug("Init VTK done for node: %s, id %d" % (self.name, self.node_id))
+        l.debug("Init VTK done for node: %s, id #%d" % (self.name, self.node_id))
         return vtk_obj
 
     def free(self):
@@ -288,7 +288,7 @@ class BVTK_Node:
         '''
         vtk_obj = BVTKCache.get_vtk_obj(self.node_id)
         if not vtk_obj:
-            raise Exception("No vtk_obj for " + self.bl_label)
+            raise Exception("No vtk_obj for " + self.name)
 
         m_properties = self.m_properties()
         for x in [m_properties[i] for i in range(len(m_properties)) if self.b_properties[i]]:
@@ -416,14 +416,15 @@ class BVTK_Node:
         return BVTKCache.init_vtkobj(self)
 
     def copy(self, node):
-        '''Copies setup from another node'''
-        raise Exception("TODO")
-        self.node_id = 0
-        BVTKCache.check_cache()
+        '''Copy setup from another node'''
+        self.node_id = 0 # Force node_id update in map_node()
+        vtk_obj = self.init_vtk()
+        BVTKCache.map_node(self, vtk_obj) # Add VTK object to cache
         if hasattr(self, 'copy_setup'):
             # some nodes need to set properties (such as color ramp elements)
             # after being copied
             self.copy_setup(node)
+        l.debug("Copy done for node: %s, id #%d" % (self.name, self.node_id))
 
     def get_b(self):
         '''Get list of booleans to show/hide boolean properties'''
@@ -460,13 +461,13 @@ class BVTK_Node:
         '''Update routine triggered on node UI topology changes (adding or
         removing nodes and links).
         '''
-        # Check if number of node input links has changed. If yes,
+        # Check if connected input node names have changed. If yes,
         # then set VTK status to out-of-date and notify downstream.
 
-        n_links =[len(socket.links) for socket in self.inputs]
-        n_inputs = sum(n_links)
-        if self.number_of_connected_inputs != n_inputs:
-            self.number_of_connected_inputs = n_inputs
+        namelist = [[link.from_node.name for link in socket.links] for socket in self.inputs]
+        names = str(namelist)
+        if self.connected_input_names != names:
+            self.connected_input_names = names
             self.notify_downstream()
 
     def notify_downstream(self, origin_node=True):
