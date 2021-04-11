@@ -196,13 +196,13 @@ class VTKConeSource(Node, BVTK_Node):
     bl_idname = 'VTKConeSourceType'
     bl_label  = 'vtkConeSource'
     
-    m_Capping   : bpy.props.BoolProperty       ( name='Capping',    default=True )
-    m_Resolution: bpy.props.IntProperty        ( name='Resolution', default=6 )
-    m_Angle     : bpy.props.FloatProperty      ( name='Angle',      default=26.56505117707799 )
-    m_Height    : bpy.props.FloatProperty      ( name='Height',     default=1.0 )
-    m_Radius    : bpy.props.FloatProperty      ( name='Radius',     default=0.5 )
-    m_Center    : bpy.props.FloatVectorProperty( name='Center',     default=[0.0, 0.0, 0.0], size=3 )
-    m_Direction : bpy.props.FloatVectorProperty( name='Direction',  default=[1.0, 0.0, 0.0], size=3 )
+    m_Capping   : bpy.props.BoolProperty       ( name='Capping',    default=True, update=BVTK_Node.outdate_vtk_status )
+    m_Resolution: bpy.props.IntProperty        ( name='Resolution', default=6, update=BVTK_Node.outdate_vtk_status )
+    m_Angle     : bpy.props.FloatProperty      ( name='Angle',      default=26.56505117707799, update=BVTK_Node.outdate_vtk_status )
+    m_Height    : bpy.props.FloatProperty      ( name='Height',     default=1.0, update=BVTK_Node.outdate_vtk_status )
+    m_Radius    : bpy.props.FloatProperty      ( name='Radius',     default=0.5, update=BVTK_Node.outdate_vtk_status )
+    m_Center    : bpy.props.FloatVectorProperty( name='Center',     default=[0.0, 0.0, 0.0], size=3, update=BVTK_Node.outdate_vtk_status )
+    m_Direction : bpy.props.FloatVectorProperty( name='Direction',  default=[1.0, 0.0, 0.0], size=3, update=BVTK_Node.outdate_vtk_status )
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 

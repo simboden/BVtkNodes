@@ -260,7 +260,7 @@ class BVTK_Node:
         '''
         # Debug
         row = layout.row()
-        row.label(text="node_id %d: %r" % (self.node_id, str(self.vtk_status)))
+        row.label(text="node_id #%d: %r" % (self.node_id, str(self.vtk_status)))
 
         # Get properties and show visible ones
         m_properties = self.m_properties()
@@ -321,17 +321,13 @@ class BVTK_Node:
 
         # VTK Nodes are derived from vtkAlgorithm, which implements VTK connections
         if not isinstance(vtk_obj, vtk.vtkAlgorithm):
-            raise Exception("not instance of vtkAlgorithm:" + self.bl_label)
-
-        # Verify number of input connections match VTK input connection count
-        if not len(self.get_input_socket_names()) == vtk_obj.GetTotalNumberOfInputConnections():
-            raise Exception("input connections don't match:" + self.bl_label)
+            raise Exception("not instance of vtkAlgorithm for #" + str(self.node_id))
 
         if socketname == 'output' or socketname == 'output 0':
             return vtk_obj, vtk_obj.GetOutputPort()
         elif socketname == 'output 1':
             return vtk_obj, vtk_obj.GetOutputPort(1)
-        raise Exception("Not implemented connection:" + socketname)
+        raise Exception("Not implemented connection for #" + str(self.node_id) + ": " + socketname)
 
     def apply_inputs(self):
         '''Set/update node input connections to this node's VTK object.
@@ -448,6 +444,12 @@ class BVTK_Node:
             txt += " '" + key + "': " + str(value) + ",\n"
         txt += "}\n"
         open(b_path,'w').write(txt)
+
+    def outdate_vtk_status(self, context):
+        '''Set node VTK status to out-of-date and notify downstream when a
+        property value is changed in UI.
+        '''
+        self.notify_downstream()
 
     def notify_downstream(self, origin_node=True):
         '''Make status changes in downstream nodes, to advertise update made

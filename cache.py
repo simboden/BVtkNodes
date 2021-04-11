@@ -155,13 +155,21 @@ class BVTKCache:
         '''
         global nodeMaxId, nodeIdMap, treeIdMap, vtkCache
 
-        nodeMaxId += 1
-        node.node_id = nodeMaxId
+        # node_id value 0 indicates a new node, for which a new number
+        # is to be assigned. For existing nodes use old node_id number.
+        if node.node_id == 0:
+            nodeMaxId += 1
+            node.node_id = nodeMaxId
+
         vtkCache[node.node_id] = vtk_obj
         nodeIdMap[node.node_id] = node
         tree = node.id_data
         treeIdMap[node.node_id] = tree
-        l.debug("Mapped node: %s, id %d" % (node.name, node.node_id))
+
+        if node.node_id == nodeMaxId:
+            l.debug("Mapped new node: %s, id %d" % (node.name, node.node_id))
+        else:
+            l.debug("Remapped old node: %s, id %d" % (node.name, node.node_id))
 
     @classmethod
     def unmap_node(cls, node):

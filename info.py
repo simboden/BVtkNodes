@@ -1,5 +1,6 @@
 from .core import l # Import logging
 from .core import *
+from .cache import BVTKCache
 
 class BVTK_Node_Info(Node, BVTK_Node):
     '''BVTK Info Node'''
@@ -17,7 +18,7 @@ class BVTK_Node_Info(Node, BVTK_Node):
     def draw_buttons(self, context, layout):
         # Debug
         row = layout.row()
-        row.label(text="node_id %d: %r" % (self.node_id, str(self.vtk_status)))
+        row.label(text="node_id #%d: %r" % (self.node_id, str(self.vtk_status)))
 
         fs="{:.5g}" # Format string
         in_node, vtk_obj, vtk_connection = self.get_input_node_and_vtk_objects('input')
@@ -69,24 +70,18 @@ class BVTK_Node_Info(Node, BVTK_Node):
 
         layout.separator()
         row = layout.row()
-        row.separator()
-        row.separator()
-        row.separator()
-        row.separator()
         row.operator("node.bvtk_node_update").node_path = node_path(self)
-        row.separator()
-        row.separator()
-        row.separator()
-        row.separator()
 
     def init_vtk(self):
         return None
 
     def apply_inputs(self):
-        return None
+        # Assign upstream VTK object to this node's VTK object to provide output
+        upstream_node, dummy = self.get_input_node_and_socketname()
+        upstream_vtk_obj = BVTKCache.get_vtk_obj(upstream_node.node_id)
+        BVTKCache.map_node(self, upstream_vtk_obj)
 
     def apply_properties(self):
-        # TODO
         return None
 
 TYPENAMES = []
