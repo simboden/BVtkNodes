@@ -22,7 +22,9 @@ class BVTK_Node_Info(Node, BVTK_Node):
 
         fs="{:.5g}" # Format string
         in_node, vtk_obj, vtk_connection = self.get_input_node_and_vtk_objects('input')
-        if not in_node:
+        if self.vtk_status != 'up-to-date':
+            layout.label(text='Not updated')
+        elif not in_node:
             layout.label(text='No node connected to input')
         elif not vtk_obj:
             layout.label(text='Input has no VTK object')
@@ -73,7 +75,7 @@ class BVTK_Node_Info(Node, BVTK_Node):
         row.operator("node.bvtk_node_update").node_path = node_path(self)
 
     def init_vtk(self):
-        return None
+        self.vtk_status = 'out-of-date'
 
     def apply_inputs(self):
         # Assign upstream VTK object to this node's VTK object to provide output
