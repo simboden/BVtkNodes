@@ -13,19 +13,21 @@ class BVTK_Node_Info(Node, BVTK_Node):
         return []
 
     def m_connections(self):
-        return (['input'],[],[],['output'])
+        return (['input'],['output'],[],[])
 
     def draw_buttons(self, context, layout):
         # Debug
         row = layout.row()
         row.label(text="node_id #%d: %r" % (self.node_id, str(self.vtk_status)))
 
+        # TODO: Modify to show information from own VTK object, not upstream
+
         fs="{:.5g}" # Format string
         in_node, vtk_obj, vtk_connection = self.get_input_node_and_vtk_objects('input')
-        if self.vtk_status != 'up-to-date':
-            layout.label(text='Not updated')
-        elif not in_node:
+        if not in_node:
             layout.label(text='No node connected to input')
+        elif self.vtk_status != 'up-to-date':
+            layout.label(text='Not updated')
         elif not vtk_obj:
             layout.label(text='Input has no VTK object')
         elif not vtk_connection:
@@ -76,18 +78,8 @@ class BVTK_Node_Info(Node, BVTK_Node):
 
     def init_vtk(self):
         self.vtk_status = 'out-of-date'
-
-    def apply_inputs(self):
-        # Assign upstream VTK object to this node's VTK object to provide output
-        upstream_node, dummy = self.get_input_node_and_socketname()
-        if not upstream_node:
-            BVTKCache.map_node(self, None)
-        else:
-            upstream_vtk_obj = BVTKCache.get_vtk_obj(upstream_node.node_id)
-            BVTKCache.map_node(self, upstream_vtk_obj)
-
-    def apply_properties(self):
-        return None
+        vtk_obj = vtk.vtkPassThroughFilter() # Pass through all input to output
+        return vtk_obj
 
 TYPENAMES = []
 add_class(BVTK_Node_Info)

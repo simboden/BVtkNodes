@@ -151,7 +151,7 @@ class BVTK_Node:
             ('none', 'none', 'none', 0),
 
             # VTK object exists but no values / commands for it has been run yet
-            ('uninitialized', 'uninitialized', 'uninitialized', 1),
+            ('initialized', 'initialized', 'initialized', 1),
 
             # setting a value/running a command has failed, execution has been stopped
             ('error', 'error', 'error', 2),
@@ -242,20 +242,17 @@ class BVTK_Node:
         Special nodes need to implement their own initialization.
         '''
         vtk_class = getattr(vtk, self.bl_label, None)
-        l.debug("Initializing " + self.bl_label)
         if vtk_class is None:
-            self.vtk_status = 'none'
-            l.error("Bad VTK class name " + self.bl_label)
-            return None
+            raise Exception("Bad VTK class name " + self.bl_label)
         vtk_obj = vtk_class()
         if not vtk_obj:
             raise Exception("Could not create " + self.bl_label)
-        self.vtk_status = 'uninitialized'
+        self.vtk_status = 'initialized'
         l.debug("Init VTK done for node: %s, id #%d" % (self.name, self.node_id))
         return vtk_obj
 
     def free(self):
-        '''Clean up node information upon removal.
+        '''Clean up node information upon node removal.
         '''
         BVTKCache.unmap_node(self)
 
@@ -284,6 +281,7 @@ class BVTK_Node:
     @run_custom_code
     def apply_properties(self):
         '''Set properties from node to VTK object based on property name.
+        Return appropriate vtk_status according to success of updates.
         General implementation for VTK nodes.
         '''
         vtk_obj = BVTKCache.get_vtk_obj(self.node_id)
@@ -306,7 +304,15 @@ class BVTK_Node:
             # SetX(self.Y)
             else:
                 cmd = 'vtk_obj.Set'+x[2:]+'(self.'+x+')'
-            exec(cmd, globals(), locals())
+
+            # Run the command and stop if error occurs
+            try:
+                exec(cmd, globals(), locals())
+            except:
+                return 'error'
+
+        # Everything was set successfully
+        return 'up-to-date'
 
     def get_vtk_obj(self):
         '''Return only the VTK object of this node.
@@ -340,21 +346,33 @@ class BVTK_Node:
         General implementation for VTK nodes.
         '''
         inputs, dummy1, extra_inputs, dummy2 = self.m_connections()
+        vtk_obj = BVTKCache.get_vtk_obj(self.node_id)
+        if not vtk_obj:
+            return None
 
         # Regular vtkAlgorithms
         for i, socketname in enumerate(inputs):
-            input_node, vtk_obj, vtk_connection = self.get_input_node_and_vtk_objects(socketname)
+            input_node, input_vtk_obj, vtk_connection = self.get_input_node_and_vtk_objects(socketname)
+            if not input_node:
+               vtk_obj.RemoveInputConnection(i, i)
+               continue
             if not vtk_connection:
                 raise Exception("Failed to get output connection from" + socketname)
-            if vtk_obj.IsA('vtkAlgorithmOutput'):
+            # Normal algorithms provide normal output
+            if vtk_connection.IsA('vtkAlgorithmOutput'):
                 vtk_obj.SetInputConnection(i, vtk_connection)
+            # Special algorithms can use SetInputData
+            elif input_vtk_obj.IsA('vtkDataObject'):
+                vtk_obj.SetInputData(i, input_vtk_obj)
             else:
-                vtk_obj.SetInputData(i, vtk_connection)
+                raise Exception("Not implemented input type for #" + str(self.node_id) + ": " + str(type(vtk_obj)))
 
         # Extra connections (call method SetX(vtk_obj))
         for socketname in extra_inputs:
             raise Exception("WIP TODO extra_input:" + socketname)
             input_node, vtk_obj, dummy = self.get_input_node_and_vtk_objects(socketname)
+            if not input_node:
+                continue
             if not vtk_obj:
                 raise Exception("Failed to get output from" + socketname)
             cmd = 'vtk_obj.Set' + socketname + '( vtk_obj )'
@@ -410,13 +428,9 @@ class BVTK_Node:
                 output_nodes.append(link.to_node)
         return output_nodes
 
-    def reset_vtkobj(self):
-        '''Resets node's vtkobj'''
-        raise Exception("shouldn't be called")
-        return BVTKCache.init_vtkobj(self)
-
     def copy(self, node):
-        '''Copy setup from another node'''
+        '''Copy setup from another node.
+        '''
         self.node_id = 0 # Force node_id update in map_node()
         vtk_obj = self.init_vtk()
         BVTKCache.map_node(self, vtk_obj) # Add VTK object to cache
@@ -427,7 +441,8 @@ class BVTK_Node:
         l.debug("Copy done for node: %s, id #%d" % (self.name, self.node_id))
 
     def get_b(self):
-        '''Get list of booleans to show/hide boolean properties'''
+        '''Get list of booleans to show/hide boolean properties.
+        '''
         n_properties = len(self.b_properties)
         # If there are correct number of saved properties, return those
         if self.bl_idname in b_properties.b:
@@ -438,7 +453,8 @@ class BVTK_Node:
         return [True] * n_properties
 
     def set_b(self, value):
-        '''Set boolean property list and update boolean properties file'''
+        '''Set boolean property list and update boolean properties file.
+        '''
         b_properties.b[self.bl_idname] = [v for v in value]
         bpy.ops.node.select_all(action='SELECT')
         bpy.ops.node.select_all(action='DESELECT')
@@ -455,7 +471,7 @@ class BVTK_Node:
         '''Set node VTK status to out-of-date and notify downstream when a
         property value is changed in UI.
         '''
-        self.notify_downstream()
+        self.notify_downstream(vtk_status='out-of-date')
 
     def update(self):
         '''Update routine triggered on node UI topology changes (adding or
@@ -468,20 +484,21 @@ class BVTK_Node:
         names = str(namelist)
         if self.connected_input_names != names:
             self.connected_input_names = names
-            self.notify_downstream()
+            self.apply_inputs()
+            self.notify_downstream(vtk_status='out-of-date')
 
-    def notify_downstream(self, origin_node=True):
+    def notify_downstream(self, vtk_status='out-of-date', origin_node=True):
         '''Make status changes in downstream nodes, to advertise update made
         in this node.
         '''
         # Recursively call for downstream nodes
         for node in self.get_output_nodes():
-            node.notify_downstream(origin_node=False)
-        # Keep out-of-date status, otherwise upstream-changed
+            node.notify_downstream(vtk_status='out-of-date', origin_node=False)
+        # For downstream nodes, out-of-date supercedes upstream-changed
         if self.vtk_status != 'out-of-date':
             self.vtk_status = 'upstream-changed'
         if origin_node:
-            self.vtk_status = 'out-of-date'
+            self.vtk_status = vtk_status
 
     def update_vtk(self):
         '''Recursively update upstream nodes and this node if not up-to-date.
@@ -489,14 +506,12 @@ class BVTK_Node:
         # Recursively call for upstream nodes
         for node in self.get_input_nodes():
             node.update_vtk()
-        # Update this node's inputs and properties only if needed.
+        # Update this node's properties to VTK object only if needed
         if self.vtk_status != 'up-to-date':
             self.vtk_status = 'updating'
             l.debug("Updating " + self.name)
-            self.apply_inputs()
-            self.apply_properties()
-            self.notify_downstream()
-            self.vtk_status = 'up-to-date'
+            new_status = self.apply_properties()
+            self.notify_downstream(vtk_status=new_status)
 
 
 # -----------------------------------------------------------------------------
