@@ -513,7 +513,15 @@ class BVTK_Node:
         '''Set node VTK status to out-of-date and notify downstream when a
         property value is changed in UI.
         '''
-        self.notify_downstream(vtk_status='out-of-date')
+        update_mode = bpy.context.scene.bvtknodes_settings.update_mode
+        if update_mode == 'update-current':
+            self.vtk_status = 'out-of-date'
+            self.update_vtk()
+        else:
+            self.notify_downstream(vtk_status='out-of-date')
+        if update_mode == 'update-all':
+            BVTKCache.update_all()
+
 
     def update(self):
         '''Update routine triggered on node UI topology changes (adding or
@@ -522,12 +530,19 @@ class BVTK_Node:
         # Check if connected input node names have changed. If yes,
         # then set VTK status to out-of-date and notify downstream.
 
+        update_mode = bpy.context.scene.bvtknodes_settings.update_mode
         namelist = [[link.from_node.name for link in socket.links] for socket in self.inputs]
         names = str(namelist)
         if self.connected_input_names != names:
             self.connected_input_names = names
             self.apply_inputs()
-            self.notify_downstream(vtk_status='out-of-date')
+            if update_mode == 'update-current':
+                self.vtk_status = 'out-of-date'
+                self.update_vtk()
+            else:
+                self.notify_downstream(vtk_status='out-of-date')
+            if update_mode == 'update-all':
+                BVTKCache.update_all()
 
     def notify_downstream(self, vtk_status='out-of-date', origin_node=True):
         '''Make status changes in downstream nodes, to advertise update made

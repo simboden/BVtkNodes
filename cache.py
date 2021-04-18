@@ -145,6 +145,17 @@ class BVTKCache:
                 node.update()
 
     @classmethod
+    def update_all(cls):
+        '''Go through all nodes and update those that are not up-to-date.
+        '''
+        for nodetree in bpy.data.node_groups:
+            if nodetree.bl_idname != 'BVTK_NodeTreeType':
+                continue
+            for node in nodetree.nodes:
+                if node.vtk_status != 'up-to-date':
+                    node.update_vtk()
+
+    @classmethod
     def map_node(cls, node, vtk_obj=None):
         '''Assign node ID to node and add VTK object and mappings to cache.
         '''

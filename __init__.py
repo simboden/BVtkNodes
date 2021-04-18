@@ -163,7 +163,7 @@ class BVTKNodes_Settings(bpy.types.PropertyGroup):
             ('no-automatic-updates', 'No Automatic Updates', 'Nothing is automatically updated after node changes', 0),
             ('update-current', 'Update Current Automatically', 'Update only the changed node automatically', 1),
             ('update-all', 'Update All Automatically', 'Update changes to all nodes automatically', 2)},
-        default='no-automatic-updates',
+        default='update-current',
     )
 
 @persistent
