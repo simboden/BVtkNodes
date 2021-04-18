@@ -7,74 +7,73 @@ class BVTK_Node_Info(Node, BVTK_Node):
     bl_idname = 'BVTK_Node_InfoType'
     bl_label  = 'Info'
 
-    arr_string = '{k} [{i}] ({data_type_name}{n_comps}): \'{name}\': {range_text}'
-
     def m_properties(self):
         return []
 
     def m_connections(self):
         return (['input'],['output'],[],[])
 
-    def draw_buttons(self, context, layout):
-        # Debug
-        row = layout.row()
-        row.label(text="node_id #%d: %r" % (self.node_id, str(self.vtk_status)))
+    def apply_properties_post(self):
+        '''Update Info Text to UI Message
+        '''
+        text = ""
+        fs1 = "{:.5g}"
+        fs2 = '{k} [{i}] ({data_type_name}{n_comps}): \'{name}\': {range_text}'
 
-        # TODO: Modify to show information from own VTK object, not upstream
+        vtk_obj, vtk_connection = self.get_vtk_obj_and_connection()
 
-        fs="{:.5g}" # Format string
-        in_node, vtk_obj, vtk_connection = self.get_input_node_and_vtk_objects('input')
-        if not in_node:
-            layout.label(text='No node connected to input')
-        elif self.vtk_status != 'up-to-date':
-            layout.label(text='Not updated')
-        elif not vtk_obj:
-            layout.label(text='Input has no VTK object')
-        elif not vtk_connection:
-            layout.label(text='Input has no VTK connection')
-        else:
-            vtk_output_obj = resolve_algorithm_output(vtk_connection)
-            layout.label(text='Type: ' + vtk_output_obj.__class__.__name__)
-            if hasattr(vtk_output_obj, 'GetNumberOfPoints'):
-                layout.label(text='Points: ' + str(vtk_output_obj.GetNumberOfPoints()))
-            if hasattr(vtk_output_obj, 'GetNumberOfCells'):
-                layout.label(text='Cells: ' + str(vtk_output_obj.GetNumberOfCells()))
-            if hasattr(vtk_output_obj, 'GetBounds'):
-                layout.label(text='X range: ' + fs.format(vtk_output_obj.GetBounds()[0]) + \
-                             ' - ' + fs.format(vtk_output_obj.GetBounds()[1]))
-                layout.label(text='Y range: ' + fs.format(vtk_output_obj.GetBounds()[2]) + \
-                             ' - ' + fs.format(vtk_output_obj.GetBounds()[3]))
-                layout.label(text='Z range: ' + fs.format(vtk_output_obj.GetBounds()[4]) + \
-                             ' - ' + fs.format(vtk_output_obj.GetBounds()[5]))
-            data = {}
-            if hasattr(vtk_output_obj, 'GetPointData'):
-                data['Point data'] = vtk_output_obj.GetPointData()
-            if hasattr(vtk_output_obj, 'GetCellData'):
-                data['Cell data'] = vtk_output_obj.GetCellData()
-            if hasattr(vtk_output_obj, 'GetFieldData'):
-                data['Field data'] = vtk_output_obj.GetFieldData()
-            for k in data:
-                d = data[k]
-                for i in range(d.GetNumberOfArrays()):
-                    arr = d.GetArray(i)
-                    data_type_name = arr.GetDataTypeAsString()
-                    n_comps = arr.GetNumberOfComponents()
-                    name = arr.GetName()
-                        
-                    if name is None or data_type_name is None or n_comps is None:
-                        l.warning("Invalid array encountered...")
+        if not vtk_obj:
+            self.ui_message = 'Input has no VTK object'
+            return 'error'
+        if not vtk_connection:
+            self.ui_message = 'Input has no VTK connection'
+            return 'error'
+        num_missing_connections = len(self.get_input_socket_names()) - vtk_obj.GetTotalNumberOfInputConnections()
+        if num_missing_connections > 0 :
+            self.ui_message = "Missing %d input connection(s)" % num_missing_connections
+            return 'error'
 
-                    range_text = ''
-                    for n in range(n_comps):
-                        r = arr.GetRange(n)
-                        range_text += '[' + fs.format(r[0]) +', ' + fs.format(r[1]) + ']  '
-                    row = layout.row()
-                    row.label(text = self.arr_string.format(k=k, i=i, data_type_name=data_type_name,
-                                                            n_comps=n_comps, name=name, range_text=range_text))
+        vtk_output_obj = resolve_algorithm_output(vtk_connection)
 
-        layout.separator()
-        row = layout.row()
-        row.operator("node.bvtk_node_update").node_path = node_path(self)
+        text += 'Type: ' + vtk_output_obj.__class__.__name__ + '\n'
+        if hasattr(vtk_output_obj, 'GetNumberOfPoints'):
+            text += 'Points: ' + str(vtk_output_obj.GetNumberOfPoints()) + '\n'
+        if hasattr(vtk_output_obj, 'GetNumberOfCells'):
+            text += 'Cells: ' + str(vtk_output_obj.GetNumberOfCells()) + '\n'
+        if hasattr(vtk_output_obj, 'GetBounds'):
+            text += 'X range: ' + fs1.format(vtk_output_obj.GetBounds()[0]) + \
+                ' - ' + fs1.format(vtk_output_obj.GetBounds()[1]) + '\n'
+            text += 'Y range: ' + fs1.format(vtk_output_obj.GetBounds()[2]) + \
+                ' - ' + fs1.format(vtk_output_obj.GetBounds()[3]) + '\n'
+            text += 'Z range: ' + fs1.format(vtk_output_obj.GetBounds()[4]) + \
+                ' - ' + fs1.format(vtk_output_obj.GetBounds()[5]) + '\n'
+        data = {}
+        if hasattr(vtk_output_obj, 'GetPointData'):
+            data['Point data'] = vtk_output_obj.GetPointData()
+        if hasattr(vtk_output_obj, 'GetCellData'):
+            data['Cell data'] = vtk_output_obj.GetCellData()
+        if hasattr(vtk_output_obj, 'GetFieldData'):
+            data['Field data'] = vtk_output_obj.GetFieldData()
+        for k in data:
+            d = data[k]
+            for i in range(d.GetNumberOfArrays()):
+                arr = d.GetArray(i)
+                data_type_name = arr.GetDataTypeAsString()
+                n_comps = arr.GetNumberOfComponents()
+                name = arr.GetName()
+
+                if name is None or data_type_name is None or n_comps is None:
+                    text += 'Warning: Invalid array encountered, number ' + str(i) + '\n'
+
+                range_text = ''
+                for n in range(n_comps):
+                    r = arr.GetRange(n)
+                    range_text += '[' + fs.format(r[0]) +', ' + fs.format(r[1]) + ']  '
+                    text += fs2.format(k=k, i=i, data_type_name=data_type_name,
+                                       n_comps=n_comps, name=name, range_text=range_text)
+                    text += '\n'
+        self.ui_message = text
+        return 'up-to-date'
 
     def init_vtk(self):
         self.vtk_status = 'out-of-date'

@@ -44,20 +44,12 @@ class BVTKCache:
         '''Rebuild Node cache and recreate VTK objects from current node
         trees.
         '''
-<<<<<<< HEAD
-        global nodeMaxId, nodesIdMap, vtkCache, last_update_id
-
-        nodeMaxId = 1
-        nodesIdMap = {}
-=======
         # Zero the map dictionaries
         global nodeMaxId, nodeIdMap, treeIdMap, vtkCache
         nodeMaxId = 0
         nodeIdMap = {}
->>>>>>> WIP: Restore node_id, streamline cache, updates to node code
         treeIdMap = {}
         vtkCache = {}
-<<<<<<< HEAD
         last_update_id = {}
         nodeCache = {}
 
@@ -133,21 +125,24 @@ class BVTKCache:
             l.debug("Created VTK object of type " + node.bl_label + ", id " + str(node.node_id))
         else:
             vtkCache[node.node_id] = None
-=======
 
         # Rebuild from existing nodes
         for nodetree in bpy.data.node_groups:
             if nodetree.bl_idname != 'BVTK_NodeTreeType':
                 continue
-            for n in nodetree.nodes:
-                # Uninitialized node
-                if n.node_id == 0 or BVTKCache.get_vtk_obj(n.node_id) == None:
-                    vtk_obj = n.init_vtk()
-                    cls.map_node(n, vtk_obj)
-                # Update nodeMaxId if needed
-                if n.node_id > nodeMaxId:
-                    nodeMaxId = n.node_id
->>>>>>> WIP: Restore node_id, streamline cache, updates to node code
+            for node in nodetree.nodes:
+                # Uninitialized node, create VTK object
+                if node.node_id == 0 or BVTKCache.get_vtk_obj(node.node_id) == None:
+                    vtk_obj = node.init_vtk()
+                    cls.map_node(node, vtk_obj)
+                # Update nodeMaxId if needed, to avoid doubles
+                if node.node_id > nodeMaxId:
+                    nodeMaxId = node.node_id
+
+            # Force resetting of VTK connections
+            for node in nodetree.nodes:
+                node.connected_input_names = "" # Reset namelist to force update
+                node.update()
 
     @classmethod
     def map_node(cls, node, vtk_obj=None):

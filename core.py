@@ -110,9 +110,26 @@ def run_custom_code(func):
                 cmd = 'vtk_obj.' + x
                 l.debug("%s run %r" % (vtk_obj.__vtkname__, cmd))
                 exec(cmd, globals(), locals())
-        # Finally call Update()
+
+        # Call Update() but only if all inputs have been connected, to
+        # avoid failure for request: vtkInformation
         if hasattr(vtk_obj, "Update"):
-            vtk_obj.Update()
+            num_missing_connections = len(self.get_input_socket_names()) - vtk_obj.GetTotalNumberOfInputConnections()
+            if num_missing_connections > 0 :
+                self.ui_message = "Missing %d input connection(s)" % num_missing_connections
+                return 'error'
+            else:
+                try:
+                    vtk_obj.Update()
+                except:
+                    self.ui_message = "Failed to run Update() for VTK object"
+                    value = 'error'
+
+        # Finally call custom finishing function (optional).
+        # Note: the return value overrides value from apply_properties()
+        if hasattr(self, "apply_properties_post"):
+            l.debug("Running apply_properties_post()")
+            value = self.apply_properties_post()
         return value
     return run_custom_code_wrapper
 
@@ -128,6 +145,8 @@ def run_custom_code(func):
 # - apply_inputs() - update input connections to VTK object
 # - apply_properties() - set properties from node to VTK object, and
 #                        update VTK object to provide updated output
+# - apply_properties_post()- special function to run after properties
+#                            have been updated (optional)
 # -----------------------------------------------------------------------------
 
 class BVTK_Node:
@@ -141,6 +160,11 @@ class BVTK_Node:
     connected_input_names: bpy.props.StringProperty(
         name="Names of Connected Input Nodes",
         description="Names of connected input nodes, used for triggering status change in update()",
+        default="",
+    )
+    ui_message: bpy.props.StringProperty(
+        name="Result Message",
+        description="Latest Result Message from Node Update, Information for User",
         default="",
     )
     vtk_status: bpy.props.EnumProperty(
@@ -264,6 +288,12 @@ class BVTK_Node:
         row = layout.row()
         row.label(text="node_id #%d: %r" % (self.node_id, str(self.vtk_status)))
 
+        # Show and reset message if any
+        if len(self.ui_message)>0:
+            for line in self.ui_message.split('\n'):
+                row = layout.row()
+                row.label(text=line)
+
         # Get properties and show visible ones
         m_properties = self.m_properties()
         for i in range(len(m_properties)):
@@ -274,19 +304,23 @@ class BVTK_Node:
         if self.bl_idname.endswith('WriterType'):
             layout.operator('node.bvtk_node_write').id = self.node_id
 
-        # Update button
-        row = layout.row()
-        row.operator("node.bvtk_node_update").node_path = node_path(self)
+        # Update button is shown when there is something to update
+        if self.vtk_status != 'up-to-date':
+            row = layout.row()
+            row.operator("node.bvtk_node_update").node_path = node_path(self)
 
     @run_custom_code
     def apply_properties(self):
-        '''Set properties from node to VTK object based on property name.
-        Return appropriate vtk_status according to success of updates.
+        '''Set properties from node to VTK object, and update the VTK object.
+        Return appropriate vtk_status according to success of update.
         General implementation for VTK nodes.
         '''
         vtk_obj = BVTKCache.get_vtk_obj(self.node_id)
         if not vtk_obj:
             raise Exception("No vtk_obj for " + self.name)
+
+        # Remove old messages
+        self.ui_message = ""
 
         m_properties = self.m_properties()
         for x in [m_properties[i] for i in range(len(m_properties)) if self.b_properties[i]]:
@@ -357,7 +391,7 @@ class BVTK_Node:
                vtk_obj.RemoveInputConnection(i, i)
                continue
             if not vtk_connection:
-                raise Exception("Failed to get output connection from" + socketname)
+                raise Exception("Failed to get output connection from %r" % socketname)
             # Normal algorithms provide normal output
             if vtk_connection.IsA('vtkAlgorithmOutput'):
                 vtk_obj.SetInputConnection(i, vtk_connection)
