@@ -112,7 +112,9 @@ def run_custom_code(func):
                 exec(cmd, globals(), locals())
 
         # Call Update() but only if all inputs have been connected, to
-        # avoid failure for request: vtkInformation
+        # avoid vtkCompositeDataPipeline failure for request: vtkInformation.
+        # Note: This does not work if node does not require all input connections.
+        # In that case you need to prepare custom apply_properties().
         if hasattr(vtk_obj, "Update"):
             num_missing_connections = len(self.get_input_socket_names()) - vtk_obj.GetTotalNumberOfInputConnections()
             if num_missing_connections > 0 :
@@ -126,9 +128,9 @@ def run_custom_code(func):
                     value = 'error'
 
         # Finally call custom finishing function (optional).
-        # Note: the return value overrides value from apply_properties()
-        if hasattr(self, "apply_properties_post"):
-            l.debug("Running apply_properties_post()")
+        # Added up-to-date requirement so that error does not
+        # get overwritten. OK?
+        if hasattr(self, "apply_properties_post") and value == 'up-to-date':
             value = self.apply_properties_post()
         return value
     return run_custom_code_wrapper
@@ -318,6 +320,12 @@ class BVTK_Node:
         vtk_obj = BVTKCache.get_vtk_obj(self.node_id)
         if not vtk_obj:
             raise Exception("No vtk_obj for " + self.name)
+
+        # Do nothing if upstream is not up-to-date
+        for node in self.get_input_nodes():
+            if node.vtk_status != 'up-to-date':
+                self.ui_message = "Stopped. Upstream not up-to-date."
+                return 'out-of-date'
 
         # Remove old messages
         self.ui_message = ""

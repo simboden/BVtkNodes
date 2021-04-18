@@ -14,7 +14,7 @@ class BVTK_Node_Info(Node, BVTK_Node):
         return (['input'],['output'],[],[])
 
     def apply_properties_post(self):
-        '''Update Info Text to UI Message
+        '''Custom post update function to generate info text from VTK objects
         '''
         text = ""
         fs1 = "{:.5g}"
