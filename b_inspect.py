@@ -24,7 +24,12 @@ class BVTK_PT_Inspect(bpy.types.Panel):
         active_node = context.active_node
         layout = self.layout
         layout.label(text='VTK version: ' + vtk.vtkVersion().GetVTKVersion())
-        vtkobj = active_node.get_vtkobj()
+
+        layout.label(text="Update Mode:")
+        layout.prop(context.scene.bvtknodes_settings, "update_mode", text="")
+        layout.separator()
+
+        vtkobj = active_node.get_vtk_obj()
         layout.operator('node.bvtk_update_obj', text='Update Object')
         if vtkobj:
             column = layout.column(align=True)
@@ -157,6 +162,7 @@ class BVTK_OT_UpdateObj(bpy.types.Operator):
             vtkobj.Update()
         log_show()
         return {'FINISHED'}
+
 
 # Register classes
 add_ui_class(BVTK_PT_Inspect)

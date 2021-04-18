@@ -154,6 +154,17 @@ else:
 l.info("Loaded VTK version: " + vtk.vtkVersion().GetVTKVersion())
 l.info("VTK base path: " + vtk.__file__)
 
+# Global add-on settings as a property group
+class BVTKNodes_Settings(bpy.types.PropertyGroup):
+    update_mode: bpy.props.EnumProperty(
+        name="Update Mode",
+        description="Update Mode for BVTK Node Tree",
+        items={
+            ('no-automatic-updates', 'No Automatic Updates', 'Nothing is automatically updated after node changes', 0),
+            ('update-current', 'Update Current Automatically', 'Update only the changed node automatically', 1),
+            ('update-all', 'Update All Automatically', 'Update changes to all nodes automatically', 2)},
+        default='no-automatic-updates',
+    )
 
 @persistent
 def on_file_loaded(scene):
@@ -317,7 +328,6 @@ def custom_register_node_categories():
     nodeitems_utils._node_categories[identifier] = \
         (cat_list, draw_add_menu, menu_types, []) # , panel_types)
 
-
 def register():
     '''Register function. CLASSES and CATEGORIES are defined in core.py and
     filled in all the gen_VTK*.py and VTK*.py files
@@ -337,6 +347,9 @@ def register():
         except:
             l.critical('error registering ' + str(c))
     custom_register_node_categories()
+    bpy.utils.register_class(BVTKNodes_Settings)
+    bpy.types.Scene.bvtknodes_settings = \
+        bpy.props.PointerProperty(type=BVTKNodes_Settings)
 
 def unregister():
     nodeitems_utils.unregister_node_categories("VTK_NODES")
@@ -346,4 +359,6 @@ def unregister():
         bpy.utils.unregister_class(c)
     bpy.app.handlers.load_post.remove(on_file_loaded)
     bpy.app.handlers.frame_change_post.remove(on_frame_change)
-            
+    bpy.utils.unregister_class(BVTKNodes_Settings)
+    del bpy.types.Scene.bvtknodes_settings
+

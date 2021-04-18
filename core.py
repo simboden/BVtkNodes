@@ -359,7 +359,7 @@ class BVTK_Node:
     def get_vtk_obj(self):
         '''Return only the VTK object of this node.
         '''
-        vtk_obj, dummy = self.get_vtk_obj_and_connection()
+        vtk_obj = BVTKCache.get_vtk_obj(self.node_id)
         return vtk_obj
 
     def get_vtk_obj_and_connection(self, socketname='output'):
@@ -609,6 +609,7 @@ def check_b_properties():
 add_class(BVTK_NodeTree)
 add_class(BVTK_NodeSocket)
 add_ui_class(BVTK_OT_NodeWrite)
+
 
 # -----------------------------------------------------------------------------
 # VTK Node Category
