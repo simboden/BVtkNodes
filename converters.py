@@ -177,15 +177,6 @@ class BVTK_Node_VTKToBlenderMesh(Node, BVTK_Node):
     recalc_norms: bpy.props.BoolProperty(name='Recalculate Normals', default=False)
     generate_material: bpy.props.BoolProperty(name='Generate Material', default=False)
 
-    def start_scan(self, context):
-        if context:
-            if self.auto_update:
-                bpy.ops.node.bvtk_auto_update_scan(
-                    node_name=self.name,
-                    tree_name=context.space_data.node_tree.name)
-
-    auto_update: bpy.props.BoolProperty(default=False, update=start_scan)
-
     def m_properties(self):
         return ['m_Name', 'create_all_verts', 'create_edges', 'create_faces',
                 'smooth', 'recalc_norms', 'generate_material']
@@ -193,29 +184,15 @@ class BVTK_Node_VTKToBlenderMesh(Node, BVTK_Node):
     def m_connections(self):
         return ( ['input'],[],[],[] )
 
-    def draw_buttons(self, context, layout):
-        layout.prop(self, 'm_Name')
-        layout.prop(self, 'create_all_verts')
-        layout.prop(self, 'create_edges')
-        layout.prop(self, 'create_faces')
-        layout.prop(self, 'auto_update', text='Auto update')
-        layout.prop(self, 'smooth', text='Smooth')
-        layout.prop(self, 'recalc_norms')
-        layout.prop(self, 'generate_material')
-        layout.separator()
-        layout.operator("node.bvtk_node_update", text="update").node_path = node_path(self)
-
-    def update_cb(self):
-        '''Update node color bar and update Blender object'''
-        input_node, vtkobj = self.get_input_node('input')
+    def apply_properties_post(self):
+        '''Generate Blender mesh object from VTK object'''
+        input_node, vtk_obj, vtk_connection = self.get_input_node_and_vtk_objects()
         ramp = None
         if input_node and input_node.bl_idname == 'BVTK_Node_ColorMapperType':
             ramp = input_node
-            ramp.update()    # setting auto range
-            input_node, vtkobj = input_node.get_input_node('input')
-        if vtkobj:
-            vtkobj = resolve_algorithm_output(vtkobj)
-            vtkdata_to_blender_mesh (vtkobj, self.m_Name, smooth=self.smooth,
+        if vtk_obj:
+            vtk_output_obj = resolve_algorithm_output(vtk_connection)
+            vtkdata_to_blender_mesh (vtk_output_obj, self.m_Name, smooth=self.smooth,
                                      create_all_verts=self.create_all_verts,
                                      create_edges=self.create_edges,
                                      create_faces=self.create_faces,
@@ -223,9 +200,11 @@ class BVTK_Node_VTKToBlenderMesh(Node, BVTK_Node):
                                      generate_material=self.generate_material,
                                      ramp=ramp)
             update_3d_view()
+        return 'up-to-date'
 
-    def apply_properties(self, vtkobj):
-        pass
+    def init_vtk(self):
+        self.vtk_status = 'out-of-date'
+        return None
 
 
 def map_elements(vals, slist):

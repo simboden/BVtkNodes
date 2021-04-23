@@ -101,6 +101,7 @@ def run_custom_code(func):
     def run_custom_code_wrapper(self):
         # Call function first
         value = func(self)
+
         # Then run Custom Code
         vtk_obj = BVTKCache.get_vtk_obj(self.node_id)
         if vtk_obj and len(self.custom_code) > 0:
@@ -115,10 +116,13 @@ def run_custom_code(func):
         # avoid vtkCompositeDataPipeline failure for request: vtkInformation.
         # Note: This does not work if node does not require all input connections.
         # In that case you need to prepare custom apply_properties().
+
+        # TODO: OK to remove? apply_properties() is checking for connections.
+
         if hasattr(vtk_obj, "Update"):
             num_missing_connections = len(self.get_input_socket_names()) - vtk_obj.GetTotalNumberOfInputConnections()
             if num_missing_connections > 0 :
-                self.ui_message = "Missing %d input connection(s)" % num_missing_connections
+                self.ui_message = "Missing %d VTK input connection(s)" % num_missing_connections
                 return 'error'
             else:
                 try:
@@ -145,10 +149,8 @@ def run_custom_code(func):
 # - draw_buttons() - node UI contents
 # - init_vtk() - creation and initialization of VTK object
 # - apply_inputs() - update input connections to VTK object
-# - apply_properties() - set properties from node to VTK object, and
-#                        update VTK object to provide updated output
-# - apply_properties_post()- special function to run after properties
-#                            have been updated (optional)
+# - apply_properties_post()- special function to run for setting properties
+#                            for special nodes (optional)
 # -----------------------------------------------------------------------------
 
 class BVTK_Node:
@@ -292,14 +294,15 @@ class BVTK_Node:
 
         # Show and reset message if any
         if len(self.ui_message)>0:
+            box = layout.box()
             for line in self.ui_message.split('\n'):
-                row = layout.row()
+                row = box.row()
                 row.label(text=line)
 
         # Get properties and show visible ones
         m_properties = self.m_properties()
         for i in range(len(m_properties)):
-            if self.b_properties[i]:
+            if not hasattr(self, "b_properties") or self.b_properties[i]:
                 layout.prop(self, m_properties[i])
 
         # Write button for writer nodes
@@ -315,20 +318,30 @@ class BVTK_Node:
     def apply_properties(self):
         '''Set properties from node to VTK object, and update the VTK object.
         Return appropriate vtk_status according to success of update.
-        General implementation for VTK nodes.
+        General implementation for both VTK and special nodes.
         '''
+
+        # For all nodes: Do nothing if some of the inputs are not connected.
+        # Is this OK, or are there VTK nodes which fail because of this?
+        namelist = [link.to_socket.name for socket in self.inputs for link in socket.links]
+        missing_inputs = ""
+        for input in self.get_input_socket_names():
+            l.debug("testing %r in %r" % (input, namelist))
+            if input not in namelist:
+                missing_inputs += input + " "
+        if len(missing_inputs) > 0:
+            self.ui_message = "Missing input connection(s): " + missing_inputs
+            return 'error'
+
+        # Stop here if there is a custom post routine, meaning this is a special node
+        if hasattr(self, "apply_properties_post"):
+            return 'up-to-date'
+
+        # Require an object exists in cache
         vtk_obj = BVTKCache.get_vtk_obj(self.node_id)
         if not vtk_obj:
-            raise Exception("No vtk_obj for " + self.name)
-
-        # Do nothing if upstream is not up-to-date
-        for node in self.get_input_nodes():
-            if node.vtk_status != 'up-to-date':
-                self.ui_message = "Stopped. Upstream not up-to-date."
-                return 'out-of-date'
-
-        # Remove old messages
-        self.ui_message = ""
+            self.ui_message = "Internal Error: No VTK object found in cache"
+            return 'error'
 
         m_properties = self.m_properties()
         for x in [m_properties[i] for i in range(len(m_properties)) if self.b_properties[i]]:
@@ -562,12 +575,29 @@ class BVTK_Node:
         '''
         # Recursively call for upstream nodes
         for node in self.get_input_nodes():
-            node.update_vtk()
+            if node.vtk_status != 'up-to-date':
+                node.update_vtk()
+
+        # Do nothing if upstream was not successfully updated
+        for node in self.get_input_nodes():
+            if node.vtk_status != 'up-to-date':
+                self.ui_message = "Can't update, upstream update failed."
+                return 'out-of-date'
+
+        # Remove old messages
+        self.ui_message = ""
+
         # Update this node's properties to VTK object only if needed
         if self.vtk_status != 'up-to-date':
             self.vtk_status = 'updating'
             l.debug("Updating " + self.name)
+
+            # This is the only point where apply_properties() is called
             new_status = self.apply_properties()
+
+            if new_status == None:
+                self.ui_message = "Node failure:\napply_properties() does not return a valid status string"
+                new_status = 'error'
             self.notify_downstream(vtk_status=new_status)
 
 
