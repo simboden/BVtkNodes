@@ -50,10 +50,11 @@ class BVTKBaseTest(unittest.TestCase):
 
         self.assertTrue(os.path.exists(python_script), "The provided python script %s was not found" % (python_script))
 
-        proc = subprocess.Popen([self.blender_path, self.blender_files_dir + blend_file, "--background", "--python", python_script,
-                            "--python-exit-code", "1" #Exit with failure if the python script fails
+        proc = subprocess.Popen([self.blender_path, self.blender_files_dir + blend_file, "--background", 
+                            "--python-exit-code", "1", #Exit with failure if the python script fails
+                            "--python", python_script,
                             ] + ([] if python_params is None else ["--"] + python_params), 
-                            shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                            shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         # wait for the process to terminate
         proc_output, proc_err = proc.communicate()

@@ -5,7 +5,7 @@ import os
 import json
 
 #Import the addon to be able to import the node tree
-from BVTK.tree import insert_into_node_tree
+from BVtkNodes.tree import insert_into_node_tree
 
 
 def assert_quit(condition, message):
@@ -94,11 +94,16 @@ def run_update_all(run_converter_nodes=True, run_writer_nodes=True):
         update_all_node.update_cb()
 
         assert_quit(update_all_node.error_count == 0, "Update all failed on the writer nodes")
-    except:
-        sys.exit(1)
+    except Exception as ex:
+        assert_quit(False, "Test failed with %s" % (ex))
 
 if __name__ == "__main__":
-    import_cli_tree()
-    run_update_all()
+    try:
+        import_cli_tree()
+        run_update_all()
+        print("Success")
+    except Exception as ex:
+        assert_quit(False, "Test failed with %s" % (ex))
     #Success - Quit
     #sys.exit(0)
+    

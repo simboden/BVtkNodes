@@ -1,452 +1,452 @@
 {
-"links": [
-{
-"from_node_name": "vtkPolyDataReader",
-"from_socket_identifier": "output",
-"to_node_name": "VTK To Blender.001",
-"to_socket_identifier": "input"
-},
-{
-"from_node_name": "vtkPolyDataNormals",
-"from_socket_identifier": "output",
-"to_node_name": "Color Mapper",
-"to_socket_identifier": "input"
-},
-{
-"from_node_name": "Color Mapper",
-"from_socket_identifier": "output",
-"to_node_name": "VTK To Blender",
-"to_socket_identifier": "input"
-},
-{
-"from_node_name": "vtkTubeFilter",
-"from_socket_identifier": "output",
-"to_node_name": "vtkPolyDataNormals",
-"to_socket_identifier": "input"
-},
-{
-"from_node_name": "vtkStreamTracer",
-"from_socket_identifier": "output",
-"to_node_name": "vtkTubeFilter",
-"to_socket_identifier": "input"
-},
-{
-"from_node_name": "Color Ramp",
-"from_socket_identifier": "lookupTable",
-"to_node_name": "Color Mapper",
-"to_socket_identifier": "lookuptable"
-},
-{
-"from_node_name": "vtkPlaneSource",
-"from_socket_identifier": "output",
-"to_node_name": "vtkStreamTracer",
-"to_socket_identifier": "input 1"
-},
-{
-"from_node_name": "vtkStructuredGridReader",
-"from_socket_identifier": "output",
-"to_node_name": "vtkStreamTracer",
-"to_socket_identifier": "input 0"
-}
-],
-"nodes": [
-{
-"bl_idname": "BVTK_Node_VTKToBlenderType",
-"color": [
-0.5,
-0.5,
-0.5
-],
-"custom_code": "",
-"generate_material": true,
-"height": 100.0,
-"hide": false,
-"label": "",
-"location": [
-300.0,
-300.0
-],
-"m_Name": "tracertubes",
-"mute": false,
-"name": "VTK To Blender",
-"show_options": true,
-"show_preview": false,
-"smooth": true,
-"width": 200.0
-},
-{
-"bl_idname": "VTKPolyDataReaderType",
-"color": [
-0.5,
-0.5,
-0.5
-],
-"custom_code": "",
-"height": 100.0,
-"hide": false,
-"label": "",
-"location": [
-0.0,
-800.0
-],
-"m_FieldDataName": "",
-"m_FileName": "//../../examples_data/kitchenforniture.vtk",
-"m_LookupTableName": "",
-"m_NormalsName": "",
-"m_ReadAllColorScalars": true,
-"m_ReadAllFields": true,
-"m_ReadAllNormals": true,
-"m_ReadAllScalars": true,
-"m_ReadAllTCoords": true,
-"m_ReadAllTensors": true,
-"m_ReadAllVectors": true,
-"m_ReadFromInputString": false,
-"m_ScalarsName": "",
-"m_TCoordsName": "",
-"m_TensorsName": "",
-"m_VectorsName": "",
-"mute": false,
-"name": "vtkPolyDataReader",
-"show_options": true,
-"show_preview": false,
-"width": 200.0
-},
-{
-"bl_idname": "BVTK_Node_VTKToBlenderType",
-"color": [
-0.5,
-0.5,
-0.5
-],
-"custom_code": "",
-"generate_material": true,
-"height": 100.0,
-"hide": false,
-"label": "",
-"location": [
-300.0,
-800.0
-],
-"m_Name": "furniture",
-"mute": false,
-"name": "VTK To Blender.001",
-"show_options": true,
-"show_preview": false,
-"smooth": false,
-"width": 200.0
-},
-{
-"bl_idname": "VTKPolyDataNormalsType",
-"color": [
-0.5,
-0.5,
-0.5
-],
-"custom_code": "",
-"height": 100.0,
-"hide": false,
-"label": "",
-"location": [
--300.0,
-300.0
-],
-"m_AutoOrientNormals": true,
-"m_ComputeCellNormals": true,
-"m_ComputePointNormals": true,
-"m_Consistency": true,
-"m_FeatureAngle": 30.0,
-"m_FlipNormals": true,
-"m_NonManifoldTraversal": true,
-"m_Splitting": true,
-"mute": false,
-"name": "vtkPolyDataNormals",
-"show_options": true,
-"show_preview": false,
-"width": 200.0
-},
-{
-"auto_range": true,
-"bl_idname": "BVTK_Node_ColorMapperType",
-"color": [
-0.5,
-0.5,
-0.5
-],
-"color_by": "E",
-"custom_code": "",
-"height": 5.5,
-"hide": false,
-"label": "",
-"location": [
-0.0,
-300.0
-],
-"lut": false,
-"max": 508.2521667480469,
-"min": 0.0,
-"mute": false,
-"name": "Color Mapper",
-"show_options": true,
-"show_preview": false,
-"texture_type": "IMAGE",
-"width": 200.0
-},
-{
-"bl_idname": "VTKTubeFilterType",
-"color": [
-0.5,
-0.5,
-0.5
-],
-"custom_code": "",
-"e_GenerateTCoords": "Off",
-"e_VaryRadius": "VaryRadiusOff",
-"height": 100.0,
-"hide": false,
-"label": "",
-"location": [
--600.0,
-300.0
-],
-"m_Capping": true,
-"m_DefaultNormal": [
-0.0,
-0.0,
-1.0
-],
-"m_NumberOfSides": 10,
-"m_Offset": 0,
-"m_OnRatio": 1,
-"m_Radius": 0.019999999552965164,
-"m_RadiusFactor": 1.0,
-"m_SidesShareVertices": true,
-"m_TextureLength": 1.0,
-"m_UseDefaultNormal": true,
-"mute": false,
-"name": "vtkTubeFilter",
-"show_options": true,
-"show_preview": false,
-"width": 200.0
-},
-{
-"bl_idname": "VTKStreamTracerType",
-"color": [
-0.5,
-0.5,
-0.5
-],
-"custom_code": "",
-"e_IntegrationDirection": "Forward",
-"e_IntegratorType": "RungeKutta45",
-"height": 100.0,
-"hide": false,
-"label": "",
-"location": [
--860.0,
-300.0
-],
-"m_ComputeVorticity": true,
-"m_InitialIntegrationStep": 0.019999999552965164,
-"m_IntegrationStepUnit": 2,
-"m_MaximumError": 9.999999974752427e-07,
-"m_MaximumIntegrationStep": 1.0,
-"m_MaximumNumberOfSteps": 2000,
-"m_MaximumPropagation": 40.0,
-"m_MinimumIntegrationStep": 0.009999999776482582,
-"m_RotationScale": 1.0,
-"m_StartPosition": [
-0.0,
-0.0,
-0.0
-],
-"m_SurfaceStreamlines": false,
-"m_TerminalSpeed": 9.999999960041972e-13,
-"mute": false,
-"name": "vtkStreamTracer",
-"show_options": true,
-"show_preview": false,
-"width": 200.0
-},
-{
-"additional_properties": {
-"elements": [
-[
-[
-0.03921568766236305,
-0.03921568766236305,
-0.7058823704719543,
-1.0
-],
-0.05000000074505806
-],
-[
-[
-0.5529412031173706,
-0.6901960968971252,
-0.9960784316062927,
-1.0
-],
-0.42500001192092896
-],
-[
-[
-0.8666666746139526,
-0.8666666746139526,
-0.8666666746139526,
-1.0
-],
-0.5
-],
-[
-[
-0.9529411792755127,
-0.5803921818733215,
-0.4588235318660736,
-1.0
-],
-0.574999988079071
-],
-[
-[
-0.7058823704719543,
-0.03921568766236305,
-0.0784313753247261,
-1.0
-],
-0.949999988079071
-]
-]
-},
-"bl_idname": "BVTK_Node_ColorRampType",
-"cm_nr_values": 8,
-"cm_preset": "custom",
-"color": [
-0.5,
-0.5,
-0.5
-],
-"custom_code": "",
-"height": 100.0,
-"hide": false,
-"label": "",
-"location": [
--300.0,
-0.0
-],
-"mute": false,
-"name": "Color Ramp",
-"show_options": true,
-"show_preview": false,
-"width": 200.0
-},
-{
-"bl_idname": "VTKPlaneSourceType",
-"color": [
-0.5,
-0.5,
-0.5
-],
-"custom_code": "",
-"height": 100.0,
-"hide": false,
-"label": "",
-"location": [
--1100.0,
-50.0
-],
-"m_Center": [
-0.0,
-0.0,
-0.0
-],
-"m_Normal": [
-0.0,
-0.0,
-1.0
-],
-"m_Origin": [
-0.019999999552965164,
-2.25,
-0.009999999776482582
-],
-"m_Point1": [
-0.019999999552965164,
-2.549999952316284,
-0.009999999776482582
-],
-"m_Point2": [
-0.019999999552965164,
-2.25,
-0.6000000238418579
-],
-"m_XResolution": 5,
-"m_YResolution": 5,
-"mute": false,
-"name": "vtkPlaneSource",
-"show_options": true,
-"show_preview": false,
-"width": 200.0
-},
-{
-"bl_idname": "BVTK_Node_UpdateAllType",
-"color": [
-0.5,
-0.5,
-0.5
-],
-"custom_code": "",
-"error_count": 0,
-"height": 100.0,
-"hide": false,
-"label": "",
-"location": [
--300.0,
-520.0
-],
-"mute": false,
-"name": "Update All",
-"show_options": true,
-"show_preview": false,
-"update_all_converters": true,
-"update_all_writers": true,
-"width": 200.0
-},
-{
-"bl_idname": "VTKStructuredGridReaderType",
-"color": [
-0.5,
-0.5,
-0.5
-],
-"custom_code": "",
-"height": 100.0,
-"hide": false,
-"label": "",
-"location": [
--1100.0,
-600.0
-],
-"m_FieldDataName": "",
-"m_FileName": "//../../examples_data/kitchenflow.vtk",
-"m_LookupTableName": "",
-"m_NormalsName": "",
-"m_ReadAllColorScalars": true,
-"m_ReadAllFields": true,
-"m_ReadAllNormals": true,
-"m_ReadAllScalars": true,
-"m_ReadAllTCoords": true,
-"m_ReadAllTensors": true,
-"m_ReadAllVectors": true,
-"m_ReadFromInputString": false,
-"m_ScalarsName": "",
-"m_TCoordsName": "",
-"m_TensorsName": "",
-"m_VectorsName": "vectors",
-"mute": false,
-"name": "vtkStructuredGridReader",
-"show_options": true,
-"show_preview": false,
-"width": 200.0
-}
-]
+    "links": [
+        {
+            "from_node_name": "vtkPolyDataReader",
+            "from_socket_identifier": "output",
+            "to_node_name": "VTK To Blender.001",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkPolyDataNormals",
+            "from_socket_identifier": "output",
+            "to_node_name": "Color Mapper",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "Color Mapper",
+            "from_socket_identifier": "output",
+            "to_node_name": "VTK To Blender",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkTubeFilter",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkPolyDataNormals",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkStreamTracer",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkTubeFilter",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "Color Ramp",
+            "from_socket_identifier": "lookupTable",
+            "to_node_name": "Color Mapper",
+            "to_socket_identifier": "lookuptable"
+        },
+        {
+            "from_node_name": "vtkPlaneSource",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkStreamTracer",
+            "to_socket_identifier": "input 1"
+        },
+        {
+            "from_node_name": "vtkStructuredGridReader",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkStreamTracer",
+            "to_socket_identifier": "input 0"
+        }
+    ],
+    "nodes": [
+        {
+            "bl_idname": "BVTK_Node_VTKToBlenderType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "generate_material": true,
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                300.0,
+                300.0
+            ],
+            "m_Name": "tracertubes",
+            "mute": false,
+            "name": "VTK To Blender",
+            "show_options": true,
+            "show_preview": false,
+            "smooth": true,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTKPolyDataReaderType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                0.0,
+                800.0
+            ],
+            "m_FieldDataName": "",
+            "m_FileName": "//../../examples_data/kitchenforniture.vtk",
+            "m_LookupTableName": "",
+            "m_NormalsName": "",
+            "m_ReadAllColorScalars": true,
+            "m_ReadAllFields": true,
+            "m_ReadAllNormals": true,
+            "m_ReadAllScalars": true,
+            "m_ReadAllTCoords": true,
+            "m_ReadAllTensors": true,
+            "m_ReadAllVectors": true,
+            "m_ReadFromInputString": false,
+            "m_ScalarsName": "",
+            "m_TCoordsName": "",
+            "m_TensorsName": "",
+            "m_VectorsName": "",
+            "mute": false,
+            "name": "vtkPolyDataReader",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "BVTK_Node_VTKToBlenderType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "generate_material": true,
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                300.0,
+                800.0
+            ],
+            "m_Name": "furniture",
+            "mute": false,
+            "name": "VTK To Blender.001",
+            "show_options": true,
+            "show_preview": false,
+            "smooth": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTKPolyDataNormalsType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -300.0,
+                300.0
+            ],
+            "m_AutoOrientNormals": true,
+            "m_ComputeCellNormals": true,
+            "m_ComputePointNormals": true,
+            "m_Consistency": true,
+            "m_FeatureAngle": 30.0,
+            "m_FlipNormals": true,
+            "m_NonManifoldTraversal": true,
+            "m_Splitting": true,
+            "mute": false,
+            "name": "vtkPolyDataNormals",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "auto_range": true,
+            "bl_idname": "BVTK_Node_ColorMapperType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "color_by": "E",
+            "custom_code": "",
+            "height": 5.5,
+            "hide": false,
+            "label": "",
+            "location": [
+                0.0,
+                300.0
+            ],
+            "lut": false,
+            "max": 508.2521667480469,
+            "min": 0.0,
+            "mute": false,
+            "name": "Color Mapper",
+            "show_options": true,
+            "show_preview": false,
+            "texture_type": "IMAGE",
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTKTubeFilterType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "e_GenerateTCoords": "Off",
+            "e_VaryRadius": "VaryRadiusOff",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -600.0,
+                300.0
+            ],
+            "m_Capping": true,
+            "m_DefaultNormal": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "m_NumberOfSides": 10,
+            "m_Offset": 0,
+            "m_OnRatio": 1,
+            "m_Radius": 0.019999999552965164,
+            "m_RadiusFactor": 1.0,
+            "m_SidesShareVertices": true,
+            "m_TextureLength": 1.0,
+            "m_UseDefaultNormal": true,
+            "mute": false,
+            "name": "vtkTubeFilter",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTKStreamTracerType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "e_IntegrationDirection": "Forward",
+            "e_IntegratorType": "RungeKutta45",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -860.0,
+                300.0
+            ],
+            "m_ComputeVorticity": true,
+            "m_InitialIntegrationStep": 0.019999999552965164,
+            "m_IntegrationStepUnit": 2,
+            "m_MaximumError": 9.999999974752427e-07,
+            "m_MaximumIntegrationStep": 1.0,
+            "m_MaximumNumberOfSteps": 2000,
+            "m_MaximumPropagation": 40.0,
+            "m_MinimumIntegrationStep": 0.009999999776482582,
+            "m_RotationScale": 1.0,
+            "m_StartPosition": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "m_SurfaceStreamlines": false,
+            "m_TerminalSpeed": 9.999999960041972e-13,
+            "mute": false,
+            "name": "vtkStreamTracer",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "additional_properties": {
+                "elements": [
+                    [
+                        [
+                            0.03921568766236305,
+                            0.03921568766236305,
+                            0.7058823704719543,
+                            1.0
+                        ],
+                        0.05000000074505806
+                    ],
+                    [
+                        [
+                            0.5529412031173706,
+                            0.6901960968971252,
+                            0.9960784316062927,
+                            1.0
+                        ],
+                        0.42500001192092896
+                    ],
+                    [
+                        [
+                            0.8666666746139526,
+                            0.8666666746139526,
+                            0.8666666746139526,
+                            1.0
+                        ],
+                        0.5
+                    ],
+                    [
+                        [
+                            0.9529411792755127,
+                            0.5803921818733215,
+                            0.4588235318660736,
+                            1.0
+                        ],
+                        0.574999988079071
+                    ],
+                    [
+                        [
+                            0.7058823704719543,
+                            0.03921568766236305,
+                            0.0784313753247261,
+                            1.0
+                        ],
+                        0.949999988079071
+                    ]
+                ]
+            },
+            "bl_idname": "BVTK_Node_ColorRampType",
+            "cm_nr_values": 8,
+            "cm_preset": "custom",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -300.0,
+                0.0
+            ],
+            "mute": false,
+            "name": "Color Ramp",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTKPlaneSourceType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -1100.0,
+                50.0
+            ],
+            "m_Center": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "m_Normal": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "m_Origin": [
+                0.019999999552965164,
+                2.25,
+                0.009999999776482582
+            ],
+            "m_Point1": [
+                0.019999999552965164,
+                2.549999952316284,
+                0.009999999776482582
+            ],
+            "m_Point2": [
+                0.019999999552965164,
+                2.25,
+                0.6000000238418579
+            ],
+            "m_XResolution": 5,
+            "m_YResolution": 5,
+            "mute": false,
+            "name": "vtkPlaneSource",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "BVTK_Node_UpdateAllType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "error_count": 0,
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -300.0,
+                520.0
+            ],
+            "mute": false,
+            "name": "Update All",
+            "show_options": true,
+            "show_preview": false,
+            "update_all_converters": true,
+            "update_all_writers": true,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTKStructuredGridReaderType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -1100.0,
+                600.0
+            ],
+            "m_FieldDataName": "",
+            "m_FileName": "//../../examples_data/kitchenflow.vtk",
+            "m_LookupTableName": "",
+            "m_NormalsName": "",
+            "m_ReadAllColorScalars": true,
+            "m_ReadAllFields": true,
+            "m_ReadAllNormals": true,
+            "m_ReadAllScalars": true,
+            "m_ReadAllTCoords": true,
+            "m_ReadAllTensors": true,
+            "m_ReadAllVectors": true,
+            "m_ReadFromInputString": false,
+            "m_ScalarsName": "",
+            "m_TCoordsName": "",
+            "m_TensorsName": "",
+            "m_VectorsName": "vectors",
+            "mute": false,
+            "name": "vtkStructuredGridReader",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        }
+    ]
 }
