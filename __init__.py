@@ -261,13 +261,7 @@ def on_frame_change(scene, depsgraph):
 @persistent
 def on_depsgraph_update(scene, depsgraph):
     '''Updates done after depsgraph changes'''
-
-    # Update particle objects
-    for node_group in bpy.data.node_groups:
-        for node in node_group.nodes:
-            if node.bl_idname == 'BVTK_Node_VTKToBlenderParticlesType':
-                l.debug("VTKToBlenderParticles")
-                node.update_particle_system(depsgraph)
+    on_frame_change(scene, depsgraph)
 
 
 

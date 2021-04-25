@@ -164,18 +164,20 @@ def gnbn(nodes, name):
             return node
     return None
 
+def insert_into_node_tree(node_tree, new_nodes_dicts, new_links_dicts):
+    existing_nodes = node_tree.nodes
+    existing_links = node_tree.links
+    for new_node_dict in new_nodes_dicts:
+        node_from_dict(existing_nodes, new_node_dict)
+    for new_link_dict in new_links_dicts:
+        link_from_dict(existing_nodes, existing_links, new_link_dict)
 
 def node_tree_from_dict(context, node_tree_dict):
     '''Create node tree from dictionary'''
     space = context.space_data
-    nodes = space.node_tree.nodes
-    links = space.node_tree.links
-    new_nodes_dicts = node_tree_dict['nodes']
-    for new_node_dict in new_nodes_dicts:
-        node_from_dict(nodes, new_node_dict)
-    new_links_dicts = node_tree_dict['links']
-    for new_link_dict in new_links_dicts:
-        link_from_dict(nodes, links, new_link_dict)
+    node_tree = space.node_tree
+    insert_into_node_tree(node_tree, node_tree_dict['nodes'], node_tree_dict['links'])
+
 
 
 def node_from_dict(nodes, node_dict):
@@ -214,11 +216,13 @@ def node_tree_to_dict(node_tree):
     '''Create node dictionary from node tree'''
     nodes = node_tree.nodes
     links = node_tree.links
+    sorted_nodes = sorted(nodes, key=lambda node: node.node_id) #For testcases, this guarantees the ordering of the nodes. Selecting and moving nodes can move their position in the list
+    sorted_links = sorted(links, key=lambda link: (link.from_node.node_id, link.to_node.node_id)) #Same with links
     n = []
-    for node in nodes:
+    for node in sorted_nodes:
         n.append(node_to_dict(node))
     l = []
-    for link in links:
+    for link in sorted_links:
         l.append(link_to_dict(link))
     return {"nodes": n, "links": l}
 
@@ -255,7 +259,8 @@ def node_to_dict(node):
         if classname in ['Vector','Color','bpy_prop_array']:
             attr = [i for i in attr]
         if 'FileName' in prop and issubclass(attr.__class__, str):
-            attr = os.path.realpath(bpy.path.abspath(attr)).replace(examples_data_dir, '$/')
+            #attr = os.path.realpath(bpy.path.abspath(attr)).replace(examples_data_dir, '$/')
+            pass
         l.debug(prop.ljust(20) + classname.ljust(20) + str(attr))
         dict[prop] = attr
     if hasattr(node, 'export_properties'):
@@ -324,6 +329,9 @@ class BVTK_OT_Tree_Export(bpy.types.Operator, ExportHelper):
     bl_idname = "node.bvtk_node_tree_export"
     bl_label = "Export Vtk Node Tree"
     filename_ext = ".json"
+    compact: bpy.props.BoolProperty(name="Compact format", 
+                description="Removes whitespaces and indentations in favor for space (Employed in tests)", 
+                default=False)
 
     def execute(self, context):
         node_tree = context.space_data.node_tree
@@ -331,7 +339,7 @@ class BVTK_OT_Tree_Export(bpy.types.Operator, ExportHelper):
             self.report({'ERROR'}, 'Select a node tree')
             return {'CANCELLED'}
         dic = node_tree_to_dict(node_tree)
-        text = json.dumps( dic, indent=4, sort_keys=True) 
+        text = json.dumps( dic, indent=(0 if self.compact else 4), sort_keys=True) 
         f = open(self.filepath, 'w', encoding='utf-8')
         f.write( text )
         f.close()

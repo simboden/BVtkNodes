@@ -114,6 +114,11 @@ using VTK 8.2.0. Old Blender version is used for stability and
 `animation features that are not yet working correctly in Blender 2.80 or newer <https://developer.blender.org/T66392>`_.
 
 
+
+.. _vtk_installation:
+
+
+
 Installation of VTK for Blender
 -------------------------------
 
@@ -130,6 +135,11 @@ Python environment. It is suggested to
    (by running populate_db.py and generate.py. Warning: Modifications may be
    required). If you want to compile custom VTK, please see
    `VTK building instructions for Linux <https://github.com/tkeskita/BVtkNodes/blob/master/build_vtk.md>`_.
+
+
+
+.. _general_installation:
+
 
 
 Installation
@@ -268,6 +278,10 @@ Favorites
 
 This tab lists favorite nodes. You can delete and add nodes for easy
 access here.
+
+
+.. _json_importexport:
+
 
 Tree
 ^^^^
