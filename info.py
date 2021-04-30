@@ -13,7 +13,7 @@ class BVTK_Node_Info(Node, BVTK_Node):
     def m_connections(self):
         return (['input'],['output'],[],[])
 
-    def apply_properties_post(self):
+    def apply_properties_special(self):
         '''Custom post update function to generate info text from VTK objects
         '''
         text = ""
@@ -33,6 +33,7 @@ class BVTK_Node_Info(Node, BVTK_Node):
             self.ui_message = "Missing %d input connection(s)" % num_missing_connections
             return 'error'
 
+        vtk_obj.Update()
         vtk_output_obj = resolve_algorithm_output(vtk_connection)
 
         text += 'Type: ' + vtk_output_obj.__class__.__name__ + '\n'

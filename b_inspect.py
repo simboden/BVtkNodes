@@ -18,16 +18,19 @@ class BVTK_PT_Inspect(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.active_node is not None and context.space_data.tree_type == 'BVTK_NodeTreeType'
+        return context.space_data.tree_type == 'BVTK_NodeTreeType'
 
     def draw(self, context):
-        active_node = context.active_node
         layout = self.layout
         layout.label(text='VTK version: ' + vtk.vtkVersion().GetVTKVersion())
 
         layout.label(text="Update Mode:")
         layout.prop(context.scene.bvtknodes_settings, "update_mode", text="")
         layout.separator()
+
+        active_node = context.active_node
+        if not active_node:
+            return None
 
         vtkobj = active_node.get_vtk_obj()
         layout.operator('node.bvtk_update_obj', text='Update Object')
@@ -43,7 +46,7 @@ class BVTK_PT_Inspect(bpy.types.Panel):
                 'node.bvtk_open_website', text=' Online Documentation', icon='WORLD')
             o.href = 'https://www.vtk.org/doc/nightly/html/class{}.html'.format(active_node.bl_label)
         else:
-            layout.label(text='Not a VTK node')
+            layout.label(text='No active VTK node to inspect')
 
 # -----------------------------------------------------------------------------
 # Add button to console header

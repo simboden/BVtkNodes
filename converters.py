@@ -184,7 +184,7 @@ class BVTK_Node_VTKToBlenderMesh(Node, BVTK_Node):
     def m_connections(self):
         return ( ['input'],[],[],[] )
 
-    def apply_properties_post(self):
+    def apply_properties_special(self):
         '''Generate Blender mesh object from VTK object'''
         input_node, vtk_obj, vtk_connection = self.get_input_node_and_vtk_objects()
         ramp = None

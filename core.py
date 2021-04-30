@@ -112,30 +112,17 @@ def run_custom_code(func):
                 l.debug("%s run %r" % (vtk_obj.__vtkname__, cmd))
                 exec(cmd, globals(), locals())
 
-        # Call Update() but only if all inputs have been connected, to
-        # avoid vtkCompositeDataPipeline failure for request: vtkInformation.
-        # Note: This does not work if node does not require all input connections.
-        # In that case you need to prepare custom apply_properties().
-
-        # TODO: OK to remove? apply_properties() is checking for connections.
-
-        if hasattr(vtk_obj, "Update"):
-            num_missing_connections = len(self.get_input_socket_names()) - vtk_obj.GetTotalNumberOfInputConnections()
-            if num_missing_connections > 0 :
-                self.ui_message = "Missing %d VTK input connection(s)" % num_missing_connections
-                return 'error'
-            else:
+        # Call custom apply function if such is specified (special node),
+        # otherwise call Update().
+        if hasattr(self, "apply_properties_special"):
+            value = self.apply_properties_special()
+        else:
+            if hasattr(vtk_obj, "Update"):
                 try:
                     vtk_obj.Update()
                 except:
                     self.ui_message = "Failed to run Update() for VTK object"
                     value = 'error'
-
-        # Finally call custom finishing function (optional).
-        # Added up-to-date requirement so that error does not
-        # get overwritten. OK?
-        if hasattr(self, "apply_properties_post") and value == 'up-to-date':
-            value = self.apply_properties_post()
         return value
     return run_custom_code_wrapper
 
@@ -149,8 +136,8 @@ def run_custom_code(func):
 # - draw_buttons() - node UI contents
 # - init_vtk() - creation and initialization of VTK object
 # - apply_inputs() - update input connections to VTK object
-# - apply_properties_post()- special function to run for setting properties
-#                            for special nodes (optional)
+# - apply_properties_special() - special function to run for setting properties
+#                                and update for special nodes (optional)
 # -----------------------------------------------------------------------------
 
 class BVTK_Node:
@@ -253,17 +240,6 @@ class BVTK_Node:
         for x in outputs:
             self.outputs.new('BVTK_NodeSocketType', x)
 
-        vtk_obj = self.init_vtk()
-        BVTKCache.map_node(self, vtk_obj) # Add VTK object to cache
-        l.debug("Init done for node: %s, id #%d" % (self.name, self.node_id))
-
-#    def reset_vtkobj(self, update_id):
-#        '''Resets node's vtkobj'''
-#        update_necessary = BVTKCache.update_necessary(self, update_id)
-#        BVTKCache.update_id(self, update_id)
-#        if update_necessary:
-#            BVTKCache.init_vtkobj(self)
-
     def init_vtk(self):
         '''Initialize and return a VTK object for the node.
         This is a general implementation for VTK nodes.
@@ -292,7 +268,7 @@ class BVTK_Node:
         row = layout.row()
         row.label(text="node_id #%d: %r" % (self.node_id, str(self.vtk_status)))
 
-        # Show and reset message if any
+        # Show message if any
         if len(self.ui_message)>0:
             box = layout.box()
             for line in self.ui_message.split('\n'):
@@ -321,20 +297,21 @@ class BVTK_Node:
         General implementation for both VTK and special nodes.
         '''
 
-        # For all nodes: Do nothing if some of the inputs are not connected.
-        # Is this OK, or are there VTK nodes which fail because of this?
+        # Do nothing if inputs are not connected
         namelist = [link.to_socket.name for socket in self.inputs for link in socket.links]
         missing_inputs = ""
         for input in self.get_input_socket_names():
-            l.debug("testing %r in %r" % (input, namelist))
+            # Only require connections named "input" are connected
+            if not input.startswith("input"):
+                continue
             if input not in namelist:
                 missing_inputs += input + " "
         if len(missing_inputs) > 0:
             self.ui_message = "Missing input connection(s): " + missing_inputs
             return 'error'
 
-        # Stop here if there is a custom post routine, meaning this is a special node
-        if hasattr(self, "apply_properties_post"):
+        # Stop here if there is a custom apply routine, meaning this is a special node
+        if hasattr(self, "apply_properties_special"):
             return 'up-to-date'
 
         # Require an object exists in cache
@@ -364,6 +341,7 @@ class BVTK_Node:
             try:
                 exec(cmd, globals(), locals())
             except:
+                # TODO: How to get error message and put it to ui_message?
                 return 'error'
 
         # Everything was set successfully
@@ -413,6 +391,7 @@ class BVTK_Node:
                continue
             if not vtk_connection:
                 raise Exception("Failed to get output connection from %r" % socketname)
+
             # Normal algorithms provide normal output
             if vtk_connection.IsA('vtkAlgorithmOutput'):
                 vtk_obj.SetInputConnection(i, vtk_connection)
@@ -540,15 +519,11 @@ class BVTK_Node:
         '''Update routine triggered on node UI topology changes (adding or
         removing nodes and links).
         '''
-        # Check if connected input node names have changed. If yes,
-        # then set VTK status to out-of-date and notify downstream.
-
+        # Change status for downstream nodes only
         update_mode = bpy.context.scene.bvtknodes_settings.update_mode
-        namelist = [[link.from_node.name for link in socket.links] for socket in self.inputs]
+        namelist = [link.from_node.name for socket in self.inputs for link in socket.links]
         names = str(namelist)
         if self.connected_input_names != names:
-            self.connected_input_names = names
-            self.apply_inputs()
             if update_mode == 'update-current':
                 self.vtk_status = 'out-of-date'
                 self.update_vtk()
@@ -587,12 +562,26 @@ class BVTK_Node:
         # Remove old messages
         self.ui_message = ""
 
+        # Allocate VTK object if it doesn't exist already
+        vtk_obj = BVTKCache.get_vtk_obj(self.node_id)
+        if vtk_obj == None:
+            vtk_obj = self.init_vtk()
+            BVTKCache.map_node(self, vtk_obj) # Add VTK object to cache
+            l.debug("Init done for node: %s, id #%d" % (self.name, self.node_id))
+
         # Update this node's properties to VTK object only if needed
         if self.vtk_status != 'up-to-date':
             self.vtk_status = 'updating'
             l.debug("Updating " + self.name)
 
-            # This is the only point where apply_properties() is called
+            # Update VTK connections if needed by running apply_inputs()
+            namelist = [link.from_node.name for socket in self.inputs for link in socket.links]
+            names = str(namelist)
+            if self.connected_input_names != names:
+                self.connected_input_names = names
+                self.apply_inputs()
+
+            # This is the only point where apply_properties() should be called
             new_status = self.apply_properties()
 
             if new_status == None:
