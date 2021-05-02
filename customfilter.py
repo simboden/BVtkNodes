@@ -273,7 +273,10 @@ class BVTK_Node_TimeSelector(Node, BVTK_Node):
                         time_steps = out_info.Get(executive.TIME_STEPS())
 
                         # If reader is aware of time, update time step
-                        if time_steps:
+                        # Added requirement len(time_steps) > 1 because VTK 9.0.1
+                        # vtkPolyDataReader started to return TIME_STEPS=0.0
+                        # always (reader is not really time aware?).
+                        if time_steps and len(time_steps) > 1:
                             size = len(time_steps)
                             #if self.time_step < -size:
                             #    self.time_step = -size
@@ -328,7 +331,7 @@ class BVTK_Node_TimeSelector(Node, BVTK_Node):
         out_info = prod.GetOutputInformation(out_port.GetIndex())
         if hasattr(executive, "TIME_STEPS"):
             time_steps = out_info.Get(executive.TIME_STEPS())
-            if time_steps:
+            if time_steps and len(time_steps) > 1:
                 row = layout.row()
                 row.prop(self, 'time_step', text="Time Step")
                 row = layout.row()
@@ -368,7 +371,7 @@ class BVTK_Node_TimeSelector(Node, BVTK_Node):
         out_info = prod.GetOutputInformation(out_port.GetIndex())
         if hasattr(executive, "TIME_STEPS"):
             time_steps = out_info.Get(executive.TIME_STEPS())
-            if time_steps:
+            if time_steps and len(time_steps) > 1:
                 size = len(time_steps)
                 if -size <= self.time_step < size:
                     if hasattr(prod, "UpdateTimeStep"):
