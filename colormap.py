@@ -7,6 +7,7 @@ from .cache import BVTKCache
 import json
 import os
 import numpy as np
+from .converters import get_vtk_array_data
 
 current_dir = os.path.dirname(__file__)
 
@@ -83,54 +84,69 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
     '''BVTK Color Mapper Node'''
     bl_idname = 'BVTK_Node_ColorMapperType'
     bl_label  = 'Color Mapper'
+    bl_description = 'Node which specifies the variable and value range for coloring of surfaces'
 
-    # Properties of ColorMapper
-    texture_type: bpy.props.EnumProperty(
-        name="texture type",
-        items=[('IMAGE','IMAGE','IMAGE','FILE_IMAGE',1)],
-        default='IMAGE'
-    )
-    default_texture: bpy.props.StringProperty(default="")
-    last_color_by: bpy.props.StringProperty(default='')
-    lut: bpy.props.BoolProperty(default=False) # Lookup table
-    height: bpy.props.FloatProperty(default=5.5)
-    max: bpy.props.FloatProperty(default=0)
-    min: bpy.props.FloatProperty(default=0)
+    my_texture_name: bpy.props.StringProperty(default="", name="Name of Blender Texture used for color information", update=BVTK_Node.outdate_vtk_status)
+    lut: bpy.props.BoolProperty(default=False, name="Generate Scalar Bar", update=BVTK_Node.outdate_vtk_status) # Boolean to generate scalar bar
+    height: bpy.props.FloatProperty(default=5.5, name="Scalar Bar Height", update=BVTK_Node.outdate_vtk_status)
+    max: bpy.props.FloatProperty(default=0, update=BVTK_Node.outdate_vtk_status)
+    min: bpy.props.FloatProperty(default=0, update=BVTK_Node.outdate_vtk_status)
+    color_by: bpy.props.StringProperty(default="", name="Color By", update=BVTK_Node.outdate_vtk_status)
+    auto_range: bpy.props.BoolProperty(default=True, name="Auto Range", update=BVTK_Node.outdate_vtk_status)
 
-    def array_change(self, context):
-        '''Determine coloring by either point or cell data'''
-        vtkobj = self.get_input_node('input')[1]
-        if self.color_by and vtkobj:
-            vtkobj = resolve_algorithm_output(vtkobj)
-            # Color by point data or cell data
-            if self.color_by[0] == 'P':
-                d = vtkobj.GetPointData()
-            elif self.color_by[0] == 'C':
-                d = vtkobj.GetCellData()
-            else:
-                d = None
-            if d:
-                range = d.GetArray(int(self.color_by[1:])).GetRange()
-                self.max = range[1]
-                self.min = range[0]
-            else:
-                self.max = 0
-                self.min = 0
+
+    def validate_and_update_values(self):
+        '''Check that values entered in node are sane. Update range min and
+        max if requested. Return error text if an error is found.
+        '''
+        if len(self.color_by) < 3:
+            return "Error: Color By must start with 'P_' (for point data)\n" \
+                + "or 'C_' (for cell data), followed by array name."
+
+        type_letter = self.color_by[0]
+        if type_letter in ('p', 'P'):
+            array_type = 'Point data'
+        elif type_letter in ('c', 'C'):
+            array_type = 'Cell data'
+        else:
+            return "Error: Color By must start with 'P_' (for point data)\n" \
+                + "or 'C_' (for cell data), followed by array name."
+
+        array_name = self.color_by[2:]
+        input_node, vtk_obj, vtk_connection = self.get_input_node_and_vtk_objects()
+        vtk_output_obj = resolve_algorithm_output(vtk_connection)
+        d = get_vtk_array_data(vtk_output_obj, array_name, type_letter)
+        if not d:
+            return "Error: " + array_type + " %r not found on input." % array_name
+
+        # Update range
+        if self.auto_range:
+            range = d.GetRange()
+            self.max = range[1]
+            self.min = range[0]
+
+        if self.min >= self.max:
+            return "Error: Range min >= range max, can't unwrap."
+
+        if len(self.inputs['lookuptable'].links) != 1:
+            return "Error: No Color Ramp Node connected"
 
     def color_arrays(self, context):
-        '''Generate array items available for coloring
+        '''Enum list generator for color_by property.
+        Generate array items available for coloring
         
         TODO: Look into resetting the selected item on new color array.
         Can access the property via self.bl_rna.properties['color_by']
         '''
+        raise Exception("To be updated")
         items = []
-        vtkobj = self.get_input_node('input')[1]
+        vtk_obj, vtk_connection = self.get_vtk_obj_and_connection()
         # self.bl_rna.properties['color_by'].get = self.get_enum
-        if vtkobj:
-            vtkobj = resolve_algorithm_output(vtkobj)
-            if hasattr(vtkobj, 'GetCellData'):
-                c_data = vtkobj.GetCellData()
-                p_data =  vtkobj.GetPointData()
+        if vtk_obj:
+            vtk_output_obj = resolve_algorithm_output(vtk_connection)
+            if hasattr(vtk_output_obj, 'GetCellData'):
+                c_data = vtk_output_obj.GetCellData()
+                p_data =  vtk_output_obj.GetPointData()
                 c_descr = 'Color by cell data using '
                 p_descr = 'Color by point data using '
                 for i in range(p_data.GetNumberOfArrays()):
@@ -147,103 +163,114 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
             items.append(('E', 'Input has no vtkobj (try updating)', 'error', 'ERROR', 0))
         return items
 
-    # Must define these annotations here after function defs
-    color_by: bpy.props.EnumProperty(items=color_arrays, name="color by", update=array_change)
-    auto_range: bpy.props.BoolProperty(default=True, update=array_change)
-
     def m_properties(self):
-        return ['color_by', 'texture_type', 'auto_range',
-                'lut', 'min', 'max', 'height']
+        return ['color_by', 'auto_range', 'lut', 'min', 'max', 'height']
 
     def m_connections(self):
-        return (['input'],[],[],['output'])
+        return (['input','lookuptable'],[],[],['output'])
 
-    def setup(self):
-        self.inputs.new('BVTK_NodeSocketType', 'lookuptable')
+    def apply_properties_special(self):
+        '''Special apply properties function.
+        '''
+        vtk_obj, vtk_connection = self.get_vtk_obj_and_connection()
 
-    def update(self):
-        if self.last_color_by != self.color_by or self.auto_range:
-            self.last_color_by = self.color_by
-            self.array_change(None)
+        if not vtk_obj:
+            self.ui_message = 'Input has no VTK object'
+            return 'error'
+        if not vtk_connection:
+            self.ui_message = 'Input has no VTK connection'
+            return 'error'
+        vtk_obj.Update()
+        val = self.validate_and_update_values()
+        if val:
+            self.ui_message = val
+            return 'error'
+        return 'up-to-date'
 
     def get_texture(self):
+        '''Dig up the texture from the Color Ramp node connected to lookuptable input.
+        '''
         in_links = self.inputs['lookuptable'].links
         if len(in_links) > 0:
             return in_links[0].from_node.get_texture()
-        if self.default_texture:
-            if self.default_texture in bpy.data.textures:
-                return bpy.data.textures[self.default_texture]
+        if self.my_texture_name:
+            if self.my_texture_name in bpy.data.textures:
+                return bpy.data.textures[self.my_texture_name]
         new_texture = get_default_texture(self.name)
-        self.default_texture = new_texture.name
+        self.my_texture_name = new_texture.name
         return new_texture
 
     def free(self):
-        if self.default_texture:
-            if self.default_texture in bpy.data.textures:
-                bpy.data.textures.remove(bpy.data.textures[self.default_texture])
+        if self.my_texture_name:
+            if self.my_texture_name in bpy.data.textures:
+                bpy.data.textures.remove(bpy.data.textures[self.my_texture_name])
         BVTKCache.unmap_node(self)
 
     def draw_buttons(self, context, layout):
+        # Debug
+        row = layout.row()
+        row.label(text="node_id #%d: %r" % (self.node_id, str(self.vtk_status)))
 
-        in_node, vtkobj = self.get_input_node('input')
-        if not in_node:
-            layout.label(text='Connect a node')
-        elif not vtkobj:
-            layout.label(text='Input has no vtkobj (try updating)')
-        else:
-            vtkobj = resolve_algorithm_output(vtkobj)
-            if hasattr(vtkobj, 'GetPointData'):
-                layout.prop(self, 'lut', text='Generate scalar bar')
-                # layout.prop(self, 'texture_type')
-                if self.lut:
-                    layout.prop(self, 'height', text='scalar bar height')
-                layout.prop(self, 'color_by', text='color by')
-                layout.prop(self, 'auto_range', text='automatic range')
-                row = layout.row(align=True)
-                row.enabled = not self.auto_range
-                row.prop(self, 'min')
-                row.prop(self, 'max')
-                layout.separator()
-            else:
-                layout.label(text='Input has no associated data (try updating)')
+        # Show message if any
+        if len(self.ui_message)>0:
+            box = layout.box()
+            for line in self.ui_message.split('\n'):
+                row = box.row()
+                row.label(text=line)
 
+        # Node specific contents
+        layout.prop(self, 'lut')
+        if self.lut:
+            layout.prop(self, 'height')
+        layout.prop(self, 'color_by')
+        layout.prop(self, 'auto_range')
+        row = layout.row(align=True)
+        row.enabled = not self.auto_range
+        row.prop(self, 'min')
+        row.prop(self, 'max')
+        layout.separator()
+
+        # Update button is shown when there is something to update
+        if self.vtk_status != 'up-to-date':
+            row = layout.row()
+            row.operator("node.bvtk_node_update").node_path = node_path(self)
+
+    def init_vtk(self):
+        self.vtk_status = 'out-of-date'
+        vtk_obj = vtk.vtkPassThroughFilter() # Pass through all input to output
+        return vtk_obj
 
 
 class BVTK_Node_ColorRamp(Node, BVTK_Node):
     '''BVTK Color Ramp Node'''
     bl_idname = 'BVTK_Node_ColorRampType'
     bl_label  = 'Color Ramp'
+    bl_description = 'Node for providing VTK Lookup Table for colors of a color palette'
 
-    texture_type: bpy.props.EnumProperty(
-        name="texture type",
-        items=[('IMAGE','IMAGE','IMAGE','FILE_IMAGE',1)],
-        default='IMAGE'
-    )
     my_texture: bpy.props.StringProperty()
 
     def preset_name_from_ind(self, ind):
         return self.cm_preset_items[ind][0]
 
     def update_colorbar_preset(self, context):
+        self.notify_downstream(vtk_status='out-of-date')
+        # Custom color map will not be modified
         if self.cm_preset == 'custom':
             return
-
         new_texture = get_matplotlib_colormap(self.name, self.cm_preset, self.cm_nr_values)
         self.my_texture = new_texture.name
 
     def update_colorbar_nr(self, context):
-        #Custom nodes will not be modified by the automatic helper
+        self.notify_downstream(vtk_status='out-of-date')
+        # Custom color map will not be modified
         if self.cm_preset == 'custom':
             return
-
         self.update_colorbar_preset(context)
 
     cm_preset_items = [ (x,x,x) for x in ['custom'] + sorted(list(colormaps_rgb.keys()))]
-    cm_preset:   bpy.props.EnumProperty   (name='Preset', default='custom', items=cm_preset_items, update=update_colorbar_preset)
-    cm_nr_values: bpy.props.IntProperty(name='Nr Color values', default=8, max=32, min=2, update=update_colorbar_nr)
+    cm_preset: bpy.props.EnumProperty(name='Preset', default='custom', items=cm_preset_items, update=update_colorbar_preset)
+    cm_nr_values: bpy.props.IntProperty(name='Number of Colors', default=8, max=32, min=2, update=update_colorbar_nr)
     b_properties: bpy.props.BoolVectorProperty(name="", size=32, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
-
-
 
     def m_properties(self):
         return ['cm_preset', 'cm_nr_values']
@@ -252,6 +279,7 @@ class BVTK_Node_ColorRamp(Node, BVTK_Node):
         return ([],[],[],['lookupTable'])
 
     def copy_setup(self, node):
+        '''Copy color ramp from argument node to self'''
         new_texture = get_default_texture(self.name)
         self.my_texture = new_texture.name
         old_texture = node.get_texture()
@@ -268,10 +296,6 @@ class BVTK_Node_ColorRamp(Node, BVTK_Node):
                     e = elements.new(new_el.position)
                     e.color = new_el.color
 
-    def setup(self):
-        new_texture = get_default_texture(self.name)
-        self.my_texture = new_texture.name
-
     def get_texture(self):
         if self.my_texture not in bpy.data.textures.keys():
             return None
@@ -283,26 +307,42 @@ class BVTK_Node_ColorRamp(Node, BVTK_Node):
         BVTKCache.unmap_node(self)
 
     def draw_buttons(self, context, layout):
+        # Debug
+        row = layout.row()
+        row.label(text="node_id #%d: %r" % (self.node_id, str(self.vtk_status)))
+
+        # Show message if any
+        if len(self.ui_message)>0:
+            box = layout.box()
+            for line in self.ui_message.split('\n'):
+                row = box.row()
+                row.label(text=line)
+
         if self.my_texture in bpy.data.textures.keys():
             layout.template_color_ramp(bpy.data.textures[self.my_texture], "color_ramp", expand=False)
-
         row = layout.row()
         row.prop(self, 'cm_preset')
         row = layout.row()
         row.prop(self, 'cm_nr_values')
 
+        # Update button is shown when there is something to update
+        if self.vtk_status != 'up-to-date':
+            row = layout.row()
+            row.operator("node.bvtk_node_update").node_path = node_path(self)
 
+    def apply_properties_special(self):
+        return 'up-to-date'
 
-    def apply_properties(self, vtkobj):
-        pass
-
-    def get_output(self, socketname):
+    def init_vtk(self):
+        new_texture = get_default_texture(self.name)
+        self.my_texture = new_texture.name
         lut = vtk.vtkLookupTable()
         lut.Build()
         return lut
 
     def special_properties(self):
         '''Make auto_update scanner notice changes in the color ramp'''
+        raise Exception("Check is this needed any more")
         return self.export_properties()['elements']
 
     def export_properties(self):

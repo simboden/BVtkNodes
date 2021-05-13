@@ -112,12 +112,13 @@ def run_custom_code(func):
                 l.debug("%s run %r" % (vtk_obj.__vtkname__, cmd))
                 exec(cmd, globals(), locals())
 
-        # Call custom apply function if such is specified (special node),
-        # otherwise call Update().
+        # Call custom apply function if such is specified (special
+        # node). Otherwise call Update(), but only if setting of
+        # properties was succesful.
         if hasattr(self, "apply_properties_special"):
             value = self.apply_properties_special()
         else:
-            if hasattr(vtk_obj, "Update"):
+            if hasattr(vtk_obj, "Update") and value == 'up-to-date':
                 try:
                     vtk_obj.Update()
                 except:
@@ -137,7 +138,7 @@ def run_custom_code(func):
 # - init_vtk() - creation and initialization of VTK object
 # - apply_inputs() - update input connections to VTK object
 # - apply_properties_special() - special function to run for setting properties
-#                                and update for special nodes (optional)
+#                                and update for special nodes
 # -----------------------------------------------------------------------------
 
 class BVTK_Node:
@@ -342,6 +343,7 @@ class BVTK_Node:
                 exec(cmd, globals(), locals())
             except:
                 # TODO: How to get error message and put it to ui_message?
+                self.ui_message = "Error when running: " + cmd
                 return 'error'
 
         # Everything was set successfully
@@ -364,14 +366,14 @@ class BVTK_Node:
             return None, None
 
         # VTK Nodes are derived from vtkAlgorithm, which implements VTK connections
-        if not isinstance(vtk_obj, vtk.vtkAlgorithm):
-            raise Exception("not instance of vtkAlgorithm for #" + str(self.node_id))
-
-        if socketname == 'output' or socketname == 'output 0':
-            return vtk_obj, vtk_obj.GetOutputPort()
-        elif socketname == 'output 1':
-            return vtk_obj, vtk_obj.GetOutputPort(1)
-        raise Exception("Not implemented connection for #" + str(self.node_id) + ": " + socketname)
+        if isinstance(vtk_obj, vtk.vtkAlgorithm):
+            if socketname == 'output' or socketname == 'output 0':
+                return vtk_obj, vtk_obj.GetOutputPort()
+            elif socketname == 'output 1':
+                return vtk_obj, vtk_obj.GetOutputPort(1)
+            raise Exception("Not implemented connection for #" + str(self.node_id) + ": " + socketname)
+        else:
+            return vtk_obj, None
 
     def apply_inputs(self):
         '''Set/update node input connections to this node's VTK object.
@@ -383,23 +385,22 @@ class BVTK_Node:
         if not vtk_obj:
             return None
 
-        # Regular vtkAlgorithms
+        # Normal connections
         for i, socketname in enumerate(inputs):
             input_node, input_vtk_obj, vtk_connection = self.get_input_node_and_vtk_objects(socketname)
-            if not input_node:
+            # Remove unconnected connection
+            if not input_node and hasattr(vtk_obj, 'RemoveInputConnection'):
                vtk_obj.RemoveInputConnection(i, i)
                continue
-            if not vtk_connection:
-                raise Exception("Failed to get output connection from %r" % socketname)
 
-            # Normal algorithms provide normal output
-            if vtk_connection.IsA('vtkAlgorithmOutput'):
+            # Normal vtkAlgorithms use SetInputConnection
+            if vtk_connection and vtk_connection.IsA('vtkAlgorithmOutput'):
                 vtk_obj.SetInputConnection(i, vtk_connection)
-            # Special algorithms can use SetInputData
+            # Special algorithms can use SetInputData. TODO: Which node uses this?
             elif input_vtk_obj.IsA('vtkDataObject'):
                 vtk_obj.SetInputData(i, input_vtk_obj)
-            else:
-                raise Exception("Not implemented input type for #" + str(self.node_id) + ": " + str(type(vtk_obj)))
+            # Otherwise input is something which is taken care of
+            # assumedly by a special node, so ignore it here.
 
         # Extra connections (call method SetX(vtk_obj))
         for socketname in extra_inputs:
@@ -699,6 +700,7 @@ def print_nodes():
 def resolve_algorithm_output(vtkobj):
     '''Return vtkobj from vtkAlgorithmOutput'''
     if vtkobj.IsA('vtkAlgorithmOutput'):
+        producer = vtkobj.GetProducer()
         vtkobj = vtkobj.GetProducer().GetOutputDataObject(vtkobj.GetIndex())
     return vtkobj
 

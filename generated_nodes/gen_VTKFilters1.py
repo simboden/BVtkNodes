@@ -1795,9 +1795,9 @@ class VTKElevationFilter(Node, BVTK_Node):
     bl_idname = 'VTKElevationFilterType'
     bl_label  = 'vtkElevationFilter'
     
-    m_HighPoint  : bpy.props.FloatVectorProperty( name='HighPoint',   default=[0.0, 0.0, 1.0], size=3 )
-    m_LowPoint   : bpy.props.FloatVectorProperty( name='LowPoint',    default=[0.0, 0.0, 0.0], size=3 )
-    m_ScalarRange: bpy.props.FloatVectorProperty( name='ScalarRange', default=[0.0, 1.0], size=2 )
+    m_HighPoint  : bpy.props.FloatVectorProperty( name='HighPoint',   default=[0.0, 0.0, 1.0], size=3, update=BVTK_Node.outdate_vtk_status )
+    m_LowPoint   : bpy.props.FloatVectorProperty( name='LowPoint',    default=[0.0, 0.0, 0.0], size=3, update=BVTK_Node.outdate_vtk_status )
+    m_ScalarRange: bpy.props.FloatVectorProperty( name='ScalarRange', default=[0.0, 1.0], size=2, update=BVTK_Node.outdate_vtk_status )
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 

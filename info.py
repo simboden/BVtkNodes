@@ -14,7 +14,7 @@ class BVTK_Node_Info(Node, BVTK_Node):
         return (['input'],['output'],[],[])
 
     def apply_properties_special(self):
-        '''Custom post update function to generate info text from VTK objects
+        '''Special update function to generate info text from VTK objects
         '''
         text = ""
         fs1 = "{:.5g}"
@@ -69,7 +69,7 @@ class BVTK_Node_Info(Node, BVTK_Node):
                 range_text = ''
                 for n in range(n_comps):
                     r = arr.GetRange(n)
-                    range_text += '[' + fs.format(r[0]) +', ' + fs.format(r[1]) + ']  '
+                    range_text += '[' + fs1.format(r[0]) +', ' + fs1.format(r[1]) + ']  '
                     text += fs2.format(k=k, i=i, data_type_name=data_type_name,
                                        n_comps=n_comps, name=name, range_text=range_text)
                     text += '\n'

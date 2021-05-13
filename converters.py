@@ -53,55 +53,66 @@ class BVTK_Node_VTKToBlender(Node, BVTK_Node):
     def update_cb(self):
         '''Update node color bar and update Blender object'''
         input_node, vtkobj = self.get_input_node('input')
-        ramp = None
+        color_mapper = None
         if input_node and input_node.bl_idname == 'BVTK_Node_ColorMapperType':
-            ramp = input_node
-            ramp.update()    # setting auto range
+            color_mapper = input_node
+            color_mapper.update()    # setting auto range
             input_node, vtkobj = input_node.get_input_node('input')
         if vtkobj:
             vtkobj = resolve_algorithm_output(vtkobj)
-            vtkdata_to_blender(vtkobj, self.m_Name, ramp, self.smooth, self.generate_material)
+            vtkdata_to_blender(vtkobj, self.m_Name, color_mapper, self.smooth, self.generate_material)
             update_3d_view()
 
     def apply_properties(self, vtkobj):
         pass
 
 
-def unwrap_and_color_the_mesh(ob, data, name, ramp, bm, generate_material):
+def unwrap_and_color_the_mesh(ob, vtk_obj, name, color_mapper, bm, generate_material):
     '''Create UV unwrap corresponding to a generated color image to color
     the mesh. Also generates material if needed.
     '''
+
     # Set colors and color legend
-    if ramp and ramp.color_by and not ramp.color_by[0] == 'E':
-        texture = ramp.get_texture()
-        if ramp.texture_type == 'IMAGE':
-            image_width = 1000
-            img = image_from_ramp(texture.color_ramp, texture.name, image_width)
+    if color_mapper and color_mapper.color_by:
+        texture = color_mapper.get_texture()
+        # Color Ramp texture_type is 'IMAGE'
+        image_width = 1000
+        img = image_from_ramp(texture.color_ramp, texture.name, image_width)
 
         # Color legend
-        vrange = (ramp.min, ramp.max)
-        if ramp.lut:
-            create_lut(name, vrange, 6, texture, h=ramp.height)
+        vrange = (color_mapper.min, color_mapper.max)
+        if color_mapper.lut:
+            create_lut(name, vrange, 6, texture, h=color_mapper.height)
 
         # Generate UV maps to get coloring either by points or faces
         bm.verts.index_update()
         bm.faces.index_update()
-        if ramp.color_by[0] == 'P':
-            bm = point_unwrap(bm, data, int(ramp.color_by[1:]), vrange)
-        elif ramp.color_by[0] == 'C':
-            bm = face_unwrap(bm, data, int(ramp.color_by[1:]), vrange)
+        if len(color_mapper.color_by) < 3:
+            return error_text
+        type_letter = color_mapper.color_by[0]
+        array_name = color_mapper.color_by[2:]
+        if type_letter == 'P' or type_letter == 'p':
+            bm, val = point_unwrap(bm, vtk_obj, array_name, vrange)
+            if val:
+                return val
+        elif type_letter == 'C' or type_letter == 'c':
+            bm, val = face_unwrap(bm, vtk_obj, array_name, vrange)
+            if val:
+                return val
+        else:
+            return error_text
 
     # Generate default material if wanted
-    if generate_material and ramp and ramp.color_by and not ramp.color_by[0] == 'E':
+    if generate_material and color_mapper and color_mapper.color_by:
         create_material(ob, texture.name)
     elif generate_material:
         create_material(ob, None)
 
 
-def vtkdata_to_blender(data, name, ramp=None, smooth=False, generate_material=False):
+def vtkdata_to_blender(data, name, color_mapper=None, smooth=False, generate_material=False):
     '''Convert VTK data to Blender mesh object, using optionally
-    given color ramp and normal smoothing. Optionally generates default
-    material, which includes also color information if ramp is given.
+    given color mapper and normal smoothing. Optionally generates default
+    material, which includes also color information if color_mapper is given.
 
     Note: This is the original implementation and does not consider
     VTK cell types (vertex semantics) in conversion, so it works best
@@ -157,7 +168,7 @@ def vtkdata_to_blender(data, name, ramp=None, smooth=False, generate_material=Fa
             verts[i].normal = point_normals.GetTuple(i)
 
     # Set colors and color legend
-    unwrap_and_color_the_mesh(ob, data, name, ramp, bm, generate_material)
+    unwrap_and_color_the_mesh(ob, data, name, color_mapper, bm, generate_material)
     bm.to_mesh(me)  # store bmesh to mesh
     l.info('conversion successful, verts = ' + str(len(verts)))
 
@@ -169,13 +180,13 @@ class BVTK_Node_VTKToBlenderMesh(Node, BVTK_Node):
     bl_idname = 'BVTK_Node_VTKToBlenderMeshType' # type name
     bl_label  = 'VTK To Blender Mesh' # label for nice name display
 
-    m_Name: bpy.props.StringProperty(name='Name', default='mesh')
-    create_all_verts: bpy.props.BoolProperty(name='Create All Verts', default=False)
-    create_edges: bpy.props.BoolProperty(name='Create Edges', default=True)
-    create_faces: bpy.props.BoolProperty(name='Create Faces', default=True)
-    smooth: bpy.props.BoolProperty(name='Smooth', default=False)
-    recalc_norms: bpy.props.BoolProperty(name='Recalculate Normals', default=False)
-    generate_material: bpy.props.BoolProperty(name='Generate Material', default=False)
+    m_Name: bpy.props.StringProperty(name='Name', default='mesh', update=BVTK_Node.outdate_vtk_status)
+    create_all_verts: bpy.props.BoolProperty(name='Create All Verts', default=False, update=BVTK_Node.outdate_vtk_status)
+    create_edges: bpy.props.BoolProperty(name='Create Edges', default=True, update=BVTK_Node.outdate_vtk_status)
+    create_faces: bpy.props.BoolProperty(name='Create Faces', default=True, update=BVTK_Node.outdate_vtk_status)
+    smooth: bpy.props.BoolProperty(name='Smooth', default=False, update=BVTK_Node.outdate_vtk_status)
+    recalc_norms: bpy.props.BoolProperty(name='Recalculate Normals', default=False, update=BVTK_Node.outdate_vtk_status)
+    generate_material: bpy.props.BoolProperty(name='Generate Material', default=False, update=BVTK_Node.outdate_vtk_status)
 
     def m_properties(self):
         return ['m_Name', 'create_all_verts', 'create_edges', 'create_faces',
@@ -187,18 +198,21 @@ class BVTK_Node_VTKToBlenderMesh(Node, BVTK_Node):
     def apply_properties_special(self):
         '''Generate Blender mesh object from VTK object'''
         input_node, vtk_obj, vtk_connection = self.get_input_node_and_vtk_objects()
-        ramp = None
+        color_mapper = None
         if input_node and input_node.bl_idname == 'BVTK_Node_ColorMapperType':
-            ramp = input_node
+            color_mapper = input_node
         if vtk_obj:
             vtk_output_obj = resolve_algorithm_output(vtk_connection)
-            vtkdata_to_blender_mesh (vtk_output_obj, self.m_Name, smooth=self.smooth,
-                                     create_all_verts=self.create_all_verts,
-                                     create_edges=self.create_edges,
-                                     create_faces=self.create_faces,
-                                     recalc_norms=self.recalc_norms,
-                                     generate_material=self.generate_material,
-                                     ramp=ramp)
+            val = vtkdata_to_blender_mesh (vtk_output_obj, self.m_Name, smooth=self.smooth,
+                                           create_all_verts=self.create_all_verts,
+                                           create_edges=self.create_edges,
+                                           create_faces=self.create_faces,
+                                           recalc_norms=self.recalc_norms,
+                                           generate_material=self.generate_material,
+                                           color_mapper=color_mapper)
+            if val:
+                self.ui_message = val
+                return 'error'
             update_3d_view()
         return 'up-to-date'
 
@@ -406,42 +420,41 @@ def edges_and_faces_to_bmesh(edges, faces, vcoords, smooth, bm,
             v.normal_update()
 
 
-def vtkdata_to_blender_mesh(data, name, create_all_verts=False,
+def vtkdata_to_blender_mesh(vtk_obj, name, create_all_verts=False,
                             create_edges=True, create_faces=True,
-                            ramp=None, smooth=False, recalc_norms=False,
+                            color_mapper=None, smooth=False, recalc_norms=False,
                             generate_material=False):
     '''Convert linear and polyhedron VTK cells into a boundary Blender
     surface mesh object.
     '''
-    if not data:
-        l.error('no data!')
-        return
-    if issubclass(data.__class__, vtk.vtkImageData):
-        imgdata_to_blender(data, name)
+    if not vtk_obj:
+        return "No VTK object on input"
+    if issubclass(vtk_obj.__class__, vtk.vtkImageData):
+        imgdata_to_blender(vtk_obj, name)
         return
     me, ob = mesh_and_object(name)
     if me.is_editmode:
         bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
 
     # Get all VTK vertex coordinates
-    data_p = data.GetPoints()
-    vcoords = [data_p.GetPoint(i) for i in range(data.GetNumberOfPoints())]
+    data_p = vtk_obj.GetPoints()
+    vcoords = [data_p.GetPoint(i) for i in range(vtk_obj.GetNumberOfPoints())]
 
     faces = {} # dictionary of boundary face vertices to be created
     edges = {} # dictionary of non-face edges to be created
 
     # Process all VTK cells
-    for i in range(data.GetNumberOfCells()):
-        data_pi = data.GetCell(i).GetPointIds()
+    for i in range(vtk_obj.GetNumberOfCells()):
+        data_pi = vtk_obj.GetCell(i).GetPointIds()
         vert_ids = [data_pi.GetId(x) for x in range(data_pi.GetNumberOfIds())]
-        cell_type = data.GetCell(i).GetCellType()
+        cell_type = vtk_obj.GetCell(i).GetCellType()
         polyfacelist = []
 
         # Polyhedrons need additional polyfacelist (face stream in VTK terminology)
         # https://vtk.org/Wiki/VTK/Polyhedron_Support
         if cell_type == 42:
             fs = vtk.vtkIdList()
-            data.GetFaceStream(i, fs)
+            vtk_obj.GetFaceStream(i, fs)
             polyfacelist = [fs.GetId(ind) for ind in range(fs.GetNumberOfIds())]
 
         edge_vis, face_vis = vtk_cell_to_edges_and_faces(cell_type, vert_ids, polyfacelist)
@@ -463,13 +476,17 @@ def vtkdata_to_blender_mesh(data, name, create_all_verts=False,
     bm = bmesh.new()
     edges_and_faces_to_bmesh(edges, faces, vcoords, smooth, bm, create_all_verts,
                              create_edges, create_faces, recalc_norms)
-    unwrap_and_color_the_mesh(ob, data, name, ramp, bm, generate_material)
+    val = unwrap_and_color_the_mesh(ob, vtk_obj, name, color_mapper, bm, generate_material)
     bm.to_mesh(me)
+    if val:
+        start_info = "Coloring failed,"
+    else:
+        start_info = "Conversion successful,"
 
-    l.info('conversion successful, verts:%d' % len(bm.verts)
+    l.info(start_info + ' verts:%d' % len(bm.verts)
            + ' edges:%d' % len(bm.edges)
            + ' faces:%d' % len(bm.faces))
-
+    return val
 
 # -----------------------------------------------------------------------------
 # Particle converter
@@ -1478,40 +1495,49 @@ def image_from_ramp(ramp, name, length):
     #return img
 
 
-def face_unwrap(bm, data, array_index, vrange):
+def face_unwrap(bm, vtk_obj, array_name, vrange):
     '''Unwrap by cell data'''
-    scalars=data.GetCellData().GetArray(array_index)
-    if scalars is not None:
-        minr, maxr = vrange
-        if maxr == minr:
-            l.error("can't unwrap -- values are constant -- range(" + \
-                    str(minr) + "," + str(maxr) + ")!")
-            return bm
-        uv_layer = bm.loops.layers.uv.verify()
-        for face in bm.faces:
-            for loop in face.loops:
-                v = (scalars.GetValue(face.index) - minr)/(maxr - minr)
-                v = min(0.999, max(0.001, v)) # Force value inside range
-                loop[uv_layer].uv = (v, 0.5)
-    return bm
+
+    scalars = get_vtk_array_data(vtk_obj, array_name, array_type='C')
+    minr, maxr = vrange
+    uv_layer = bm.loops.layers.uv.verify()
+    for face in bm.faces:
+        for loop in face.loops:
+            v = (scalars.GetValue(face.index) - minr)/(maxr - minr)
+            v = min(0.999, max(0.001, v)) # Force value inside range
+            loop[uv_layer].uv = (v, 0.5)
+    return bm, None
 
 
-def point_unwrap(bm, data, array_index, vrange):
+def point_unwrap(bm, vtk_obj, array_name, vrange):
     '''Unwrap by point data'''
-    scalars=data.GetPointData().GetArray(array_index)
-    if scalars is not None:
-        minr, maxr = vrange
-        if maxr == minr:
-            l.error("can't unwrap -- values are constant -- range(" + \
-                    str(minr) + "," + str(maxr) + ")!")
-            return bm
-        uv_layer = bm.loops.layers.uv.verify()
-        for face in bm.faces:
-            for loop in face.loops:
-                v = (scalars.GetValue(loop.vert.index) - minr)/(maxr - minr)
-                v = min(0.999, max(0.001, v)) # Force value inside range
-                loop[uv_layer].uv = (v, 0.5)
-    return bm
+
+    scalars = get_vtk_array_data(vtk_obj, array_name, array_type='P')
+    minr, maxr = vrange
+    uv_layer = bm.loops.layers.uv.verify()
+    for face in bm.faces:
+        for loop in face.loops:
+            v = (scalars.GetValue(loop.vert.index) - minr)/(maxr - minr)
+            v = min(0.999, max(0.001, v)) # Force value inside range
+            loop[uv_layer].uv = (v, 0.5)
+    return bm, None
+
+
+def get_vtk_array_data(vtk_obj, array_name, array_type='P'):
+    '''Get VTK data array from data set with given name and type (point or
+    cell data)
+    '''
+    if array_type in ('P', 'p'):
+        data = vtk_obj.GetPointData()
+    elif array_type in ('C', 'c'):
+        data = vtk_obj.GetCellData()
+    else:
+        raise ValueError("Unknown array type %r" % array_type)
+
+    for i in range(data.GetNumberOfArrays()):
+        name = str(data.GetArrayName(i))
+        if name == array_name:
+            return data.GetArray(i)
 
 
 # -----------------------------------------------------------------------------
