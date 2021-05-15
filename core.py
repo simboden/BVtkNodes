@@ -26,6 +26,8 @@ b_path = b_properties.__file__ # Boolean properties config file path
 from .update import *
 from .cache import BVTKCache
 
+ENUM_ICON = 'DOT' # Default icon for enumeration lists
+
 # -----------------------------------------------------------------------------
 # BVTK_NodeTree
 # -----------------------------------------------------------------------------
@@ -644,7 +646,6 @@ def check_b_properties():
 add_class(BVTK_NodeTree)
 add_class(BVTK_NodeSocket)
 add_ui_class(BVTK_OT_NodeWrite)
-
 
 # -----------------------------------------------------------------------------
 # VTK Node Category

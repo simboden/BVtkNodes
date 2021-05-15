@@ -169,7 +169,18 @@ class BVTKNodes_Settings(bpy.types.PropertyGroup):
 @persistent
 def on_file_loaded(scene):
     '''Initialize cache and VTK objects after Blender file has been opened'''
-    cache.BVTKCache.init()
+    # Set all nodes out-of-date and remove input connection information
+    # to force correct initialization upon first update.
+    for nodetree in bpy.data.node_groups:
+            if nodetree.bl_idname != 'BVTK_NodeTreeType':
+                continue
+            for node in nodetree.nodes:
+                node.vtk_status = 'out-of-date'
+                node.connected_input_names = ""
+    # Update if needed
+    update_mode = bpy.context.scene.bvtknodes_settings.update_mode
+    if update_mode != 'no-automatic-updates':
+        cache.BVTKCache.init()
 
 @persistent
 def compareGeneratedAndCurrentVTKVersion():

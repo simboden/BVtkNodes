@@ -131,37 +131,37 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
         if len(self.inputs['lookuptable'].links) != 1:
             return "Error: No Color Ramp Node connected"
 
-    def color_arrays(self, context):
+    def color_by_enum_generator(self, context=None):
         '''Enum list generator for color_by property.
-        Generate array items available for coloring
-        
-        TODO: Look into resetting the selected item on new color array.
-        Can access the property via self.bl_rna.properties['color_by']
+        Generate array items available for coloring.
         '''
-        raise Exception("To be updated")
-        items = []
+
+        items = [('None', 'Empty (clear value)', 'Empty (clear value)', ENUM_ICON, 0)]
+
         vtk_obj, vtk_connection = self.get_vtk_obj_and_connection()
-        # self.bl_rna.properties['color_by'].get = self.get_enum
-        if vtk_obj:
+        if vtk_connection:
             vtk_output_obj = resolve_algorithm_output(vtk_connection)
             if hasattr(vtk_output_obj, 'GetCellData'):
                 c_data = vtk_output_obj.GetCellData()
-                p_data =  vtk_output_obj.GetPointData()
+                p_data = vtk_output_obj.GetPointData()
                 c_descr = 'Color by cell data using '
                 p_descr = 'Color by point data using '
                 for i in range(p_data.GetNumberOfArrays()):
                     arr_name = str(p_data.GetArrayName(i))
-                    items.append(('P'+str(i), arr_name, p_descr+arr_name+' array', 'VERTEXSEL', len(items)))
+                    items.append(('P_'+arr_name, arr_name, p_descr+arr_name+' array', 'VERTEXSEL', len(items)))
                 for i in range(c_data.GetNumberOfArrays()):
                     arr_name = str(c_data.GetArrayName(i))
-                    items.append(('C'+str(i), arr_name, c_descr+arr_name+' array', 'FACESEL', len(items)))
-            # If there is no data fields
-            if len(items) == 0:
-                items.append(('E', 'No cell or point data', 'error', 'ERROR', 0))
-        else:
-            # Need to populate enum prop even if no vtkobj to avoid blender warning
-            items.append(('E', 'Input has no vtkobj (try updating)', 'error', 'ERROR', 0))
+                    items.append(('C_'+arr_name, arr_name, c_descr+arr_name+' array', 'FACESEL', len(items)))
         return items
+
+    def color_by_set_value(self, context=None):
+        '''Set value of StringProprety using value from EnumProperty'''
+        if self.color_by_enum == 'None':
+            self.color_by = ""
+        else:
+            self.color_by = str(self.color_by_enum)
+
+    color_by_enum: bpy.props.EnumProperty(items=color_by_enum_generator, update=color_by_set_value, name='Choices')
 
     def m_properties(self):
         return ['color_by', 'auto_range', 'lut', 'min', 'max', 'height']
@@ -222,7 +222,10 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
         layout.prop(self, 'lut')
         if self.lut:
             layout.prop(self, 'height')
-        layout.prop(self, 'color_by')
+        row = layout.row(align=True)
+        row.prop(self, 'color_by')
+        row.prop(self, 'color_by_enum', icon_only=True)
+
         layout.prop(self, 'auto_range')
         row = layout.row(align=True)
         row.enabled = not self.auto_range
