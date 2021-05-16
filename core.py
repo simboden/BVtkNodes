@@ -136,7 +136,7 @@ def run_custom_code(func):
 # need to provide own versions of following methods:
 # - m_properties() - names of node properties
 # - m_connections() - names of node connections
-# - draw_buttons() - node UI contents
+# - draw_buttons_special() - node UI contents
 # - init_vtk() - creation and initialization of VTK object
 # - apply_inputs() - update input connections to VTK object
 # - apply_properties_special() - special function to run for setting properties
@@ -247,6 +247,7 @@ class BVTK_Node:
         '''Initialize and return a VTK object for the node.
         This is a general implementation for VTK nodes.
         Special nodes need to implement their own initialization.
+        If special node has no VTK objects, it's OK to return None.
         '''
         vtk_class = getattr(vtk, self.bl_label, None)
         if vtk_class is None:
@@ -265,7 +266,9 @@ class BVTK_Node:
 
     @show_custom_code
     def draw_buttons(self, context, layout):
-        '''Show properties in the node. General implementation for VTK nodes.
+        '''Show properties in the node. General implementation for both VTK
+        and special nodes. Special nodes may provide draw_buttons_special()
+        to show custom content in node.
         '''
         # Debug
         row = layout.row()
@@ -278,15 +281,19 @@ class BVTK_Node:
                 row = box.row()
                 row.label(text=line)
 
-        # Get properties and show visible ones
-        m_properties = self.m_properties()
-        for i in range(len(m_properties)):
-            if not hasattr(self, "b_properties") or self.b_properties[i]:
-                layout.prop(self, m_properties[i])
+        # Main content
+        if hasattr(self, 'draw_buttons_special'):
+            self.draw_buttons_special(context, layout)
+        else:
+            # Get properties and show visible ones
+            m_properties = self.m_properties()
+            for i in range(len(m_properties)):
+                if not hasattr(self, "b_properties") or self.b_properties[i]:
+                    layout.prop(self, m_properties[i])
 
-        # Write button for writer nodes
-        if self.bl_idname.endswith('WriterType'):
-            layout.operator('node.bvtk_node_write').id = self.node_id
+            # Write button for writer nodes
+            if self.bl_idname.endswith('WriterType'):
+                layout.operator('node.bvtk_node_write').id = self.node_id
 
         # Update button is shown when there is something to update
         if self.vtk_status != 'up-to-date':

@@ -206,19 +206,7 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
                 bpy.data.textures.remove(bpy.data.textures[self.my_texture_name])
         BVTKCache.unmap_node(self)
 
-    def draw_buttons(self, context, layout):
-        # Debug
-        row = layout.row()
-        row.label(text="node_id #%d: %r" % (self.node_id, str(self.vtk_status)))
-
-        # Show message if any
-        if len(self.ui_message)>0:
-            box = layout.box()
-            for line in self.ui_message.split('\n'):
-                row = box.row()
-                row.label(text=line)
-
-        # Node specific contents
+    def draw_buttons_special(self, context, layout):
         layout.prop(self, 'lut')
         if self.lut:
             layout.prop(self, 'height')
@@ -232,11 +220,6 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
         row.prop(self, 'min')
         row.prop(self, 'max')
         layout.separator()
-
-        # Update button is shown when there is something to update
-        if self.vtk_status != 'up-to-date':
-            row = layout.row()
-            row.operator("node.bvtk_node_update").node_path = node_path(self)
 
     def init_vtk(self):
         self.vtk_status = 'out-of-date'
@@ -309,29 +292,13 @@ class BVTK_Node_ColorRamp(Node, BVTK_Node):
             bpy.data.textures.remove(bpy.data.textures[self.my_texture])
         BVTKCache.unmap_node(self)
 
-    def draw_buttons(self, context, layout):
-        # Debug
-        row = layout.row()
-        row.label(text="node_id #%d: %r" % (self.node_id, str(self.vtk_status)))
-
-        # Show message if any
-        if len(self.ui_message)>0:
-            box = layout.box()
-            for line in self.ui_message.split('\n'):
-                row = box.row()
-                row.label(text=line)
-
+    def draw_buttons_special(self, context, layout):
         if self.my_texture in bpy.data.textures.keys():
             layout.template_color_ramp(bpy.data.textures[self.my_texture], "color_ramp", expand=False)
         row = layout.row()
         row.prop(self, 'cm_preset')
         row = layout.row()
         row.prop(self, 'cm_nr_values')
-
-        # Update button is shown when there is something to update
-        if self.vtk_status != 'up-to-date':
-            row = layout.row()
-            row.operator("node.bvtk_node_update").node_path = node_path(self)
 
     def apply_properties_special(self):
         return 'up-to-date'
