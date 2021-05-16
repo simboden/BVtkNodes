@@ -466,11 +466,12 @@ class BVTK_Node:
         return output_nodes
 
     def copy(self, node):
-        '''Copy setup from another node.
+        '''Copy setup from another node to self.
         '''
         self.node_id = 0 # Force node_id update in map_node()
         vtk_obj = self.init_vtk()
-        BVTKCache.map_node(self, vtk_obj) # Add VTK object to cache
+        if vtk_obj:
+            BVTKCache.map_node(self, vtk_obj) # Add VTK object to cache
         if hasattr(self, 'copy_setup'):
             # some nodes need to set properties (such as color ramp elements)
             # after being copied
@@ -567,10 +568,12 @@ class BVTK_Node:
 
         # Allocate VTK object if it doesn't exist already
         vtk_obj = BVTKCache.get_vtk_obj(self.node_id)
+        # TODO: None has double meaning "nothing in cache" and "None is in cache", no problem?
         if vtk_obj == None:
             vtk_obj = self.init_vtk()
-            BVTKCache.map_node(self, vtk_obj) # Add VTK object to cache
-            l.debug("Init done for node: %s, id #%d" % (self.name, self.node_id))
+            if vtk_obj:
+                BVTKCache.map_node(self, vtk_obj) # Add VTK object to cache
+                l.debug("Init done for node: %s, id #%d" % (self.name, self.node_id))
 
         # Update this node's properties to VTK object only if needed
         if self.vtk_status != 'up-to-date':
@@ -587,8 +590,8 @@ class BVTK_Node:
             # This is the only point where apply_properties() should be called
             new_status = self.apply_properties()
 
-            if new_status == None:
-                self.ui_message = "Node failure:\napply_properties() does not return a valid status string"
+            if new_status not in ('none', 'initialized', 'error', 'upstream-changed', 'out-of-date', 'waiting-for-upstream', 'updating', 'up-to-date'):
+                self.ui_message = "Internal error:\napply_properties() does not return a valid status string"
                 new_status = 'error'
             self.notify_downstream(vtk_status=new_status)
 

@@ -179,8 +179,8 @@ def on_file_loaded(scene):
                 node.connected_input_names = ""
     # Update if needed
     update_mode = bpy.context.scene.bvtknodes_settings.update_mode
-    if update_mode != 'no-automatic-updates':
-        cache.BVTKCache.init()
+    if update_mode == 'update-all':
+        cache.BVTKCache.update_all()
 
 @persistent
 def compareGeneratedAndCurrentVTKVersion():

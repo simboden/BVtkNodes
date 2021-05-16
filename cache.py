@@ -44,6 +44,8 @@ class BVTKCache:
         '''Rebuild Node cache and recreate VTK objects from current node
         trees.
         '''
+        raise Exception("rebuild_cache is obsolete, TODO: remove")
+
         # Zero the map dictionaries
         global nodeMaxId, nodeIdMap, treeIdMap, vtkCache
         nodeMaxId = 0
