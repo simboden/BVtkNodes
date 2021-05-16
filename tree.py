@@ -6,6 +6,7 @@ from . import core
 from bpy_extras.io_utils import ExportHelper
 import json
 import os
+from .cache import BVTKCache
 
 # -----------------------------------------------------------------------------
 # Node tree JSON import/export, node arranging operator and node tree examples
@@ -175,9 +176,19 @@ def insert_into_node_tree(node_tree, new_nodes_dicts, new_links_dicts):
 def node_tree_from_dict(context, node_tree_dict):
     '''Create node tree from dictionary'''
     space = context.space_data
+
+    # Disable updating nodes during node creation
+    update_mode = bpy.context.scene.bvtknodes_settings.update_mode
+    old_mode = str(update_mode)
+    bpy.context.scene.bvtknodes_settings.update_mode = 'no-automatic-updates'
+
     node_tree = space.node_tree
     insert_into_node_tree(node_tree, node_tree_dict['nodes'], node_tree_dict['links'])
 
+    # Restore Update Mode and update if needed
+    bpy.context.scene.bvtknodes_settings.update_mode = old_mode
+    if update_mode == 'update-all':
+        BVTKCache.update_all()
 
 
 def node_from_dict(nodes, node_dict):
@@ -200,6 +211,9 @@ def node_from_dict(nodes, node_dict):
                 setattr(new_node, prop, value)
             except:
                 l.error("setattr failed for " + str(prop) + " " + str(value))
+
+    # Reset vtk_status to out-of-date to ensure correct initialization
+    setattr(new_node, 'vtk_status', 'out-of-date')
 
 def link_from_dict(nodes, links, new_link_dict):
     '''Create link between nodes using data from node dictionary'''
