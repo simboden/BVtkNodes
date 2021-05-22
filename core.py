@@ -243,6 +243,27 @@ class BVTK_Node:
         for x in outputs:
             self.outputs.new('BVTK_NodeSocketType', x)
 
+    def set_vtk_status(self, new_status='none'):
+        '''Set node's VTK status to new status value and change node color.
+        '''
+
+        def status_to_color(vtk_status='none'):
+            '''Return color for argument VTK status'''
+            colors={'none': (0.3, 0.3, 0.3),
+                    'initialized': (0.7, 0.7, 0.7),
+                    'error': (0.8, 0.2, 0.2),
+                    'upstream-changed': (0.8, 0.6, 0.2),
+                    'out-of-date': (0.6, 0.8, 0.2),
+                    'waiting-for-upstream': (0.2, 0.8, 0.8),
+                    'updating': (0.2, 0.2, 0.8),
+                    'up-to-date': (0.5, 0.5, 0.5)}
+            return colors[vtk_status]
+
+        if self.vtk_status == new_status:
+            return
+        self.vtk_status = new_status
+        self.color = status_to_color(new_status)
+
     def init_vtk(self):
         '''Initialize and return a VTK object for the node.
         This is a general implementation for VTK nodes.
@@ -255,7 +276,7 @@ class BVTK_Node:
         vtk_obj = vtk_class()
         if not vtk_obj:
             raise Exception("Could not create " + self.bl_label)
-        self.vtk_status = 'initialized'
+        self.set_vtk_status('initialized')
         l.debug("Init VTK done for node: %s, id #%d" % (self.name, self.node_id))
         return vtk_obj
 
@@ -270,6 +291,7 @@ class BVTK_Node:
         and special nodes. Special nodes may provide draw_buttons_special()
         to show custom content in node.
         '''
+
         # Debug
         row = layout.row()
         row.label(text="node_id #%d: %r" % (self.node_id, str(self.vtk_status)))
@@ -518,7 +540,7 @@ class BVTK_Node:
         '''
         update_mode = bpy.context.scene.bvtknodes_settings.update_mode
         if update_mode == 'update-current':
-            self.vtk_status = 'out-of-date'
+            self.set_vtk_status('out-of-date')
             self.update_vtk()
         else:
             self.notify_downstream(vtk_status='out-of-date')
@@ -536,7 +558,7 @@ class BVTK_Node:
         names = str(namelist)
         if self.connected_input_names != names:
             if update_mode == 'update-current':
-                self.vtk_status = 'out-of-date'
+                self.set_vtk_status('out-of-date')
                 self.update_vtk()
             else:
                 self.notify_downstream(vtk_status='out-of-date')
@@ -552,9 +574,9 @@ class BVTK_Node:
             node.notify_downstream(vtk_status='out-of-date', origin_node=False)
         # For downstream nodes, out-of-date supercedes upstream-changed
         if self.vtk_status != 'out-of-date':
-            self.vtk_status = 'upstream-changed'
+            self.set_vtk_status('upstream-changed')
         if origin_node:
-            self.vtk_status = vtk_status
+            self.set_vtk_status(vtk_status)
 
     def update_vtk(self):
         '''Recursively update upstream nodes and this node if not up-to-date.
@@ -584,7 +606,7 @@ class BVTK_Node:
 
         # Update this node's properties to VTK object only if needed
         if self.vtk_status != 'up-to-date':
-            self.vtk_status = 'updating'
+            self.set_vtk_status('updating')
             l.debug("Updating " + self.name)
 
             # Update VTK connections if needed by running apply_inputs()

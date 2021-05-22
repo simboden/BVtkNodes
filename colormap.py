@@ -222,7 +222,7 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
         layout.separator()
 
     def init_vtk(self):
-        self.vtk_status = 'out-of-date'
+        self.set_vtk_status('out-of-date')
         vtk_obj = vtk.vtkPassThroughFilter() # Pass through all input to output
         return vtk_obj
 
@@ -326,8 +326,8 @@ class BVTK_Node_ColorRamp(Node, BVTK_Node):
         return {'elements': e}
 
     def import_properties(self, dict):
-        l.debug("importing colormap " + str(self.name))
         '''Import colormap properties. Called by import operator'''
+        l.debug("importing colormap " + str(self.name))
         t = self.get_texture()
         new_elements = dict['elements']
         if t:

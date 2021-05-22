@@ -217,7 +217,7 @@ class BVTK_Node_VTKToBlenderMesh(Node, BVTK_Node):
         return 'up-to-date'
 
     def init_vtk(self):
-        self.vtk_status = 'out-of-date'
+        self.set_vtk_status('out-of-date')
         return None
 
 

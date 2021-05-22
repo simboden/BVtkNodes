@@ -77,7 +77,7 @@ class BVTK_Node_Info(Node, BVTK_Node):
         return 'up-to-date'
 
     def init_vtk(self):
-        self.vtk_status = 'out-of-date'
+        self.set_vtk_status('out-of-date')
         vtk_obj = vtk.vtkPassThroughFilter() # Pass through all input to output
         return vtk_obj
 

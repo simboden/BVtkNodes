@@ -175,7 +175,7 @@ def on_file_loaded(scene):
             if nodetree.bl_idname != 'BVTK_NodeTreeType':
                 continue
             for node in nodetree.nodes:
-                node.vtk_status = 'out-of-date'
+                node.set_vtk_status('out-of-date')
                 node.connected_input_names = ""
     # Update if needed
     update_mode = bpy.context.scene.bvtknodes_settings.update_mode
