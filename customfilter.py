@@ -146,44 +146,47 @@ class BVTK_Node_MultiBlockLeaf(Node, BVTK_Node):
     '''
     bl_idname = 'BVTK_Node_MultiBlockLeafType'
     bl_label = 'Multi Block Leaf'
+    bl_description = 'Node to extract one block from vtkMultiBlockDataSet'
 
-    def blocks(self, context):
-        '''Returns a list for a dynamic enum. Once verified that
-        the input vtk object is decomposable in blocks, the list
-        will contain an element for every block, with the following
-        information:
-        - Block index
-        - Block data type (ex. structured grid)
-        - Block custom name (if it's defined, in most cases it's not)
-        '''
-        in_node, vtkobj = self.get_input_node('input')
-        if not in_node:
-            return []
-        elif not vtkobj:
-            return []
-        else:
-            vtkobj = resolve_algorithm_output(vtkobj)
-            if not vtkobj:
-                return []
-            if not hasattr(vtkobj, "GetNumberOfBlocks") or not hasattr(vtkobj, "GetBlock"):
-                return []
-            items = []
-            meta_flag = True if hasattr(vtkobj, "GetMetaData") else False
-            for i in range(vtkobj.GetNumberOfBlocks()):
-                block = vtkobj.GetBlock(i)
-                meta_data = vtkobj.GetMetaData(i) if meta_flag else None
-                if meta_data:
-                    custom_name = meta_data.Get(vtk.vtkCompositeDataSet.NAME())
-                    if not custom_name:
-                        custom_name = ""
-                else:
-                    custom_name = ""
-                name = "[" + str(i) + "]: " + custom_name + " (" + \
-                       (block.__class__.__name__ if block else "Empty Block") + ")"
-                items.append((str(i), name, ""))
+    block: bpy.props.StringProperty(default="", name="Block Name", update=BVTK_Node.outdate_vtk_status)
+
+    def block_enum_generator(self, context=None):
+        '''Returns an enum list of block names'''
+
+        items = [('None', 'Empty (clear value)', 'Empty (clear value)', ENUM_ICON, 0)]
+
+        input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects()
+        if not hasattr(vtk_output_obj, "GetNumberOfBlocks") or \
+           not hasattr(vtk_output_obj, "GetBlock"):
             return items
 
-    block: bpy.props.EnumProperty(items=blocks, name="Output Block")
+        for i in range(vtk_output_obj.GetNumberOfBlocks()):
+            block = vtk_output_obj.GetBlock(i)
+            if hasattr(vtk_output_obj, "GetMetaData"):
+                meta_data = vtk_output_obj.GetMetaData(i)
+                name = meta_data.Get(vtk.vtkCompositeDataSet.NAME())
+            else:
+                name = str(i)
+            items.append((name, name, name, ENUM_ICON, i+1))
+        return items
+
+    def block_set_value(self, context=None):
+        '''Set value of StringProprety using value from EnumProperty'''
+        if self.block_enum == 'None':
+            self.block = ""
+        else:
+            self.block = str(self.block_enum)
+
+    block_enum: bpy.props.EnumProperty(items=block_enum_generator, update=block_set_value, name="Choices")
+
+    def validate_and_update_values(self):
+        '''Check that value in block property exists.
+        '''
+        if len(self.block) < 1:
+            return "Error: Need a Block Name"
+        block_enum_list = first_elements(self.block_enum_generator())
+        if not self.block in block_enum_list:
+            return "Block named %r was not found in input" % self.block
 
     def m_properties(self):
         return []
@@ -191,45 +194,36 @@ class BVTK_Node_MultiBlockLeaf(Node, BVTK_Node):
     def m_connections(self):
         return (['input'], [], [], ['output'])
 
-    def draw_buttons(self, context, layout):
-        in_node, vtkobj = self.get_input_node('input')
-        if not in_node:
-            layout.label(text='Connect a node')
-        elif not vtkobj:
-            layout.label(text='Input has not vtkobj (try updating)')
-        else:
-            vtkobj = resolve_algorithm_output(vtkobj)
-            if not vtkobj:
-                return
-            class_name = vtkobj.__class__.__name__
-            layout.label(text="Input: "+class_name)
-            if not hasattr(vtkobj, "GetNumberOfBlocks") or not hasattr(vtkobj, "GetBlock"):
-                layout.label(text="Error: Input Object has no")
-                layout.label(text="          MultiBlock Data")
-                return
-            layout.prop(self, "block")
+    def draw_buttons_special(self, context, layout):
+        row = layout.row(align=True)
+        row.prop(self, 'block')
+        row.prop(self, 'block_enum', icon_only=True)
 
-    def apply_properties(self, vtkobj):
-        pass
+    def apply_properties_special(self):
+        val = self.validate_and_update_values()
+        if val:
+            self.ui_message = val
+            return 'error'
+        return 'up-to-date'
 
-    def apply_inputs(self, vtkobj):
-        pass
-
-    def get_output(self, socketname):
+    def get_vtk_output_object_special(self, socketname='output'):
         '''The function checks if the specified block can be retrieved from
         the input vtk object, in case it's possible the said block is returned.
         '''
-        in_node, vtkobj = self.get_input_node('input')
-        if in_node:
-            if vtkobj:
-                vtkobj = resolve_algorithm_output(vtkobj)
-                if vtkobj:
-                    # TODO: remove "not" in front of hasattr(vtkobj, "GetBlock")?
-                    if hasattr(vtkobj, "GetNumberOfBlocks") or not hasattr(vtkobj, "GetBlock"):
-                        if self.block:
-                            return vtkobj.GetBlock(int(self.block))
+        input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects()
+        if not vtk_output_obj:
+            return None
+
+        # Find index number from element list
+        block_enum_list = first_elements(self.block_enum_generator())
+        i = block_enum_list.index(self.block) - 1
+        if hasattr(vtk_output_obj, "GetBlock"):
+            return vtk_output_obj.GetBlock(i)
         return None
 
+    def init_vtk(self):
+        self.set_vtk_status('out-of-date')
+        return None
 
 # ----------------------------------------------------------------
 # Time Selector

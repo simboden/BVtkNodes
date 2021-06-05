@@ -780,3 +780,11 @@ def node_prop_path(node, propname):
 def assert_bvtk(condition, message):
     if not condition:
         raise(AssertionError(message))
+
+def first_elements(list_of_lists):
+    '''Return first elements in argument list of lists (like an enum list)
+    '''
+    if not isinstance(list_of_lists, list):
+        return None
+    elem_list = [x[0] for x in list_of_lists]
+    return elem_list

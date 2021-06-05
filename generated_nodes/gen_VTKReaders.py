@@ -1807,18 +1807,18 @@ class VTKOpenFOAMReader(Node, BVTK_Node):
     bl_idname = 'VTKOpenFOAMReaderType'
     bl_label  = 'vtkOpenFOAMReader'
     
-    m_AddDimensionsToArrayNames : bpy.props.BoolProperty  ( name='AddDimensionsToArrayNames',  default=True )
-    m_CacheMesh                 : bpy.props.BoolProperty  ( name='CacheMesh',                  default=True )
-    m_CopyDataToCellZones       : bpy.props.BoolProperty  ( name='CopyDataToCellZones',        default=False )
-    m_CreateCellToPoint         : bpy.props.BoolProperty  ( name='CreateCellToPoint',          default=True )
-    m_DecomposePolyhedra        : bpy.props.BoolProperty  ( name='DecomposePolyhedra',         default=True )
-    m_ListTimeStepsByControlDict: bpy.props.BoolProperty  ( name='ListTimeStepsByControlDict', default=True )
-    m_PositionsIsIn13Format     : bpy.props.BoolProperty  ( name='PositionsIsIn13Format',      default=True )
-    m_ReadZones                 : bpy.props.BoolProperty  ( name='ReadZones',                  default=True )
-    m_SkipZeroTime              : bpy.props.BoolProperty  ( name='SkipZeroTime',               default=False )
-    m_Use64BitFloats            : bpy.props.BoolProperty  ( name='Use64BitFloats',             default=True )
-    m_Use64BitLabels            : bpy.props.BoolProperty  ( name='Use64BitLabels',             default=False )
-    m_FileName                  : bpy.props.StringProperty( name='FileName',                   default="", subtype='FILE_PATH' )
+    m_AddDimensionsToArrayNames : bpy.props.BoolProperty  ( name='AddDimensionsToArrayNames',  default=True, update=BVTK_Node.outdate_vtk_status )
+    m_CacheMesh                 : bpy.props.BoolProperty  ( name='CacheMesh',                  default=True, update=BVTK_Node.outdate_vtk_status )
+    m_CopyDataToCellZones       : bpy.props.BoolProperty  ( name='CopyDataToCellZones',        default=False, update=BVTK_Node.outdate_vtk_status )
+    m_CreateCellToPoint         : bpy.props.BoolProperty  ( name='CreateCellToPoint',          default=True, update=BVTK_Node.outdate_vtk_status )
+    m_DecomposePolyhedra        : bpy.props.BoolProperty  ( name='DecomposePolyhedra',         default=True, update=BVTK_Node.outdate_vtk_status )
+    m_ListTimeStepsByControlDict: bpy.props.BoolProperty  ( name='ListTimeStepsByControlDict', default=True, update=BVTK_Node.outdate_vtk_status )
+    m_PositionsIsIn13Format     : bpy.props.BoolProperty  ( name='PositionsIsIn13Format',      default=True, update=BVTK_Node.outdate_vtk_status )
+    m_ReadZones                 : bpy.props.BoolProperty  ( name='ReadZones',                  default=True, update=BVTK_Node.outdate_vtk_status )
+    m_SkipZeroTime              : bpy.props.BoolProperty  ( name='SkipZeroTime',               default=False, update=BVTK_Node.outdate_vtk_status )
+    m_Use64BitFloats            : bpy.props.BoolProperty  ( name='Use64BitFloats',             default=True, update=BVTK_Node.outdate_vtk_status )
+    m_Use64BitLabels            : bpy.props.BoolProperty  ( name='Use64BitLabels',             default=False, update=BVTK_Node.outdate_vtk_status )
+    m_FileName                  : bpy.props.StringProperty( name='FileName',                   default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status )
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=12, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
