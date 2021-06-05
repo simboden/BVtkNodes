@@ -197,23 +197,21 @@ class BVTK_Node_VTKToBlenderMesh(Node, BVTK_Node):
 
     def apply_properties_special(self):
         '''Generate Blender mesh object from VTK object'''
-        input_node, vtk_obj, vtk_connection = self.get_input_node_and_vtk_objects()
+        input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects()
         color_mapper = None
         if input_node and input_node.bl_idname == 'BVTK_Node_ColorMapperType':
             color_mapper = input_node
-        if vtk_obj:
-            vtk_output_obj = resolve_algorithm_output(vtk_connection)
-            val = vtkdata_to_blender_mesh (vtk_output_obj, self.m_Name, smooth=self.smooth,
-                                           create_all_verts=self.create_all_verts,
-                                           create_edges=self.create_edges,
-                                           create_faces=self.create_faces,
-                                           recalc_norms=self.recalc_norms,
-                                           generate_material=self.generate_material,
-                                           color_mapper=color_mapper)
-            if val:
-                self.ui_message = val
-                return 'error'
-            update_3d_view()
+        val = vtkdata_to_blender_mesh (vtk_output_obj, self.m_Name, smooth=self.smooth,
+                                       create_all_verts=self.create_all_verts,
+                                       create_edges=self.create_edges,
+                                       create_faces=self.create_faces,
+                                       recalc_norms=self.recalc_norms,
+                                       generate_material=self.generate_material,
+                                       color_mapper=color_mapper)
+        if val:
+            self.ui_message = val
+            return 'error'
+        update_3d_view()
         return 'up-to-date'
 
     def init_vtk(self):

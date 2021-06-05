@@ -1,6 +1,5 @@
 from .core import l # Import logging
 from .core import *
-from .cache import BVTKCache
 
 class BVTK_Node_Info(Node, BVTK_Node):
     '''BVTK Info Node'''
@@ -20,34 +19,42 @@ class BVTK_Node_Info(Node, BVTK_Node):
         fs1 = "{:.5g}"
         fs2 = '{k} [{i}] ({data_type_name}{n_comps}): \'{name}\': {range_text}'
 
-        vtk_obj, vtk_connection = self.get_vtk_obj_and_connection()
-
-        if not vtk_obj:
-            self.ui_message = 'Input has no VTK object'
-            return 'error'
-        if not vtk_connection:
-            self.ui_message = 'Input has no VTK connection'
-            return 'error'
-        num_missing_connections = len(self.get_input_socket_names()) - vtk_obj.GetTotalNumberOfInputConnections()
-        if num_missing_connections > 0 :
-            self.ui_message = "Missing %d input connection(s)" % num_missing_connections
-            return 'error'
-
+        vtk_obj = self.get_vtk_obj()
         vtk_obj.Update()
-        vtk_output_obj = resolve_algorithm_output(vtk_connection)
+        vtk_output_obj = self.get_vtk_output_object()
 
         text += 'Type: ' + vtk_output_obj.__class__.__name__ + '\n'
+
+        # Print block names for vtkMultiBlockDataSet
+        if hasattr(vtk_output_obj, 'GetNumberOfBlocks'):
+            for i in range(vtk_output_obj.GetNumberOfBlocks()):
+                block = vtk_output_obj.GetBlock(i)
+                if not hasattr(vtk_output_obj, "GetMetaData"):
+                    text += "     Block " + str(i) + ": No meta data available\n"
+                    continue
+                meta_data = vtk_output_obj.GetMetaData(i)
+                if not meta_data:
+                    continue
+                block_name = meta_data.Get(vtk.vtkCompositeDataSet.NAME())
+                text += "     Block " + str(i) + ": %r" % block_name + " (" + \
+                       (block.__class__.__name__ if block else "Empty Block") + ")\n"
+
         if hasattr(vtk_output_obj, 'GetNumberOfPoints'):
             text += 'Points: ' + str(vtk_output_obj.GetNumberOfPoints()) + '\n'
         if hasattr(vtk_output_obj, 'GetNumberOfCells'):
             text += 'Cells: ' + str(vtk_output_obj.GetNumberOfCells()) + '\n'
         if hasattr(vtk_output_obj, 'GetBounds'):
-            text += 'X range: ' + fs1.format(vtk_output_obj.GetBounds()[0]) + \
-                ' - ' + fs1.format(vtk_output_obj.GetBounds()[1]) + '\n'
-            text += 'Y range: ' + fs1.format(vtk_output_obj.GetBounds()[2]) + \
-                ' - ' + fs1.format(vtk_output_obj.GetBounds()[3]) + '\n'
-            text += 'Z range: ' + fs1.format(vtk_output_obj.GetBounds()[4]) + \
-                ' - ' + fs1.format(vtk_output_obj.GetBounds()[5]) + '\n'
+            # GetBounds() can fail, so use try-except for getting bounds
+            try:
+                bounds = vtk_output_obj.GetBounds()
+                text += 'X range: ' + fs1.format(bounds[0]) + \
+                    ' - ' + fs1.format(bounds[1]) + '\n'
+                text += 'Y range: ' + fs1.format(bounds[2]) + \
+                    ' - ' + fs1.format(bounds[3]) + '\n'
+                text += 'Z range: ' + fs1.format(bounds[4]) + \
+                    ' - ' + fs1.format(bounds[5]) + '\n'
+            except:
+                pass
         data = {}
         if hasattr(vtk_output_obj, 'GetPointData'):
             data['Point data'] = vtk_output_obj.GetPointData()

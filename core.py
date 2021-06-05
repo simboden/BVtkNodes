@@ -105,7 +105,7 @@ def run_custom_code(func):
         value = func(self)
 
         # Then run Custom Code
-        vtk_obj = BVTKCache.get_vtk_obj(self.node_id)
+        vtk_obj = self.get_vtk_obj()
         if vtk_obj and len(self.custom_code) > 0:
             for x in self.custom_code.splitlines():
                 if x.startswith("#"):
@@ -132,15 +132,17 @@ def run_custom_code(func):
 # -----------------------------------------------------------------------------
 # base class for all BVTK_Nodes
 #
-# General implementation for VTK nodes below. Special nodes likely
+# General implementation for VTK nodes below. Special nodes may
 # need to provide own versions of following methods:
 # - m_properties() - names of node properties
 # - m_connections() - names of node connections
 # - draw_buttons_special() - node UI contents
 # - init_vtk() - creation and initialization of VTK object
 # - apply_inputs() - update input connections to VTK object
-# - apply_properties_special() - special function to run for setting properties
-#                                and update for special nodes
+# - apply_properties_special() - special function to run for setting
+#       properties and update VTK object for special nodes
+# - get_vtk_output_object_special() - special function to provide
+#       VTK output object for special nodes
 # -----------------------------------------------------------------------------
 
 class BVTK_Node:
@@ -347,7 +349,7 @@ class BVTK_Node:
             return 'up-to-date'
 
         # Require an object exists in cache
-        vtk_obj = BVTKCache.get_vtk_obj(self.node_id)
+        vtk_obj = self.get_vtk_obj()
         if not vtk_obj:
             self.ui_message = "Internal Error: No VTK object found in cache"
             return 'error'
@@ -381,30 +383,52 @@ class BVTK_Node:
         return 'up-to-date'
 
     def get_vtk_obj(self):
-        '''Return only the VTK object of this node.
+        '''Return the VTK object of this node from cache.
         '''
         vtk_obj = BVTKCache.get_vtk_obj(self.node_id)
         return vtk_obj
 
-    def get_vtk_obj_and_connection(self, socketname='output'):
-        '''Return existing cached VTK object and VTK output connection object
-        for argument output socket name of this node. Assumes VTK
-        object is up-to-date. General implementation for VTK nodes.
+    def get_output_connection(self, socketname='output'):
+        '''Return VTK output connection object for argument output socket name
+        of this node. Return None if no connection is provided.
         '''
 
-        vtk_obj = BVTKCache.get_vtk_obj(self.node_id)
-        if not vtk_obj:
-            return None, None
-
         # VTK Nodes are derived from vtkAlgorithm, which implements VTK connections
-        if isinstance(vtk_obj, vtk.vtkAlgorithm):
-            if socketname == 'output' or socketname == 'output 0':
-                return vtk_obj, vtk_obj.GetOutputPort()
-            elif socketname == 'output 1':
-                return vtk_obj, vtk_obj.GetOutputPort(1)
-            raise Exception("Not implemented connection for #" + str(self.node_id) + ": " + socketname)
+        vtk_obj = self.get_vtk_obj()
+        if not isinstance(vtk_obj, vtk.vtkAlgorithm):
+            return None
+        if socketname == 'output' or socketname == 'output 0':
+            return vtk_obj.GetOutputPort()
+        elif socketname == 'output 1':
+            return vtk_obj.GetOutputPort(1)
         else:
-            return vtk_obj, None
+            raise Exception("Not implemented connection for #" + str(self.node_id) + ": " + socketname)
+
+    def get_vtk_output_object(self, socketname='output'):
+        '''Return VTK output data object for argument output socket name of
+        this node.
+        '''
+
+        # Normal VTK algorithm provides output data object via producer
+        vtk_connection = self.get_output_connection(socketname)
+        if hasattr(vtk_connection, 'IsA') and vtk_connection.IsA('vtkAlgorithmOutput'):
+            producer = vtk_connection.GetProducer()
+            return producer.GetOutputDataObject(vtk_connection.GetIndex())
+
+        # Special nodes may provide custom function
+        if hasattr(self, 'get_vtk_output_object_special'):
+           return self.get_vtk_output_object_special(socketname)
+
+        # Final option is to return node's cached VTK object
+        return self.get_vtk_obj()
+
+    def get_vtk_output_obj_and_connection(self, socketname='output'):
+        '''Return both the output VTK data object and VTK connection for the
+        argument output socket name of this node.
+        '''
+        vtk_output_obj = self.get_vtk_output_object(socketname)
+        vtk_connection = self.get_output_connection(socketname)
+        return vtk_output_obj, vtk_connection
 
     def apply_inputs(self):
         '''Set/update node input connections to this node's VTK object.
@@ -412,13 +436,13 @@ class BVTK_Node:
         General implementation for VTK nodes.
         '''
         inputs, dummy1, extra_inputs, dummy2 = self.m_connections()
-        vtk_obj = BVTKCache.get_vtk_obj(self.node_id)
+        vtk_obj = self.get_vtk_obj()
         if not vtk_obj:
             return None
 
         # Normal connections
         for i, socketname in enumerate(inputs):
-            input_node, input_vtk_obj, vtk_connection = self.get_input_node_and_vtk_objects(socketname)
+            input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects(socketname)
             # Remove unconnected connection
             if not input_node and hasattr(vtk_obj, 'RemoveInputConnection'):
                vtk_obj.RemoveInputConnection(i, i)
@@ -427,16 +451,16 @@ class BVTK_Node:
             # Normal vtkAlgorithms use SetInputConnection
             if vtk_connection and vtk_connection.IsA('vtkAlgorithmOutput'):
                 vtk_obj.SetInputConnection(i, vtk_connection)
-            # Special algorithms can use SetInputData. TODO: Which node uses this?
-            elif input_vtk_obj.IsA('vtkDataObject'):
-                vtk_obj.SetInputData(i, input_vtk_obj)
-            # Otherwise input is something which is taken care of
-            # assumedly by a special node, so ignore it here.
+
+            # If node provides VTK data object as output, use SetInputData.
+            # TODO: Does some node actually use this?
+            elif hasattr(vtk_output_obj, 'IsA') and vtk_output_obj.IsA('vtkDataObject'):
+                vtk_obj.SetInputData(i, vtk_output_obj)
 
         # Extra connections (call method SetX(vtk_obj))
         for socketname in extra_inputs:
             raise Exception("WIP TODO extra_input:" + socketname)
-            input_node, vtk_obj, dummy = self.get_input_node_and_vtk_objects(socketname)
+            input_node, vtk_obj, dummy = self.get_input_node_and_output_vtk_objects(socketname)
             if not input_node:
                 continue
             if not vtk_obj:
@@ -444,14 +468,15 @@ class BVTK_Node:
             cmd = 'vtk_obj.Set' + socketname + '( vtk_obj )'
             exec(cmd, globals(), locals())
 
-    def get_input_node_and_vtk_objects(self, input_socket_name='input'):
-        '''Return input node, it's VTK object and the VTK output connection of
-        the node which is connected to this node's argument input socket name.
+    def get_input_node_and_output_vtk_objects(self, input_socket_name='input'):
+        '''Return input node, VTK output object it produces, and the VTK
+        output connection of the input node which is connected to this
+        node's argument input socket name.
         '''
         input_node, from_socket_name = self.get_input_node_and_socketname(input_socket_name)
         if not input_node:
             return None, None, None
-        vtk_obj, vtk_connection = input_node.get_vtk_obj_and_connection(from_socket_name)
+        vtk_obj, vtk_connection = input_node.get_vtk_output_obj_and_connection(from_socket_name)
         return input_node, vtk_obj, vtk_connection
 
     def get_input_node_and_socketname(self, input_socket_name='input'):
@@ -501,6 +526,7 @@ class BVTK_Node:
         vtk_obj = self.init_vtk()
         if vtk_obj:
             BVTKCache.map_node(self, vtk_obj) # Add VTK object to cache
+        # TODO: rename to copy_special to unify terminology
         if hasattr(self, 'copy_setup'):
             # some nodes need to set properties (such as color ramp elements)
             # after being copied
@@ -596,13 +622,11 @@ class BVTK_Node:
         self.ui_message = ""
 
         # Allocate VTK object if it doesn't exist already
-        vtk_obj = BVTKCache.get_vtk_obj(self.node_id)
-        # TODO: None has double meaning "nothing in cache" and "None is in cache", no problem?
-        if vtk_obj == None:
+        vtk_obj = self.get_vtk_obj()
+        if vtk_obj == 'not-in-cache':
             vtk_obj = self.init_vtk()
-            if vtk_obj:
-                BVTKCache.map_node(self, vtk_obj) # Add VTK object to cache
-                l.debug("Init done for node: %s, id #%d" % (self.name, self.node_id))
+            BVTKCache.map_node(self, vtk_obj) # Add VTK object to cache
+            l.debug("Init done for node: %s, id #%d" % (self.name, self.node_id))
 
         # Update this node's properties to VTK object only if needed
         if self.vtk_status != 'up-to-date':
@@ -728,14 +752,6 @@ def print_nodes():
 # -----------------------------------------------------------------------------
 # Useful help functions
 # -----------------------------------------------------------------------------
-
-
-def resolve_algorithm_output(vtkobj):
-    '''Return vtkobj from vtkAlgorithmOutput'''
-    if vtkobj.IsA('vtkAlgorithmOutput'):
-        producer = vtkobj.GetProducer()
-        vtkobj = vtkobj.GetProducer().GetOutputDataObject(vtkobj.GetIndex())
-    return vtkobj
 
 
 def update_3d_view():

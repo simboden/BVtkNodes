@@ -177,6 +177,9 @@ def on_file_loaded(scene):
             for node in nodetree.nodes:
                 node.set_vtk_status('out-of-date')
                 node.connected_input_names = ""
+                # Update nodeMaxId
+                if node.node_id > cache.nodeMaxId:
+                    cache.nodeMaxId = node.node_id
     # Update if needed
     update_mode = bpy.context.scene.bvtknodes_settings.update_mode
     if update_mode == 'update-all':

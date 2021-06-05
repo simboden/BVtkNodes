@@ -168,7 +168,8 @@ class BVTKCache:
         if node.node_id == 0:
             nodeMaxId += 1
             node.node_id = nodeMaxId
-
+        if node.node_id in vtkCache:
+            raise ValueError("Internal Error: Cache already contains node_id #%d" % node.node_id)
         vtkCache[node.node_id] = vtk_obj
         nodeIdMap[node.node_id] = node
         tree = node.id_data
@@ -227,4 +228,6 @@ class BVTKCache:
         if node_id in vtkCache:
             return vtkCache[node_id]
         else:
-            return None
+            # Use special return value for 'nothing in cache' because
+            # None can be returned as a value in cache.
+            return 'not-in-cache'

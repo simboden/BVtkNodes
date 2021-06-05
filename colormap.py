@@ -113,8 +113,7 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
                 + "or 'C_' (for cell data), followed by array name."
 
         array_name = self.color_by[2:]
-        input_node, vtk_obj, vtk_connection = self.get_input_node_and_vtk_objects()
-        vtk_output_obj = resolve_algorithm_output(vtk_connection)
+        input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects()
         d = get_vtk_array_data(vtk_output_obj, array_name, type_letter)
         if not d:
             return "Error: " + array_type + " %r not found on input." % array_name
@@ -138,9 +137,8 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
 
         items = [('None', 'Empty (clear value)', 'Empty (clear value)', ENUM_ICON, 0)]
 
-        vtk_obj, vtk_connection = self.get_vtk_obj_and_connection()
+        vtk_output_obj, vtk_connection = self.get_vtk_output_obj_and_connection()
         if vtk_connection:
-            vtk_output_obj = resolve_algorithm_output(vtk_connection)
             if hasattr(vtk_output_obj, 'GetCellData'):
                 c_data = vtk_output_obj.GetCellData()
                 p_data = vtk_output_obj.GetPointData()
@@ -172,14 +170,7 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
     def apply_properties_special(self):
         '''Special apply properties function.
         '''
-        vtk_obj, vtk_connection = self.get_vtk_obj_and_connection()
-
-        if not vtk_obj:
-            self.ui_message = 'Input has no VTK object'
-            return 'error'
-        if not vtk_connection:
-            self.ui_message = 'Input has no VTK connection'
-            return 'error'
+        vtk_obj = self.get_vtk_obj()
         vtk_obj.Update()
         val = self.validate_and_update_values()
         if val:
