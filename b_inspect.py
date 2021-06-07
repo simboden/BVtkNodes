@@ -87,22 +87,18 @@ class BVTK_OT_SetTextEditor(bpy.types.Operator):
 
     def execute(self, context):
         active_node = context.active_node
-        vtkobj = active_node.get_vtkobj()
+        vtkobj = active_node.get_vtk_obj()
         classname = vtkobj.__class__.__name__
         if self.print == 0:
             inner = self.text_block("DOCUMENTATION " + classname, str(vtkobj.__doc__))
         if self.print == 1:
             inner = self.text_block(classname, str(vtkobj))
         if self.print == 2:
-            output_ports = active_node.m_connections()[1]
+            socketnames = active_node.get_output_socket_names()
             inner = ''
-            for o in output_ports:
-                if o == 'output' or o == 'output 0':
-                    inner += self.text_block('output', str(vtkobj.GetOutput(0)))
-                if o == 'output 1':
-                    inner += self.text_block('output 1', str(vtkobj.GetOutput(1)))
-                # TODO: handle output 2,3,....
-
+            for socketname in socketnames:
+                vtk_output_obj = active_node.get_vtk_output_object(socketname)
+                inner += self.text_block(socketname, str(vtk_output_obj))
         text = self.get_text('BVTK', inner)
         flag = True
         areas = context.screen.areas
@@ -136,9 +132,9 @@ class BVTK_OT_SetTextEditor(bpy.types.Operator):
 
 
 class BVTK_OT_OpenWebsite(bpy.types.Operator):
-    '''Open web site in web browser'''
     bl_idname = 'node.bvtk_open_website'
-    bl_label = ''
+    bl_label = 'Open Web Browser'
+    bl_description = 'Open web site in web browser'
 
     href: bpy.props.StringProperty()
 
@@ -149,21 +145,14 @@ class BVTK_OT_OpenWebsite(bpy.types.Operator):
 
 
 class BVTK_OT_UpdateObj(bpy.types.Operator):
-    '''Run update of this node's VTK Object'''
     bl_idname = "node.bvtk_update_obj"
-    bl_label = "call update()"
+    bl_label = "Update Node"
+    bl_description = "Run update of this node's VTK Object"
 
     prop: bpy.props.StringProperty()
 
     def execute(self, context):
-        BVTKCache.check_cache()
-        active_node = context.active_node
-        vtkobj = active_node.get_vtkobj()
-        log_check()
-        active_node.apply_properties(vtkobj)
-        if hasattr(vtkobj, 'Update'):
-            vtkobj.Update()
-        log_show()
+        self.update_vtk()
         return {'FINISHED'}
 
 

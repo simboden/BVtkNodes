@@ -77,9 +77,9 @@ class BVTK_Node_Info(Node, BVTK_Node):
                 for n in range(n_comps):
                     r = arr.GetRange(n)
                     range_text += '[' + fs1.format(r[0]) +', ' + fs1.format(r[1]) + ']  '
-                    text += fs2.format(k=k, i=i, data_type_name=data_type_name,
-                                       n_comps=n_comps, name=name, range_text=range_text)
-                    text += '\n'
+                text += fs2.format(k=k, i=i, data_type_name=data_type_name,
+                                   n_comps=n_comps, name=name, range_text=range_text)
+                text += '\n'
         self.ui_message = text
         return 'up-to-date'
 

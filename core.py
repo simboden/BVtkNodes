@@ -228,6 +228,12 @@ class BVTK_Node:
         m_connections = self.m_connections()
         return m_connections[0]
 
+    def get_output_socket_names(self):
+        '''Return output socket names from m_connections.
+        '''
+        m_connections = self.m_connections()
+        return m_connections[1]
+
     def init(self, context):
         '''Create and initialize a new BVTK node.
         '''
@@ -432,7 +438,7 @@ class BVTK_Node:
 
     def apply_inputs(self):
         '''Set/update node input connections to this node's VTK object.
-        This is called from get_vtk_output() during update.
+        This is called from update_vtk() during update.
         General implementation for VTK nodes.
         '''
         inputs, dummy1, extra_inputs, dummy2 = self.m_connections()
@@ -452,8 +458,7 @@ class BVTK_Node:
             if vtk_connection and vtk_connection.IsA('vtkAlgorithmOutput'):
                 vtk_obj.SetInputConnection(i, vtk_connection)
 
-            # If node provides VTK data object as output, use SetInputData.
-            # TODO: Does some node actually use this?
+            # Special nodes can provide a VTK data object as output
             elif hasattr(vtk_output_obj, 'IsA') and vtk_output_obj.IsA('vtkDataObject'):
                 vtk_obj.SetInputData(i, vtk_output_obj)
 
@@ -633,11 +638,16 @@ class BVTK_Node:
             self.set_vtk_status('updating')
             l.debug("Updating " + self.name)
 
-            # Update VTK connections if needed by running apply_inputs()
+            # Update VTK connections if node connections have changed
             namelist = [link.from_node.name for socket in self.inputs for link in socket.links]
             names = str(namelist)
             if self.connected_input_names != names:
                 self.connected_input_names = names
+                self.apply_inputs()
+
+            # Special nodes: Update VTK connections always, because
+            # provided VTK data object might have changed.
+            elif not str(self.__class__).startswith("vtk"):
                 self.apply_inputs()
 
             # This is the only point where apply_properties() should be called

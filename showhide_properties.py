@@ -55,7 +55,6 @@ class BVTK_OT_Edit_Custom_Code(bpy.types.Operator):
             active_node = context.active_node
         else: # Call from node
             # Get node based on node_id tag and make it active
-            BVTKCache.check_cache()
             active_node = BVTKCache.get_node(self.node_id)
             active_node.select = True
             
@@ -94,7 +93,6 @@ class BVTK_OT_Save_Custom_Code(bpy.types.Operator):
             active_node = context.active_node
         else: # Call from node
             # Get node based on node_id tag and make it active
-            BVTKCache.check_cache()
             active_node = BVTKCache.get_node(self.node_id)
             active_node.select = True
             

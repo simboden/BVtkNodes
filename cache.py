@@ -198,7 +198,7 @@ class BVTKCache:
     @classmethod
     def get_node(cls, node_id:int):
         '''Get node corresponding to node_id.
-        Called by BVTK_OT_NodeWrite.
+        Called by Node Write and Edit/Save Custom Code.
         '''
         global nodeIdMap
 
@@ -210,7 +210,7 @@ class BVTKCache:
     @classmethod
     def get_tree(cls, node_id:int):
         '''Get node tree corresponding to node_id.
-        Called in BVTK_OT_Edit_Custom_Code.
+        Called by Node Write and Edit/Save Custom Code.
         '''
         global treeIdMap
 
