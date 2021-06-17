@@ -50,7 +50,10 @@ class BVTKBaseTest(unittest.TestCase):
 
         self.assertTrue(os.path.exists(python_script), "The provided python script %s was not found" % (python_script))
 
-        proc = subprocess.Popen([self.blender_path, self.blender_files_dir + blend_file, "--background", 
+        proc = subprocess.Popen([self.blender_path, 
+                            "--addons", "BVtkNodes", #Activate the addon, even if not set using the user preferences
+                            "--background", 
+                            self.blender_files_dir + blend_file, 
                             "--python-exit-code", "1", #Exit with failure if the python script fails
                             "--python", python_script,
                             ] + ([] if python_params is None else ["--"] + python_params), 
@@ -87,6 +90,10 @@ class BVTKBaseTest(unittest.TestCase):
 
 
 class BVTKMainExamples(BVTKBaseTest):
+
+    def test_addon_importable(self):
+        self.runTestCase("test_template.blend", "test_addon_importable.py")
+
     def test_append(self):
         self.runTestCase("test_template.blend", python_params=["-j", "//../json_files/test_append_triangle.json"])
 

@@ -1,0 +1,41 @@
+name: CI Tests
+
+on:
+  push:
+    branches: [ master, ci ]
+  pull_request:
+    branches: [ master, ci ]
+
+jobs:
+
+  run_ci:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.7]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies of the test environment
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install numpy vtk==9.0.1 pyvista
+    - name: Install the library
+      run: |
+        #Zip addon before downloading blender
+        zip -r BVtkNodes.zip .
+
+        #Install blender and the addon
+        sh test/install_blender.sh
+        sh test/install_bvtk.sh
+
+    - name: Run the tests
+      run: |
+        export BLENDER_PATH="$PWD/blender/blender"
+        python test/test_main.py
