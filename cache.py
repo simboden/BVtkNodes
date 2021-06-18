@@ -5,9 +5,9 @@ import functools
 
 l = logging.getLogger(__name__)
 
-#last_update_id:dict = {} # node_id -> last update ID
-
-#persistent_storage = {"nodes": {}}
+# TODO: Modify Global Time Keeper and remove these?
+last_update_id:dict = {} # node_id -> last update ID
+persistent_storage = {"nodes": {}}
 
 #It is sometimes not possible to save instance variables in a class, which is why we use this node
 class PersistentStorageUser():
