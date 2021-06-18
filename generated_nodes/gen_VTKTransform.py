@@ -11,10 +11,10 @@ class VTKBSplineTransform(Node, BVTK_Node):
     bl_label  = 'vtkBSplineTransform'
     e_BorderMode_items=[ (x,x,x) for x in ['Edge', 'Zero', 'ZeroAtBorder']]
     
-    m_InverseIterations: bpy.props.IntProperty  ( name='InverseIterations', default=500 )
-    m_DisplacementScale: bpy.props.FloatProperty( name='DisplacementScale', default=1.0 )
-    m_InverseTolerance : bpy.props.FloatProperty( name='InverseTolerance',  default=1e-06 )
-    e_BorderMode       : bpy.props.EnumProperty ( name='BorderMode',        default="Edge", items=e_BorderMode_items )
+    m_InverseIterations: bpy.props.IntProperty(name='InverseIterations', default=500, update=BVTK_Node.outdate_vtk_status)
+    m_DisplacementScale: bpy.props.FloatProperty(name='DisplacementScale', default=1.0, update=BVTK_Node.outdate_vtk_status)
+    m_InverseTolerance: bpy.props.FloatProperty(name='InverseTolerance', default=1e-06, update=BVTK_Node.outdate_vtk_status)
+    e_BorderMode: bpy.props.EnumProperty(name='BorderMode', default="Edge", items=e_BorderMode_items, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -32,8 +32,8 @@ class VTKCylindricalTransform(Node, BVTK_Node):
     bl_idname = 'VTKCylindricalTransformType'
     bl_label  = 'vtkCylindricalTransform'
     
-    m_InverseIterations: bpy.props.IntProperty  ( name='InverseIterations', default=500 )
-    m_InverseTolerance : bpy.props.FloatProperty( name='InverseTolerance',  default=0.001 )
+    m_InverseIterations: bpy.props.IntProperty(name='InverseIterations', default=500, update=BVTK_Node.outdate_vtk_status)
+    m_InverseTolerance: bpy.props.FloatProperty(name='InverseTolerance', default=0.001, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -69,11 +69,11 @@ class VTKGridTransform(Node, BVTK_Node):
     bl_label  = 'vtkGridTransform'
     e_InterpolationMode_items=[ (x,x,x) for x in ['NearestNeighbor', 'Linear', 'Cubic']]
     
-    m_InverseIterations: bpy.props.IntProperty  ( name='InverseIterations', default=500 )
-    m_DisplacementScale: bpy.props.FloatProperty( name='DisplacementScale', default=1.0 )
-    m_DisplacementShift: bpy.props.FloatProperty( name='DisplacementShift', default=0.0 )
-    m_InverseTolerance : bpy.props.FloatProperty( name='InverseTolerance',  default=0.01 )
-    e_InterpolationMode: bpy.props.EnumProperty ( name='InterpolationMode', default="Linear", items=e_InterpolationMode_items )
+    m_InverseIterations: bpy.props.IntProperty(name='InverseIterations', default=500, update=BVTK_Node.outdate_vtk_status)
+    m_DisplacementScale: bpy.props.FloatProperty(name='DisplacementScale', default=1.0, update=BVTK_Node.outdate_vtk_status)
+    m_DisplacementShift: bpy.props.FloatProperty(name='DisplacementShift', default=0.0, update=BVTK_Node.outdate_vtk_status)
+    m_InverseTolerance: bpy.props.FloatProperty(name='InverseTolerance', default=0.01, update=BVTK_Node.outdate_vtk_status)
+    e_InterpolationMode: bpy.props.EnumProperty(name='InterpolationMode', default="Linear", items=e_InterpolationMode_items, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -109,12 +109,12 @@ class VTKIterativeClosestPointTransform(Node, BVTK_Node):
     bl_label  = 'vtkIterativeClosestPointTransform'
     e_MeanDistanceMode_items=[ (x,x,x) for x in ['RMS', 'AbsoluteValue']]
     
-    m_CheckMeanDistance        : bpy.props.BoolProperty ( name='CheckMeanDistance',         default=True )
-    m_StartByMatchingCentroids : bpy.props.BoolProperty ( name='StartByMatchingCentroids',  default=True )
-    m_MaximumNumberOfIterations: bpy.props.IntProperty  ( name='MaximumNumberOfIterations', default=50 )
-    m_MaximumNumberOfLandmarks : bpy.props.IntProperty  ( name='MaximumNumberOfLandmarks',  default=200 )
-    m_MaximumMeanDistance      : bpy.props.FloatProperty( name='MaximumMeanDistance',       default=0.01 )
-    e_MeanDistanceMode         : bpy.props.EnumProperty ( name='MeanDistanceMode',          default="RMS", items=e_MeanDistanceMode_items )
+    m_CheckMeanDistance: bpy.props.BoolProperty(name='CheckMeanDistance', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_StartByMatchingCentroids: bpy.props.BoolProperty(name='StartByMatchingCentroids', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_MaximumNumberOfIterations: bpy.props.IntProperty(name='MaximumNumberOfIterations', default=50, update=BVTK_Node.outdate_vtk_status)
+    m_MaximumNumberOfLandmarks: bpy.props.IntProperty(name='MaximumNumberOfLandmarks', default=200, update=BVTK_Node.outdate_vtk_status)
+    m_MaximumMeanDistance: bpy.props.FloatProperty(name='MaximumMeanDistance', default=0.01, update=BVTK_Node.outdate_vtk_status)
+    e_MeanDistanceMode: bpy.props.EnumProperty(name='MeanDistanceMode', default="RMS", items=e_MeanDistanceMode_items, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -133,7 +133,7 @@ class VTKLandmarkTransform(Node, BVTK_Node):
     bl_label  = 'vtkLandmarkTransform'
     e_Mode_items=[ (x,x,x) for x in ['RigidBody', 'Similarity', 'Affine']]
     
-    e_Mode: bpy.props.EnumProperty( name='Mode', default="Similarity", items=e_Mode_items )
+    e_Mode: bpy.props.EnumProperty(name='Mode', default="Similarity", items=e_Mode_items, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -219,8 +219,8 @@ class VTKSphericalTransform(Node, BVTK_Node):
     bl_idname = 'VTKSphericalTransformType'
     bl_label  = 'vtkSphericalTransform'
     
-    m_InverseIterations: bpy.props.IntProperty  ( name='InverseIterations', default=500 )
-    m_InverseTolerance : bpy.props.FloatProperty( name='InverseTolerance',  default=0.001 )
+    m_InverseIterations: bpy.props.IntProperty(name='InverseIterations', default=500, update=BVTK_Node.outdate_vtk_status)
+    m_InverseTolerance: bpy.props.FloatProperty(name='InverseTolerance', default=0.001, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -239,11 +239,11 @@ class VTKThinPlateSplineTransform(Node, BVTK_Node):
     bl_label  = 'vtkThinPlateSplineTransform'
     e_Basis_items=[ (x,x,x) for x in ['R', 'R2LogR']]
     
-    m_RegularizeBulkTransform: bpy.props.BoolProperty ( name='RegularizeBulkTransform', default=True )
-    m_InverseIterations      : bpy.props.IntProperty  ( name='InverseIterations',       default=500 )
-    m_InverseTolerance       : bpy.props.FloatProperty( name='InverseTolerance',        default=0.001 )
-    m_Sigma                  : bpy.props.FloatProperty( name='Sigma',                   default=1.0 )
-    e_Basis                  : bpy.props.EnumProperty ( name='Basis',                   default="R2LogR", items=e_Basis_items )
+    m_RegularizeBulkTransform: bpy.props.BoolProperty(name='RegularizeBulkTransform', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_InverseIterations: bpy.props.IntProperty(name='InverseIterations', default=500, update=BVTK_Node.outdate_vtk_status)
+    m_InverseTolerance: bpy.props.FloatProperty(name='InverseTolerance', default=0.001, update=BVTK_Node.outdate_vtk_status)
+    m_Sigma: bpy.props.FloatProperty(name='Sigma', default=1.0, update=BVTK_Node.outdate_vtk_status)
+    e_Basis: bpy.props.EnumProperty(name='Basis', default="R2LogR", items=e_Basis_items, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
