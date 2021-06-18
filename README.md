@@ -1,5 +1,5 @@
 # BVTKNodes
-[![](https://readthedocs.org/projects/bvtknodes/badge/?version=latest)](https://bvtknodes.readthedocs.io) [![](https://img.shields.io/github/license/tkeskita/BVtkNodes)](https://github.com/tkeskita/BVtkNodes/blob/master/LICENSE) [![](https://img.shields.io/badge/Download-.zip-blue)](https://github.com/tkeskita/BVtkNodes/archive/master.zip) ![](https://img.shields.io/github/stars/tkeskita/BVtkNodes?style=social)
+[![CI Tests](https://github.com/tkeskita/BVtkNodes/actions/workflows/blender-tests.yml/badge.svg)](https://github.com/tkeskita/BVtkNodes/actions/workflows/blender-tests.yml) [![](https://readthedocs.org/projects/bvtknodes/badge/?version=latest)](https://bvtknodes.readthedocs.io) [![](https://img.shields.io/github/license/tkeskita/BVtkNodes)](https://github.com/tkeskita/BVtkNodes/blob/master/LICENSE) [![](https://img.shields.io/badge/Download-.zip-blue)](https://github.com/tkeskita/BVtkNodes/archive/master.zip) ![](https://img.shields.io/github/stars/tkeskita/BVtkNodes?style=social)
 
 BVTKNodes is a Blender add-on that wraps the Visualization Toolkit (VTK) library for scientific visualization in Blender. 
 The high-level features of this add-on include:
