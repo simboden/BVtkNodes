@@ -112,6 +112,7 @@ def run_custom_code(func):
                     continue
                 cmd = 'vtk_obj.' + x
                 l.debug("%s run %r" % (vtk_obj.__vtkname__, cmd))
+                # TODO: Error handling
                 exec(cmd, globals(), locals())
 
         # Call custom apply function if such is specified (special
@@ -464,13 +465,13 @@ class BVTK_Node:
 
         # Extra connections (call method SetX(vtk_obj))
         for socketname in extra_inputs:
-            raise Exception("WIP TODO extra_input:" + socketname)
             input_node, vtk_obj, dummy = self.get_input_node_and_output_vtk_objects(socketname)
             if not input_node:
                 continue
             if not vtk_obj:
                 raise Exception("Failed to get output from" + socketname)
             cmd = 'vtk_obj.Set' + socketname + '( vtk_obj )'
+            # TODO: Error handling
             exec(cmd, globals(), locals())
 
     def get_input_node_and_output_vtk_objects(self, input_socket_name='input'):
