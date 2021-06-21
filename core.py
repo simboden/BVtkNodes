@@ -463,14 +463,14 @@ class BVTK_Node:
             elif hasattr(vtk_output_obj, 'IsA') and vtk_output_obj.IsA('vtkDataObject'):
                 vtk_obj.SetInputData(i, vtk_output_obj)
 
-        # Extra connections (call method SetX(vtk_obj))
+        # Extra connections (call method SetX(vtk_output_obj) for vtk_obj)
         for socketname in extra_inputs:
-            input_node, vtk_obj, dummy = self.get_input_node_and_output_vtk_objects(socketname)
+            input_node, vtk_output_obj, dummy = self.get_input_node_and_output_vtk_objects(socketname)
             if not input_node:
                 continue
-            if not vtk_obj:
+            if not vtk_output_obj:
                 raise Exception("Failed to get output from" + socketname)
-            cmd = 'vtk_obj.Set' + socketname + '( vtk_obj )'
+            cmd = 'vtk_obj.Set' + socketname + '(vtk_output_obj)'
             # TODO: Error handling
             exec(cmd, globals(), locals())
 
