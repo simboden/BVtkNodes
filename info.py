@@ -19,9 +19,7 @@ class BVTK_Node_Info(Node, BVTK_Node):
         fs1 = "{:.5g}"
         fs2 = '{k} [{i}] ({data_type_name}{n_comps}): \'{name}\': {range_text}'
 
-        vtk_obj = self.get_vtk_obj()
-        vtk_obj.Update()
-        vtk_output_obj = self.get_vtk_output_object()
+        input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects('input')
 
         text += 'Type: ' + vtk_output_obj.__class__.__name__ + '\n'
 
@@ -83,10 +81,14 @@ class BVTK_Node_Info(Node, BVTK_Node):
         self.ui_message = text
         return 'up-to-date'
 
+    def get_vtk_output_object_special(self, socketname='output'):
+        '''Pass on VTK output from input as output'''
+        input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects()
+        return vtk_output_obj
+
     def init_vtk(self):
         self.set_vtk_status('out-of-date')
-        vtk_obj = vtk.vtkPassThroughFilter() # Pass through all input to output
-        return vtk_obj
+        return None
 
 TYPENAMES = []
 add_class(BVTK_Node_Info)
