@@ -8,105 +8,38 @@
         },
         {
             "from_node_name": "vtkPlane",
-            "from_socket_identifier": "self",
+            "from_socket_identifier": "output",
             "to_node_name": "vtkClipPolyData",
             "to_socket_identifier": "ClipFunction"
         },
         {
             "from_node_name": "vtkClipPolyData",
             "from_socket_identifier": "output 0",
-            "to_node_name": "VTK To Blender",
+            "to_node_name": "VTK To Blender Mesh",
             "to_socket_identifier": "input"
         },
         {
             "from_node_name": "vtkClipPolyData",
             "from_socket_identifier": "output 1",
-            "to_node_name": "VTK To Blender.001",
+            "to_node_name": "VTK To Blender Mesh.001",
             "to_socket_identifier": "input"
         }
     ],
     "nodes": [
         {
-            "bl_idname": "VTKClipPolyDataType",
-            "color": [
-                0.6079999804496765,
-                0.6079999804496765,
-                0.6079999804496765
-            ],
-            "height": 100.0,
-            "hide": false,
-            "label": "",
-            "location": [
-                0,
-                300
-            ],
-            "m_GenerateClipScalars": true,
-            "m_GenerateClippedOutput": true,
-            "m_InsideOut": true,
-            "m_Value": 0.0,
-            "mute": false,
-            "name": "vtkClipPolyData",
-            "show_options": true,
-            "show_preview": false,
-            "width": 200.0
-        },
-        {
-            "bl_idname": "BVTK_Node_VTKToBlenderType",
-            "color": [
-                0.6079999804496765,
-                0.6079999804496765,
-                0.6079999804496765
-            ],
-            "height": 100.0,
-            "hide": false,
-            "label": "",
-            "location": [
-                300,
-                300
-            ],
-            "m_Name": "mesh",
-            "mute": false,
-            "name": "VTK To Blender",
-            "show_options": true,
-            "show_preview": false,
-            "smooth": false,
-            "width": 200.0
-        },
-        {
-            "bl_idname": "BVTK_Node_VTKToBlenderType",
-            "color": [
-                0.6079999804496765,
-                0.6079999804496765,
-                0.6079999804496765
-            ],
-            "height": 100.0,
-            "hide": false,
-            "label": "",
-            "location": [
-                300,
-                50
-            ],
-            "m_Name": "mesh2",
-            "mute": false,
-            "name": "VTK To Blender.001",
-            "show_options": true,
-            "show_preview": false,
-            "smooth": false,
-            "width": 200.0
-        },
-        {
             "bl_idname": "VTKSphereSourceType",
             "color": [
-                0.6079999804496765,
-                0.6079999804496765,
-                0.6079999804496765
+                0.5,
+                0.5,
+                0.5
             ],
+            "custom_code": "",
             "height": 100.0,
             "hide": false,
             "label": "",
             "location": [
-                -400,
-                300
+                -400.0,
+                300.0
             ],
             "m_Center": [
                 0.0,
@@ -130,16 +63,17 @@
         {
             "bl_idname": "VTKPlaneType",
             "color": [
-                0.6079999804496765,
-                0.6079999804496765,
-                0.6079999804496765
+                0.5,
+                0.5,
+                0.5
             ],
+            "custom_code": "",
             "height": 100.0,
             "hide": false,
             "label": "",
             "location": [
-                -400,
-                0
+                -400.0,
+                -100.0
             ],
             "m_Normal": [
                 1.0,
@@ -153,9 +87,91 @@
             ],
             "mute": false,
             "name": "vtkPlane",
+            "orientation_object": "",
             "show_options": true,
             "show_preview": false,
             "width": 285.1534118652344
+        },
+        {
+            "bl_idname": "VTKClipPolyDataType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                0.0,
+                300.0
+            ],
+            "m_GenerateClipScalars": true,
+            "m_GenerateClippedOutput": true,
+            "m_InsideOut": true,
+            "m_Value": 0.0,
+            "mute": false,
+            "name": "vtkClipPolyData",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "BVTK_Node_VTKToBlenderMeshType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "create_all_verts": false,
+            "create_edges": true,
+            "create_faces": true,
+            "custom_code": "",
+            "generate_material": false,
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                300.0,
+                300.0
+            ],
+            "m_Name": "mesh",
+            "mute": false,
+            "name": "VTK To Blender Mesh",
+            "recalc_norms": false,
+            "show_options": true,
+            "show_preview": false,
+            "smooth": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "BVTK_Node_VTKToBlenderMeshType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "create_all_verts": false,
+            "create_edges": true,
+            "create_faces": true,
+            "custom_code": "",
+            "generate_material": false,
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                300.0,
+                -40.0
+            ],
+            "m_Name": "mesh2",
+            "mute": false,
+            "name": "VTK To Blender Mesh.001",
+            "recalc_norms": false,
+            "show_options": true,
+            "show_preview": false,
+            "smooth": false,
+            "width": 200.0
         }
     ]
 }

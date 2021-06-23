@@ -21,34 +21,11 @@
         {
             "from_node_name": "Color Mapper",
             "from_socket_identifier": "output",
-            "to_node_name": "VTK To Blender",
+            "to_node_name": "VTK To Blender Mesh",
             "to_socket_identifier": "input"
         }
     ],
     "nodes": [
-        {
-            "bl_idname": "BVTK_Node_VTKToBlenderType",
-            "color": [
-                0.5,
-                0.5,
-                0.5
-            ],
-            "generate_material": true,
-            "height": 100.0,
-            "hide": false,
-            "label": "",
-            "location": [
-                300.0,
-                300.0
-            ],
-            "m_Name": "mesh",
-            "mute": false,
-            "name": "VTK To Blender",
-            "show_options": true,
-            "show_preview": false,
-            "smooth": false,
-            "width": 200.0
-        },
         {
             "bl_idname": "VTKConeSourceType",
             "color": [
@@ -56,6 +33,7 @@
                 0.5,
                 0.5
             ],
+            "custom_code": "",
             "height": 100.0,
             "hide": false,
             "label": "",
@@ -91,6 +69,7 @@
                 0.5,
                 0.5
             ],
+            "custom_code": "",
             "height": 100.0,
             "hide": false,
             "label": "",
@@ -116,32 +95,6 @@
             "name": "vtkElevationFilter",
             "show_options": true,
             "show_preview": false,
-            "width": 200.0
-        },
-        {
-            "auto_range": true,
-            "bl_idname": "BVTK_Node_ColorMapperType",
-            "color": [
-                0.5,
-                0.5,
-                0.5
-            ],
-            "color_by": "",
-            "height": 5.5,
-            "hide": false,
-            "label": "",
-            "location": [
-                0.0,
-                300.0
-            ],
-            "lut": false,
-            "max": 0.0,
-            "min": 0.0,
-            "mute": false,
-            "name": "Color Mapper",
-            "show_options": true,
-            "show_preview": false,
-            "texture_type": "IMAGE",
             "width": 200.0
         },
         {
@@ -195,22 +148,79 @@
                 ]
             },
             "bl_idname": "BVTK_Node_ColorRampType",
+            "cm_nr_values": 8,
+            "cm_preset": "custom",
             "color": [
                 0.5,
                 0.5,
                 0.5
             ],
+            "custom_code": "",
             "height": 100.0,
             "hide": false,
             "label": "",
             "location": [
                 -250.0,
-                100.0
+                0.0
             ],
             "mute": false,
             "name": "Color Ramp",
             "show_options": true,
             "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "auto_range": true,
+            "bl_idname": "BVTK_Node_ColorMapperType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "color_by": "P_Elevation",
+            "custom_code": "",
+            "height": 5.5,
+            "hide": false,
+            "label": "",
+            "location": [
+                0.0,
+                300.0
+            ],
+            "lut": false,
+            "max": 0.7165063619613647,
+            "min": 0.28349363803863525,
+            "mute": false,
+            "name": "Color Mapper",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "BVTK_Node_VTKToBlenderMeshType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "create_all_verts": false,
+            "create_edges": true,
+            "create_faces": true,
+            "custom_code": "",
+            "generate_material": true,
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                250.0,
+                300.0
+            ],
+            "m_Name": "mesh",
+            "mute": false,
+            "name": "VTK To Blender Mesh",
+            "recalc_norms": false,
+            "show_options": true,
+            "show_preview": false,
+            "smooth": false,
             "width": 200.0
         }
     ]
