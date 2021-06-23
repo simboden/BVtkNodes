@@ -111,7 +111,7 @@ def run_custom_code(func):
                 if x.startswith("#"):
                     continue
                 cmd = 'vtk_obj.' + x
-                l.debug("%s run %r" % (vtk_obj.__vtkname__, cmd))
+                l.debug("%s run %r" % (self.name, cmd))
                 # TODO: Error handling
                 exec(cmd, globals(), locals())
 
@@ -427,7 +427,12 @@ class BVTK_Node:
            return self.get_vtk_output_object_special(socketname)
 
         # Final option is to return node's cached VTK object
-        return self.get_vtk_obj()
+        vtk_obj = self.get_vtk_obj()
+        if vtk_obj:
+            return vtk_obj
+
+        raise Exception("Internal error: No output from %r" % self.name)
+
 
     def get_vtk_output_obj_and_connection(self, socketname='output'):
         '''Return both the output VTK data object and VTK connection for the

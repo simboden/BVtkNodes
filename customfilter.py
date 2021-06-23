@@ -189,7 +189,7 @@ class BVTK_Node_MultiBlockLeaf(Node, BVTK_Node):
             return "Block named %r was not found in input" % self.block
 
     def m_properties(self):
-        return []
+        return ['block']
 
     def m_connections(self):
         return (['input'], [], [], ['output'])
@@ -216,10 +216,11 @@ class BVTK_Node_MultiBlockLeaf(Node, BVTK_Node):
 
         # Find index number from element list
         block_enum_list = first_elements(self.block_enum_generator())
+        if not self.block in block_enum_list:
+            return None
         i = block_enum_list.index(self.block) - 1
         if hasattr(vtk_output_obj, "GetBlock"):
             return vtk_output_obj.GetBlock(i)
-        return None
 
     def init_vtk(self):
         self.set_vtk_status('out-of-date')

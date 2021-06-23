@@ -310,5 +310,7 @@ class VTKSphere(BVTK_ImplicitFunction, Node, BVTK_Node):
         self.m_Radius = ob.empty_draw_size*ob.scale[0]  # assuming scale x = y = z
         self.m_Center = ob.location
 
-add_class(VTKSphere)
+# TODO: Upgrade customized version (supporting location and scale from
+# Blender Sphere Empty object). Similar implementation as for vtkPlane.
+#add_class(VTKSphere)
 
