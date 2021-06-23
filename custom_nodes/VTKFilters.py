@@ -5,6 +5,10 @@ from ..core import show_custom_code, run_custom_code
 
 class BVTK_PG_ValueSettings(bpy.types.PropertyGroup):
     '''Property Group for float array of variable size'''
+
+    # DO NOT USE, TO BE REMOVED. Deprecated in favor of providing
+    # single and additional contour values for vtkContourFilter.
+
     value: bpy.props.FloatProperty(default = 0)
 
 add_ui_class(BVTK_PG_ValueSettings)
@@ -15,6 +19,10 @@ class BVTK_ContourHelper:
     '''Base class for filters which use variable number of discrete
     data values for input, similar to vtkCountourFilter.
     '''
+
+    # DO NOT USE, TO BE REMOVED. Deprecated in favor of providing
+    # single and additional contour values for vtkContourFilter.
+
     m_ContourValues: bpy.props.CollectionProperty(type=BVTK_PG_ValueSettings)
 
     @show_custom_code
@@ -78,6 +86,9 @@ class BVTK_OT_UpdateCollection(bpy.types.Operator):
     bl_idname = "node.bvtk_update_collection"
     bl_label = "Update"
 
+    # DO NOT USE, TO BE REMOVED. Deprecated in favor of providing
+    # single and additional contour values for vtkContourFilter.
+
     index: bpy.props.IntProperty(default = 0)
     value: bpy.props.FloatProperty()
     prop_path: bpy.props.StringProperty()
@@ -96,26 +107,76 @@ add_ui_class(BVTK_OT_UpdateCollection)
 
 # -----------------------------------------------------------------------------
 
-class VTKContourFilter(BVTK_ContourHelper, Node, BVTK_Node):
+class VTKContourFilter(Node, BVTK_Node):
     '''Manually modified version of VTK Contour Filter'''
     bl_idname = 'VTKContourFilterType'
     bl_label = 'vtkContourFilter'
 
-    m_ComputeGradients: bpy.props.BoolProperty(name='ComputeGradients', default=True)
-    m_ComputeNormals: bpy.props.BoolProperty(name='ComputeNormals', default=True)
-    m_ComputeScalars: bpy.props.BoolProperty(name='ComputeScalars', default=True)
-    m_GenerateTriangles: bpy.props.BoolProperty(name='GenerateTriangles', default=True)
-    m_ArrayComponent: bpy.props.IntProperty(name='ArrayComponent', default=0)
-    m_NumberOfContours: bpy.props.IntProperty(name='NumberOfContours', default=1)
+    m_ComputeGradients: bpy.props.BoolProperty(name='ComputeGradients', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ComputeNormals: bpy.props.BoolProperty(name='ComputeNormals', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ComputeScalars: bpy.props.BoolProperty(name='ComputeScalars', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_GenerateTriangles: bpy.props.BoolProperty(name='GenerateTriangles', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ArrayComponent: bpy.props.IntProperty(name='ArrayComponent', default=0, update=BVTK_Node.outdate_vtk_status)
+    m_NumberOfContours: bpy.props.IntProperty(name='NumberOfContours', default=1, update=BVTK_Node.outdate_vtk_status)
 
-    b_properties: bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    single_value: bpy.props.FloatProperty(name='Single Value', default=0.5, update=BVTK_Node.outdate_vtk_status)
+    additional_values: bpy.props.StringProperty(name='Additional Values', default="", update=BVTK_Node.outdate_vtk_status)
+
+    b_properties: bpy.props.BoolVectorProperty(name="", size=8, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties(self):
         return ['m_ComputeGradients', 'm_ComputeNormals', 'm_ComputeScalars', 'm_GenerateTriangles', 'm_ArrayComponent',
-                'm_NumberOfContours', 'm_ContourValues']
+                'm_NumberOfContours', 'single_value', 'additional_values']
 
     def m_connections(self):
         return (['input'], ['output'], [], [])
+
+    def get_additional_values(self):
+        '''Return list of floats from Additional Values text string.
+        '''
+        vals = str(self.additional_values).split(',')
+        floats = []
+        for val in vals:
+            try:
+                floats.append(float(val))
+            except:
+                return None
+        return floats
+
+    def apply_properties_special(self):
+        '''Set contour values from Single Value and Additional Values fields.
+        '''
+
+        # Set normal VTK properties first
+        vtk_obj=self.get_vtk_obj()
+        m_properties = self.m_properties()
+        for x in [m_properties[i] for i in range(len(m_properties)) if self.b_properties[i]]:
+            if not x.startswith('m_'):
+                continue
+            # SetX(self.Y)
+            cmd = 'vtk_obj.Set' + x[2:] + '(self.' + x + ')'
+            exec(cmd, globals(), locals())
+
+        # Set single value always
+        vtk_obj.SetNumberOfContours(0)
+        vtk_obj.SetValue(0, float(self.single_value))
+
+        if len(self.additional_values) == 0:
+            vtk_obj.Update()
+            return 'up-to-date'
+
+        # Set additional values if provided
+        i = 1
+        floats = self.get_additional_values()
+        if not floats:
+            self.ui_message = "Additional Values must be comma separated list of number"
+            return 'error'
+        for f in floats:
+            vtk_obj.SetValue(i, f)
+            i += 1
+        self.m_NumberOfContours = i
+        vtk_obj.Update()
+        return 'up-to-date'
 
 add_class(VTKContourFilter)
 
