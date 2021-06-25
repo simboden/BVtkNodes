@@ -804,3 +804,15 @@ def first_elements(list_of_lists):
         return None
     elem_list = [x[0] for x in list_of_lists]
     return elem_list
+
+def string_to_floats(input_string:str):
+    '''Return a list of floats from a comma separated text string.
+    '''
+    vals = input_string.split(',')
+    floats = []
+    for val in vals:
+        try:
+            floats.append(float(val))
+        except:
+            return None
+    return floats
