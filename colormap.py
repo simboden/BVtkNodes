@@ -120,9 +120,19 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
 
         # Update range
         if self.auto_range:
-            range = d.GetRange()
-            self.max = range[1]
-            self.min = range[0]
+            # Disable triggering of automatic node update when updating range
+            # values (properties with update=BVTK_Node.outdate_vtk_status).
+            # TODO: Refactor to core if some other nodes need this as well.
+            update_mode = bpy.context.scene.bvtknodes_settings.update_mode
+            old_mode = str(update_mode)
+            bpy.context.scene.bvtknodes_settings.update_mode = 'no-automatic-updates'
+
+            value_range = d.GetRange()
+            self.max = value_range[1]
+            self.min = value_range[0]
+
+            # Restore Update Mode and update if needed
+            bpy.context.scene.bvtknodes_settings.update_mode = old_mode
 
         if self.min >= self.max:
             return "Error: Range min >= range max, can't unwrap."
@@ -137,7 +147,7 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
 
         items = [('None', 'Empty (clear value)', 'Empty (clear value)', ENUM_ICON, 0)]
 
-        vtk_output_obj, vtk_connection = self.get_vtk_output_obj_and_connection()
+        input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects()
         if vtk_connection:
             if hasattr(vtk_output_obj, 'GetCellData'):
                 c_data = vtk_output_obj.GetCellData()
@@ -170,8 +180,6 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
     def apply_properties_special(self):
         '''Special apply properties function.
         '''
-        vtk_obj = self.get_vtk_obj()
-        vtk_obj.Update()
         val = self.validate_and_update_values()
         if val:
             self.ui_message = val
@@ -212,10 +220,14 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
         row.prop(self, 'max')
         layout.separator()
 
+    def get_vtk_output_object_special(self, socketname='output'):
+        '''Pass on VTK output from input as output'''
+        input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects()
+        return vtk_output_obj
+
     def init_vtk(self):
         self.set_vtk_status('out-of-date')
-        vtk_obj = vtk.vtkPassThroughFilter() # Pass through all input to output
-        return vtk_obj
+        return None
 
 
 class BVTK_Node_ColorRamp(Node, BVTK_Node):

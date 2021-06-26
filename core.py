@@ -268,8 +268,6 @@ class BVTK_Node:
                     'up-to-date': (0.5, 0.5, 0.5)}
             return colors[vtk_status]
 
-        if self.vtk_status == new_status:
-            return
         self.vtk_status = new_status
         self.color = status_to_color(new_status)
 

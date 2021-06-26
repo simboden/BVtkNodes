@@ -213,7 +213,7 @@ def node_from_dict(nodes, node_dict):
                 l.error("setattr failed for " + str(prop) + " " + str(value))
 
     # Reset vtk_status to out-of-date to ensure correct initialization
-    setattr(new_node, 'vtk_status', 'out-of-date')
+    new_node.set_vtk_status('out-of-date')
 
 def link_from_dict(nodes, links, new_link_dict):
     '''Create link between nodes using data from node dictionary'''
