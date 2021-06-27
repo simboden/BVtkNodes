@@ -137,7 +137,8 @@ def run_custom_code(func):
 # need to provide own versions of following methods:
 # - m_properties() - names of node properties
 # - m_connections() - names of node connections
-# - draw_buttons_special() - node UI contents
+# - init_special() - special function to run when node is created
+# - draw_buttons_special() - special node UI contents
 # - init_vtk() - creation and initialization of VTK object
 # - apply_inputs() - update input connections to VTK object
 # - apply_properties_special() - special function to run for setting
@@ -251,6 +252,9 @@ class BVTK_Node:
             self.inputs.new('BVTK_NodeSocketType', x)
         for x in outputs:
             self.outputs.new('BVTK_NodeSocketType', x)
+
+        if hasattr(self, 'init_special'):
+            self.init_special(context)
 
     def set_vtk_status(self, new_status='none'):
         '''Set node's VTK status to new status value and change node color.
@@ -467,6 +471,7 @@ class BVTK_Node:
                 vtk_obj.SetInputData(i, vtk_output_obj)
 
         # Extra connections (call method SetX(vtk_output_obj) for vtk_obj)
+        # See e.g. vtkClipPolyData in the clip example tree.
         for socketname in extra_inputs:
             input_node, vtk_output_obj, dummy = self.get_input_node_and_output_vtk_objects(socketname)
             if not input_node:

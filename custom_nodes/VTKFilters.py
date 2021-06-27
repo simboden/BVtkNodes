@@ -209,9 +209,9 @@ class VTKAppendFilter(Node, BVTK_Node):
     bl_idname = 'VTKAppendFilterType'
     bl_label = 'vtkAppendFilter'
 
-    m_MergePoints        : bpy.props.BoolProperty ( name='MergePoints',         default=True )
-    m_ToleranceIsAbsolute: bpy.props.BoolProperty ( name='ToleranceIsAbsolute', default=True )
-    m_Tolerance          : bpy.props.FloatProperty( name='Tolerance',           default=0.0 )
+    m_MergePoints: bpy.props.BoolProperty(name='MergePoints', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ToleranceIsAbsolute: bpy.props.BoolProperty(name='ToleranceIsAbsolute', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_Tolerance: bpy.props.FloatProperty(name='Tolerance', default=0.0, update=BVTK_Node.outdate_vtk_status)
 
     b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -219,34 +219,28 @@ class VTKAppendFilter(Node, BVTK_Node):
         return ['m_MergePoints', 'm_ToleranceIsAbsolute', 'm_Tolerance']
 
     def m_connections(self):
-        return (['input'], ['output'], [], [])
+        return (['input1', 'input2', 'aux_in3', 'aux_in4', 'aux_in5', 'aux_in6', 'aux_in7', 'aux_in8', ], ['output'], [], [])
 
-    def setup(self):
-        self.inputs['input'].link_limit = 300
+    def apply_inputs(self):
+        inputs, dummy1, extra_inputs, dummy2 = self.m_connections()
+        vtk_obj = self.get_vtk_obj()
 
-    def apply_inputs(self, vtkobj):
-        added = [vtkobj.GetInputConnection(0, i) for i in range(vtkobj.GetNumberOfInputConnections(0))]
-        toadd = []
-        for node, in_obj in self.get_input_nodes('input'):
-            toadd.append(in_obj)
-            if in_obj not in added:
-                if in_obj.IsA('vtkAlgorithmOutput'):
-                    vtkobj.AddInputConnection(in_obj)
-                else:
-                    vtkobj.AddInputData(in_obj)
-
+        # Remove all existing connections
+        added = [vtk_obj.GetInputConnection(0, i) for i in range(vtk_obj.GetNumberOfInputConnections(0))]
         for obj in added:
-            if obj not in toadd:
-                if in_obj.IsA('vtkAlgorithmOutput'):
-                    vtkobj.RemoveInputConnection(0, in_obj)
+            if obj.IsA('vtkAlgorithmOutput'):
+                vtk_obj.RemoveInputConnection(0, obj)
+            else:
+                vtk_obj.RemoveInputData(obj)
+
+        # Build new connections
+        for i, socketname in enumerate(inputs):
+            input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects(socketname)
+            if vtk_output_obj not in added:
+                if vtk_connection and vtk_connection.IsA('vtkAlgorithmOutput'):
+                    vtk_obj.AddInputConnection(vtk_connection)
                 else:
-                    vtkobj.RemoveInputData(in_obj)
-
-    def get_output(self, socketname):
-        vtkobj = self.get_vtkobj()
-        if not vtkobj in [None, 0] and hasattr(vtkobj, 'GetOutput'):
-            return vtkobj.GetOutput()
-
+                    vtk_obj.AddInputData(vtk_output_obj)
 
 add_class(VTKAppendFilter)
 TYPENAMES.append('VTKAppendFilterType')
