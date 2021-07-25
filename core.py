@@ -418,15 +418,15 @@ class BVTK_Node:
         this node.
         '''
 
+        # Special nodes may provide custom function
+        if hasattr(self, 'get_vtk_output_object_special'):
+           return self.get_vtk_output_object_special(socketname)
+
         # Normal VTK algorithm provides output data object via producer
         vtk_connection = self.get_output_connection(socketname)
         if hasattr(vtk_connection, 'IsA') and vtk_connection.IsA('vtkAlgorithmOutput'):
             producer = vtk_connection.GetProducer()
             return producer.GetOutputDataObject(vtk_connection.GetIndex())
-
-        # Special nodes may provide custom function
-        if hasattr(self, 'get_vtk_output_object_special'):
-           return self.get_vtk_output_object_special(socketname)
 
         # Final option is to return node's cached VTK object
         vtk_obj = self.get_vtk_obj()

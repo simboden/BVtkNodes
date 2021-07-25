@@ -345,11 +345,11 @@ class VTKTransformFilter(Node, BVTK_Node):
     bl_idname = 'VTKTransformFilterType'
     bl_label = 'vtkTransformFilter'
 
-    m_Scale: bpy.props.FloatVectorProperty(name='Scale X/Y/Z', default=[1., 1., 1.], size=3)
+    m_Scale: bpy.props.FloatVectorProperty(name='Scale X/Y/Z', default=[1., 1., 1.], size=3, update=BVTK_Node.outdate_vtk_status)
     m_Rotation: bpy.props.FloatVectorProperty(name='Rotation X/Y/Z', default=[0., 0., 0.],
                                               min=0.,
-                                              max=360., size=3)
-    m_Translation: bpy.props.FloatVectorProperty(name='Translation X/Y/Z', default=[0., 0., 0.], size=3)
+                                              max=360., size=3, update=BVTK_Node.outdate_vtk_status)
+    m_Translation: bpy.props.FloatVectorProperty(name='Translation X/Y/Z', default=[0., 0., 0.], size=3, update=BVTK_Node.outdate_vtk_status)
 
     b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -359,18 +359,35 @@ class VTKTransformFilter(Node, BVTK_Node):
     def m_connections(self):
         return (['input'], ['output'], [], [])
 
-    @run_custom_code
-    def apply_properties(self, vtkobj):
-        self.vtk_transform = vtk.vtkTransform()
-        self.vtk_transform.Scale(*self.m_Scale)
-        self.vtk_transform.RotateX(self.m_Rotation[0])
-        self.vtk_transform.RotateY(self.m_Rotation[1])
-        self.vtk_transform.RotateZ(self.m_Rotation[2])
-        self.vtk_transform.Translate(*self.m_Translation)
+    def apply_properties_special(self):
+        input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects()
+        return 'up-to-date'
 
+    def get_vtk_output_object_special(self, socketname='output'):
+        '''Apply the transformation to incoming VTK object and return the result'''
+        vtk_obj = self.get_vtk_obj()
+        input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects()
 
-        vtkobj.SetTransform(self.vtk_transform)
+        # Color Mapper node triggers VTK object search upon loading
+        # (color_by_enum_generator), before any VTK objects
+        # exist. vtk_output_obj evaluates then to node's own VTK
+        # object, due to "final option" in get_vtk_output_object().
+        # It's not possible to provide anything at that stage, so we stop here.
+        # TODO: Could this be handled better, e.g. provide a
+        # core function to detect this early state and stop before calling
+        # get_input_node_and_output_vtk_objects() in enum_generator()?
+        if not vtk_output_obj or isinstance(vtk_output_obj, vtk.vtkTransformFilter):
+            return None
 
+        trans = vtk.vtkTransform()
+        trans.Scale(*self.m_Scale)
+        trans.RotateX(self.m_Rotation[0])
+        trans.RotateY(self.m_Rotation[1])
+        trans.RotateZ(self.m_Rotation[2])
+        trans.Translate(*self.m_Translation)
+        vtk_obj.SetTransform(trans)
+        vtk_obj.Update()
+        return vtk_obj.GetOutputDataObject(0)
 
 add_class(VTKTransformFilter)
 TYPENAMES.append('VTKTransformFilterType')
