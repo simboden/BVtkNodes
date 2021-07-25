@@ -305,10 +305,10 @@ class VTKBoxClipDataSet(Node, BVTK_Node):
     bl_idname = 'VTKBoxClipDataSetType'
     bl_label  = 'vtkBoxClipDataSet'
     
-    m_GenerateClipScalars  : bpy.props.BoolProperty( name='GenerateClipScalars',   default=True )
-    m_GenerateClippedOutput: bpy.props.BoolProperty( name='GenerateClippedOutput', default=True )
-    m_Orientation          : bpy.props.IntProperty ( name='Orientation',           default=1 )
-    m_BoxClip              : bpy.props.FloatVectorProperty ( name='BoxClip',          default=[0.,1.0,0.,1.0,0.0,1.0], size=6)
+    m_GenerateClipScalars  : bpy.props.BoolProperty( name='GenerateClipScalars',   default=True, update=BVTK_Node.outdate_vtk_status )
+    m_GenerateClippedOutput: bpy.props.BoolProperty( name='GenerateClippedOutput', default=True, update=BVTK_Node.outdate_vtk_status )
+    m_Orientation          : bpy.props.IntProperty ( name='Orientation',           default=1, update=BVTK_Node.outdate_vtk_status )
+    m_BoxClip              : bpy.props.FloatVectorProperty ( name='BoxClip',       default=[0.0,1.0,0.0,1.0,0.0,1.0], size=6, update=BVTK_Node.outdate_vtk_status)
 
     b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -317,8 +317,8 @@ class VTKBoxClipDataSet(Node, BVTK_Node):
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1'], [], []) 
     
-    @run_custom_code
-    def apply_properties(self, vtkobj):
+    def apply_properties_special(self):
+        vtk_obj = self.get_vtk_obj()
         m_properties=self.m_properties()
         for x in [m_properties[i] for i in range(len(m_properties)) if self.b_properties[i]]:
             # Skip setting any empty values
@@ -327,12 +327,14 @@ class VTKBoxClipDataSet(Node, BVTK_Node):
                 continue
             # SetX(*self.Y)
             if 'BoxClip' in x:
-                cmd = 'vtkobj.Set'+x[2:]+'(*self.'+x+')'
+                cmd = 'vtk_obj.Set'+x[2:]+'(*self.'+x+')'
             # SetX(self.Y)
             else:
-                cmd = 'vtkobj.Set'+x[2:]+'(self.'+x+')'
+                cmd = 'vtk_obj.Set'+x[2:]+'(self.'+x+')'
+            l.debug("%s run cmd %s" % (self.name, cmd))
             exec(cmd, globals(), locals())
-
+        vtk_obj.Update()
+        return 'up-to-date'
 
 add_class( VTKBoxClipDataSet )        
 TYPENAMES.append('VTKBoxClipDataSetType' )
