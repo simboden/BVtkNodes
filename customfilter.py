@@ -230,7 +230,7 @@ class BVTK_Node_MultiBlockLeaf(Node, BVTK_Node):
 # Time Selector
 # ----------------------------------------------------------------
 
-def update_timestep_in_filename(filename, time_step):
+def update_timestep_in_filename(filename, time_index):
     '''Return file name, where time definition integer string (assumed to
     be located just before dot at end of file name) has been replaced
     to argument time step number
@@ -242,7 +242,7 @@ def update_timestep_in_filename(filename, time_step):
         numbers = regex1.group(1)
         n = len(numbers)
         defstr = "%0" + str(n) + "d"
-        replacement = defstr % time_step
+        replacement = defstr % time_index
         # Replace with dot at end to increase odds for correct substitution
         newname = filename.replace(numbers + ".", replacement + ".")
         return newname
@@ -256,128 +256,103 @@ class BVTK_Node_TimeSelector(Node, BVTK_Node):
     bl_idname = 'BVTK_Node_TimeSelectorType'
     bl_label = 'Time Selector'
 
-    def check_range(self, context):
-        in_node, out_port = self.get_input_node('input')
-        if in_node:
-            if out_port:
-                if out_port.IsA('vtkAlgorithmOutput'):
-                    prod = out_port.GetProducer()
-                    executive = prod.GetExecutive()
-                    out_info = prod.GetOutputInformation(out_port.GetIndex())
-                    if hasattr(executive, "TIME_STEPS"):
-                        time_steps = out_info.Get(executive.TIME_STEPS())
+    def get_time_values(self, context=None):
+        '''Return list of time step values from VTK Executive or None if no
+        time values are found.
+        '''
+        input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects('input')
+        if not vtk_connection or not vtk_connection.IsA('vtkAlgorithmOutput'):
+            return None
+        prod = vtk_connection.GetProducer()
+        executive = prod.GetExecutive()
+        out_info = prod.GetOutputInformation(vtk_connection.GetIndex())
+        if not hasattr(executive, "TIME_STEPS"):
+            return None
+        time_values = out_info.Get(executive.TIME_STEPS())
 
-                        # If reader is aware of time, update time step
-                        # Added requirement len(time_steps) > 1 because VTK 9.0.1
-                        # vtkPolyDataReader started to return TIME_STEPS=0.0
-                        # always (reader is not really time aware?).
-                        if time_steps and len(time_steps) > 1:
-                            size = len(time_steps)
-                            #if self.time_step < -size:
-                            #    self.time_step = -size
-                            #elif self.time_step >= size:
-                            #    self.time_step = size-1
-                            # Make data loop outside normal time range.
-                            # Value test is needed to avoid infinite property
-                            # update loop calling check_range().
-                            time_val = self.time_step % size
-                            if self.time_step != time_val:
-                                self.time_step = time_val
+        # If reader is aware of time, it provides list of time step values.
+        # Added requirement len(time_values) > 1 because VTK 9.0.1
+        # vtkPolyDataReader started to return TIME_STEPS=0.0
+        # always (reader is not really time aware?).
+        if time_values and len(time_values) > 1:
+            return time_values
 
-                        # Hack for time unaware readers: If file name of reader
-                        # node contains number string at end, update it
-                        else:
-                            try:
-                                filename = in_node.m_FileName
-                                newname = update_timestep_in_filename(filename, self.time_step)
-                                in_node.m_FileName = newname
-                            except Exception as ex:
-                                pass
+    def update_time_unaware_reader_node(self):
+        '''Hack to update time unaware readers: If file name of input node
+        contains number string at end, update it.
+        '''
+        input_node, _ = self.get_input_node_and_socketname('input')
+        if not input_node:
+            return None
+        try:
+            filename = input_node.m_FileName
+            newname = update_timestep_in_filename(filename, self.time_index)
+            input_node.m_FileName = newname
+        except Exception as ex:
+            pass
+
+    def get_time_value(self):
+        '''Return time value of current time index as a text string'''
+        time_values = self.get_time_values()
+        if not time_values:
+            return 'Unknown'
+        size = len(time_values)
+        time_index = self.time_index % size
+        return str(time_values[time_index])
 
     def activate_scene_time(self, context):
         if self.use_scene_time:
-            self.time_step = context.scene.frame_current
-            self.check_range(context)
+            self.time_index = context.scene.frame_current
+        self.outdate_vtk_status(context)
 
-    time_step: bpy.props.IntProperty(update=check_range)
+    def time_index_update(self, context=None):
+        '''Custom time_index out-of-date routine'''
+        time_values = self.get_time_values()
+        l.debug("time_values " + str(time_values))
+        if not time_values:
+            self.update_time_unaware_reader_node()
+        self.outdate_vtk_status(context)
+
+    time_index: bpy.props.IntProperty(name="Time Index", default=1, update=time_index_update)
     use_scene_time: bpy.props.BoolProperty(name="Use Scene Time", default=True, update=activate_scene_time)
     b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties(self):
-        return ['time_step', 'use_scene_time']
+        return ['time_index', 'use_scene_time']
 
     def m_connections(self):
         return (['input'], [], [], ['output'])
 
-    def draw_buttons(self, context, layout):
-        in_node, out_port = self.get_input_node('input')
-        if not in_node:
-            layout.label(text='Connect a node')
-            return
-        if not out_port:
-            layout.label(text='Input has not vtkobj (try updating)')
-            return
-        if not out_port.IsA('vtkAlgorithmOutput'):
-            layout.label(text='Input is not a vtkAlgorithm')
-            return
-
-        prod = out_port.GetProducer()
-        executive = prod.GetExecutive()
-        out_info = prod.GetOutputInformation(out_port.GetIndex())
-        if hasattr(executive, "TIME_STEPS"):
-            time_steps = out_info.Get(executive.TIME_STEPS())
-            if time_steps and len(time_steps) > 1:
-                row = layout.row()
-                row.prop(self, 'time_step', text="Time Step")
-                row = layout.row()
-                row.prop(self, 'use_scene_time')
-                row = layout.row()
-                size = len(time_steps)
-                row.label(text="Max Steps: "+str(size-1))
-                if -size <= self.time_step < size:
-                    layout.label(text="Time Value: "+str(time_steps[self.time_step]))
+    def apply_properties_special(self):
+        '''Set time to VTK Executive'''
+        self.ui_message = "Time: " + self.get_time_value()
+        time_values = self.get_time_values()
+        if time_values:
+            input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects('input')
+            if not vtk_connection or not vtk_connection.IsA('vtkAlgorithmOutput'):
+                self.ui_message = "No VTK connection or VTK Algorithm Output"
+                return 'error'
+            prod = vtk_connection.GetProducer()
+            size = len(time_values)
+            if -size <= self.time_index < size:
+                if hasattr(prod, "UpdateTimeStep"):
+                    prod.UpdateTimeStep(time_values[self.time_index])
                 else:
-                    layout.label(text='Index error', icon='ERROR')
+                    self.ui_message = "Error: " + prod.__class__.__name__ + " does not have 'UpdateTimeStep' method."
+                    return 'error'
             else:
-                layout.label(text='No time data on input')
-        else:
-            layout.label(text='Input contains no time steps')
-        return
+                self.ui_message = "Error: time index " + str(self.time_index) + " is out of index range (%d)" % (size - 1)
+                return 'error'
+        return 'up-to-date'
 
-    def apply_properties(self, vtkobj):
-        pass
+    def get_vtk_output_object_special(self, socketname='output'):
+        '''Pass on VTK output from input as output'''
+        input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects()
+        return vtk_output_obj
 
-    def apply_inputs(self, vtkobj):
-        pass
-
-    def get_output(self, socketname):
-        '''Check if the input is valid and if the time step can be set.
-        If tests pass the time step is updated and the input object is returned,
-        otherwise None is returned.
-        '''
-        in_node, out_port = self.get_input_node('input')
-        if not in_node or not out_port:
-            return None
-        if not out_port.IsA('vtkAlgorithmOutput'):
-            return None
-
-        prod = out_port.GetProducer()
-        executive = prod.GetExecutive()
-        out_info = prod.GetOutputInformation(out_port.GetIndex())
-        if hasattr(executive, "TIME_STEPS"):
-            time_steps = out_info.Get(executive.TIME_STEPS())
-            if time_steps and len(time_steps) > 1:
-                size = len(time_steps)
-                if -size <= self.time_step < size:
-                    if hasattr(prod, "UpdateTimeStep"):
-                        prod.UpdateTimeStep(time_steps[self.time_step])
-                    else:
-                        l.error(prod.__class__.__name__+" does not have 'UpdateTimeStep' method.")
-                        l.error("If you can, please document this case and report it to the developers.")
-                else:
-                    l.error('Index out of time steps range')
-        return resolve_algorithm_output(out_port)
-
+    def init_vtk(self):
+        self.set_vtk_status('out-of-date')
+        return None
 
 # ----------------------------------------------------------------
 # Image Data Object Source

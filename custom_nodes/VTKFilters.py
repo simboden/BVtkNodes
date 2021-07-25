@@ -261,10 +261,10 @@ class VTKThreshold(Node, BVTK_Node):
 
     e_AttrType_items=[ (x,x,x) for x in ['PointData', 'CellData']]
 
-    m_Value1:     bpy.props.FloatProperty  (name='Low Value', default=float("-inf") )
-    m_Value2:     bpy.props.FloatProperty  (name='High Value', default=float("inf") )
-    m_AttrName:   bpy.props.StringProperty (name='Attribute Name', default='' )
-    e_AttrType:   bpy.props.EnumProperty   (name='Attribute Type', default='PointData', items=e_AttrType_items )
+    m_Value1:     bpy.props.FloatProperty  (name='Low Value', default=float("-inf"), update=BVTK_Node.outdate_vtk_status )
+    m_Value2:     bpy.props.FloatProperty  (name='High Value', default=float("inf"), update=BVTK_Node.outdate_vtk_status )
+    m_AttrName:   bpy.props.StringProperty (name='Attribute Name', default='', update=BVTK_Node.outdate_vtk_status )
+    e_AttrType:   bpy.props.EnumProperty   (name='Attribute Type', default='PointData', items=e_AttrType_items, update=BVTK_Node.outdate_vtk_status )
 
     b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -274,8 +274,8 @@ class VTKThreshold(Node, BVTK_Node):
     def m_connections(self):
         return (['input'], ['output'], [], [])
 
-    @run_custom_code
-    def apply_properties(self, vtkobj):
+    def apply_properties_special(self):
+        vtk_obj = self.get_vtk_obj()
         value1 = self.m_Value1
         value2 = self.m_Value2
         attr_name = self.m_AttrName
@@ -283,13 +283,15 @@ class VTKThreshold(Node, BVTK_Node):
         if self.e_AttrType == 'CellData':
             attr_type = vtk.vtkDataObject.FIELD_ASSOCIATION_CELLS
 
-        vtkobj.ThresholdBetween(value1, value2)
+        vtk_obj.ThresholdBetween(value1, value2)
 
         # Previously in VTK, to get a threshold with respect to a given
         # attribute you needed to place it as the current scalars.
         # Nowadays user must indicate on which array the filter should operate.
         # This idiom is becoming more and more used in VTK.
-        vtkobj.SetInputArrayToProcess(0, 0, 0, attr_type, attr_name)
+        vtk_obj.SetInputArrayToProcess(0, 0, 0, attr_type, attr_name)
+        vtk_obj.Update()
+        return 'up-to-date'
 
 add_class(VTKThreshold)
 TYPENAMES.append('VTKThresholdType')

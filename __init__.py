@@ -249,11 +249,10 @@ def on_frame_change(scene, depsgraph):
             # Note: This is a workaround to enable transient data traversal
             # while this issue remains: https://developer.blender.org/T66392
             if node.bl_idname == 'BVTK_Node_TimeSelectorType' and node.use_scene_time:
-                node.time_step = scene.frame_current
-                l.debug("TimeSelector time step %d" % node.time_step)
-                connected_converter_nodes = backtrack_converter_nodes(node)
-                #Append, ignoring duplicates
-                nodes_2b_updated = nodes_2b_updated.union(set(connected_converter_nodes))
+                if node.time_index != scene.frame_current:
+                    node.time_index = scene.frame_current
+                    node.time_index_update()
+                    l.debug("TimeSelector time index %d" % node.time_index)
 
             elif node.bl_idname == 'BVTK_Node_GlobalTimeKeeperType':
                 updated_nodes = node.set_new_time(scene.frame_current)
