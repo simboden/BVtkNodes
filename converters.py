@@ -19,7 +19,9 @@ except ImportError:
 # -----------------------------------------------------------------------------
 
 class BVTK_Node_VTKToBlender(Node, BVTK_Node):
-    '''Convert output from VTK Node to Blender Mesh Object'''
+    '''Legacy node for converting output from VTK Node to Blender Mesh Object.
+    Note: Not upgraded to new core.py. Superceded by VTK To Blender Mesh Node.
+    '''
     bl_idname = 'BVTK_Node_VTKToBlenderType' # type name
     bl_label  = 'VTK To Blender'  # label for nice name display
 
@@ -1708,8 +1710,10 @@ class BVTK_OT_NodeUpdate(bpy.types.Operator):
 
 # Add classes and menu items
 TYPENAMES = []
-add_class(BVTK_Node_VTKToBlender)
-TYPENAMES.append('BVTK_Node_VTKToBlenderType')
+# Disabled legacy mesh output node, it's not upgraded to new core.py.
+# You can use VTK To Blender Mesh node instead.
+# add_class(BVTK_Node_VTKToBlender)
+# TYPENAMES.append('BVTK_Node_VTKToBlenderType')
 add_class(BVTK_Node_VTKToBlenderMesh)
 TYPENAMES.append('BVTK_Node_VTKToBlenderMeshType')
 add_class(BVTK_OT_InitializeParticleSystem)
