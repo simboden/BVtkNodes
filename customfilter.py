@@ -361,10 +361,10 @@ class BVTK_Node_ImageDataObjectSource(Node, BVTK_Node):
     bl_idname = 'BVTK_Node_ImageDataObjectSourceType'
     bl_label = 'VTKImageData Object Source'
 
-    origin: bpy.props.FloatVectorProperty(name='Origin', default=[0.0, 0.0, 0.0], size=3)
-    dimensions: bpy.props.IntVectorProperty(name='Dimensions', default=[10, 10, 10], size=3)
-    spacing: bpy.props.FloatVectorProperty(name='Spacing', default=[0.1, 0.1, 0.1], size=3)
-    multiplier: bpy.props.FloatProperty(name='Multiplier', default=1.0)
+    origin: bpy.props.FloatVectorProperty(name='Origin', default=[0.0, 0.0, 0.0], size=3, update=BVTK_Node.outdate_vtk_status)
+    dimensions: bpy.props.IntVectorProperty(name='Dimensions', default=[10, 10, 10], size=3, update=BVTK_Node.outdate_vtk_status)
+    spacing: bpy.props.FloatVectorProperty(name='Spacing', default=[0.1, 0.1, 0.1], size=3, update=BVTK_Node.outdate_vtk_status)
+    multiplier: bpy.props.FloatProperty(name='Multiplier', default=1.0, update=BVTK_Node.outdate_vtk_status)
 
     def m_properties(self):
         return ['origin', 'dimensions', 'spacing', 'multiplier']
@@ -372,16 +372,10 @@ class BVTK_Node_ImageDataObjectSource(Node, BVTK_Node):
     def m_connections(self):
         return ([], [], [], ['output'])
 
-    def draw_buttons(self, context, layout):
-        layout.prop(self, 'origin')
-        layout.prop(self, 'dimensions')
-        layout.prop(self, 'spacing')
-        layout.prop(self, 'multiplier')
+    def apply_properties_special(self):
+        return 'up-to-date'
 
-    def apply_properties(self, vtkobj):
-        pass
-
-    def get_output(self, socketname):
+    def get_vtk_output_object_special(self, socketname='output'):
         '''Generate a new vtkImageData object'''
         from mathutils import Vector
         img = vtk.vtkImageData()
@@ -390,6 +384,10 @@ class BVTK_Node_ImageDataObjectSource(Node, BVTK_Node):
         img.SetDimensions([round(c * dim) for dim in self.dimensions])
         img.SetSpacing(Vector(self.spacing) / c)
         return img
+
+    def init_vtk(self):
+        self.set_vtk_status('out-of-date')
+        return None
 
 # ----------------------------------------------------------------
 # Global Time Keeper
