@@ -12,9 +12,8 @@ from .update import Update, no_queue_update
 
 
 class BVTK_Node_CustomFilter(Node, BVTK_Node):
-    '''VTK Custom Filter, defined in Blender text data block. Supports one
-    or multiple inputs. Custom function must return a variable which
-    is set as input of the node following custom filter.
+    '''VTK Custom Filter, defined in a Blender text data block. Supports one
+    input. Custom function must return a VTK output object.
     '''
     bl_idname = 'BVTK_Node_CustomFilterType'
     bl_label = 'Custom Filter'
@@ -49,9 +48,9 @@ class BVTK_Node_CustomFilter(Node, BVTK_Node):
         return []
 
     def m_connections(self):
-        return (['input'], [], [], ['output'])
+        return (['input'], ['output'], [], [])
 
-    def draw_buttons(self, context, layout):
+    def draw_buttons_special(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, 'text')
         op = row.operator('node.bvtk_new_text', icon='ZOOM_IN', text='')
@@ -62,19 +61,14 @@ class BVTK_Node_CustomFilter(Node, BVTK_Node):
         else:
             layout.label(text='No functions found in specified text')
 
-    def apply_properties(self, vtkobj):
-        pass
+    def apply_properties_special(self):
+        return 'up-to-date'
 
-    def apply_inputs(self, vtkobj):
-        pass
-
-    def get_output(self, socketname):
+    def get_vtk_output_object_special(self, socketname='output'):
         '''Execute user defined function. If something goes wrong,
         print the error and return the input object.
         '''
-        input_objects = [x[1] for x in self.get_input_nodes('input')]
-        if len(input_objects) == 1:
-            input_objects = input_objects[0]
+        input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects()
         if self.text in bpy.data.texts:
             t = bpy.data.texts[self.text].as_string()
             try:
@@ -82,19 +76,20 @@ class BVTK_Node_CustomFilter(Node, BVTK_Node):
             except Exception as e:
                 l.error('error while parsing user defined text: ' + \
                       str(e).replace('<string>', self.text))
-                return self.get_input_node('input')[1]
+                return vtk_output_obj
             if self.func not in locals():
                 l.error('function not found')
             else:
                 try:
-                    user_output = eval(self.func+'(input_objects)')
+                    user_output = eval(self.func+'(vtk_output_obj)')
                     return user_output
                 except Exception as e:
                     l.error('error while executing user defined function:' + str(e))
-        return self.get_input_node('input')[1]
+        return vtk_output_obj
 
-    def setup(self):
-        self.inputs['input'].link_limit = 300
+    # Currently core does not support multiple inputs
+    #def init_special(self):
+    #    self.inputs['input'].link_limit = 300
 
     def export_properties(self):
         '''Export node properties'''
@@ -109,6 +104,9 @@ class BVTK_Node_CustomFilter(Node, BVTK_Node):
         '''Import node properties'''
         bpy.ops.node.bvtk_new_text(body=dict['text_as_string'], name=dict['text_name'])
 
+    def init_vtk(self):
+        self.set_vtk_status('out-of-date')
+        return None
 
 class BVTK_OT_NewText(bpy.types.Operator):
     '''New text operator'''
