@@ -244,6 +244,11 @@ def on_frame_change(scene, depsgraph):
 
     bvtk_nodes = core.get_all_bvtk_nodes()
 
+    # Update always special converters requiring depsgraph
+    for node in bvtk_nodes:
+        if node.bl_idname == 'BVTK_Node_VTKToBlenderParticlesType':
+            node.update_particle_system(depsgraph)
+
     def time_changed(bvtk_nodes):
         '''Return True if time point has changed'''
         for node in bvtk_nodes:
@@ -282,11 +287,6 @@ def on_frame_change(scene, depsgraph):
             #Append, ignoring duplicates
             for conv_nodes in connected_converter_nodes:
                 nodes_2b_updated = nodes_2b_updated.union(set(conv_nodes))
-
-    # Update special converters requiring depsgraph
-    for node in bvtk_nodes:
-        if node.bl_idname == 'BVTK_Node_VTKToBlenderParticlesType':
-            node.update_particle_system(depsgraph)
 
     # Update if needed
     update_mode = bpy.context.scene.bvtknodes_settings.update_mode

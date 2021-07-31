@@ -578,13 +578,13 @@ class BVTK_Node_VTKToBlenderParticles(Node, BVTK_Node):
     bl_idname = 'BVTK_Node_VTKToBlenderParticlesType' # type name
     bl_label  = 'VTK To Blender Particles' # label for nice name display
 
-    ob_name: bpy.props.StringProperty(name='Name', default='particles')
-    glyph_name: bpy.props.StringProperty(name='Glyph Name', default='glyph')
-    vec_name: bpy.props.StringProperty(name='Direction Vector Array Name', default='')
-    scale_name: bpy.props.StringProperty(name='Scale Value or Name', default='')
-    color_name: bpy.props.StringProperty(name='Color Value Array Name', default='')
-    np: bpy.props.IntProperty(name='Particle Count', default=1000, min=1)
-    generate_material: bpy.props.BoolProperty(name='Generate Material', default=True)
+    ob_name: bpy.props.StringProperty(name='Name', default='particles', update=BVTK_Node.outdate_vtk_status)
+    glyph_name: bpy.props.StringProperty(name='Glyph Name', default='glyph', update=BVTK_Node.outdate_vtk_status)
+    vec_name: bpy.props.StringProperty(name='Direction Vector Array Name', default='', update=BVTK_Node.outdate_vtk_status)
+    scale_name: bpy.props.StringProperty(name='Scale Value or Name', default='', update=BVTK_Node.outdate_vtk_status)
+    color_name: bpy.props.StringProperty(name='Color Value Array Name', default='', update=BVTK_Node.outdate_vtk_status)
+    np: bpy.props.IntProperty(name='Particle Count', default=1000, min=1, update=BVTK_Node.outdate_vtk_status)
+    generate_material: bpy.props.BoolProperty(name='Generate Material', default=True, update=BVTK_Node.outdate_vtk_status)
 
     # Data storage for point data from VTK
     from typing import List
@@ -594,64 +594,54 @@ class BVTK_Node_VTKToBlenderParticles(Node, BVTK_Node):
     quats: List[float]
     nParticles: float
 
-    def start_scan(self, context):
-        if not context:
-            return
-        if not self.auto_update:
-            return
-        bpy.ops.node.bvtk_auto_update_scan(
-            node_name=self.name,
-            tree_name=context.space_data.node_tree.name)
-
-    auto_update: bpy.props.BoolProperty(default=False, update=start_scan)
-
     def m_properties(self):
         return ['ob_name', 'glyph_name', 'vec_name', 'scale_name', 'color_name', 'np', 'generate_material']
 
     def m_connections(self):
         return (['input'],[],[],[])
 
-    def draw_buttons(self, context, layout):
+    def draw_buttons_special(self, context, layout):
         layout.prop(self, 'ob_name')
         layout.prop(self, 'glyph_name')
         layout.prop(self, 'vec_name')
         layout.prop(self, 'scale_name')
         layout.prop(self, 'color_name')
         layout.prop(self, 'np')
-        warning_text = warn_if_not_exist_object(self.glyph_name)
-        if warning_text:
-            layout.label(text=warning_text)
         layout.prop(self, 'generate_material')
-        layout.separator()
-        if not warning_text:
-            layout.operator("node.bvtk_initialize_particle_system", text="Initialize")
-            layout.operator("node.bvtk_node_update", text="Update").node_path = node_path(self)
-
-    def update_cb(self):
-        '''Update node color bar'''
-        pass
+        layout.operator("node.bvtk_initialize_particle_system", text="Initialize")
 
     def update_particle_system(self, depsgraph):
         '''Updates Blender Particle System from point data in vtkPolyData'''
-        input_node, vtkobj = self.get_input_node('input')
+        input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects()
+        if not vtk_output_obj:
+            return
+
         l.debug("Updating Particle System for Object %r" % self.ob_name)
-        if vtkobj:
-            vtkdata = resolve_algorithm_output(vtkobj)
-            if not vtkdata:
-                l.error('No vtkdata!')
-                return
-            if not issubclass(vtkdata.__class__, vtk.vtkPolyData):
-                l.error('Data is not vtkPolyData!')
-                return
+        if not vtk_output_obj:
+            l.error('No vtkdata!')
+            return
+        if not issubclass(vtk_output_obj.__class__, vtk.vtkPolyData):
+            l.error('Data is not vtkPolyData!')
+            return
 
-            npoints = get_vtk_particle_data(self, vtkdata)
-            if npoints == 0:
-                return
-            vtkdata_to_blender_particles(self, depsgraph)
-            update_3d_view()
+        npoints = get_vtk_particle_data(self, vtk_output_obj)
+        if npoints == 0:
+            return
+        vtkdata_to_blender_particles(self, depsgraph)
+        update_3d_view()
 
-    def apply_properties(self, vtkobj):
-        pass
+    def apply_properties_special(self):
+        warning_text = warn_if_not_exist_object(self.glyph_name)
+        if warning_text:
+            self.ui_message = warning_text
+            return 'error'
+        # Note: update_particle_system is called from on_frame_change
+        # and not here, because it requires depsgraph.
+        return 'up-to-date'
+
+    def init_vtk(self):
+        self.set_vtk_status('out-of-date')
+        return None
 
 
 def truncate_or_pad_list(slist, n):
