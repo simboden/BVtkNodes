@@ -368,15 +368,7 @@ class VTKTransformFilter(Node, BVTK_Node):
         vtk_obj = self.get_vtk_obj()
         input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects()
 
-        # Color Mapper node triggers VTK object search upon loading
-        # (color_by_enum_generator), before any VTK objects
-        # exist. vtk_output_obj evaluates then to node's own VTK
-        # object, due to "final option" in get_vtk_output_object().
-        # It's not possible to provide anything at that stage, so we stop here.
-        # TODO: Could this be handled better, e.g. provide a
-        # core function to detect this early state and stop before calling
-        # get_input_node_and_output_vtk_objects() in enum_generator()?
-        if not vtk_output_obj or isinstance(vtk_output_obj, vtk.vtkTransformFilter):
+        if not vtk_output_obj:
             return None
 
         trans = vtk.vtkTransform()

@@ -258,6 +258,7 @@ class BVTK_Node:
 
     def set_vtk_status(self, new_status='none'):
         '''Set node's VTK status to new status value and change node color.
+        Note: Does not trigger any updates.
         '''
 
         def status_to_color(vtk_status='none'):
@@ -397,6 +398,12 @@ class BVTK_Node:
         vtk_obj = BVTKCache.get_vtk_obj(self.node_id)
         return vtk_obj
 
+    def vtk_obj_in_cache(self):
+        '''Return True if an object (or None) is in cache.
+        '''
+        return BVTKCache.vtk_obj_in_cache(self.node_id)
+
+
     def get_output_connection(self, socketname='output'):
         '''Return VTK output connection object for argument output socket name
         of this node. Return None if no connection is provided.
@@ -428,13 +435,8 @@ class BVTK_Node:
             producer = vtk_connection.GetProducer()
             return producer.GetOutputDataObject(vtk_connection.GetIndex())
 
-        # Final option is to return node's cached VTK object
-        vtk_obj = self.get_vtk_obj()
-        if vtk_obj:
-            return vtk_obj
-
-        raise Exception("Internal error: No output from %r" % self.name)
-
+        # Final option is to return node's cached VTK object (may be None)
+        return self.get_vtk_obj()
 
     def get_vtk_output_obj_and_connection(self, socketname='output'):
         '''Return both the output VTK data object and VTK connection for the
@@ -636,8 +638,7 @@ class BVTK_Node:
         self.ui_message = ""
 
         # Allocate VTK object if it doesn't exist already
-        vtk_obj = self.get_vtk_obj()
-        if vtk_obj == 'not-in-cache':
+        if not self.vtk_obj_in_cache():
             vtk_obj = self.init_vtk()
             BVTKCache.map_node(self, vtk_obj) # Add VTK object to cache
             l.debug("Init done for node: %s, id #%d" % (self.name, self.node_id))
@@ -819,3 +820,13 @@ def string_to_floats(input_string:str):
         except:
             return None
     return floats
+
+def get_all_bvtk_nodes():
+    '''Return list of BVTK Nodes from all node trees/groups'''
+    bvtk_nodes = []
+    for node_group in bpy.data.node_groups:
+        if node_group.bl_idname != 'BVTK_NodeTreeType':
+            continue
+        for node in node_group.nodes:
+            bvtk_nodes.append(node)
+    return bvtk_nodes

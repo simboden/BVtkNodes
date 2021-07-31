@@ -169,6 +169,7 @@ class BVTKNodes_Settings(bpy.types.PropertyGroup):
 @persistent
 def on_file_loaded(scene):
     '''Initialize cache and VTK objects after Blender file has been opened'''
+    l.debug("Triggered")
     # Set all nodes out-of-date and remove input connection information
     # to force correct initialization upon first update.
     for nodetree in bpy.data.node_groups:
@@ -238,30 +239,62 @@ def backtrack_converter_nodes(root_node):
 
 @persistent
 def on_frame_change(scene, depsgraph):
-    '''Updates done after frame (time step) changes'''
+    '''Updates done after frame number (time step) changes'''
+    l.debug("Triggered")
 
-    nodes_2b_updated = set()
+    bvtk_nodes = core.get_all_bvtk_nodes()
 
-    # Update Time Selectors
-    for node_group in bpy.data.node_groups:
-        for node in node_group.nodes:
-            # Set frame number directly from Blender timeline.
-            # Note: This is a workaround to enable transient data traversal
-            # while this issue remains: https://developer.blender.org/T66392
+    def time_changed(bvtk_nodes):
+        '''Return True if time point has changed'''
+        for node in bvtk_nodes:
             if node.bl_idname == 'BVTK_Node_TimeSelectorType' and node.use_scene_time:
                 if node.time_index != scene.frame_current:
-                    node.time_index = scene.frame_current
-                    node.time_index_update()
-                    l.debug("TimeSelector time index %d" % node.time_index)
-
+                    return True
             elif node.bl_idname == 'BVTK_Node_GlobalTimeKeeperType':
-                updated_nodes = node.set_new_time(scene.frame_current)
-                connected_converter_nodes = [backtrack_converter_nodes(node) for node in updated_nodes]
-                l.debug("Global Time Keeper time step %d" % node.global_time)
+                if node.time_index != node.add_correct_routine_here():
+                    return True
+        return False
 
-                #Append, ignoring duplicates
-                for conv_nodes in connected_converter_nodes:
-                    nodes_2b_updated = nodes_2b_updated.union(set(conv_nodes))
+    # This check is needed because this routine can be triggered also
+    # from depsgraph update.
+    if not time_changed(bvtk_nodes):
+        return None
+
+    # Update Time Selectors or Global Time Keeper
+    for node in bvtk_nodes:
+        # Outdate all nodes. Maybe it is possible to outdate only some
+        # nodes, but using this simple approach for now.
+        node.set_vtk_status('out-of-date')
+
+        # Note: This is a workaround to enable transient data traversal
+        # while this issue remains: https://developer.blender.org/T66392
+        if node.bl_idname == 'BVTK_Node_TimeSelectorType' and node.use_scene_time:
+            node.time_index = scene.frame_current
+            node.time_index_update()
+            l.debug("Time Selector time step %d" % node.time_index)
+
+        elif node.bl_idname == 'BVTK_Node_GlobalTimeKeeperType':
+            # TODO: Modify for new update system
+            updated_nodes = node.set_new_time(scene.frame_current)
+            connected_converter_nodes = [backtrack_converter_nodes(node) for node in updated_nodes]
+            l.debug("Global Time Keeper time step %d" % node.global_time)
+
+            #Append, ignoring duplicates
+            for conv_nodes in connected_converter_nodes:
+                nodes_2b_updated = nodes_2b_updated.union(set(conv_nodes))
+
+    # Update special converters requiring depsgraph
+    for node in bvtk_nodes:
+        if node.bl_idname == 'BVTK_Node_VTKToBlenderParticlesType':
+            node.update_particle_system(depsgraph)
+
+    # Update if needed
+    update_mode = bpy.context.scene.bvtknodes_settings.update_mode
+    if update_mode == 'update-all':
+        cache.BVTKCache.update_all()
+
+    return None
+    # TODO: Clean up old stuff below when converters are upgraded
 
     # Update mesh objects
     for node in nodes_2b_updated:
@@ -276,12 +309,6 @@ def on_frame_change(scene, depsgraph):
                 l.debug("Animation: Updating VTKToBlenderVolume")
                 converters.delete_objects_startswith(node.ob_name)
                 update.no_queue_update(node, node.update_cb)
-
-            # Update particle objects
-            elif node.bl_idname == 'BVTK_Node_VTKToBlenderParticlesType':
-                l.debug("VTKToBlenderParticles")
-                update.no_queue_update(node, node.update_cb)
-                node.update_particle_system(depsgraph)
             
             else:
                 l.warning("on_frame_change: Converter nodes " + str(node) + " was found during backtracking but was not updated")
@@ -297,6 +324,7 @@ def on_frame_change(scene, depsgraph):
 @persistent
 def on_depsgraph_update(scene, depsgraph):
     '''Updates done after depsgraph changes'''
+    l.debug("Triggered")
     on_frame_change(scene, depsgraph)
 
 

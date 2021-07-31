@@ -227,7 +227,14 @@ class BVTKCache:
 
         if node_id in vtkCache:
             return vtkCache[node_id]
-        else:
-            # Use special return value for 'nothing in cache' because
-            # None can be returned as a value in cache.
-            return 'not-in-cache'
+        return None
+
+    @classmethod
+    def vtk_obj_in_cache(cls, node_id:int):
+        '''Return True if an object (or None) is in cache.
+        '''
+        global vtkCache
+
+        if node_id in vtkCache:
+            return True
+        return False
