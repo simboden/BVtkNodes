@@ -834,7 +834,13 @@ def reset_particle_material(ob, matname):
 # -----------------------------------------------------------------------------
 
 class BVTK_Node_VTKToBlenderVolume(Node, BVTK_Node):
-    '''Convert output from VTK Node to Blender Volume Object'''
+    '''Convert output from VTK Node to Blender Volume Object.
+    Note: Not upgraded to new core.py. Requires pyopenvdb, which is
+    not (at least not yet) inlcuded in Blender by default.
+    https://devtalk.blender.org/t/build-pyopenvdb-as-part-of-make-deps/14148
+    Currently it is better to maintain and use VTK To OpenVDB Exporter node,
+    at least until such a time when pyopenvdb is included in Blender.
+    '''
     bl_idname = 'BVTK_Node_VTKToBlenderVolumeType'
     bl_label  = 'VTK To Blender Volume'
 
@@ -1103,56 +1109,38 @@ class BVTK_Node_VTKToOpenVDBExporter(Node, BVTK_Node):
     bl_idname = 'BVTK_Node_VTKToOpenVDBExporterType'
     bl_label  = 'VTK To OpenVDB Exporter'
 
-    ob_name: bpy.props.StringProperty(name='Name', default='volume')
-    density_name: bpy.props.StringProperty(name='Density Field Name', default='')
-    color_name: bpy.props.StringProperty(name='Color Field Name', default='')
-    flame_name: bpy.props.StringProperty(name='Flame Field Name', default='')
-    temperature_name: bpy.props.StringProperty(name='Temperature Field Name', default='')
-    result_message: bpy.props.StringProperty(name='Error Message', default='')
+    ob_name: bpy.props.StringProperty(name='Name', default='volume', update=BVTK_Node.outdate_vtk_status)
+    density_name: bpy.props.StringProperty(name='Density Field Name', default='', update=BVTK_Node.outdate_vtk_status)
+    color_name: bpy.props.StringProperty(name='Color Field Name', default='', update=BVTK_Node.outdate_vtk_status)
+    flame_name: bpy.props.StringProperty(name='Flame Field Name', default='', update=BVTK_Node.outdate_vtk_status)
+    temperature_name: bpy.props.StringProperty(name='Temperature Field Name', default='', update=BVTK_Node.outdate_vtk_status)
 
     def m_properties(self):
         return ['ob_name', 'density_name', 'color_name', 'flame_name',
-                'temperature_name', 'result_message']
+                'temperature_name']
 
     def m_connections(self):
         return (['input'],[],[],[])
 
-    def draw_buttons(self, context, layout):
-        layout.prop(self, 'ob_name')
-        layout.prop(self, 'density_name')
-        layout.prop(self, 'color_name')
-        layout.prop(self, 'flame_name')
-        layout.prop(self, 'temperature_name')
-        layout.separator()
-        layout.operator("node.bvtk_node_update", text="Export").node_path = node_path(self)
-        if self.result_message:
-            layout.label(text="Last Result Message:")
-            box = layout.box()
-            box.label(text=self.result_message)
+    def apply_properties_special(self):
+        '''Export vtkImageData into OpenVDB Volume data'''
+        input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects()
+        if not vtk_output_obj:
+            self.ui_message = 'Error: No VTK data on input!'
+            return 'error'
 
-    def update_export(self):
-        '''Update Blender Volume data from vtkImageData'''
-        input_node, vtkobj = self.get_input_node('input')
-        l.debug("Updating Volume Object %r" % self.ob_name)
-        if vtkobj:
-            vtkdata = resolve_algorithm_output(vtkobj)
-            if not vtkdata:
-                self.result_message = 'Error: No VTK Data!'
-                l.error(self.result_message)
-                return
-            if not issubclass(vtkdata.__class__, vtk.vtkImageData):
-                self.result_message = 'Error: Data Type is not vtkImageData!'
-                l.error(self.result_message)
-                return
-            dims = vtk_image_data_to_openvdb_export(self, vtkdata)
-            self.result_message = 'Done. Dimensions %s' % str(dims)
-            update_3d_view()
+        if not issubclass(vtk_output_obj.__class__, vtk.vtkImageData):
+            self.ui_message = 'Error: Input is not vtkImageData!'
+            return 'error'
+        dims = vtk_image_data_to_openvdb_export(self, vtk_output_obj)
+        self.ui_message = 'Exported dimensions: %s' % str(dims)
+        update_3d_view()
+        l.debug("Exported OpenVDB data for %r" % self.ob_name)
+        return 'up-to-date'
 
-    def update_cb(self):
-        self.update_export()
-
-    def apply_properties(self, vtkobj):
-        pass
+    def init_vtk(self):
+        self.set_vtk_status('out-of-date')
+        return None
 
 
 def vtk_image_data_to_openvdb_export(node, imgdata):
@@ -1709,8 +1697,11 @@ TYPENAMES.append('BVTK_Node_VTKToBlenderMeshType')
 add_class(BVTK_OT_InitializeParticleSystem)
 add_class(BVTK_Node_VTKToBlenderParticles)
 TYPENAMES.append('BVTK_Node_VTKToBlenderParticlesType')
-add_class(BVTK_Node_VTKToBlenderVolume)
-TYPENAMES.append('BVTK_Node_VTKToBlenderVolumeType')
+
+# Disabled VTK To Blender Volume, it's not upgraded to new core.py.
+# You can use VTK To OpenVDB Exporter node instead.
+#add_class(BVTK_Node_VTKToBlenderVolume)
+#TYPENAMES.append('BVTK_Node_VTKToBlenderVolumeType')
 add_class(BVTK_Node_VTKToOpenVDBExporter)
 TYPENAMES.append('BVTK_Node_VTKToOpenVDBExporterType')
 menu_items = [NodeItem(x) for x in TYPENAMES]
