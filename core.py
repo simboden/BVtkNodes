@@ -83,10 +83,13 @@ def show_custom_code(func):
         if self.expanded:
             col = layout.column(align=True)
             row = col.row()
-            op = row.operator('node.bvtk_custom_code_edit', text="Edit", icon="TEXT")
-            op.node_id = self.node_id # Set node id in operator
-            op = row.operator('node.bvtk_custom_code_save', text="Save", icon="FILE_TICK")
-            op.node_id = self.node_id # Set node id in operator
+            # Only show edit and save buttons in node if cache is up-to-date,
+            # otherwise get_tree() fails for the operator.
+            if self.get_vtk_obj():
+                op = row.operator('node.bvtk_custom_code_edit', text="Edit", icon="TEXT")
+                op.node_id = self.node_id # Set node id in operator
+                op = row.operator('node.bvtk_custom_code_save', text="Save", icon="FILE_TICK")
+                op.node_id = self.node_id # Set node id in operator
             if len(self.custom_code) > 0:
                     box = layout.box()
                     col = box.column()
