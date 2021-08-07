@@ -170,6 +170,9 @@ class BVTKNodes_Settings(bpy.types.PropertyGroup):
 def on_file_loaded(scene):
     '''Initialize cache and VTK objects after Blender file has been opened'''
     l.debug("Triggered")
+    # Reset the node cache
+    cache.BVTKCache.reset_cache()
+
     # Set all nodes out-of-date and remove input connection information
     # to force correct initialization upon first update.
     for nodetree in bpy.data.node_groups:

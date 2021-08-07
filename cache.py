@@ -40,20 +40,15 @@ class BVTKCache:
         cls.rebuild_cache()
 
     @classmethod
-    def rebuild_cache(cls):
-        '''Rebuild Node cache and recreate VTK objects from current node
-        trees.
+    def reset_cache(cls):
+        '''Create new empty node cache variables.
         '''
-        raise Exception("rebuild_cache is obsolete, TODO: remove")
-
         # Zero the map dictionaries
         global nodeMaxId, nodeIdMap, treeIdMap, vtkCache
         nodeMaxId = 0
         nodeIdMap = {}
         treeIdMap = {}
         vtkCache = {}
-        last_update_id = {}
-        nodeCache = {}
 
     @classmethod
     def add_new_node(cls, node):
