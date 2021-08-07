@@ -95,7 +95,7 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
     auto_range: bpy.props.BoolProperty(default=True, name="Auto Range", update=BVTK_Node.outdate_vtk_status)
 
 
-    def validate_and_update_values(self):
+    def validate_and_update_values_special(self):
         '''Check that values entered in node are sane. Update range min and
         max if requested. Return error text if an error is found.
         '''
@@ -178,12 +178,6 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
         return (['input','lookuptable'],[],[],['output'])
 
     def apply_properties_special(self):
-        '''Special apply properties function.
-        '''
-        val = self.validate_and_update_values()
-        if val:
-            self.ui_message = val
-            return 'error'
         return 'up-to-date'
 
     def get_texture(self):

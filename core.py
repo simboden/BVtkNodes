@@ -104,7 +104,15 @@ def run_custom_code(func):
     '''Decorator to run custom code. Used in apply_properties().'''
     @functools.wraps(func)
     def run_custom_code_wrapper(self):
-        # Call function first
+        # Run optional validation routine, which can update values in
+        # node before running the actual function.
+        if hasattr(self, "validate_and_update_values_special"):
+            value = self.validate_and_update_values_special()
+            if value:
+                self.ui_message = value
+                return 'error'
+
+        # Call the actual function
         value = func(self)
 
         # Then run Custom Code
@@ -144,6 +152,8 @@ def run_custom_code(func):
 # - draw_buttons_special() - special node UI contents
 # - init_vtk() - creation and initialization of VTK object
 # - apply_inputs() - update input connections to VTK object
+# - validate_and_update_values_special() - optional node value
+#       validation and update routine
 # - apply_properties_special() - special function to run for setting
 #       properties and update VTK object for special nodes
 # - get_vtk_output_object_special() - special function to provide

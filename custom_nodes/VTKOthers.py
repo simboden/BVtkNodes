@@ -209,7 +209,7 @@ class VTKPlane(Node, BVTK_Node):
 
     orientation_object_enum: bpy.props.EnumProperty(items=orientation_object_enum_generator, update=orientation_object_set_value, name="Choices")
 
-    def validate_and_update_values(self):
+    def validate_and_update_values_special(self):
         '''Check that provided orientation information has no issues.
         '''
         # If there's no object name, use normal and origin from node values.
@@ -246,11 +246,6 @@ class VTKPlane(Node, BVTK_Node):
             self.m_Origin = ob.location
 
     def apply_properties_special(self):
-        val = self.validate_and_update_values()
-        if val:
-            self.ui_message = val
-            return 'error'
-
         # Update values from orientation object if needed.
         if len(self.orientation_object) > 0:
             ob = bpy.data.objects[self.orientation_object]

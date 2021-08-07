@@ -177,7 +177,7 @@ class BVTK_Node_MultiBlockLeaf(Node, BVTK_Node):
 
     block_enum: bpy.props.EnumProperty(items=block_enum_generator, update=block_set_value, name="Choices")
 
-    def validate_and_update_values(self):
+    def validate_and_update_values_special(self):
         '''Check that value in block property exists.
         '''
         if len(self.block) < 1:
@@ -198,10 +198,6 @@ class BVTK_Node_MultiBlockLeaf(Node, BVTK_Node):
         row.prop(self, 'block_enum', icon_only=True)
 
     def apply_properties_special(self):
-        val = self.validate_and_update_values()
-        if val:
-            self.ui_message = val
-            return 'error'
         return 'up-to-date'
 
     def get_vtk_output_object_special(self, socketname='output'):
