@@ -197,6 +197,23 @@ class BVTK_Node_VTKToBlenderMesh(Node, BVTK_Node):
     def m_connections(self):
         return ( ['input'],[],[],[] )
 
+    def draw_buttons_special(self, context, layout):
+        '''Custom draw buttons function, to show force update button. Force
+        update is sometimes necessary for e.g. vtkPlane when using
+        Blender object for specifying the plane. Changing Blender
+        object properties does not trigger property outdating for
+        nodes, so user must have an option for force updating the
+        upstream pipeline.
+        '''
+        layout.prop(self, 'm_Name')
+        layout.prop(self, 'create_all_verts')
+        layout.prop(self, 'create_edges')
+        layout.prop(self, 'create_faces')
+        layout.prop(self, 'smooth')
+        layout.prop(self, 'recalc_norms')
+        layout.prop(self, 'generate_material')
+        layout.operator("node.bvtk_node_force_update_upstream").node_path = node_path(self)
+
     def apply_properties_special(self):
         '''Generate Blender mesh object from VTK object'''
         input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects()

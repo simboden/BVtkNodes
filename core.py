@@ -620,6 +620,14 @@ class BVTK_Node:
             if update_mode == 'update-all':
                 BVTKCache.update_all()
 
+    def outdate_upstream(self):
+        '''Set all upstream nodes to out-of-date status (to force update on
+        them when they are updated next time).
+        '''
+        for node in self.get_input_nodes():
+            node.outdate_upstream()
+            node.set_vtk_status('out-of-date')
+
     def notify_downstream(self, vtk_status='out-of-date', origin_node=True):
         '''Make status changes in downstream nodes, to advertise update made
         in this node.
@@ -683,6 +691,24 @@ class BVTK_Node:
 
 
 # -----------------------------------------------------------------------------
+# Node Update Operators
+# -----------------------------------------------------------------------------
+
+class BVTK_OT_NodeForceUpdateUpstream(bpy.types.Operator):
+    '''Force All Upstream Nodes and This Node to be Updated'''
+    bl_idname = "node.bvtk_node_force_update_upstream"
+    bl_label = "Force Update Upstream"
+
+    node_path: bpy.props.StringProperty()
+
+    def execute(self, context):
+        node = eval(self.node_path)
+        node.outdate_upstream()
+        node.update_vtk()
+        return {'FINISHED'}
+
+
+# -----------------------------------------------------------------------------
 # VTK Node Write
 # -----------------------------------------------------------------------------
 update_id = 0
@@ -734,6 +760,7 @@ def check_b_properties():
 # Register classes
 add_class(BVTK_NodeTree)
 add_class(BVTK_NodeSocket)
+add_ui_class(BVTK_OT_NodeForceUpdateUpstream)
 add_ui_class(BVTK_OT_NodeWrite)
 
 # -----------------------------------------------------------------------------
