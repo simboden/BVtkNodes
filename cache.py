@@ -6,7 +6,6 @@ import functools
 l = logging.getLogger(__name__)
 
 # TODO: Modify Global Time Keeper and remove these?
-last_update_id:dict = {} # node_id -> last update ID
 persistent_storage = {"nodes": {}}
 
 #It is sometimes not possible to save instance variables in a class, which is why we use this node
@@ -94,17 +93,6 @@ class BVTKCache:
                         cls.map_node(n, tree=nt)
                     if cls.get_vtkobj(n) == None:
                         cls.init_vtkobj(n)
-
-    @classmethod
-    def update_necessary(cls, node, update_id):
-        global last_update_id
-        node_id = node.node_id
-        return (not node_id in last_update_id or update_id != last_update_id[node_id])
-
-    @classmethod
-    def update_id(cls, node, update_iter):
-        global last_update_id
-        last_update_id[node.node_id] = update_iter
 
     @classmethod
     def init_vtkobj(cls, node):

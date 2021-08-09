@@ -468,68 +468,6 @@ class BVTK_Node_GlobalTimeKeeper(PersistentStorageUser, AnimationHelper, Node, B
     def copy(self, node):
         self.setup()
 
-# ----------------------------------------------------------------
-# Update All Node
-# ----------------------------------------------------------------
-class BVTK_Node_UpdateAll(Node, BVTK_Node):
-    '''This nodes provides an easy functionality to call all update on all convertes and/or writer nodes
-    '''
-    bl_idname = 'BVTK_Node_UpdateAllType'
-    bl_label = 'Update All'
-
-    update_all_converters: bpy.props.BoolProperty(name="Update All Converters", default=True)
-    update_all_writers: bpy.props.BoolProperty(name="Update All Writers", default=True)
-    error_count: bpy.props.IntProperty(name="Error Count", default=0)
-
-    def m_connections(self):
-        return ([], [], [], [])
-
-    def m_properties(self):
-        return ['update_all_converters', 'update_all_writers', 'error_count']
-
-    def draw_buttons(self, context, layout):
-        row = layout.row()
-        row.prop(self, 'update_all_converters')
-        row = layout.row()
-        row.prop(self, 'update_all_writers')
-        row = layout.row()
-        row.separator()
-        row.separator()
-        row.separator()
-        row.operator("node.bvtk_node_update", text="Update").node_path = node_path(self)
-        return
-
-    def update_cb(self):
-        self.error_count = 0
-        for node_group in bpy.data.node_groups.values():
-            if node_group.name == node_tree_name:
-                for node in node_group.nodes:
-
-                    try:
-                        #Converter nodes
-                        if self.update_all_converters and node.bl_idname in converters_list:
-                            no_queue_update(node, node.update_cb)
-
-                            object_name = node.m_Name
-                            if object_name not in bpy.data.objects:
-                                l.error("Node " + node.name + " succeeded, but produced no output object (%s)" % (object_name))
-                                self.error_count += 1
-
-                        #Writer nodes
-                        elif self.update_all_writers and node.bl_label.endswith("Writer"):
-                            no_queue_update(node, lambda x: x, False)
-                            node.get_vtkobj().Write()
-
-                            if hasattr(node, "m_FileName"):
-                                output_file = node.m_FileName.replace("//", bpy.path.abspath("//"))
-                                if not os.path.exists(output_file):
-                                    l.error("Node " + node.name + " succeeded, but produced no output file (%s)" % (output_file))
-                                    self.error_count += 1
-                                    
-                    except Exception as ex:
-                        l.error("Update of node " + node.name + " failed with " + str(ex))
-
-
 
 
 # Add classes and menu items
@@ -543,8 +481,6 @@ add_class(BVTK_Node_TimeSelector)
 TYPENAMES.append('BVTK_Node_TimeSelectorType')
 add_class(BVTK_Node_GlobalTimeKeeper)
 TYPENAMES.append('BVTK_Node_GlobalTimeKeeperType')
-add_class(BVTK_Node_UpdateAll)
-TYPENAMES.append('BVTK_Node_UpdateAllType')
 add_class(BVTK_Node_ImageDataObjectSource)
 TYPENAMES.append('BVTK_Node_ImageDataObjectSourceType')
 
