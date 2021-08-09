@@ -259,7 +259,7 @@ def on_frame_change(scene, depsgraph):
                 if node.time_index != scene.frame_current:
                     return True
             elif node.bl_idname == 'BVTK_Node_GlobalTimeKeeperType':
-                if node.time_index != node.add_correct_routine_here():
+                if node.global_time != scene.frame_current:
                     return True
         return False
 
@@ -282,14 +282,9 @@ def on_frame_change(scene, depsgraph):
             l.debug("Time Selector time step %d" % node.time_index)
 
         elif node.bl_idname == 'BVTK_Node_GlobalTimeKeeperType':
-            # TODO: Modify for new update system
-            updated_nodes = node.set_new_time(scene.frame_current)
-            connected_converter_nodes = [backtrack_converter_nodes(node) for node in updated_nodes]
+            node.global_time = scene.frame_current
+            node.update_time(bpy.context)
             l.debug("Global Time Keeper time step %d" % node.global_time)
-
-            #Append, ignoring duplicates
-            for conv_nodes in connected_converter_nodes:
-                nodes_2b_updated = nodes_2b_updated.union(set(conv_nodes))
 
     # Update if needed
     update_mode = bpy.context.scene.bvtknodes_settings.update_mode

@@ -402,6 +402,7 @@ class BVTK_Node_GlobalTimeKeeper(PersistentStorageUser, AnimationHelper, Node, B
         self.get_persistent_storage()["animated_properties"] = self.animated_properties
         self.get_persistent_storage()["interpolation_modes"] = self.interpolation_modes
         self.get_persistent_storage()["animated_values"] = self.animated_values
+        self.ui_message = "Global Time: {}".format(self.global_time)
 
     global_time: bpy.props.IntProperty(update=update_time, name="Global Time")
     invalid: bpy.props.BoolProperty(name="Is Node Valid")
@@ -409,14 +410,11 @@ class BVTK_Node_GlobalTimeKeeper(PersistentStorageUser, AnimationHelper, Node, B
     def m_connections(self):
         return ([], [], [], [])
 
-    def draw_buttons(self, context, layout):
+    def validate_and_update_values_special(self):
         if self.invalid:
-            row = layout.row()
-            row.label(text="You already have a global time keeper")
-            return
+            return "Error: You already have a Global Time Keeper node"
 
-        row = layout.row()
-        row.label(text="Global Time: {}".format(self.global_time))
+    def draw_buttons_special(self, context, layout):
         storage = self.get_persistent_storage()
         if "animated_properties" in storage:
             animated_properties = storage["animated_properties"]
@@ -441,28 +439,18 @@ class BVTK_Node_GlobalTimeKeeper(PersistentStorageUser, AnimationHelper, Node, B
                     row.label(text="(%s)" % ",".join(["%.2f" % (val) for val in elem[4]]))
                     row.label(text=elem[-1])
 
-        row = layout.row()
-        row.separator()
-        row.separator()
-        row.separator()
-        row.separator()
-        row.operator("node.bvtk_node_update", text="update").node_path = node_path(self)
-        return
-
-    def apply_properties(self, vtkobj):
-        pass
-
-    def apply_inputs(self, vtkobj):
-        pass
-
-    def update_cb(self):
+    def apply_properties_special(self):
         self.update_time(bpy.context)
+        self.ui_message = "Global Time: {}".format(self.global_time)
+        return 'up-to-date'
 
     def set_new_time(self, frame):
+        '''Set new time from frame number. Called from on_frame_change().
+        '''
         self.global_time = frame
         return self.get_persistent_storage()["updated_nodes"]
 
-    def setup(self):
+    def init_vtk(self):
         if self.name != self.bl_label:
             self.invalid = True
             raise RuntimeError("A Global Time Keeper already exists. There can be only one Global Time Keeper per scene")

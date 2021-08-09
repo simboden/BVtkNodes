@@ -63,6 +63,7 @@ def iterate_f_curves(f_curves):
 class AnimationHelper():
 
     current_frame = invalid_frame
+
     def setup(self):
         self.current_frame = invalid_frame
         self.animated_properties = None
@@ -70,12 +71,13 @@ class AnimationHelper():
     def get_animated_property_list(self):
         '''Fetches the animated properties in a presentable way'''
 
+        # Get fcurves
         if "NodeTreeAction" not in bpy.data.actions:
             return {}
-
         self.f_curves = bpy.data.actions["NodeTreeAction"].fcurves
 
         animated_properties = {}
+
         for items in iterate_f_curves(self.f_curves):
             (prop_path, node_name, attribute_name, arr_ind, keyframes, keyframe_values, current_val, interpolation_mode) = items[2:9] + items[-1:]
 
@@ -100,12 +102,13 @@ class AnimationHelper():
         return animated_properties
 
     def update_animated_properties(self, scene):
-
+        '''Update the animated properties upon change in Global Time.'''
         self.animated_properties = []
         self.animated_properties_info = []
         self.interpolation_modes = []
         self.animated_values = {}
 
+        # Stop if fcurves are not accessible
         if "NodeTreeAction" not in bpy.data.actions:
             return []
 
@@ -113,6 +116,7 @@ class AnimationHelper():
         AnimationHelper.current_frame = current_frame
         self.f_curves = bpy.data.actions["NodeTreeAction"].fcurves
         updated_nodes = set()
+
         for items in iterate_f_curves(self.f_curves):
             #(f_curve, node_group, prop_path, node_name, attribute_name, arr_ind, keyframes, keyframe_values, current_val, interpolation_modes, interpolation_mode) = items
             (f_curve, node_group, prop_path, node_name, arr_ind, current_val, interpolation_modes) = items[0:4] + items[5:6] + items[-3:-1]
