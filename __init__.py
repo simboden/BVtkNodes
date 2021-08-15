@@ -268,6 +268,10 @@ def on_frame_change(scene, depsgraph):
     if not time_changed(bvtk_nodes):
         return None
 
+    # Set no automatic updates to avoid triggering multiple updates
+    update_mode = bpy.context.scene.bvtknodes_settings.update_mode
+    bpy.context.scene.bvtknodes_settings.update_mode = 'no-automatic-updates'
+
     # Update Time Selectors or Global Time Keeper
     for node in bvtk_nodes:
         # Outdate all nodes. Maybe it is possible to outdate only some
@@ -286,8 +290,8 @@ def on_frame_change(scene, depsgraph):
             node.update_time(bpy.context)
             l.debug("Global Time Keeper time step %d" % node.global_time)
 
-    # Update if needed
-    update_mode = bpy.context.scene.bvtknodes_settings.update_mode
+    # Restore update_mode and update if needed
+    bpy.context.scene.bvtknodes_settings.update_mode = update_mode
     if update_mode == 'update-all':
         cache.BVTKCache.update_all()
 
