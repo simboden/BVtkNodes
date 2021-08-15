@@ -175,15 +175,14 @@ def on_file_loaded(scene):
 
     # Set all nodes out-of-date and remove input connection information
     # to force correct initialization upon first update.
-    for nodetree in bpy.data.node_groups:
-            if nodetree.bl_idname != 'BVTK_NodeTreeType':
-                continue
-            for node in nodetree.nodes:
-                node.set_vtk_status('out-of-date')
-                node.connected_input_names = ""
-                # Update nodeMaxId
-                if node.node_id > cache.nodeMaxId:
-                    cache.nodeMaxId = node.node_id
+    bvtk_nodes = core.get_all_bvtk_nodes()
+    for node in bvtk_nodes:
+        node.set_vtk_status('out-of-date')
+        node.connected_input_names = ""
+        # Update nodeMaxId
+        if node.node_id > cache.nodeMaxId:
+            cache.nodeMaxId = node.node_id
+
     # Update if needed
     update_mode = bpy.context.scene.bvtknodes_settings.update_mode
     if update_mode == 'update-all':

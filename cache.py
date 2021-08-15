@@ -2,6 +2,7 @@ import logging
 import bpy
 import vtk
 import functools
+from . import core
 
 l = logging.getLogger(__name__)
 
@@ -36,6 +37,7 @@ class BVTKCache:
     def init(cls):
         ''' Create cache.
         '''
+        # TODO: Remove?
         cls.rebuild_cache()
 
     @classmethod
@@ -76,23 +78,23 @@ class BVTKCache:
         operator must be interrupted, but the next operator call will work
         OK.
         '''
+        # TODO: Remove?
+
+        bvtk_nodes = core.get_all_bvtk_nodes()
+
         # After F8 or FileOpen VTKCache is empty and NodesMaxId == 1
         # any previous node_id must be invalidated
         if nodeMaxId == 1:
-            for nt in bpy.data.node_groups:
-                if nt.bl_idname == 'BVTK_NodeTreeType':
-                    for n in nt.nodes:
-                        n.node_id = 0
+            for n in bvtk_nodes:
+                n.node_id = 0
 
         # For each node check if it has a node_id
         # and if it has a vtk_obj associated
-        for nt in bpy.data.node_groups:
-            if nt.bl_idname == 'BVTK_NodeTreeType':
-                for n in nt.nodes:
-                    if n.node_id == 0:
-                        cls.map_node(n, tree=nt)
-                    if cls.get_vtkobj(n) == None:
-                        cls.init_vtkobj(n)
+        for n in bvtk_nodes:
+            if n.node_id == 0:
+                cls.map_node(n, tree=nt)
+            if cls.get_vtkobj(n) == None:
+                cls.init_vtkobj(n)
 
     @classmethod
     def init_vtkobj(cls, node):
@@ -112,33 +114,30 @@ class BVTKCache:
             vtkCache[node.node_id] = None
 
         # Rebuild from existing nodes
-        for nodetree in bpy.data.node_groups:
-            if nodetree.bl_idname != 'BVTK_NodeTreeType':
-                continue
-            for node in nodetree.nodes:
-                # Uninitialized node, create VTK object
-                if node.node_id == 0 or BVTKCache.get_vtk_obj(node.node_id) == None:
-                    vtk_obj = node.init_vtk()
-                    cls.map_node(node, vtk_obj)
-                # Update nodeMaxId if needed, to avoid doubles
-                if node.node_id > nodeMaxId:
-                    nodeMaxId = node.node_id
+        bvtk_nodes = core.get_all_bvtk_nodes()
 
-            # Force resetting of VTK connections
-            for node in nodetree.nodes:
-                node.connected_input_names = "" # Reset namelist to force update
-                node.update()
+        for node in bvtk_nodes:
+            # Uninitialized node, create VTK object
+            if node.node_id == 0 or BVTKCache.get_vtk_obj(node.node_id) == None:
+                vtk_obj = node.init_vtk()
+                cls.map_node(node, vtk_obj)
+            # Update nodeMaxId if needed, to avoid doubles
+            if node.node_id > nodeMaxId:
+                nodeMaxId = node.node_id
+
+        # Force resetting of VTK connections
+        for node in bvtk_nodes:
+            node.connected_input_names = "" # Reset namelist to force update
+            node.update()
 
     @classmethod
     def update_all(cls):
         '''Go through all nodes and update those that are not up-to-date.
         '''
-        for nodetree in bpy.data.node_groups:
-            if nodetree.bl_idname != 'BVTK_NodeTreeType':
-                continue
-            for node in nodetree.nodes:
-                if node.vtk_status != 'up-to-date':
-                    node.update_vtk()
+        bvtk_nodes = core.get_all_bvtk_nodes()
+        for node in bvtk_nodes:
+            if node.vtk_status != 'up-to-date':
+                node.update_vtk()
 
     @classmethod
     def map_node(cls, node, vtk_obj=None):
