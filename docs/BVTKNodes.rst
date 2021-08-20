@@ -535,23 +535,27 @@ number in Blender Timeline updates the particle data. Note:
 VTK To Blender Volume
 ^^^^^^^^^^^^^^^^^^^^^
 
-.. warning::
+This node is currently obsoleted, since it requires
+`custom build of Blender dependency libraries
+<https://devtalk.blender.org/t/build-pyopenvdb-as-part-of-make-deps/14148>`_
+to enable `pyopenvdb` in Blender, in order to convert 3D VTK image
+data (*vtkImageData*) into OpenVDB grids. Instead, please use the *VTK
+To OpenVDB Exporter* node described next. If `pyopenvdb` becomes
+a standard part of Blender one day, this node can be resurrected.
 
-   This node is experimental! Currently it requires a
-   `custom build of Blender dependency libraries
-   <https://devtalk.blender.org/t/build-pyopenvdb-as-part-of-make-deps/14148>`_
-   to enable `pyopenvdb` in Blender. If Blender installation does not
-   include `pyopenvdb`, the node shows an error message instead of the
-   options listed below.
 
 
-This node converts 3D VTK image data (*vtkImageData*) into
-OpenVDB grids, saves them to a **.vdb** file at the location
-of the Blender file, and finally imports the **.vdb** file
-into Blender as a Volume Object.
+VTK To OpenVDB Exporter
+^^^^^^^^^^^^^^^^^^^^^^^
 
-- **Name** is the name of the Volume Object and OpenVDB file to be
-  created.
+This node exports selected 3D *vtkImageData* arrays (density, color,
+flame and temperature inputs) into a JSON file, which can be then
+converted into OpenVDB (.vdb) file format using an external
+installation of *pyopenvdb*. OpenVDB files can be then imported back
+to Blender as a Volume Object for volumetric rendering, using e.g. the
+*Principled Volume Shader*.
+
+- **Name** is the base name of the OpenVDB file to be created.
 - **Density Field Name** specifies the field name of scalar array to
   be used for the *Density* output of Volume Info node in Blender
   Shader Editor.
@@ -562,41 +566,8 @@ into Blender as a Volume Object.
   strength.
 - **Temperature Field Name** is a scalar field shown as *Temperature*
   output in Volume Info node.
-- **Generate Material** if enabled, will overwrite or generate a
-  default shader material for the volume object using Principled
-  Volume Shader.
-- **Export File Sequence** if enabled, will add frame number to the
-  exported OpenVDB file name and object name. This allows generation of
-  series of OpenVDB files, which can be imported afterwards as a
-  sequence into Blender for separate rendering.
 
-.. warning::
-
-   Currently there seems to be a bug in Blender which prohibits
-   concurrent volume object generation and rendering. Please use Export
-   File Sequence option to first generate volume data files,
-   then render them in separate animation.
-
-**Hint**: Add Math or Vector Math nodes in the Shader Editor to modify
-array values to obtain wanted visual results, instead of adding the
-mathematical manipulation of the arrays in BVTKNodes. See
-:ref:`volumetric_rendering` example.
-
-
-
-VTK To OpenVDB Exporter
-^^^^^^^^^^^^^^^^^^^^^^^
-
-This node is similar to `VTK To Blender Volume`_ node, but it only
-exports selected field data (density, color, flame and temperature
-inputs) into a JSON file, which can be then converted into OpenVDB
-(.vdb) file format externally. This is essentially a workaround node,
-meant to be used with an external OpenVDB conversion using an external
-installation of *pyopenvdb*. This node is provided until such a time
-that *pyopenvdb* can be included easily in Blender for direct use of
-`VTK To Blender Volume`_ node.
-
-Upon running **Export**, the node creates a file like
+Upon running **Update Node**, the node creates a file like
 ``volume_00001.json`` (format is name + frame number) into the folder
 where the blender file is saved.  If node input is not a data suitable
 for exporting (VTK 3D Image Data or Structured Points Data), the node
@@ -628,6 +599,12 @@ on your system:
 If you find out free packages that provide *pyopenvdb*,
 `please comment here <https://github.com/tkeskita/BVtkNodes/issues/25>`_.
 
+See also `other alternative routes from VTK to OpenVDB <https://discourse.vtk.org/t/vtk-to-openvdb-file-format/6322>`_.
+
+**Hint**: Add Math or Vector Math nodes in the Shader Editor to modify
+array values to obtain wanted visual results, instead of adding the
+mathematical manipulation of the arrays in BVTKNodes. See
+:ref:`volumetric_rendering` example.
 
 VTKImageData Object Source
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
