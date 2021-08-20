@@ -382,13 +382,16 @@ overwrite settings with Custom Code.
 Editing of Custom Code is done using Blender Text Editor:
 
 - Select a VTK node in BVTK Node Tree
-- In *Properties* Tab, run **Edit Custom Code**
+- In *Properties* Tab, run **Edit Custom Code**.
 - Go to Blender Text Editor, and add/edit code in **BVTK** text block.
 - To save edited text to active node, run **Save Custom Code** in
   *Properties* Tab. Updated code is shown on the node bottom when mouse
   cursor enters BVTK Node Tree area (see bottom example in
   :ref:`extract_boundary_surfaces`, *vtkOpenFoamReader* node)
 
+You can find Edit and Save buttons also directly on the node if the
+node is up-to-date: Click on the eye icon on the node bottom right
+part to see the custom code and the operator buttons.
 
 Customized VTK Nodes
 --------------------
@@ -402,10 +405,10 @@ vtkPlane
 This node specifies an infinite plane suitable for e.g. slicing 3D VTK
 cell data (see example :ref:`cutting_field_data`). Plane can be
 specified by manual input of **Normal** and **Origin** vectors, or by
-selecting an existing Blender Object or New Plane from the dropdown
-menu and then run **Link Object**. When linked, the location and
-rotation of the Blender Object is used to calculate Normal and Origin
-for *vtkPlane*. Run **Unlink Object** to remove link.
+selecting an existing Blender Object (must be either a Plane or an
+Empty Blender Object type) from the *Orientation Object* dropdown
+menu. The location and rotation of the named Blender Object is used to
+calculate Normal and Origin for *vtkPlane*.
 
 
 Special Nodes
@@ -416,13 +419,16 @@ VTK To Blender
 ^^^^^^^^^^^^^^
 
 This is the original main node, which converts VTK surface mesh data
-into a Blender mesh. It creates faces directly out of VTK cell vertex
+into a Blender mesh. This node has been superceded by the *VTK To
+Blender Mesh* node in the
+`tkeskita/bvtknodes <https://github.com/tkeskita/BVtkNodes>`_ version.
+
+*VTK To Blender* creates faces directly out of VTK cell vertex
 lists, without any pre-processing. This works well when VTK data
 consists of simple cells with ordered vertices as input, such as
 e.g. trigonal or quadrigonal boundary faces generated with
 *vtkGeometryFilter*. Direct conversion of 3D cells or polygons does
-not work correctly. In those cases, please use `VTK To Blender Mesh`_
-node without *vtkGeometryFilter* instead.
+not work correctly.
 
 - **Name** specifies the object and mesh names for the Blender object
   which will be created. **Note:** Any pre-existing mesh will be deleted
