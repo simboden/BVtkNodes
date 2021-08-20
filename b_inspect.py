@@ -31,9 +31,9 @@ class BVTK_PT_Inspect(bpy.types.Panel):
         active_node = context.active_node
         if not active_node:
             return None
+        layout.operator("node.bvtk_node_update").node_path = node_path(active_node)
 
         vtkobj = active_node.get_vtk_obj()
-        layout.operator('node.bvtk_update_obj', text='Update Object')
         if vtkobj:
             column = layout.column(align=True)
             o = column.operator('node.bvtk_set_text_editor', text='Documentation')
@@ -144,23 +144,10 @@ class BVTK_OT_OpenWebsite(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class BVTK_OT_UpdateObj(bpy.types.Operator):
-    bl_idname = "node.bvtk_update_obj"
-    bl_label = "Update Node"
-    bl_description = "Run update of this node's VTK Object"
-
-    prop: bpy.props.StringProperty()
-
-    def execute(self, context):
-        self.update_vtk()
-        return {'FINISHED'}
-
-
 # Register classes
 add_ui_class(BVTK_PT_Inspect)
 add_ui_class(BVTK_HT_Console)
 add_ui_class(BVTK_OT_SetTextEditor)
 add_ui_class(BVTK_OT_OpenWebsite)
-add_ui_class(BVTK_OT_UpdateObj)
 
 

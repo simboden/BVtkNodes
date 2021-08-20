@@ -182,28 +182,32 @@ class BVTK_Node:
         name="VTK Status",
         description="Status of BVTK node",
         items={
-            # no status information
+            # No status information. This should never be a state for
+            # nodes that are initialized work correctly.
             ('none', 'none', 'none', 0),
 
-            # VTK object exists but no values / commands for it has been run yet
+            # VTK object exists but no values / commands for it has been run yet.
+            # This is state reserved for a possible future where running only
+            # initialization without updating is required.
             ('initialized', 'initialized', 'initialized', 1),
 
-            # setting a value/running a command has failed, execution has been stopped
+            # Setting a value/running a command has failed, execution has been stopped
             ('error', 'error', 'error', 2),
 
-            # a change has been made to an upstream node, may need to update
+            # A change has been made to an upstream node, may need to update
             ('upstream-changed', 'upstream-changed', 'upstream-changed', 3),
 
-            # a change has been made to this node, may need to run update
+            # A change has been made to this node, may need to run update
             ('out-of-date', 'out-of-date', 'out-of-date', 4),
 
-            # input node(s) are running an update
+            # Input node(s) are running an update.
+            # Reserved for modal operators that visualize node tree updates.
             ('waiting-for-upstream', 'waiting-for-upstream', 'waiting-for-upstream', 5),
 
-            # setting values / running commands for this node
+            # Setting values / running commands for this node
             ('updating', 'updating', 'updating', 6),
 
-            # finished running commands for this node
+            # Successfully finished running update commands for this node
             ('up-to-date', 'up-to-date', 'up-to-date', 7),
         },
         default='none',

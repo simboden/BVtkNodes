@@ -10,9 +10,7 @@ BVTKNodes is an addon for
 `Blender (an open source 3D content creation and visualization tool) <https://www.blender.org/>`_.
 This addon makes it possible to create and execute VTK pipelines
 configured in Blender Node Editor, to produce objects like surface meshes,
-which can be then modified and visualized in Blender. Support for
-particle systems and volumetric objects have been added (experimental
-feature!).
+which can be then modified and visualized in Blender.
 
 BVTKNodes provides Blender users with access to data readers for many
 scientific data formats, along with capability to convert VTK data
@@ -100,7 +98,8 @@ This version was demonstrated in the
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Upgraded and developed version for Blender 2.83 LTS series using VTK
-9.0.1.
+9.0.1. Uses a new update system and a new mesh generator node
+*VTK To Blender Mesh* instead of the legacy *VKT To Blender* node.
 
 .. note::
    
@@ -109,7 +108,7 @@ Upgraded and developed version for Blender 2.83 LTS series using VTK
 3. `esowc/sci_vis <https://github.com/esowc/sci_vis>`_
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-A recent, more developed version with new features for Blender 2.79b
+A version with new features for Blender 2.79b
 using VTK 8.2.0. Old Blender version is used for stability and 
 `animation features that are not yet working correctly in Blender 2.80 or newer <https://developer.blender.org/T66392>`_.
 
@@ -208,9 +207,9 @@ shown in `Introduction`_. For other examples, see `Tree`_ tab below.
   folder icon and select *head.vti* file.
 - In *vtkContourFilter* node click plus icon to add a contour value,
   then set the value.
-- In *VTK To Blender* node, add name to mesh object, set **Generate
+- In *VTK To Blender Mesh* node, add name to mesh object, set **Generate
   Material** on, and run **Update**. A mesh object should now appear
-  in the 3D viewport. Repeat this for the other *VTK To Blender Node*.
+  in the 3D viewport. Repeat this for the other *VTK To Blender Mesh Node*.
 - At this point, BVTKNodes should have created two (overlapping) mesh
   objects, which are shown in the Blender Properties Editor.
 - Save Blender file.
@@ -222,6 +221,31 @@ setting up lighting and world backround, modification of materials for
 objects, modify settings for rendering engine, rendering of image,
 possibly composition and finally saving of image file. To learn about
 those, it is suggested to search for Blender tutorials on-line.
+
+Node Status
+-----------
+
+The `tkeskita/bvtknodes <https://github.com/tkeskita/BVtkNodes>`_
+version of BVTKNodes includes a modified core update system for nodes,
+which fully separates node editing in Blender from updates on the VTK
+Object level, to allow control over updates. Each BVTK Node has a
+*Node Status*, which indicates the current status. Main node statuses
+include
+
+- **Out-of-date** - Node and VTK level are not in sync. VTK Object
+  might not yet even exist.
+- **Updating** - VTK level is currently being updated to match current
+  node properties.
+- **Up-to-date** - Node and VTK level are in sync. VTK Object exists
+  in memory.
+- **Upstream-changed** - Some value in an upstream node has been
+  changed. Node and VTK level may not be in sync, and update is needed.
+- **Error** - Setting a value from node to VTK Object, or running of a
+  VTK command, has failed. Execution has been stopped.
+
+Using these statuses, it is possible to build different VTK level
+updating systems, without binding node editing operations with them
+(see Update Mode in :ref:`inspect` Panel) .
 
 
 Tabs in BVTK Node Editor
@@ -254,14 +278,32 @@ Properties
   shown in the node (editor screen updates when mouse cursor enters it)
   if there is any saved to it.
 
+.. _inspect:
+
 Inspect
 ^^^^^^^
 
-This tab contains tools for debugging and information.
+This tab contains global settings, tools for debugging and information.
 
 - Inspect tab shows the VTK version at the top.
-- **Update Object** operator will call Update() for the VTK object
-  represented by this node.
+
+- **Update Mode** is a global setting which determines when changes
+  made in node properties are updated to the corresponding VTK Object
+  and output.
+
+  - **No Automatic Updates** will trigger no updates. Downstream nodes
+    are only informed that a change was made (status changes to
+    *Upstream changed*).
+  - **Update Current Automatically** will only update current node and
+    upstream nodes, if they are out-of-date.
+  - **Update All Automatically** will update upstream nodes (if
+    needed), the current node and downstream nodes automatically.
+
+- **Update Node** operator will call a node specific update routine on
+  the active node. The update routine initializes a VTK object (if no
+  VTK Object exists), sets properties from node to the VTK Object and
+  runs VTK level update command(s). This operator is available also on
+  nodes, but only if the node status is not *Up-to-date*.
 - **Documentation** will show doc string of the VTK object in the
   BVTK Text Block in the Text Editor.
 - **Node Status** will show status of the VTK object in the

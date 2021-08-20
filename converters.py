@@ -1310,6 +1310,8 @@ class BVTK_OT_AutoUpdateScan(bpy.types.Operator):
     bl_idname = "node.bvtk_auto_update_scan"
     bl_label = "Auto Update"
 
+    # TODO: Remove
+
     _timer = None
     node_name: bpy.props.StringProperty()
     tree_name: bpy.props.StringProperty()
