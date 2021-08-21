@@ -698,26 +698,30 @@ processed.
 Global Time Keeper
 ^^^^^^^^^^^^^^^^^^
 
-The Global Time Keeper node is a special node that aims to reimplement keyframe functionality, 
-`not available in custom node trees currently <https://github.com/tkeskita/BVtkNodes/issues/3>`_.
-Keyframe handling in BVTK is similar to the rest of Blender, i.e. keyframes can be inserted on properties
-by pressing `I` on your keyboard when hovering over a property that is animatable. Alternatively, you can
-right-click and use `Insert Keyframe`, or `Clear Keyframes` to edit the keyframes. For more information,
-please read the `official Blender documentation <https://docs.blender.org/manual/en/latest/animation/keyframes/index.html>`_.
+The Global Time Keeper node is a special node that allows animation of
+values in BVTK Nodes using the Blender animation system using
+keyframes. This is done by reimplementing the keyframe functionality,
+which is `not available in custom node trees currently
+<https://github.com/tkeskita/BVtkNodes/issues/3>`_.  Keyframe handling
+in BVTK is similar to the rest of Blender, i.e. keyframes can be
+inserted on properties by pressing `I` on your keyboard when hovering
+over a property that is animatable. Alternatively, you can right-click
+and use `Insert Keyframe`, or `Clear Keyframes` to edit the
+keyframes. For more information, please read the `official Blender
+documentation on keyframes
+<https://docs.blender.org/manual/en/latest/animation/keyframes/index.html>`_.
 
-In order for BVTK to actually update the values of the keyframed properties, the Global Time Keeper node need to be inserted
-into the node tree. After pressing update and each frame change, it will query and update all keyframed properties with
-the current value. It also shows all properties in the node tree that currently have keyframes along
-with the keyframe values. 
+In order for BVTKNodes to actually update the values of the keyframed
+properties, the Global Time Keeper node must be inserted into the node
+tree. Running **Update Node** after a frame change will update all
+keyframed property values. The node also shows all properties in the
+node tree that currently have keyframes along with the keyframe
+values.
 
 .. image:: images/global_time_keeper.png
 
-On each frame change, the Global Time Keeper first updates all keyframed properties, if their value has changed, and 
-later updates all conversion nodes that are connected to the keyframed nodes.
-
-.. note::
-  Since this implementation is an unofficial reimplementation of the animation feature, 
-  it does not support all features:
+.. note:: Since this implementation is an unofficial reimplementation
+  of the animation feature, it does not support all features:
 
   * The keyframes are not accessible over the `Dope Sheet` or `Graph Editor`
   * Interpolation mode is always set to linear for all properties
