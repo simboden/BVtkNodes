@@ -638,51 +638,62 @@ Color Mapper
 ^^^^^^^^^^^^
 
 This node assigns color to mesh data. You will see the colors
-in Blender 3D Viewport when Shading mode is set to either **Material
+in Blender 3D Viewport when Shading Mode is set to either **Material
 Preview** or **Rendered**.
 
-- **Input** connector is connected to a VTK pipeline
-- **lookuptable** connector should be connected to a *Color Ramp* node,
+- **input** connector is connected to an input node.
+- **lookuptable** connector must be connected to a *Color Ramp* node,
   which specifies the colors for the value range.
-- **Generate scalar bar** will generate a color legend object to the
+- **Generate Scalar Bar** will generate a color legend object to the
   Blender scene. Warning: This feature is not working currently well.
   Alternative for this is to prepare a separate color legend image in an
   image manipulation program and composite that on top of the result
   images.
-- **color bar** selects the variable according to which coloring is
-  carried out.
-- **Automatic range** will udate the value ranges
-  automatically if enabled.
-- **min** and **max** specify the value range.
-- **output** connector should be attached to a *VTK To Blender* node.
+- **Color By** is a text field which specifies the data array for
+  which coloring is carried out. The first character determines the
+  array type ("C" for cell/face values, or "P" for point values), and the
+  characters starting from third position specify the array
+  name. Second character is not used. For example, "P_pressure"
+  specifies coloring by point data in "pressure" array. If preceding
+  nodes are up-to-date, the dropdown menu on the right will provide a
+  list for selection.
+- **Auto Range** will update the value range for the data array
+  specified in *Color By* automatically during update, if enabled.
+- **min** and **max** specify the value range (if *Auto Range* is disabled).
+- **output** connector should be attached to a *VTK To Blender Mesh* node.
 
 Multi Block Leaf
 ^^^^^^^^^^^^^^^^
 
 This node allows you to filter to a single data set, when the input is
 of type *vtkMultiBlockDataSet*. This is often required prior to
-processing of a specific array data when a VTK Reader provides
-multi block data.
+processing of a specific array data when a VTK Reader provides multi
+block data. **Block Name** text field specifies the data set name. If
+preceding nodes are up-to-date, the dropdown menu on the right will
+provide a list for selection.
 
 Time Selector
 ^^^^^^^^^^^^^
 
-This node can be connected immediately after a VTK Reader node to
+This node can be connected immediately after a VTK reader node to
 control which time point of transient (time dependent) data is to be
 processed.
 
-Note: If `Use Scene Time` is set to true, time is directly controlled via the 
-Blender Timeline Editor. If the frame in
-the Timeline is changed, the Time Step in the Time Selector node is
-automatically updated to correspond that frame number. This allows
-rendering of animations directly from Blender.
+- If **Use Scene Time** is enabled, time is directly controlled via the
+  Blender Timeline Editor. If the frame in the Blender Timeline Editor
+  is changed, then **Time Index** in the Time Selector node is
+  automatically updated to correspond that frame number.
 
-Note 2: If the VTK Reader is not aware of time data, and if File Name
-of the Reader node contains integers at the end of the File Name, then
-the integer part of the File Name is updated to correspond to Timeline
-frame number. This allows animation of time series data for readers
-that are not aware of time (e.g. vtkPolyDataReader, which can read
-point and surface data from .vtk files).
+- If **Use Scene Time** time is disabled, then it is possible to use
+  `Global Time Keeper` node to animate the `Time Index` value (see
+  below).
+
+- If the VTK Reader is not aware of time data, and if File Name of the
+  Reader node contains integers at the end of the File Name, then the
+  integer part of the File Name is updated to correspond to Timeline
+  frame number. This allows animation of time series data for readers
+  that are not aware of time (e.g. `vtkPolyDataReader`, which can read
+  point and surface data from .vtk files).
 
 Global Time Keeper
 ^^^^^^^^^^^^^^^^^^
