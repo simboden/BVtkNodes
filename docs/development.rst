@@ -5,6 +5,40 @@ Development
 BVTKNodes is a community driven `open-source project <https://producingoss.com/>`_.
 If you want to develop and improve BVTKNodes for everyone, please feel free to head over to `our current github repository <https://github.com/tkeskita/BVtkNodes>`_.
 
+Terminology
+-----------
+
+- (BVTK) node = a Blender node object in BVTK node tree
+- generated node = VTK node which has been automatically generated
+- custom node = customized version of a generated node
+- VTK node = a generated or a custom node which implements a VTK class
+- special node = all other nodes in BVTK node tree
+- socket = Blender socket in a node
+- VTK object = instance of vtkObject class
+- VTK connection = instance of vtkAlgorithmOutput class
+
+BVTK Core
+---------
+
+The `tkeskita/bvtknodes <https://github.com/tkeskita/BVtkNodes>`_
+version includes a modified core functionality for BVTK Nodes, which
+allows custom functionality to be plugged in for custom nodes.
+These can be used by adding special functions to nodes:
+
+- **init_special()** - special function to run when node is created.
+- **draw_buttons_special()** - special node UI contents.
+- **init_vtk()** - creation and initialization of VTK object.
+- **apply_inputs()** - update input connections to VTK object.
+- **validate_and_update_values_special()** - optional node value
+  validation and update routine.
+- **apply_properties_special()** - special function to run for setting
+  properties and update VTK object for special nodes.
+- **get_vtk_output_object_special()** - special function to provide
+  VTK output object for special nodes.
+
+Please see current custom nodes located in `custom_nodes` folder in
+the source for examples.
+
 Testing Framework
 -----------------
 BVTKNodes includes a testing framework (located in the `test` directory) that should help with checking new updates and finding bugs.

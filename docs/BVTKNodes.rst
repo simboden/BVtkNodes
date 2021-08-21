@@ -783,38 +783,20 @@ thresholding. It is always possible to provide these as Custom Code,
 but to make the node easier to
 use, the code for *class VTKThreshold* was copied to file
 *VTKFilters.py*, modified and commented, and *add_class* and
-*TYPENAMES.append* commands needed for registering were added. The
-main work is done in the function *apply_properties*. Please feel free
-to submit such node code customizations at `github issues page`_!
+*TYPENAMES.append* commands needed for registering were added.
+Please feel free to submit such node code customizations at
+`github issues page`_!
 
 
-Error Messages
---------------
+Information and Error Messages
+------------------------------
 
-It is normal to occasionally see pop-up of *vtkInformation* errors
-from *vtkCompositeDataPipeline*, like the following, often repeated
-many times. These occur during pipeline execution when input of a VTK
-node is either missing or empty. You need to run **Update** on the
-final *VTK To Blender (Mesh)* node to force update of preceding
-nodes. No new error messages should appear when the pipeline is
-up-to-date and values in nodes are correct. Typical error message::
-
-  vtkCompositeDataPipeline (0x7f0,5d2,f02,f40): Algorithm vtkPassArrays(0x7f0,5d3,c37,420) returned failure for request: vtkInformation (0x7f0,5d3,58d,980)
-    Debug: Off
-    Modified Time: 28215
-    Reference Count: 1
-    Registered Events: (none)
-    Request: REQUEST_DATA_OBJECT
-    ALGORITHM_AFTER_FORWARD: 1
-    FORWARD_DIRECTION: 0
-
-Another common warning shown in the terminal is
-*pyrna_enum_to_py*. These warnings occur when a selection list is
-empty, which happens when the pipeline in not up-to-date,
-e.g. immediately after loading a Blender file. Running **Update**
-should clear these as well::
-
-  WARN (bpy.rna): /home/sources/buildbot-worker-linux_centos7/linux_lts_283/blender.git/source/blender/python/intern/bpy_rna.c:1479 pyrna_enum_to_py: current value '4' matches no enum in 'BVTK_Node_ColorMapperType', 'Color Mapper', 'color_by'
+Nodes show messages at the UI message box at node top, if any text is
+available. These messages are used to show information and also errors
+for the user. In addition, node is shown in red color if an error is
+encountered. Unfortunately, VTK level error messages are not currently
+captured to this message, so you may need to see debugging messages
+(see below) when trying to find out cause for a failure.
 
 
 Debug Messages
@@ -837,6 +819,8 @@ with contents
   import logging
   logging.basicConfig(format='%(funcName)s: %(message)s', level=logging.DEBUG)
 
+Please check the :ref:`development` section for more information for developers.
+
 
 Other Resources
 ---------------
@@ -853,7 +837,7 @@ You are free to ask and give advice for specific use cases at
 Please check this list first though:
 
 * Read through these docs first, and view examples in :ref:`ug_nodes`.
-* Run **Update** on the final *VTK To Blender* node to update the
+* Run **Force Update** on the final *VTK To Blender Mesh* node to update the
   preceding nodes.
 * For time dependent data, try to change frame number in Blender
   Timeline Editor.
