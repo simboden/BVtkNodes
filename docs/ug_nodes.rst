@@ -8,7 +8,10 @@ grid (*vtkUnstructuredGrid*) data composed of 3D cells. Examples below
 utilize the *cubeflow* OpenFOAM dataset located in *examples_data*
 folder of the add-on sources. This is a very small and simple 5x5x5
 hexahedral mesh with 5 time points for testing and debugging
-purposes. For more elaborate visualizations, please have a look at
+purposes. The node tree examples below are available in *Tree* tab,
+*Examples*, names starting with *cubeflow*.
+
+For more elaborate visualizations, please have a look at
 `a gallery thread on blenderartists <https://blenderartists.org/t/bvtknodes-gallery/1161079>`_.
 
 .. image:: images/ug_cubeflow_geometry.png
@@ -17,21 +20,19 @@ purposes. For more elaborate visualizations, please have a look at
 Set Up Reader
 -------------
 
-Here is a typical start node setup to read data, select time, select
-the correct data block and finally info node to see information about
-data read in:
+This node tree example name is *cubeflow_base_boundary*.
+This is a typical start node setup which contains a reader node
+*vtkOpenFOAMReader* to read data, a *Time Selector* node to specify
+time, a *Multi Block Leaf* node to select the correct data block, an
+*Info* node to show the pipeline contents, and finally a *VTK To
+Blender Mesh* node to create the boundary mesh as a Blender mesh
+object.
 
-* Add *vtkOpenFOAMReader* - Select *case.foam* file located at the
-  *cubeflow* directory to **FileName** field.
-* Add *Time Selector* node and connect it
-* Add *Multi Block Leaf* node and connect it
-* Add *Info* node and connect it
-* Press *Update* button on *Info* node to update pipeline
-
-When data is read in correctly, the *Info* node shows number of
-points/cells, and fields read in. Set **Time Step** value to **5** in
-*Time Selector* node by changing frame number in
-Blender Timeline Editor.
+After importing the example, set **Time Index** value to **5** in
+*Time Selector* node by changing frame number in Blender Timeline
+Editor. Press *Update Node* button on *Info* node to update pipeline.
+If data is read in correctly, the *Info* node shows number of
+points/cells, and fields read in.
 
 .. image:: images/ug_reader_nodesetup.png
 
@@ -60,7 +61,8 @@ Extract Boundary Surfaces
 
 .. image:: images/vtk_to_blender_mesh_node.png
 
-Alternatively you can use *vtkGeometryFilter* followed by the legacy
+For forks other than `tkeskita/bvtknodes <https://github.com/tkeskita/BVtkNodes>`_
+you can use *vtkGeometryFilter* followed by the legacy
 *VTK To Blender* node.
 **Note**: This may not produce correct results for polyhedron meshes.
 
@@ -73,6 +75,10 @@ need to
   (see :ref:`custom_code`).
 * Add two *Multi Block Leaf* nodes in series to select patches and the
   wanted patch, before connecting to *VTK To Blender Mesh*.
+* Run *Update Node* and *Force Update Upstream* on *VTK To Blender
+  Mesh* node to make the ``EnableAllPatchArrays()`` work correctly.
+
+This node tree example name is *cubeflow_boundary_patch*.
 
 .. image:: images/ug_extract_boundary_patch_nodesetup.png
 
