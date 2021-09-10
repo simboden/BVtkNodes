@@ -27,6 +27,7 @@ from .update import *
 from .cache import BVTKCache
 
 ENUM_ICON = 'DOT' # Default icon for enumeration lists
+debug_mode = False # Set true to see more information in nodes
 
 # -----------------------------------------------------------------------------
 # BVTK_NodeTree
@@ -321,9 +322,11 @@ class BVTK_Node:
         to show custom content in node.
         '''
 
-        # Debug
-        row = layout.row()
-        row.label(text="node_id #%d: %r" % (self.node_id, str(self.vtk_status)))
+        # Show node ID number and status in debug mode
+        global debug_mode
+        if debug_mode:
+            row = layout.row()
+            row.label(text="node_id #%d: %r" % (self.node_id, str(self.vtk_status)))
 
         # Show message if any
         if len(self.ui_message)>0:
