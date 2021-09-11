@@ -8,8 +8,13 @@ grid (*vtkUnstructuredGrid*) data composed of 3D cells. Examples below
 utilize the *cubeflow* OpenFOAM dataset located in *examples_data*
 folder of the add-on sources. This is a very small and simple 5x5x5
 hexahedral mesh with 5 time points for testing and debugging
-purposes. The node tree examples below are available in *Tree* tab,
-*Examples*, names starting with *cubeflow*.
+purposes.
+
+The node tree examples below are available in *Tree* tab, *Examples*,
+names starting with *cubeflow*. After importing an example, change the
+frame number to 5 in Blender Timeline Editor, if you want to get same
+results as in examples below. Then run *Update Node* on the final
+nodes to update the pipelines.
 
 For more elaborate visualizations, please have a look at
 `a gallery thread on blenderartists <https://blenderartists.org/t/bvtknodes-gallery/1161079>`_.
@@ -28,9 +33,7 @@ time, a *Multi Block Leaf* node to select the correct data block, an
 Blender Mesh* node to create the boundary mesh as a Blender mesh
 object.
 
-After importing the example, set **Time Index** value to **5** in
-*Time Selector* node by changing frame number in Blender Timeline
-Editor. Press *Update Node* button on *Info* node to update pipeline.
+Press *Update Node* button on *Info* node to update pipeline.
 If data is read in correctly, the *Info* node shows number of
 points/cells, and fields read in.
 
@@ -86,21 +89,14 @@ This node tree example name is *cubeflow_boundary_patch*.
 Field Data Calculations
 -----------------------
 
-You can use
-*vtkArrayCalculator* to calculate new fields from existing fields.
+You can use *vtkArrayCalculator* to calculate new fields from existing
+fields.
 
-* **Optional**: Add first *vtkPassArrays* if you want to discard other
-  data arrays except the ones you use in calculations.
-  You can specify which cell or point data fields
-  will be operated on, by :ref:`custom_code` commands like::
-  
-    AddArray(vtk.vtkDataObject.CELL, "U")
-    AddArray(vtk.vtkDataObject.POINT, "")
-
-* In *vtkArrayCalculator* node, write the calculator code to **Function**
-  field, the result array name to **ResultArrayName**, and select
-  correct type for the **AttributeType** field. Finally you must
-  specify the array names which are operated on by Custom Code like::
+* In *vtkArrayCalculator* node, write the calculator code to
+  **Function** field, the result array name to **ResultArrayName**,
+  and select correct type for the **AttributeType** field. Disable
+  **Coordinate Results**. Finally you must specify the array names
+  which are operated on by Custom Code like::
 
     AddVectorArrayName("U")
 
@@ -120,7 +116,8 @@ Cutting Field Data
 
 Use *vtkCutter* in combination with a geometry generator (like
 *vtkPlane*) to slice your field data. Combine with *Color Mapper* and
-*Color Ramp* to color by field value.
+*Color Ramp* to color by field value. The name of this example node
+tree is *cubeflow_cut_plane*.
 
 * Connect *vtkPlane* to the **CutFunction** connector on the
   *vtkCutter* node.
@@ -132,9 +129,7 @@ Use *vtkCutter* in combination with a geometry generator (like
   so that result colors will be shown after final Update. Note: 3D
   Viewport must be in *Material Preview* or *Rendered* mode to see the
   colors.
-* Run *Update* on the *VTK To Blender Mesh* node, then select the correct
-  field for **color by** in *Color Mapper* node, fix range min and max
-  if required, and click *Update* again.
+* Run *Update Node* on the *VTK To Blender Mesh* node.
 
 .. image:: images/ug_cut_plane_nodesetup.png
 
@@ -142,9 +137,13 @@ Here is the result in 3D Viewport shown in Material Preview Mode:
 
 .. image:: images/ug_cut_plane_result.png
 
-Note that the *Color Ramp* now features several presets, exported from `matplotlib <https://matplotlib.org/stable/tutorials/colors/colormaps.html>`_.
-The number of color values determine how closely the *Color Ramp* will match the underlying colormap (up to 32 samples are possible).
-Together with constant interpolation mode, this can create a contour-like effect on the surface.
+Note that the *Color Ramp* now features several color map presets,
+exported from
+`matplotlib <https://matplotlib.org/stable/tutorials/colors/colormaps.html>`_.
+The number of color values determine how closely the *Color Ramp* will
+match the underlying colormap (up to 32 samples are possible).
+Together with constant interpolation mode, this can create a
+contour-like effect on the surface.
 
 
 Vector Glyphs

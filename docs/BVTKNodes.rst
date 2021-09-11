@@ -229,23 +229,23 @@ The `tkeskita/bvtknodes <https://github.com/tkeskita/BVtkNodes>`_
 version of BVTKNodes includes a modified core update system for nodes,
 which fully separates node editing in Blender from updates on the VTK
 Object level, to allow control over updates. Each BVTK Node has a
-*Node Status*, which indicates the current status. Main node statuses
-include
+*Node Status*, which is indicated by the color of the node background, to
+show the current status. Main node statuses include
 
-- **Out-of-date** - Node and VTK level are not in sync. VTK Object
+- **Out-of-date** (green) - Node and VTK level are not in sync. VTK Object
   might not yet even exist.
-- **Updating** - VTK level is currently being updated to match current
+- **Updating** (blue) - VTK level is currently being updated to match current
   node properties.
-- **Up-to-date** - Node and VTK level are in sync. VTK Object exists
+- **Up-to-date** (dark gray)- Node and VTK level are in sync. VTK Object exists
   in memory.
-- **Upstream-changed** - Some value in an upstream node has been
+- **Upstream-changed** (orange) - Some value in an upstream node has been
   changed. Node and VTK level may not be in sync, and update is needed.
-- **Error** - Setting a value from node to VTK Object, or running of a
+- **Error** (red) - Setting a value from node to VTK Object, or running of a
   VTK command, has failed. Execution has been stopped.
 
 Using these statuses, it is possible to build different VTK level
-updating systems, without binding node editing operations with them
-(see Update Mode in :ref:`inspect` Panel) .
+updating systems, without binding node editing operations with updates
+(see Update Mode in :ref:`inspect` Panel).
 
 
 Tabs in BVTK Node Editor
