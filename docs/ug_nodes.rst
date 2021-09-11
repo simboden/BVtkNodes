@@ -233,10 +233,10 @@ Stream Tracers
 --------------
 
 Stream tracers calculated by *vtkStreamTracer* can be visualized with
-e.g. *vtkTubeFilter* using this node setup:
+e.g. *vtkTubeFilter* using this node tree example, named
+*cubeflow_stream_tracers*.
 
-* Select the vector field for tracing with *vtkAssignAttribute*
-  (see above) or *vtkPassArrays* like here.
+* Select the vector field for tracing with *vtkAssignAttribute*.
 * Generate source points for stream tracer with e.g. *vtkPlaneSource*
   and make sure points are inside the domain.
 * Add *vtkStreamTracer* and modify settings according to your case:
@@ -256,8 +256,7 @@ e.g. *vtkTubeFilter* using this node setup:
   face normals for the result.
 * Finally add *Color Mapper*, *Color Ramp* and *VTK To Blender Mesh* with
   **Generate Material** and **Smooth** on.
-* Run *Update* on the *VTK To Blender Mesh* node, select appropriate
-  coloring in *Color Mapper*, and rerun *Update*.
+* Run *Update Node* on final node.
 
 .. image:: images/ug_stream_tracers_nodesetup.png
 
