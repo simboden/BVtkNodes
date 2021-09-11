@@ -192,19 +192,19 @@ Here is the result in 3D Viewport shown in Material Preview Mode:
 Contours
 --------
 
-Contours can be generated with *vtkContourFilter*:
+Contours can be generated with *vtkContourFilter*. This example node
+tree name is *cubeflow_contours*.
 
 * First add *vtkAssignAttribute* node and add Custom Code (see :ref:`custom_code`) to
   specify a point data array to be used for contouring, e.g.
   ``Assign("p", vtk.vtkDataSetAttributes.SCALARS, vtk.vtkAssignAttribute.POINT_DATA)``
-* Add *vtkContourFilter*, and add wanted contour values by pressing
-  the plus icon and then input three values: 0.017, 0.02, 0.023.
-  Disable **GenerateTriangles** to retain polyhedrons.
+* Add *vtkContourFilter*, and add wanted contour values:
+  Single Value: 0.017, and Additional Values: 0.02, 0.023.
+  Disable **GenerateTriangles** to retain polyhedrons (if wanted).
 * Add *Color Mapper*, *Color Ramp* and *VTK To Blender Mesh* nodes. In *VTK
   To Blender Mesh* node, select both **Generate Material** and **Smooth**
   to get smoothened face normals.
-* Run *Update* on the *VTK To Blender Mesh* node, select appropriate
-  coloring in *Color Mapper*, and rerun *Update*.
+* Run *Update Node* on the final node.
 
 .. image:: images/ug_contour_nodesetup.png
 
@@ -216,11 +216,11 @@ Iso-surface
 -----------
 
 A closed iso-surface (a contour with no holes in surface, e.g. for
-volumetric rendering) can be achieved by clipping with a value with this
-approach using *vtkClipDataSet*, *vtkDataSetRegionSurfaceFilter* and
-*vtkPolyDataNormals* (to get consistent face normals).
-Replace *vtkPassArrays* with *vtkAssignAttribute* (see `contours`_
-above) if you need to color the iso-surface with data.
+volumetric rendering) can be achieved by clipping with a value with
+this approach using *vtkAssignAttribute*, *vtkClipDataSet*,
+*vtkDataSetRegionSurfaceFilter* and *vtkPolyDataNormals* (to get
+consistent face normals). The name of this example tree is
+*cubeflow_isosurface*.
 
 .. image:: images/ug_isosurface_nodesetup.png
 
