@@ -267,21 +267,37 @@ Here is the result in 3D Viewport shown in Material Preview Mode:
 
 .. _volumetric_rendering:
 
-Volumetric Rendering
---------------------
+OpenVDB Export and Volumetric Rendering
+---------------------------------------
 
-Volumetric rendering of 3D *vtkImageData* is possible by using the
-experimental :ref:`VTKToBlenderVolume` node. You can use a custom
-*VTKImageData Object Source* node in conjunction with *vtkProbeFilter*
-to convert e.g. unstructured grid data into *vtkImageData* voxel data
-required by the volumetric conversion.
+Conversion of 3D *vtkImageData* into OpenVDB (.vdb format) and
+subsequent volumetric rendering of the OpenVDB files is possible by
+using the *VTK To OpenVDB Exporter* node. This example node tree name
+is *cubeflow_openvdb_export*. A *VTKImageData Object Source* node is
+used in conjunction with *vtkProbeFilter* to convert the unstructured
+grid data into *vtkImageData* (voxel data) required by the OpenVDB
+format.
+
+**Note:** Make sure that sampling points in *VTKImageData Object
+Source* fall inside the domain at voxel center points.
+
+**Note 2:** Location, rotation and scale are lost in the OpenVDB export.
 
 .. image:: images/ug_volumetrics_nodesetup.png
 
-Edit the generated volumetric material in Shader Editor, node setup is
-shown below. Here is the result of the example data viewed from above,
-when lit only by an added Sun lamp with strength value 10. Color is
-manipulated in the material by two Vector Math nodes to add red color
-to velocity X component and blue color to velocity Z component.
+When the *Update Node* has been run for the *VTK To OpenVDB Exporter*
+node, an intermediate .json file is saved to the location of the
+Blender file, which can be converted to .vdb format according to
+instructions in the node documentation (see
+:ref:`VTKToOpenVDBExporter`). After that, the OpenVDB file can be
+imported to Blender as a Volume Object.
+
+After importing OpenVDB file(s), you must add a volumetric material to
+the Volume Object in Blender Shader Editor. An example material node
+setup is shown below, with rendering of the result (volume_00005.vdb,
+viewed from above, using Eevee render engine), when lit only by a
+sun lamp with strength value 100. Color is manipulated in the
+material by two Vector Math nodes to add red color to velocity X
+component and blue color to velocity Z component.
 
 .. image:: images/ug_volumetrics_result.png

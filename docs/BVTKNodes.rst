@@ -544,6 +544,7 @@ To OpenVDB Exporter* node described next. If `pyopenvdb` becomes
 a standard part of Blender one day, this node can be resurrected.
 
 
+.. _VTKToOpenVDBExporter:
 
 VTK To OpenVDB Exporter
 ^^^^^^^^^^^^^^^^^^^^^^^
