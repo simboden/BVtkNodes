@@ -9,7 +9,7 @@ try:
     import pyopenvdb
     with_pyopenvdb = True
 except ImportError:
-    l.warning("Import pyopenvdb failed, BVTK To Blender Volume is unavailable.")
+    l.warning("pyopenvdb was not found (this is normal)")
     with_pyopenvdb = False
 
 # -----------------------------------------------------------------------------

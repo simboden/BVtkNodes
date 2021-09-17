@@ -2,7 +2,6 @@ from .core import l # Import logging
 from .core import *
 from .animation_helper import AnimationHelper
 from .cache import PersistentStorageUser, persistent_storage
-from .__init__ import converters_list
 from .tree import node_tree_name
 from .update import Update, no_queue_update
 

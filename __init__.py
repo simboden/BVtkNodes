@@ -6,8 +6,8 @@
 
 bl_info = {
     "name": "BVTKNodes, Blender VTK Nodes",
-    "author": "Silvano Imboden, Lorenzo Celli, Paul McManus, Tuomo Keskitalo",
-    "version": (0, 6),
+    "author": "BVTKNodes Developers",
+    "version": (0, 7),
     "blender": (2, 83,  0),
     "location": "BVTK Node Tree Editor > New",
     "description": "Create and execute VTK pipelines in Blender Node Editor",
@@ -29,34 +29,40 @@ bl_info = {
 # VTK object = instance of vtkObject class
 # VTK connection = instance of vtkAlgorithmOutput class
 
-
 # Note: See core.py on how to set up Python Logging to see debug messages
 
-# OPEN ISSUES
-# - Currently it is not possible to use Blender 2.8 animation system
-#   to animate BVTKNodes properties. This is due to bug in Blender,
-#   and it has been previously reported at
-#   https://developer.blender.org/T66392
-# - generate/vtk_info_modified.py is not used, should it be deleted?
-# - continue development of node_tree_from_py at some point?
-# - cone.json example raises a lot of vtkInformation request errors on
-#   first run, but still works, and later updates do not produce errors
-# - Color Mapper color_by produces RNA warnings due to empty list
-#   until input nodes generate the list
-# - Generate Scalar Bar in Color Mapper is not working correctly.
-#
 # IDEAS FOR FUTURE DEVELOPMENT
-#
-# - Calculator Node: use vtkExpression evaluator
+# - Pass on VTK errors to node.ui_message. How to get VTK error texts?
+# - Upgrade vtkSphere to support getting location and scale from
+#   Blender Sphere Empty object (similar implementation as for
+#   vtkPlane).
+# - Add version number to JSON exports and check minimum version number
+#   for compatibility before import.
+# - Modify core to support multiple inputs, e.g. for
+#   vtkAppendFilter.
+# - Time Selector to give error for time unaware readers if file does not exist.
+#   vtkThreshold to give error if attribute does not exist, and if user
+#   provided range is out of data range.
+# - Custom Filter should ideally support several inputs and
+#   outputs. Also communicate errors to users via self.ui_message. More
+#   general approach would be to use special functions specified in text
+#   block like init_vtk(), apply_properties_special(),
+#   get_vtk_output_object_special(), draw_buttons_special(), ...
+# - Edit/Save Custom Code buttons in nodes should ideally work also
+#   before running Update. Requires a direct way to get node to the
+#   operator without cache information.
+# - vtkOpenFOAMReader with Custom Code EnableAllPatchArrays() fails to
+#   produce Patches block on first run.
+# - Calculator Node: use vtkExpression evaluator?
 # - Blender To VTK Node: A BVTK node which converts Blender mesh into
 #   vtkPolyData. Alternatively add vtkBlendReader to VTK?
 #   Or maybe vtkAlembicReader to VTK? https://www.alembic.io/
 # - Support for several VTK versions in one add-on. Would require making
 #   gen_VTK*.py, VTK*.py and b_properties dependent on specific VTK version
 #   and easy switch between versions.
-# - Time subranges for temporal averaged analysis
-# - Better access to OpenFOAM Reader settings, like selection of
-#   regions and different data arrays
+# - Time subranges for temporal averaged analysis?
+# - generate/vtk_info_modified.py is not used, should it be deleted?
+# - continue development of node_tree_from_py at some point?
 
 
 # Import VTK Python module or exit immediately
@@ -85,7 +91,6 @@ if need_reloading:
 
     importlib.reload(update)
     importlib.reload(core)
-    # importlib.reload(cache)
     importlib.reload(b_properties)
     importlib.reload(showhide_properties)
     importlib.reload(tree)
@@ -125,7 +130,6 @@ else:
     from   nodeitems_utils import NodeItem
 
     from . import core
-    # from . import cache
     from . import b_properties
     from . import showhide_properties
     from . import b_inspect
@@ -215,29 +219,9 @@ def compareGeneratedAndCurrentVTKVersion():
         l.warning("Warning: Generated VTK file did not provide a VTK version")
 
     elif gen_vtk_version != vtk_version :
-        l.warning("Warning: Generated VTK file has version %s, but blender's VTK version is %s" % (gen_vtk_version, vtk_version))
+        l.warning("Warning: Generated VTK file has version %s, but Blender's VTK version is %s" % (gen_vtk_version, vtk_version))
 
 compareGeneratedAndCurrentVTKVersion()
-
-converters_list = ['BVTK_Node_VTKToBlenderType', 'BVTK_Node_VTKToBlenderMeshType', 
-        'BVTK_Node_VTKToBlenderVolumeType', 'BVTK_Node_VTKToBlenderParticlesType']
-
-def backtrack_converter_nodes(root_node):
-    '''Searches all converter nodes and returns a list of them
-    '''
-    all_outputs = root_node.outputs
-
-    found_converter_nodes = []
-    for output in all_outputs:
-        links = output.links
-        for link in links:
-            output_node = link.to_socket.node
-            if output_node.bl_idname in converters_list:
-                found_converter_nodes += [output_node]
-            else:
-                found_converter_nodes += backtrack_converter_nodes(output_node)
-
-    return found_converter_nodes
 
 @persistent
 def on_frame_change(scene, depsgraph):
@@ -294,47 +278,16 @@ def on_frame_change(scene, depsgraph):
     if update_mode == 'update-all':
         cache.BVTKCache.update_all()
 
-    return None
-    # TODO: Clean up old stuff below when converters are upgraded
-
-    # Update mesh objects
-    for node in nodes_2b_updated:
-        try:
-            if node.bl_idname == 'BVTK_Node_VTKToBlenderType':
-                l.debug("Animation: Updating VTKToBlender")
-                update.no_queue_update(node, node.update_cb)
-            elif node.bl_idname == 'BVTK_Node_VTKToBlenderMeshType':
-                l.debug("Animation: Updating VTKToBlenderMesh")
-                update.no_queue_update(node, node.update_cb)
-            elif node.bl_idname == 'BVTK_Node_VTKToBlenderVolumeType':
-                l.debug("Animation: Updating VTKToBlenderVolume")
-                converters.delete_objects_startswith(node.ob_name)
-                update.no_queue_update(node, node.update_cb)
-            
-            else:
-                l.warning("on_frame_change: Converter nodes " + str(node) + " was found during backtracking but was not updated")
-        except Exception as ex:
-            #An error message will be logged, but we can't display an error here in the UI
-            err_str = "Animation: Update of %s failed with ex: %s" % (node, ex)
-            l.error(err_str)
-
-
-
-
-
 @persistent
 def on_depsgraph_update(scene, depsgraph):
     '''Updates done after depsgraph changes'''
     l.debug("Triggered")
     on_frame_change(scene, depsgraph)
 
-
-
 def custom_register_node_categories():
     '''Custom registering of node categories to prevent node categories to
     be shown on the tool-shelf
     '''
-
     identifier = "VTK_NODES"
     cat_list = core.CATEGORIES
 
