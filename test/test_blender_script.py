@@ -74,36 +74,20 @@ def import_json_node_tree(json_fname):
 def import_cli_tree():
     import_json_node_tree(parse_standard_test_args())
 
-def run_update_all(run_converter_nodes=True, run_writer_nodes=True):
-    try:
-        node_tree_name = "NodeTree"
-        assert_quit(node_tree_name in bpy.data.node_groups, "Found no BVTK NodeTree")
-        assert_quit("Update All" in bpy.data.node_groups[node_tree_name].nodes, "Found no Update All node")
-        update_all_node = bpy.data.node_groups[node_tree_name].nodes["Update All"]
-
-
-        update_all_node.update_all_writers = False
-        update_all_node.update_all_converters = True
-        update_all_node.update_cb()
-
-        assert_quit(update_all_node.error_count == 0, "Update all failed on the converter nodes")
-
-
-        update_all_node.update_all_writers = True
-        update_all_node.update_all_converters = False
-        update_all_node.update_cb()
-
-        assert_quit(update_all_node.error_count == 0, "Update all failed on the writer nodes")
-    except Exception as ex:
-        assert_quit(False, "Test failed with %s" % (ex))
+def check_node_statuses():
+    '''Check that status of all nodes is up-to-date'''
+    from BVtkNodes.core import get_all_bvtk_nodes
+    nodes = get_all_bvtk_nodes()
+    for node in nodes:
+        if node.vtk_status != 'up-to-date':
+            assert_quit(False, "Test failed with %s" % node.name)
 
 if __name__ == "__main__":
     try:
         import_cli_tree()
-        run_update_all()
+        check_node_statuses()
         print("Success")
     except Exception as ex:
         assert_quit(False, "Test failed with %s" % (ex))
     #Success - Quit
     #sys.exit(0)
-    

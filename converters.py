@@ -1524,6 +1524,8 @@ def get_vtk_array_data(vtk_obj, array_name, array_type='P'):
     '''Get VTK data array from data set with given name and type (point or
     cell data)
     '''
+    if not vtk_obj:
+        return None
     if array_type in ('P', 'p'):
         data = vtk_obj.GetPointData()
     elif array_type in ('C', 'c'):

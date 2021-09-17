@@ -3,13 +3,13 @@
         {
             "from_node_name": "vtkClipPolyData",
             "from_socket_identifier": "output 0",
-            "to_node_name": "VTK To Blender",
+            "to_node_name": "VTK To Blender Mesh",
             "to_socket_identifier": "input"
         },
         {
             "from_node_name": "vtkClipPolyData",
             "from_socket_identifier": "output 1",
-            "to_node_name": "VTK To Blender.001",
+            "to_node_name": "VTK To Blender Mesh.001",
             "to_socket_identifier": "input"
         },
         {
@@ -52,7 +52,7 @@
             "width": 200.0
         },
         {
-            "bl_idname": "BVTK_Node_VTKToBlenderType",
+            "bl_idname": "BVTK_Node_VTKToBlenderMeshType",
             "color": [
                 0.6079999804496765,
                 0.6079999804496765,
@@ -69,14 +69,14 @@
             ],
             "m_Name": "mesh",
             "mute": false,
-            "name": "VTK To Blender",
+            "name": "VTK To Blender Mesh",
             "show_options": true,
             "show_preview": false,
             "smooth": false,
             "width": 200.0
         },
         {
-            "bl_idname": "BVTK_Node_VTKToBlenderType",
+            "bl_idname": "BVTK_Node_VTKToBlenderMeshType",
             "color": [
                 0.6079999804496765,
                 0.6079999804496765,
@@ -93,7 +93,7 @@
             ],
             "m_Name": "mesh2",
             "mute": false,
-            "name": "VTK To Blender.001",
+            "name": "VTK To Blender Mesh.001",
             "show_options": true,
             "show_preview": false,
             "smooth": false,
@@ -163,30 +163,6 @@
             "show_options": true,
             "show_preview": false,
             "width": 285.1534118652344
-        },
-        {
-            "bl_idname": "BVTK_Node_UpdateAllType",
-            "color": [
-                0.5,
-                0.5,
-                0.5
-            ],
-            "custom_code": "",
-            "error_count": 0,
-            "height": 100.0,
-            "hide": false,
-            "label": "",
-            "location": [
-                -13.501360893249512,
-                471.1139831542969
-            ],
-            "mute": false,
-            "name": "Update All",
-            "show_options": true,
-            "show_preview": false,
-            "update_all_converters": true,
-            "update_all_writers": true,
-            "width": 200.0
         }
     ]
 }

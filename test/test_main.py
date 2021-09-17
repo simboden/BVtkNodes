@@ -61,7 +61,6 @@ class BVTKBaseTest(unittest.TestCase):
         returncode = proc.returncode
         stdout_msg = proc_output.decode('utf-8') #Stdout and Stderr will be displayed if the test fails
         stderr_msg = proc_err.decode('utf-8')
-
         self.assertTrue(returncode == 0, "Blender STDOUT:%s%s--------------%sSTDERR:%s%s--------------" 
                                                 % (os.linesep, stdout_msg, os.linesep, os.linesep, stderr_msg))
 
