@@ -101,7 +101,7 @@ class BVTK_MT_Tree_Examples(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
-        for i in os.listdir(examples_dir):
+        for i in sorted(os.listdir(examples_dir)):
             if i.endswith('.json'):
                 layout.operator('node.bvtk_node_tree_import', \
                                 text = i.replace('.json', '') \
