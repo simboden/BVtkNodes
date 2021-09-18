@@ -29,16 +29,9 @@ vtkCache:dict = {}   # node_id -> VTK object
 class BVTKCache:
     '''Class for navigation between nodes and VTK objects.
     node_id property is used as key in map dictionaries.
-    All nodes should have an entry in the cache dictionaries.
+    All VTK nodes must have an entry in the cache dictionaries.
     vtkCache entry can be None if there is no VTK object.
     '''
-
-    @classmethod
-    def init(cls):
-        ''' Create cache.
-        '''
-        # TODO: Remove?
-        cls.rebuild_cache()
 
     @classmethod
     def reset_cache(cls):
@@ -69,32 +62,6 @@ class BVTKCache:
             l.debug("Created VTK object of type " + node.bl_label)
         else:
             node.vtk_status = 'none'
-
-    @classmethod
-    def check_cache(cls):
-        '''Rebuild Node Cache. Called by all operators. Cache is out of sync
-        if an operator is called and at the same time NodesMaxId=1.
-        This happens after reloading addons. Cache is rebuilt, and the
-        operator must be interrupted, but the next operator call will work
-        OK.
-        '''
-        # TODO: Remove?
-
-        bvtk_nodes = core.get_all_bvtk_nodes()
-
-        # After F8 or FileOpen VTKCache is empty and NodesMaxId == 1
-        # any previous node_id must be invalidated
-        if nodeMaxId == 1:
-            for n in bvtk_nodes:
-                n.node_id = 0
-
-        # For each node check if it has a node_id
-        # and if it has a vtk_obj associated
-        for n in bvtk_nodes:
-            if n.node_id == 0:
-                cls.map_node(n, tree=nt)
-            if cls.get_vtkobj(n) == None:
-                cls.init_vtkobj(n)
 
     @classmethod
     def init_vtkobj(cls, node):

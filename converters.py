@@ -1,6 +1,5 @@
 from .update import *
 from .core import l # Import logging
-from .core import update_id
 from .core import *
 from .cache import BVTKCache
 import bmesh

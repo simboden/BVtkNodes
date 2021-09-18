@@ -347,7 +347,7 @@ class BVTK_Node:
 
             # Write button for writer nodes
             if self.bl_idname.endswith('WriterType'):
-                layout.operator('node.bvtk_node_write').id = self.node_id
+                layout.operator('node.bvtk_node_write').node_path = node_path(self)
 
         # Update button is shown when there is something to update
         if self.vtk_status != 'up-to-date':
@@ -728,26 +728,20 @@ class BVTK_OT_NodeForceUpdateUpstream(bpy.types.Operator):
 
 
 # -----------------------------------------------------------------------------
-# VTK Node Write
+# VTK Writer Nodes' Write Operator
 # -----------------------------------------------------------------------------
-update_id = 0
 class BVTK_OT_NodeWrite(bpy.types.Operator):
-    '''Operator to call VTK Write() for a node'''
+    '''Operator to call VTK Write() for a writer node'''
     bl_idname = "node.bvtk_node_write"
-    bl_label = "Write"
-    # TODO: Check if this can be removed?
+    bl_label = "Write Data"
 
-    id: bpy.props.IntProperty()
+    node_path: bpy.props.StringProperty()
 
     def execute(self, context):
-        global update_id
-        update_id += 1
-        BVTKCache.check_cache()
-        node = BVTKCache.get_node(self.id)  # TODO: change node_id to node_path?
+        node = eval(self.node_path)
         if node:
-            def cb():
-                node.get_vtkobj().Write()
-            Update(node, cb, update_id)
+            node.update_vtk()
+            node.get_vtk_obj().Write()
 
         return {'FINISHED'}
 
