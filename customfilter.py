@@ -3,7 +3,6 @@ from .core import *
 from .animation_helper import AnimationHelper
 from .cache import PersistentStorageUser, persistent_storage
 from .tree import node_tree_name
-from .update import Update, no_queue_update
 
 # -----------------------------------------------------------------------------
 # Custom filter

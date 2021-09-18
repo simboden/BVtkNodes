@@ -1730,5 +1730,4 @@ CATEGORIES.append(BVTK_NodeCategory("Converters", "Converters", items=menu_items
 
 add_class(BVTK_OT_NodeUpdate)
 add_ui_class(BVTK_OT_AutoUpdateScan)
-add_ui_class(BVTK_OT_FunctionQueue) # CHECKME: Why does this not work in update.py?
 
