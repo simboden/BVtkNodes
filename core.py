@@ -23,7 +23,6 @@ import functools # for decorators
 
 from . import b_properties # Boolean properties
 b_path = b_properties.__file__ # Boolean properties config file path
-from .update import *
 from .cache import BVTKCache
 
 ENUM_ICON = 'DOT' # Default icon for enumeration lists

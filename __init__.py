@@ -89,7 +89,6 @@ need_reloading = "bpy" in locals()
 if need_reloading:
     import importlib
 
-    importlib.reload(update)
     importlib.reload(core)
     importlib.reload(b_properties)
     importlib.reload(showhide_properties)
@@ -138,7 +137,6 @@ else:
     from . import colormap
     from . import customfilter
     from . import info
-    from . import update
     from . import converters
 
     from .custom_nodes import VTKSources
