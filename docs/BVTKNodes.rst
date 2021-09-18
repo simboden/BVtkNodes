@@ -222,6 +222,8 @@ objects, modify settings for rendering engine, rendering of image,
 possibly composition and finally saving of image file. To learn about
 those, it is suggested to search for Blender tutorials on-line.
 
+.. _node_status:
+
 Node Status
 -----------
 

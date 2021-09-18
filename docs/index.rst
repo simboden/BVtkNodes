@@ -13,4 +13,4 @@ Welcome to BVTKNodes's documentation!
    BVTKNodes.rst
    ug_nodes.rst
    development.rst
-
+   whats_new.rst
