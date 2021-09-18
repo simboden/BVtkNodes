@@ -261,7 +261,7 @@ class BVTK_Node_ColorRamp(Node, BVTK_Node):
     def m_connections(self):
         return ([],[],[],['lookupTable'])
 
-    def copy_setup(self, node):
+    def copy_special(self, node):
         '''Copy color ramp from argument node to self'''
         new_texture = get_default_texture(self.name)
         self.my_texture = new_texture.name

@@ -166,7 +166,7 @@ class BVTK_Node:
 
     node_id: bpy.props.IntProperty(
         name="Node ID Number",
-        description="Node ID Number for mapping VTK objects in BVTKcache",
+        description="Node ID Number for mapping VTK objects in BVTKCache",
         default=0,
     )
     connected_input_names: bpy.props.StringProperty(
@@ -184,7 +184,7 @@ class BVTK_Node:
         description="Status of BVTK node",
         items={
             # No status information. This should never be a state for
-            # nodes that are initialized work correctly.
+            # nodes that are initialized and work correctly.
             ('none', 'none', 'none', 0),
 
             # VTK object exists but no values / commands for it has been run yet.
@@ -420,6 +420,7 @@ class BVTK_Node:
 
     def vtk_obj_in_cache(self):
         '''Return True if an object (or None) is in cache.
+        True means that node has been initialized correctly.
         '''
         return BVTKCache.vtk_obj_in_cache(self.node_id)
 
@@ -562,11 +563,10 @@ class BVTK_Node:
         vtk_obj = self.init_vtk()
         if vtk_obj:
             BVTKCache.map_node(self, vtk_obj) # Add VTK object to cache
-        # TODO: rename to copy_special to unify terminology
-        if hasattr(self, 'copy_setup'):
+        if hasattr(self, 'copy_special'):
             # some nodes need to set properties (such as color ramp elements)
             # after being copied
-            self.copy_setup(node)
+            self.copy_special(node)
         l.debug("Copy done for node: %s, id #%d" % (self.name, self.node_id))
 
     def get_b(self):
@@ -723,6 +723,7 @@ class BVTK_OT_NodeWrite(bpy.types.Operator):
     '''Operator to call VTK Write() for a node'''
     bl_idname = "node.bvtk_node_write"
     bl_label = "Write"
+    # TODO: Check if this can be removed?
 
     id: bpy.props.IntProperty()
 
