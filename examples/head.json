@@ -1,21 +1,15 @@
 {
     "links": [
         {
-            "from_node_name": "vtkImageGaussianSmooth",
-            "from_socket_identifier": "output",
-            "to_node_name": "vtkContourFilter",
-            "to_socket_identifier": "input"
-        },
-        {
-            "from_node_name": "vtkContourFilter",
-            "from_socket_identifier": "output",
-            "to_node_name": "VTK To Blender",
-            "to_socket_identifier": "input"
-        },
-        {
             "from_node_name": "vtkXMLImageDataReader",
             "from_socket_identifier": "output",
             "to_node_name": "vtkImageGaussianSmooth",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkImageGaussianSmooth",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkContourFilter",
             "to_socket_identifier": "input"
         },
         {
@@ -25,44 +19,19 @@
             "to_socket_identifier": "input"
         },
         {
+            "from_node_name": "vtkContourFilter",
+            "from_socket_identifier": "output",
+            "to_node_name": "VTK To Blender Mesh",
+            "to_socket_identifier": "input"
+        },
+        {
             "from_node_name": "vtkContourFilter.001",
             "from_socket_identifier": "output",
-            "to_node_name": "VTK To Blender.001",
+            "to_node_name": "VTK To Blender Mesh.001",
             "to_socket_identifier": "input"
         }
     ],
     "nodes": [
-        {
-            "additional_properties": {
-                "m_ContourValues": [
-                    66.0
-                ]
-            },
-            "bl_idname": "VTKContourFilterType",
-            "color": [
-                0.5,
-                0.5,
-                0.5
-            ],
-            "height": 100.0,
-            "hide": false,
-            "label": "",
-            "location": [
-                0.0,
-                300.0
-            ],
-            "m_ArrayComponent": 0,
-            "m_ComputeGradients": true,
-            "m_ComputeNormals": true,
-            "m_ComputeScalars": true,
-            "m_GenerateTriangles": true,
-            "m_NumberOfContours": 1,
-            "mute": false,
-            "name": "vtkContourFilter",
-            "show_options": true,
-            "show_preview": false,
-            "width": 200.0
-        },
         {
             "bl_idname": "VTKXMLImageDataReaderType",
             "color": [
@@ -70,6 +39,7 @@
                 0.5,
                 0.5
             ],
+            "custom_code": "",
             "height": 100.0,
             "hide": false,
             "label": "",
@@ -98,6 +68,7 @@
                 0.5,
                 0.5
             ],
+            "custom_code": "",
             "e_SplitMode": "Slab",
             "height": 100.0,
             "hide": false,
@@ -133,12 +104,46 @@
             "width": 200.0
         },
         {
-            "bl_idname": "BVTK_Node_VTKToBlenderType",
+            "bl_idname": "VTKContourFilterType",
             "color": [
                 0.5,
                 0.5,
                 0.5
             ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                0.0,
+                300.0
+            ],
+            "m_ArrayComponent": 0,
+            "m_ComputeGradients": true,
+            "m_ComputeNormals": true,
+            "m_ComputeScalars": true,
+            "m_GenerateTriangles": true,
+            "m_NumberOfContours": 1,
+            "additional_values": "",
+            "mute": false,
+            "name": "vtkContourFilter",
+            "show_options": true,
+            "show_preview": false,
+            "single_value": 66.0,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "BVTK_Node_VTKToBlenderMeshType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "create_all_verts": false,
+            "create_edges": true,
+            "create_faces": true,
+            "custom_code": "",
+            "generate_material": false,
             "height": 100.0,
             "hide": false,
             "label": "",
@@ -148,52 +153,27 @@
             ],
             "m_Name": "skel",
             "mute": false,
-            "name": "VTK To Blender",
+            "name": "VTK To Blender Mesh",
+            "recalc_norms": false,
             "show_options": true,
             "show_preview": false,
             "smooth": true,
             "width": 200.0
         },
         {
-            "bl_idname": "BVTK_Node_VTKToBlenderType",
-            "color": [
-                0.5,
-                0.5,
-                0.5
-            ],
-            "height": 100.0,
-            "hide": false,
-            "label": "",
-            "location": [
-                300.0,
-                0.0
-            ],
-            "m_Name": "skin",
-            "mute": false,
-            "name": "VTK To Blender.001",
-            "show_options": true,
-            "show_preview": false,
-            "smooth": true,
-            "width": 200.0
-        },
-        {
-            "additional_properties": {
-                "m_ContourValues": [
-                    20.0
-                ]
-            },
             "bl_idname": "VTKContourFilterType",
             "color": [
                 0.5,
                 0.5,
                 0.5
             ],
+            "custom_code": "",
             "height": 100.0,
             "hide": false,
             "label": "",
             "location": [
                 0.0,
-                0.0
+                -110.0
             ],
             "m_ArrayComponent": 0,
             "m_ComputeGradients": true,
@@ -201,10 +181,40 @@
             "m_ComputeScalars": true,
             "m_GenerateTriangles": true,
             "m_NumberOfContours": 1,
+            "additional_values": "",
             "mute": false,
             "name": "vtkContourFilter.001",
             "show_options": true,
             "show_preview": false,
+            "single_value": 20.0,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "BVTK_Node_VTKToBlenderMeshType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "create_all_verts": false,
+            "create_edges": true,
+            "create_faces": true,
+            "custom_code": "",
+            "generate_material": false,
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                300.0,
+                -110.0
+            ],
+            "m_Name": "skin",
+            "mute": false,
+            "name": "VTK To Blender Mesh.001",
+            "recalc_norms": false,
+            "show_options": true,
+            "show_preview": false,
+            "smooth": true,
             "width": 200.0
         }
     ]

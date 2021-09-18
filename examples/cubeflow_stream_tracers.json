@@ -1,13 +1,25 @@
 {
     "links": [
         {
-            "from_node_name": "vtkPolyDataReader",
+            "from_node_name": "vtkOpenFOAMReader",
             "from_socket_identifier": "output",
-            "to_node_name": "VTK To Blender Mesh",
+            "to_node_name": "Time Selector",
             "to_socket_identifier": "input"
         },
         {
-            "from_node_name": "vtkStructuredGridReader",
+            "from_node_name": "Time Selector",
+            "from_socket_identifier": "output",
+            "to_node_name": "Multi Block Leaf",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "Multi Block Leaf",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkAssignAttribute",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkAssignAttribute",
             "from_socket_identifier": "output",
             "to_node_name": "vtkStreamTracer",
             "to_socket_identifier": "input 0"
@@ -45,13 +57,13 @@
         {
             "from_node_name": "Color Mapper",
             "from_socket_identifier": "output",
-            "to_node_name": "VTK To Blender Mesh.001",
+            "to_node_name": "VTK To Blender Mesh",
             "to_socket_identifier": "input"
         }
     ],
     "nodes": [
         {
-            "bl_idname": "VTKPolyDataReaderType",
+            "bl_idname": "VTKOpenFOAMReaderType",
             "color": [
                 0.5,
                 0.5,
@@ -62,30 +74,92 @@
             "hide": false,
             "label": "",
             "location": [
-                0.0,
-                920.0
+                -550.0,
+                250.0
             ],
-            "m_FieldDataName": "",
-            "m_FileName": "$/kitchenforniture.vtk",
-            "m_LookupTableName": "",
-            "m_NormalsName": "",
-            "m_ReadAllColorScalars": true,
-            "m_ReadAllFields": true,
-            "m_ReadAllNormals": true,
-            "m_ReadAllScalars": true,
-            "m_ReadAllTCoords": true,
-            "m_ReadAllTensors": true,
-            "m_ReadAllVectors": true,
-            "m_ReadFromInputString": false,
-            "m_ScalarsName": "",
-            "m_TCoordsName": "",
-            "m_TensorsName": "",
-            "m_VectorsName": "",
+            "m_AddDimensionsToArrayNames": false,
+            "m_CacheMesh": true,
+            "m_CopyDataToCellZones": false,
+            "m_CreateCellToPoint": true,
+            "m_DecomposePolyhedra": false,
+            "m_FileName": "$/cubeflow/case.foam",
+            "m_ListTimeStepsByControlDict": false,
+            "m_PositionsIsIn13Format": false,
+            "m_ReadZones": false,
+            "m_SkipZeroTime": false,
+            "m_Use64BitFloats": true,
+            "m_Use64BitLabels": false,
             "mute": false,
-            "name": "vtkPolyDataReader",
+            "name": "vtkOpenFOAMReader",
             "show_options": true,
             "show_preview": false,
             "width": 200.0
+        },
+        {
+            "bl_idname": "BVTK_Node_TimeSelectorType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -300.0,
+                250.0
+            ],
+            "mute": false,
+            "name": "Time Selector",
+            "show_options": true,
+            "show_preview": false,
+            "time_index": 5,
+            "use_scene_time": true,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "BVTK_Node_MultiBlockLeafType",
+            "block": "internalMesh",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -30.0,
+                250.0
+            ],
+            "mute": false,
+            "name": "Multi Block Leaf",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTKAssignAttributeType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "Assign(\"U\", vtk.vtkDataSetAttributes.VECTORS, vtk.vtkAssignAttribute.CELL_DATA)",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                220.0,
+                250.0
+            ],
+            "mute": false,
+            "name": "vtkAssignAttribute",
+            "show_options": true,
+            "show_preview": false,
+            "width": 499.6391296386719
         },
         {
             "bl_idname": "BVTK_Node_VTKToBlenderMeshType",
@@ -94,7 +168,7 @@
                 0.5,
                 0.5
             ],
-            "create_all_verts": false,
+            "create_all_verts": true,
             "create_edges": true,
             "create_faces": true,
             "custom_code": "",
@@ -103,53 +177,16 @@
             "hide": false,
             "label": "",
             "location": [
-                300.0,
-                920.0
+                1850,
+                250
             ],
-            "m_Name": "furniture",
+            "m_Name": "mesh",
             "mute": false,
             "name": "VTK To Blender Mesh",
             "recalc_norms": false,
             "show_options": true,
             "show_preview": false,
-            "smooth": false,
-            "width": 200.0
-        },
-        {
-            "bl_idname": "VTKStructuredGridReaderType",
-            "color": [
-                0.5,
-                0.5,
-                0.5
-            ],
-            "custom_code": "",
-            "height": 100.0,
-            "hide": false,
-            "label": "",
-            "location": [
-                -1100.0,
-                600.0
-            ],
-            "m_FieldDataName": "",
-            "m_FileName": "$/kitchenflow.vtk",
-            "m_LookupTableName": "",
-            "m_NormalsName": "",
-            "m_ReadAllColorScalars": true,
-            "m_ReadAllFields": true,
-            "m_ReadAllNormals": true,
-            "m_ReadAllScalars": true,
-            "m_ReadAllTCoords": true,
-            "m_ReadAllTensors": true,
-            "m_ReadAllVectors": true,
-            "m_ReadFromInputString": false,
-            "m_ScalarsName": "",
-            "m_TCoordsName": "",
-            "m_TensorsName": "",
-            "m_VectorsName": "vectors",
-            "mute": false,
-            "name": "vtkStructuredGridReader",
-            "show_options": true,
-            "show_preview": false,
+            "smooth": true,
             "width": 200.0
         },
         {
@@ -164,8 +201,8 @@
             "hide": false,
             "label": "",
             "location": [
-                -1100.0,
-                -10.0
+                450,
+                0
             ],
             "m_Center": [
                 0.0,
@@ -174,31 +211,31 @@
             ],
             "m_Normal": [
                 0.0,
-                0.0,
-                1.0
+                1.0,
+                0.0
             ],
             "m_Origin": [
-                0.019999999552965164,
-                2.25,
-                0.009999999776482582
+                0.20000000298023224,
+                -0.9900000095367432,
+                0.0
             ],
             "m_Point1": [
-                0.019999999552965164,
-                2.549999952316284,
-                0.009999999776482582
+                0.9900000095367432,
+                -0.9900000095367432,
+                0.0
             ],
             "m_Point2": [
-                0.019999999552965164,
-                2.25,
-                0.6000000238418579
+                0.20000000298023224,
+                -0.9900000095367432,
+                0.800000011920929
             ],
-            "m_XResolution": 5,
-            "m_YResolution": 5,
+            "m_XResolution": 3,
+            "m_YResolution": 3,
             "mute": false,
             "name": "vtkPlaneSource",
             "show_options": true,
             "show_preview": false,
-            "width": 200.0
+            "width": 255.735595703125
         },
         {
             "bl_idname": "VTKStreamTracerType",
@@ -214,17 +251,17 @@
             "hide": false,
             "label": "",
             "location": [
-                -860.0,
-                300.0
+                800,
+                250
             ],
-            "m_ComputeVorticity": true,
-            "m_InitialIntegrationStep": 0.019999999552965164,
+            "m_ComputeVorticity": false,
+            "m_InitialIntegrationStep": 0.009999999776482582,
             "m_IntegrationStepUnit": 2,
-            "m_MaximumError": 9.999999974752427e-07,
+            "m_MaximumError": 9.999999717180685e-10,
             "m_MaximumIntegrationStep": 1.0,
-            "m_MaximumNumberOfSteps": 2000,
-            "m_MaximumPropagation": 40.0,
-            "m_MinimumIntegrationStep": 0.009999999776482582,
+            "m_MaximumNumberOfSteps": 1000,
+            "m_MaximumPropagation": 100.0,
+            "m_MinimumIntegrationStep": 1.000000013351432e-10,
             "m_RotationScale": 1.0,
             "m_StartPosition": [
                 0.0,
@@ -253,23 +290,23 @@
             "hide": false,
             "label": "",
             "location": [
-                -600.0,
-                300.0
+                1070,
+                250
             ],
-            "m_Capping": true,
+            "m_Capping": false,
             "m_DefaultNormal": [
                 0.0,
                 0.0,
                 1.0
             ],
-            "m_NumberOfSides": 10,
+            "m_NumberOfSides": 6,
             "m_Offset": 0,
             "m_OnRatio": 1,
             "m_Radius": 0.019999999552965164,
-            "m_RadiusFactor": 1.0,
+            "m_RadiusFactor": 10.0,
             "m_SidesShareVertices": true,
             "m_TextureLength": 1.0,
-            "m_UseDefaultNormal": true,
+            "m_UseDefaultNormal": false,
             "mute": false,
             "name": "vtkTubeFilter",
             "show_options": true,
@@ -288,15 +325,15 @@
             "hide": false,
             "label": "",
             "location": [
-                -300.0,
-                300.0
+                1330,
+                250
             ],
             "m_AutoOrientNormals": true,
             "m_ComputeCellNormals": true,
             "m_ComputePointNormals": true,
             "m_Consistency": true,
             "m_FeatureAngle": 30.0,
-            "m_FlipNormals": true,
+            "m_FlipNormals": false,
             "m_NonManifoldTraversal": true,
             "m_Splitting": true,
             "mute": false,
@@ -368,8 +405,8 @@
             "hide": false,
             "label": "",
             "location": [
-                -300.0,
-                -120.0
+                1330,
+                -125
             ],
             "mute": false,
             "name": "Color Ramp",
@@ -391,44 +428,16 @@
             "hide": false,
             "label": "",
             "location": [
-                0.0,
-                300.0
+                1600,
+                250
             ],
             "lut": false,
-            "max": 35.0,
-            "min": 1.0,
+            "max": 15.0,
+            "min": 0.0,
             "mute": false,
             "name": "Color Mapper",
             "show_options": true,
             "show_preview": false,
-            "width": 200.0
-        },
-        {
-            "bl_idname": "BVTK_Node_VTKToBlenderMeshType",
-            "color": [
-                0.5,
-                0.5,
-                0.5
-            ],
-            "create_all_verts": false,
-            "create_edges": true,
-            "create_faces": true,
-            "custom_code": "",
-            "generate_material": true,
-            "height": 100.0,
-            "hide": false,
-            "label": "",
-            "location": [
-                300.0,
-                300.0
-            ],
-            "m_Name": "tracertubes",
-            "mute": false,
-            "name": "VTK To Blender Mesh.001",
-            "recalc_norms": false,
-            "show_options": true,
-            "show_preview": false,
-            "smooth": true,
             "width": 200.0
         }
     ]

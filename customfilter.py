@@ -2,9 +2,7 @@ from .core import l # Import logging
 from .core import *
 from .animation_helper import AnimationHelper
 from .cache import PersistentStorageUser, persistent_storage
-from .__init__ import converters_list
 from .tree import node_tree_name
-from .update import Update, no_queue_update
 
 # -----------------------------------------------------------------------------
 # Custom filter
@@ -12,9 +10,8 @@ from .update import Update, no_queue_update
 
 
 class BVTK_Node_CustomFilter(Node, BVTK_Node):
-    '''VTK Custom Filter, defined in Blender text data block. Supports one
-    or multiple inputs. Custom function must return a variable which
-    is set as input of the node following custom filter.
+    '''VTK Custom Filter, defined in a Blender text data block. Supports one
+    input. Custom function must return a VTK output object.
     '''
     bl_idname = 'BVTK_Node_CustomFilterType'
     bl_label = 'Custom Filter'
@@ -49,9 +46,9 @@ class BVTK_Node_CustomFilter(Node, BVTK_Node):
         return []
 
     def m_connections(self):
-        return (['input'], [], [], ['output'])
+        return (['input'], ['output'], [], [])
 
-    def draw_buttons(self, context, layout):
+    def draw_buttons_special(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, 'text')
         op = row.operator('node.bvtk_new_text', icon='ZOOM_IN', text='')
@@ -62,19 +59,14 @@ class BVTK_Node_CustomFilter(Node, BVTK_Node):
         else:
             layout.label(text='No functions found in specified text')
 
-    def apply_properties(self, vtkobj):
-        pass
+    def apply_properties_special(self):
+        return 'up-to-date'
 
-    def apply_inputs(self, vtkobj):
-        pass
-
-    def get_output(self, socketname):
+    def get_vtk_output_object_special(self, socketname='output'):
         '''Execute user defined function. If something goes wrong,
         print the error and return the input object.
         '''
-        input_objects = [x[1] for x in self.get_input_nodes('input')]
-        if len(input_objects) == 1:
-            input_objects = input_objects[0]
+        input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects()
         if self.text in bpy.data.texts:
             t = bpy.data.texts[self.text].as_string()
             try:
@@ -82,19 +74,20 @@ class BVTK_Node_CustomFilter(Node, BVTK_Node):
             except Exception as e:
                 l.error('error while parsing user defined text: ' + \
                       str(e).replace('<string>', self.text))
-                return self.get_input_node('input')[1]
+                return vtk_output_obj
             if self.func not in locals():
                 l.error('function not found')
             else:
                 try:
-                    user_output = eval(self.func+'(input_objects)')
+                    user_output = eval(self.func+'(vtk_output_obj)')
                     return user_output
                 except Exception as e:
                     l.error('error while executing user defined function:' + str(e))
-        return self.get_input_node('input')[1]
+        return vtk_output_obj
 
-    def setup(self):
-        self.inputs['input'].link_limit = 300
+    # Currently core does not support multiple inputs
+    #def init_special(self):
+    #    self.inputs['input'].link_limit = 300
 
     def export_properties(self):
         '''Export node properties'''
@@ -109,6 +102,9 @@ class BVTK_Node_CustomFilter(Node, BVTK_Node):
         '''Import node properties'''
         bpy.ops.node.bvtk_new_text(body=dict['text_as_string'], name=dict['text_name'])
 
+    def init_vtk(self):
+        self.set_vtk_status('out-of-date')
+        return None
 
 class BVTK_OT_NewText(bpy.types.Operator):
     '''New text operator'''
@@ -146,96 +142,87 @@ class BVTK_Node_MultiBlockLeaf(Node, BVTK_Node):
     '''
     bl_idname = 'BVTK_Node_MultiBlockLeafType'
     bl_label = 'Multi Block Leaf'
+    bl_description = 'Node to extract one block from vtkMultiBlockDataSet'
 
-    def blocks(self, context):
-        '''Returns a list for a dynamic enum. Once verified that
-        the input vtk object is decomposable in blocks, the list
-        will contain an element for every block, with the following
-        information:
-        - Block index
-        - Block data type (ex. structured grid)
-        - Block custom name (if it's defined, in most cases it's not)
-        '''
-        in_node, vtkobj = self.get_input_node('input')
-        if not in_node:
-            return []
-        elif not vtkobj:
-            return []
-        else:
-            vtkobj = resolve_algorithm_output(vtkobj)
-            if not vtkobj:
-                return []
-            if not hasattr(vtkobj, "GetNumberOfBlocks") or not hasattr(vtkobj, "GetBlock"):
-                return []
-            items = []
-            meta_flag = True if hasattr(vtkobj, "GetMetaData") else False
-            for i in range(vtkobj.GetNumberOfBlocks()):
-                block = vtkobj.GetBlock(i)
-                meta_data = vtkobj.GetMetaData(i) if meta_flag else None
-                if meta_data:
-                    custom_name = meta_data.Get(vtk.vtkCompositeDataSet.NAME())
-                    if not custom_name:
-                        custom_name = ""
-                else:
-                    custom_name = ""
-                name = "[" + str(i) + "]: " + custom_name + " (" + \
-                       (block.__class__.__name__ if block else "Empty Block") + ")"
-                items.append((str(i), name, ""))
+    block: bpy.props.StringProperty(default="", name="Block Name", update=BVTK_Node.outdate_vtk_status)
+
+    def block_enum_generator(self, context=None):
+        '''Returns an enum list of block names'''
+
+        items = [('None', 'Empty (clear value)', 'Empty (clear value)', ENUM_ICON, 0)]
+
+        input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects()
+        if not hasattr(vtk_output_obj, "GetNumberOfBlocks") or \
+           not hasattr(vtk_output_obj, "GetBlock"):
             return items
 
-    block: bpy.props.EnumProperty(items=blocks, name="Output Block")
+        for i in range(vtk_output_obj.GetNumberOfBlocks()):
+            block = vtk_output_obj.GetBlock(i)
+            if hasattr(vtk_output_obj, "GetMetaData"):
+                meta_data = vtk_output_obj.GetMetaData(i)
+                name = meta_data.Get(vtk.vtkCompositeDataSet.NAME())
+            else:
+                name = str(i)
+            items.append((name, name, name, ENUM_ICON, i+1))
+        return items
+
+    def block_set_value(self, context=None):
+        '''Set value of StringProprety using value from EnumProperty'''
+        if self.block_enum == 'None':
+            self.block = ""
+        else:
+            self.block = str(self.block_enum)
+
+    block_enum: bpy.props.EnumProperty(items=block_enum_generator, update=block_set_value, name="Choices")
+
+    def validate_and_update_values_special(self):
+        '''Check that value in block property exists.
+        '''
+        if len(self.block) < 1:
+            return "Error: Need a Block Name"
+        block_enum_list = first_elements(self.block_enum_generator())
+        if not self.block in block_enum_list:
+            return "Block named %r was not found in input" % self.block
 
     def m_properties(self):
-        return []
+        return ['block']
 
     def m_connections(self):
         return (['input'], [], [], ['output'])
 
-    def draw_buttons(self, context, layout):
-        in_node, vtkobj = self.get_input_node('input')
-        if not in_node:
-            layout.label(text='Connect a node')
-        elif not vtkobj:
-            layout.label(text='Input has not vtkobj (try updating)')
-        else:
-            vtkobj = resolve_algorithm_output(vtkobj)
-            if not vtkobj:
-                return
-            class_name = vtkobj.__class__.__name__
-            layout.label(text="Input: "+class_name)
-            if not hasattr(vtkobj, "GetNumberOfBlocks") or not hasattr(vtkobj, "GetBlock"):
-                layout.label(text="Error: Input Object has no")
-                layout.label(text="          MultiBlock Data")
-                return
-            layout.prop(self, "block")
+    def draw_buttons_special(self, context, layout):
+        row = layout.row(align=True)
+        row.prop(self, 'block')
+        row.prop(self, 'block_enum', icon_only=True)
 
-    def apply_properties(self, vtkobj):
-        pass
+    def apply_properties_special(self):
+        return 'up-to-date'
 
-    def apply_inputs(self, vtkobj):
-        pass
-
-    def get_output(self, socketname):
+    def get_vtk_output_object_special(self, socketname='output'):
         '''The function checks if the specified block can be retrieved from
         the input vtk object, in case it's possible the said block is returned.
         '''
-        in_node, vtkobj = self.get_input_node('input')
-        if in_node:
-            if vtkobj:
-                vtkobj = resolve_algorithm_output(vtkobj)
-                if vtkobj:
-                    # TODO: remove "not" in front of hasattr(vtkobj, "GetBlock")?
-                    if hasattr(vtkobj, "GetNumberOfBlocks") or not hasattr(vtkobj, "GetBlock"):
-                        if self.block:
-                            return vtkobj.GetBlock(int(self.block))
-        return None
+        input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects()
+        if not vtk_output_obj:
+            return None
 
+        # Find index number from element list
+        block_enum_list = first_elements(self.block_enum_generator())
+        if not self.block in block_enum_list:
+            return None
+        i = block_enum_list.index(self.block) - 1
+        if hasattr(vtk_output_obj, "GetBlock"):
+            return vtk_output_obj.GetBlock(i)
+
+    def init_vtk(self):
+        self.set_vtk_status('out-of-date')
+        return None
 
 # ----------------------------------------------------------------
 # Time Selector
 # ----------------------------------------------------------------
 
-def update_timestep_in_filename(filename, time_step):
+def update_timestep_in_filename(filename, time_index):
     '''Return file name, where time definition integer string (assumed to
     be located just before dot at end of file name) has been replaced
     to argument time step number
@@ -247,7 +234,7 @@ def update_timestep_in_filename(filename, time_step):
         numbers = regex1.group(1)
         n = len(numbers)
         defstr = "%0" + str(n) + "d"
-        replacement = defstr % time_step
+        replacement = defstr % time_index
         # Replace with dot at end to increase odds for correct substitution
         newname = filename.replace(numbers + ".", replacement + ".")
         return newname
@@ -261,128 +248,103 @@ class BVTK_Node_TimeSelector(Node, BVTK_Node):
     bl_idname = 'BVTK_Node_TimeSelectorType'
     bl_label = 'Time Selector'
 
-    def check_range(self, context):
-        in_node, out_port = self.get_input_node('input')
-        if in_node:
-            if out_port:
-                if out_port.IsA('vtkAlgorithmOutput'):
-                    prod = out_port.GetProducer()
-                    executive = prod.GetExecutive()
-                    out_info = prod.GetOutputInformation(out_port.GetIndex())
-                    if hasattr(executive, "TIME_STEPS"):
-                        time_steps = out_info.Get(executive.TIME_STEPS())
+    def get_time_values(self, context=None):
+        '''Return list of time step values from VTK Executive or None if no
+        time values are found.
+        '''
+        input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects('input')
+        if not vtk_connection or not vtk_connection.IsA('vtkAlgorithmOutput'):
+            return None
+        prod = vtk_connection.GetProducer()
+        executive = prod.GetExecutive()
+        out_info = prod.GetOutputInformation(vtk_connection.GetIndex())
+        if not hasattr(executive, "TIME_STEPS"):
+            return None
+        time_values = out_info.Get(executive.TIME_STEPS())
 
-                        # If reader is aware of time, update time step
-                        # Added requirement len(time_steps) > 1 because VTK 9.0.1
-                        # vtkPolyDataReader started to return TIME_STEPS=0.0
-                        # always (reader is not really time aware?).
-                        if time_steps and len(time_steps) > 1:
-                            size = len(time_steps)
-                            #if self.time_step < -size:
-                            #    self.time_step = -size
-                            #elif self.time_step >= size:
-                            #    self.time_step = size-1
-                            # Make data loop outside normal time range.
-                            # Value test is needed to avoid infinite property
-                            # update loop calling check_range().
-                            time_val = self.time_step % size
-                            if self.time_step != time_val:
-                                self.time_step = time_val
+        # If reader is aware of time, it provides list of time step values.
+        # Added requirement len(time_values) > 1 because VTK 9.0.1
+        # vtkPolyDataReader started to return TIME_STEPS=0.0
+        # always (reader is not really time aware?).
+        if time_values and len(time_values) > 1:
+            return time_values
 
-                        # Hack for time unaware readers: If file name of reader
-                        # node contains number string at end, update it
-                        else:
-                            try:
-                                filename = in_node.m_FileName
-                                newname = update_timestep_in_filename(filename, self.time_step)
-                                in_node.m_FileName = newname
-                            except Exception as ex:
-                                pass
+    def update_time_unaware_reader_node(self):
+        '''Hack to update time unaware readers: If file name of input node
+        contains number string at end, update it.
+        '''
+        input_node, _ = self.get_input_node_and_socketname('input')
+        if not input_node:
+            return None
+        try:
+            filename = input_node.m_FileName
+            newname = update_timestep_in_filename(filename, self.time_index)
+            input_node.m_FileName = newname
+        except Exception as ex:
+            pass
+
+    def get_time_value(self):
+        '''Return time value of current time index as a text string'''
+        time_values = self.get_time_values()
+        if not time_values:
+            return 'Unknown'
+        size = len(time_values)
+        time_index = self.time_index % size
+        return str(time_values[time_index])
 
     def activate_scene_time(self, context):
         if self.use_scene_time:
-            self.time_step = context.scene.frame_current
-            self.check_range(context)
+            self.time_index = context.scene.frame_current
+        self.outdate_vtk_status(context)
 
-    time_step: bpy.props.IntProperty(update=check_range)
+    def time_index_update(self, context=None):
+        '''Custom time_index out-of-date routine'''
+        time_values = self.get_time_values()
+        l.debug("time_values " + str(time_values))
+        if not time_values:
+            self.update_time_unaware_reader_node()
+        self.outdate_vtk_status(context)
+
+    time_index: bpy.props.IntProperty(name="Time Index", default=1, update=time_index_update)
     use_scene_time: bpy.props.BoolProperty(name="Use Scene Time", default=True, update=activate_scene_time)
     b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties(self):
-        return ['time_step', 'use_scene_time']
+        return ['time_index', 'use_scene_time']
 
     def m_connections(self):
         return (['input'], [], [], ['output'])
 
-    def draw_buttons(self, context, layout):
-        in_node, out_port = self.get_input_node('input')
-        if not in_node:
-            layout.label(text='Connect a node')
-            return
-        if not out_port:
-            layout.label(text='Input has not vtkobj (try updating)')
-            return
-        if not out_port.IsA('vtkAlgorithmOutput'):
-            layout.label(text='Input is not a vtkAlgorithm')
-            return
-
-        prod = out_port.GetProducer()
-        executive = prod.GetExecutive()
-        out_info = prod.GetOutputInformation(out_port.GetIndex())
-        if hasattr(executive, "TIME_STEPS"):
-            time_steps = out_info.Get(executive.TIME_STEPS())
-            if time_steps and len(time_steps) > 1:
-                row = layout.row()
-                row.prop(self, 'time_step', text="Time Step")
-                row = layout.row()
-                row.prop(self, 'use_scene_time')
-                row = layout.row()
-                size = len(time_steps)
-                row.label(text="Max Steps: "+str(size-1))
-                if -size <= self.time_step < size:
-                    layout.label(text="Time Value: "+str(time_steps[self.time_step]))
+    def apply_properties_special(self):
+        '''Set time to VTK Executive'''
+        self.ui_message = "Time: " + self.get_time_value()
+        time_values = self.get_time_values()
+        if time_values:
+            input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects('input')
+            if not vtk_connection or not vtk_connection.IsA('vtkAlgorithmOutput'):
+                self.ui_message = "No VTK connection or VTK Algorithm Output"
+                return 'error'
+            prod = vtk_connection.GetProducer()
+            size = len(time_values)
+            if -size <= self.time_index < size:
+                if hasattr(prod, "UpdateTimeStep"):
+                    prod.UpdateTimeStep(time_values[self.time_index])
                 else:
-                    layout.label(text='Index error', icon='ERROR')
+                    self.ui_message = "Error: " + prod.__class__.__name__ + " does not have 'UpdateTimeStep' method."
+                    return 'error'
             else:
-                layout.label(text='No time data on input')
-        else:
-            layout.label(text='Input contains no time steps')
-        return
+                self.ui_message = "Error: time index " + str(self.time_index) + " is out of index range (%d)" % (size - 1)
+                return 'error'
+        return 'up-to-date'
 
-    def apply_properties(self, vtkobj):
-        pass
+    def get_vtk_output_object_special(self, socketname='output'):
+        '''Pass on VTK output from input as output'''
+        input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects()
+        return vtk_output_obj
 
-    def apply_inputs(self, vtkobj):
-        pass
-
-    def get_output(self, socketname):
-        '''Check if the input is valid and if the time step can be set.
-        If tests pass the time step is updated and the input object is returned,
-        otherwise None is returned.
-        '''
-        in_node, out_port = self.get_input_node('input')
-        if not in_node or not out_port:
-            return None
-        if not out_port.IsA('vtkAlgorithmOutput'):
-            return None
-
-        prod = out_port.GetProducer()
-        executive = prod.GetExecutive()
-        out_info = prod.GetOutputInformation(out_port.GetIndex())
-        if hasattr(executive, "TIME_STEPS"):
-            time_steps = out_info.Get(executive.TIME_STEPS())
-            if time_steps and len(time_steps) > 1:
-                size = len(time_steps)
-                if -size <= self.time_step < size:
-                    if hasattr(prod, "UpdateTimeStep"):
-                        prod.UpdateTimeStep(time_steps[self.time_step])
-                    else:
-                        l.error(prod.__class__.__name__+" does not have 'UpdateTimeStep' method.")
-                        l.error("If you can, please document this case and report it to the developers.")
-                else:
-                    l.error('Index out of time steps range')
-        return resolve_algorithm_output(out_port)
-
+    def init_vtk(self):
+        self.set_vtk_status('out-of-date')
+        return None
 
 # ----------------------------------------------------------------
 # Image Data Object Source
@@ -393,10 +355,10 @@ class BVTK_Node_ImageDataObjectSource(Node, BVTK_Node):
     bl_idname = 'BVTK_Node_ImageDataObjectSourceType'
     bl_label = 'VTKImageData Object Source'
 
-    origin: bpy.props.FloatVectorProperty(name='Origin', default=[0.0, 0.0, 0.0], size=3)
-    dimensions: bpy.props.IntVectorProperty(name='Dimensions', default=[10, 10, 10], size=3)
-    spacing: bpy.props.FloatVectorProperty(name='Spacing', default=[0.1, 0.1, 0.1], size=3)
-    multiplier: bpy.props.FloatProperty(name='Multiplier', default=1.0)
+    origin: bpy.props.FloatVectorProperty(name='Origin', default=[0.0, 0.0, 0.0], size=3, update=BVTK_Node.outdate_vtk_status)
+    dimensions: bpy.props.IntVectorProperty(name='Dimensions', default=[10, 10, 10], size=3, update=BVTK_Node.outdate_vtk_status)
+    spacing: bpy.props.FloatVectorProperty(name='Spacing', default=[0.1, 0.1, 0.1], size=3, update=BVTK_Node.outdate_vtk_status)
+    multiplier: bpy.props.FloatProperty(name='Multiplier', default=1.0, update=BVTK_Node.outdate_vtk_status)
 
     def m_properties(self):
         return ['origin', 'dimensions', 'spacing', 'multiplier']
@@ -404,16 +366,10 @@ class BVTK_Node_ImageDataObjectSource(Node, BVTK_Node):
     def m_connections(self):
         return ([], [], [], ['output'])
 
-    def draw_buttons(self, context, layout):
-        layout.prop(self, 'origin')
-        layout.prop(self, 'dimensions')
-        layout.prop(self, 'spacing')
-        layout.prop(self, 'multiplier')
+    def apply_properties_special(self):
+        return 'up-to-date'
 
-    def apply_properties(self, vtkobj):
-        pass
-
-    def get_output(self, socketname):
+    def get_vtk_output_object_special(self, socketname='output'):
         '''Generate a new vtkImageData object'''
         from mathutils import Vector
         img = vtk.vtkImageData()
@@ -422,6 +378,10 @@ class BVTK_Node_ImageDataObjectSource(Node, BVTK_Node):
         img.SetDimensions([round(c * dim) for dim in self.dimensions])
         img.SetSpacing(Vector(self.spacing) / c)
         return img
+
+    def init_vtk(self):
+        self.set_vtk_status('out-of-date')
+        return None
 
 # ----------------------------------------------------------------
 # Global Time Keeper
@@ -440,6 +400,7 @@ class BVTK_Node_GlobalTimeKeeper(PersistentStorageUser, AnimationHelper, Node, B
         self.get_persistent_storage()["animated_properties"] = self.animated_properties
         self.get_persistent_storage()["interpolation_modes"] = self.interpolation_modes
         self.get_persistent_storage()["animated_values"] = self.animated_values
+        self.ui_message = "Global Time: {}".format(self.global_time)
 
     global_time: bpy.props.IntProperty(update=update_time, name="Global Time")
     invalid: bpy.props.BoolProperty(name="Is Node Valid")
@@ -447,14 +408,11 @@ class BVTK_Node_GlobalTimeKeeper(PersistentStorageUser, AnimationHelper, Node, B
     def m_connections(self):
         return ([], [], [], [])
 
-    def draw_buttons(self, context, layout):
+    def validate_and_update_values_special(self):
         if self.invalid:
-            row = layout.row()
-            row.label(text="You already have a global time keeper")
-            return
+            return "Error: You already have a Global Time Keeper node"
 
-        row = layout.row()
-        row.label(text="Global Time: {}".format(self.global_time))
+    def draw_buttons_special(self, context, layout):
         storage = self.get_persistent_storage()
         if "animated_properties" in storage:
             animated_properties = storage["animated_properties"]
@@ -479,28 +437,18 @@ class BVTK_Node_GlobalTimeKeeper(PersistentStorageUser, AnimationHelper, Node, B
                     row.label(text="(%s)" % ",".join(["%.2f" % (val) for val in elem[4]]))
                     row.label(text=elem[-1])
 
-        row = layout.row()
-        row.separator()
-        row.separator()
-        row.separator()
-        row.separator()
-        row.operator("node.bvtk_node_update", text="update").node_path = node_path(self)
-        return
-
-    def apply_properties(self, vtkobj):
-        pass
-
-    def apply_inputs(self, vtkobj):
-        pass
-
-    def update_cb(self):
+    def apply_properties_special(self):
         self.update_time(bpy.context)
+        self.ui_message = "Global Time: {}".format(self.global_time)
+        return 'up-to-date'
 
     def set_new_time(self, frame):
+        '''Set new time from frame number. Called from on_frame_change().
+        '''
         self.global_time = frame
         return self.get_persistent_storage()["updated_nodes"]
 
-    def setup(self):
+    def init_vtk(self):
         if self.name != self.bl_label:
             self.invalid = True
             raise RuntimeError("A Global Time Keeper already exists. There can be only one Global Time Keeper per scene")
@@ -518,68 +466,6 @@ class BVTK_Node_GlobalTimeKeeper(PersistentStorageUser, AnimationHelper, Node, B
     def copy(self, node):
         self.setup()
 
-# ----------------------------------------------------------------
-# Update All Node
-# ----------------------------------------------------------------
-class BVTK_Node_UpdateAll(Node, BVTK_Node):
-    '''This nodes provides an easy functionality to call all update on all convertes and/or writer nodes
-    '''
-    bl_idname = 'BVTK_Node_UpdateAllType'
-    bl_label = 'Update All'
-
-    update_all_converters: bpy.props.BoolProperty(name="Update All Converters", default=True)
-    update_all_writers: bpy.props.BoolProperty(name="Update All Writers", default=True)
-    error_count: bpy.props.IntProperty(name="Error Count", default=0)
-
-    def m_connections(self):
-        return ([], [], [], [])
-
-    def m_properties(self):
-        return ['update_all_converters', 'update_all_writers', 'error_count']
-
-    def draw_buttons(self, context, layout):
-        row = layout.row()
-        row.prop(self, 'update_all_converters')
-        row = layout.row()
-        row.prop(self, 'update_all_writers')
-        row = layout.row()
-        row.separator()
-        row.separator()
-        row.separator()
-        row.operator("node.bvtk_node_update", text="Update").node_path = node_path(self)
-        return
-
-    def update_cb(self):
-        self.error_count = 0
-        for node_group in bpy.data.node_groups.values():
-            if node_group.name == node_tree_name:
-                for node in node_group.nodes:
-
-                    try:
-                        #Converter nodes
-                        if self.update_all_converters and node.bl_idname in converters_list:
-                            no_queue_update(node, node.update_cb)
-
-                            object_name = node.m_Name
-                            if object_name not in bpy.data.objects:
-                                l.error("Node " + node.name + " succeeded, but produced no output object (%s)" % (object_name))
-                                self.error_count += 1
-
-                        #Writer nodes
-                        elif self.update_all_writers and node.bl_label.endswith("Writer"):
-                            no_queue_update(node, lambda x: x, False)
-                            node.get_vtkobj().Write()
-
-                            if hasattr(node, "m_FileName"):
-                                output_file = node.m_FileName.replace("//", bpy.path.abspath("//"))
-                                if not os.path.exists(output_file):
-                                    l.error("Node " + node.name + " succeeded, but produced no output file (%s)" % (output_file))
-                                    self.error_count += 1
-                                    
-                    except Exception as ex:
-                        l.error("Update of node " + node.name + " failed with " + str(ex))
-
-
 
 
 # Add classes and menu items
@@ -593,8 +479,6 @@ add_class(BVTK_Node_TimeSelector)
 TYPENAMES.append('BVTK_Node_TimeSelectorType')
 add_class(BVTK_Node_GlobalTimeKeeper)
 TYPENAMES.append('BVTK_Node_GlobalTimeKeeperType')
-add_class(BVTK_Node_UpdateAll)
-TYPENAMES.append('BVTK_Node_UpdateAllType')
 add_class(BVTK_Node_ImageDataObjectSource)
 TYPENAMES.append('BVTK_Node_ImageDataObjectSourceType')
 

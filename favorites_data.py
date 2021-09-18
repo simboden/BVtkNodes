@@ -1,5 +1,4 @@
 favorites = [
- ('BVTK_Node_VTKToBlenderType', 'VTK To Blender'),
  ('BVTK_Node_VTKToBlenderMeshType', 'VTK To Blender Mesh'),
  ('BVTK_Node_InfoType', 'Info'),
  ('BVTK_Node_ColorMapperType', 'Color Mapper'),

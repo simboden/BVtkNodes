@@ -149,13 +149,6 @@ def generate(group):
 
         C = { 'NAME':c['name'], 'PROPS':[], 'ENUM_ITEMS':[], 'CONNECTIONS':((),(),(),()) }
 
-        # Find character field maximum widths
-        wn = 0 # name field character width
-        wp = 0 # type field character width
-        if len(c['props']):
-            wn = max([len(p['name']) for p in c['props']])
-            wp = max([len(p['type']) for p in c['props']])
-
         # Process class properties
         for p in c['props']:
             name = p['name']
@@ -190,11 +183,12 @@ def generate(group):
                 items_arg = ", subtype='DIR_PATH'"
 
             # Declaration row
-            P['decl'] = "{}{}: bpy.props.{}( name={} default={}{}{} )".format(
+            decl_string = "{}{}: bpy.props.{}(name='{}', default={}{}{}, update=BVTK_Node.outdate_vtk_status)"
+            P['decl'] = decl_string.format(
                 prefix,
-                name.ljust(wn),
-                ptype.ljust(wp),
-                ( "'"+name+"'," ).ljust(wn+3),
+                name,
+                ptype,
+                name,
                 value,
                 size,
                 items_arg

@@ -10,9 +10,7 @@ BVTKNodes is an addon for
 `Blender (an open source 3D content creation and visualization tool) <https://www.blender.org/>`_.
 This addon makes it possible to create and execute VTK pipelines
 configured in Blender Node Editor, to produce objects like surface meshes,
-which can be then modified and visualized in Blender. Support for
-particle systems and volumetric objects have been added (experimental
-feature!).
+which can be then modified and visualized in Blender.
 
 BVTKNodes provides Blender users with access to data readers for many
 scientific data formats, along with capability to convert VTK data
@@ -100,7 +98,8 @@ This version was demonstrated in the
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Upgraded and developed version for Blender 2.83 LTS series using VTK
-9.0.1.
+9.0.1. Uses a new update system and a new mesh generator node
+*VTK To Blender Mesh* instead of the legacy *VKT To Blender* node.
 
 .. note::
    
@@ -109,7 +108,7 @@ Upgraded and developed version for Blender 2.83 LTS series using VTK
 3. `esowc/sci_vis <https://github.com/esowc/sci_vis>`_
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-A recent, more developed version with new features for Blender 2.79b
+A version with new features for Blender 2.79b
 using VTK 8.2.0. Old Blender version is used for stability and 
 `animation features that are not yet working correctly in Blender 2.80 or newer <https://developer.blender.org/T66392>`_.
 
@@ -208,9 +207,9 @@ shown in `Introduction`_. For other examples, see `Tree`_ tab below.
   folder icon and select *head.vti* file.
 - In *vtkContourFilter* node click plus icon to add a contour value,
   then set the value.
-- In *VTK To Blender* node, add name to mesh object, set **Generate
+- In *VTK To Blender Mesh* node, add name to mesh object, set **Generate
   Material** on, and run **Update**. A mesh object should now appear
-  in the 3D viewport. Repeat this for the other *VTK To Blender Node*.
+  in the 3D viewport. Repeat this for the other *VTK To Blender Mesh Node*.
 - At this point, BVTKNodes should have created two (overlapping) mesh
   objects, which are shown in the Blender Properties Editor.
 - Save Blender file.
@@ -222,6 +221,33 @@ setting up lighting and world backround, modification of materials for
 objects, modify settings for rendering engine, rendering of image,
 possibly composition and finally saving of image file. To learn about
 those, it is suggested to search for Blender tutorials on-line.
+
+.. _node_status:
+
+Node Status
+-----------
+
+The `tkeskita/bvtknodes <https://github.com/tkeskita/BVtkNodes>`_
+version of BVTKNodes includes a modified core update system for nodes,
+which fully separates node editing in Blender from updates on the VTK
+Object level, to allow control over updates. Each BVTK Node has a
+*Node Status*, which is indicated by the color of the node background, to
+show the current status. Main node statuses include
+
+- **Out-of-date** (green) - Node and VTK level are not in sync. VTK Object
+  might not yet even exist.
+- **Updating** (blue) - VTK level is currently being updated to match current
+  node properties.
+- **Up-to-date** (dark gray)- Node and VTK level are in sync. VTK Object exists
+  in memory.
+- **Upstream-changed** (orange) - Some value in an upstream node has been
+  changed. Node and VTK level may not be in sync, and update is needed.
+- **Error** (red) - Setting a value from node to VTK Object, or running of a
+  VTK command, has failed. Execution has been stopped.
+
+Using these statuses, it is possible to build different VTK level
+updating systems, without binding node editing operations with updates
+(see Update Mode in :ref:`inspect` Panel).
 
 
 Tabs in BVTK Node Editor
@@ -254,14 +280,32 @@ Properties
   shown in the node (editor screen updates when mouse cursor enters it)
   if there is any saved to it.
 
+.. _inspect:
+
 Inspect
 ^^^^^^^
 
-This tab contains tools for debugging and information.
+This tab contains global settings, tools for debugging and information.
 
 - Inspect tab shows the VTK version at the top.
-- **Update Object** operator will call Update() for the VTK object
-  represented by this node.
+
+- **Update Mode** is a global setting which determines when changes
+  made in node properties are updated to the corresponding VTK Object
+  and output.
+
+  - **No Automatic Updates** will trigger no updates. Downstream nodes
+    are only informed that a change was made (status changes to
+    *Upstream changed*).
+  - **Update Current Automatically** will only update current node and
+    upstream nodes, if they are out-of-date.
+  - **Update All Automatically** will update upstream nodes (if
+    needed), the current node and downstream nodes automatically.
+
+- **Update Node** operator will call a node specific update routine on
+  the active node. The update routine initializes a VTK object (if no
+  VTK Object exists), sets properties from node to the VTK Object and
+  runs VTK level update command(s). This operator is available also on
+  nodes, but only if the node status is not *Up-to-date*.
 - **Documentation** will show doc string of the VTK object in the
   BVTK Text Block in the Text Editor.
 - **Node Status** will show status of the VTK object in the
@@ -340,13 +384,16 @@ overwrite settings with Custom Code.
 Editing of Custom Code is done using Blender Text Editor:
 
 - Select a VTK node in BVTK Node Tree
-- In *Properties* Tab, run **Edit Custom Code**
+- In *Properties* Tab, run **Edit Custom Code**.
 - Go to Blender Text Editor, and add/edit code in **BVTK** text block.
 - To save edited text to active node, run **Save Custom Code** in
   *Properties* Tab. Updated code is shown on the node bottom when mouse
   cursor enters BVTK Node Tree area (see bottom example in
   :ref:`extract_boundary_surfaces`, *vtkOpenFoamReader* node)
 
+You can find Edit and Save buttons also directly on the node if the
+node is up-to-date: Click on the eye icon on the node bottom right
+part to see the custom code and the operator buttons.
 
 Customized VTK Nodes
 --------------------
@@ -360,10 +407,10 @@ vtkPlane
 This node specifies an infinite plane suitable for e.g. slicing 3D VTK
 cell data (see example :ref:`cutting_field_data`). Plane can be
 specified by manual input of **Normal** and **Origin** vectors, or by
-selecting an existing Blender Object or New Plane from the dropdown
-menu and then run **Link Object**. When linked, the location and
-rotation of the Blender Object is used to calculate Normal and Origin
-for *vtkPlane*. Run **Unlink Object** to remove link.
+selecting an existing Blender Object (must be either a Plane or an
+Empty Blender Object type) from the *Orientation Object* dropdown
+menu. The location and rotation of the named Blender Object is used to
+calculate Normal and Origin for *vtkPlane*.
 
 
 Special Nodes
@@ -374,13 +421,16 @@ VTK To Blender
 ^^^^^^^^^^^^^^
 
 This is the original main node, which converts VTK surface mesh data
-into a Blender mesh. It creates faces directly out of VTK cell vertex
+into a Blender mesh. This node has been superceded by the *VTK To
+Blender Mesh* node in the
+`tkeskita/bvtknodes <https://github.com/tkeskita/BVtkNodes>`_ version.
+
+*VTK To Blender* creates faces directly out of VTK cell vertex
 lists, without any pre-processing. This works well when VTK data
 consists of simple cells with ordered vertices as input, such as
 e.g. trigonal or quadrigonal boundary faces generated with
 *vtkGeometryFilter*. Direct conversion of 3D cells or polygons does
-not work correctly. In those cases, please use `VTK To Blender Mesh`_
-node without *vtkGeometryFilter* instead.
+not work correctly.
 
 - **Name** specifies the object and mesh names for the Blender object
   which will be created. **Note:** Any pre-existing mesh will be deleted
@@ -487,23 +537,28 @@ number in Blender Timeline updates the particle data. Note:
 VTK To Blender Volume
 ^^^^^^^^^^^^^^^^^^^^^
 
-.. warning::
+This node is currently obsoleted, since it requires
+`custom build of Blender dependency libraries
+<https://devtalk.blender.org/t/build-pyopenvdb-as-part-of-make-deps/14148>`_
+to enable `pyopenvdb` in Blender, in order to convert 3D VTK image
+data (*vtkImageData*) into OpenVDB grids. Instead, please use the *VTK
+To OpenVDB Exporter* node described next. If `pyopenvdb` becomes
+a standard part of Blender one day, this node can be resurrected.
 
-   This node is experimental! Currently it requires a
-   `custom build of Blender dependency libraries
-   <https://devtalk.blender.org/t/build-pyopenvdb-as-part-of-make-deps/14148>`_
-   to enable `pyopenvdb` in Blender. If Blender installation does not
-   include `pyopenvdb`, the node shows an error message instead of the
-   options listed below.
 
+.. _VTKToOpenVDBExporter:
 
-This node converts 3D VTK image data (*vtkImageData*) into
-OpenVDB grids, saves them to a **.vdb** file at the location
-of the Blender file, and finally imports the **.vdb** file
-into Blender as a Volume Object.
+VTK To OpenVDB Exporter
+^^^^^^^^^^^^^^^^^^^^^^^
 
-- **Name** is the name of the Volume Object and OpenVDB file to be
-  created.
+This node exports selected 3D *vtkImageData* arrays (density, color,
+flame and temperature inputs) into a JSON file, which can be then
+converted into OpenVDB (.vdb) file format using an external
+installation of *pyopenvdb*. OpenVDB files can be then imported back
+to Blender as a Volume Object for volumetric rendering, using e.g. the
+*Principled Volume Shader*.
+
+- **Name** is the base name of the OpenVDB file to be created.
 - **Density Field Name** specifies the field name of scalar array to
   be used for the *Density* output of Volume Info node in Blender
   Shader Editor.
@@ -514,41 +569,8 @@ into Blender as a Volume Object.
   strength.
 - **Temperature Field Name** is a scalar field shown as *Temperature*
   output in Volume Info node.
-- **Generate Material** if enabled, will overwrite or generate a
-  default shader material for the volume object using Principled
-  Volume Shader.
-- **Export File Sequence** if enabled, will add frame number to the
-  exported OpenVDB file name and object name. This allows generation of
-  series of OpenVDB files, which can be imported afterwards as a
-  sequence into Blender for separate rendering.
 
-.. warning::
-
-   Currently there seems to be a bug in Blender which prohibits
-   concurrent volume object generation and rendering. Please use Export
-   File Sequence option to first generate volume data files,
-   then render them in separate animation.
-
-**Hint**: Add Math or Vector Math nodes in the Shader Editor to modify
-array values to obtain wanted visual results, instead of adding the
-mathematical manipulation of the arrays in BVTKNodes. See
-:ref:`volumetric_rendering` example.
-
-
-
-VTK To OpenVDB Exporter
-^^^^^^^^^^^^^^^^^^^^^^^
-
-This node is similar to `VTK To Blender Volume`_ node, but it only
-exports selected field data (density, color, flame and temperature
-inputs) into a JSON file, which can be then converted into OpenVDB
-(.vdb) file format externally. This is essentially a workaround node,
-meant to be used with an external OpenVDB conversion using an external
-installation of *pyopenvdb*. This node is provided until such a time
-that *pyopenvdb* can be included easily in Blender for direct use of
-`VTK To Blender Volume`_ node.
-
-Upon running **Export**, the node creates a file like
+Upon running **Update Node**, the node creates a file like
 ``volume_00001.json`` (format is name + frame number) into the folder
 where the blender file is saved.  If node input is not a data suitable
 for exporting (VTK 3D Image Data or Structured Points Data), the node
@@ -580,6 +602,12 @@ on your system:
 If you find out free packages that provide *pyopenvdb*,
 `please comment here <https://github.com/tkeskita/BVtkNodes/issues/25>`_.
 
+See also `other alternative routes from VTK to OpenVDB <https://discourse.vtk.org/t/vtk-to-openvdb-file-format/6322>`_.
+
+**Hint**: Add Math or Vector Math nodes in the Shader Editor to modify
+array values to obtain wanted visual results, instead of adding the
+mathematical manipulation of the arrays in BVTKNodes. See
+:ref:`volumetric_rendering` example.
 
 VTKImageData Object Source
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -613,75 +641,90 @@ Color Mapper
 ^^^^^^^^^^^^
 
 This node assigns color to mesh data. You will see the colors
-in Blender 3D Viewport when Shading mode is set to either **Material
+in Blender 3D Viewport when Shading Mode is set to either **Material
 Preview** or **Rendered**.
 
-- **Input** connector is connected to a VTK pipeline
-- **lookuptable** connector should be connected to a *Color Ramp* node,
+- **input** connector is connected to an input node.
+- **lookuptable** connector must be connected to a *Color Ramp* node,
   which specifies the colors for the value range.
-- **Generate scalar bar** will generate a color legend object to the
+- **Generate Scalar Bar** will generate a color legend object to the
   Blender scene. Warning: This feature is not working currently well.
   Alternative for this is to prepare a separate color legend image in an
   image manipulation program and composite that on top of the result
   images.
-- **color bar** selects the variable according to which coloring is
-  carried out.
-- **Automatic range** will udate the value ranges
-  automatically if enabled.
-- **min** and **max** specify the value range.
-- **output** connector should be attached to a *VTK To Blender* node.
+- **Color By** is a text field which specifies the data array for
+  which coloring is carried out. The first character determines the
+  array type ("C" for cell/face values, or "P" for point values), and the
+  characters starting from third position specify the array
+  name. Second character is not used. For example, "P_pressure"
+  specifies coloring by point data in "pressure" array. If preceding
+  nodes are up-to-date, the dropdown menu on the right will provide a
+  list for selection.
+- **Auto Range** will update the value range for the data array
+  specified in *Color By* automatically during update, if enabled.
+- **min** and **max** specify the value range (if *Auto Range* is disabled).
+- **output** connector should be attached to a *VTK To Blender Mesh* node.
 
 Multi Block Leaf
 ^^^^^^^^^^^^^^^^
 
 This node allows you to filter to a single data set, when the input is
 of type *vtkMultiBlockDataSet*. This is often required prior to
-processing of a specific array data when a VTK Reader provides
-multi block data.
+processing of a specific array data when a VTK Reader provides multi
+block data. **Block Name** text field specifies the data set name. If
+preceding nodes are up-to-date, the dropdown menu on the right will
+provide a list for selection.
 
 Time Selector
 ^^^^^^^^^^^^^
 
-This node can be connected immediately after a VTK Reader node to
+This node can be connected immediately after a VTK reader node to
 control which time point of transient (time dependent) data is to be
 processed.
 
-Note: If `Use Scene Time` is set to true, time is directly controlled via the 
-Blender Timeline Editor. If the frame in
-the Timeline is changed, the Time Step in the Time Selector node is
-automatically updated to correspond that frame number. This allows
-rendering of animations directly from Blender.
+- If **Use Scene Time** is enabled, time is directly controlled via the
+  Blender Timeline Editor. If the frame in the Blender Timeline Editor
+  is changed, then **Time Index** in the Time Selector node is
+  automatically updated to correspond that frame number.
 
-Note 2: If the VTK Reader is not aware of time data, and if File Name
-of the Reader node contains integers at the end of the File Name, then
-the integer part of the File Name is updated to correspond to Timeline
-frame number. This allows animation of time series data for readers
-that are not aware of time (e.g. vtkPolyDataReader, which can read
-point and surface data from .vtk files).
+- If **Use Scene Time** time is disabled, then it is possible to use
+  `Global Time Keeper` node to animate the `Time Index` value (see
+  below).
+
+- If the VTK Reader is not aware of time data, and if File Name of the
+  Reader node contains integers at the end of the File Name, then the
+  integer part of the File Name is updated to correspond to Timeline
+  frame number. This allows animation of time series data for readers
+  that are not aware of time (e.g. `vtkPolyDataReader`, which can read
+  point and surface data from .vtk files).
 
 Global Time Keeper
 ^^^^^^^^^^^^^^^^^^
 
-The Global Time Keeper node is a special node that aims to reimplement keyframe functionality, 
-`not available in custom node trees currently <https://github.com/tkeskita/BVtkNodes/issues/3>`_.
-Keyframe handling in BVTK is similar to the rest of Blender, i.e. keyframes can be inserted on properties
-by pressing `I` on your keyboard when hovering over a property that is animatable. Alternatively, you can
-right-click and use `Insert Keyframe`, or `Clear Keyframes` to edit the keyframes. For more information,
-please read the `official Blender documentation <https://docs.blender.org/manual/en/latest/animation/keyframes/index.html>`_.
+The Global Time Keeper node is a special node that allows animation of
+values in BVTK Nodes using the Blender animation system using
+keyframes. This is done by reimplementing the keyframe functionality,
+which is `not available in custom node trees currently
+<https://github.com/tkeskita/BVtkNodes/issues/3>`_.  Keyframe handling
+in BVTK is similar to the rest of Blender, i.e. keyframes can be
+inserted on properties by pressing `I` on your keyboard when hovering
+over a property that is animatable. Alternatively, you can right-click
+and use `Insert Keyframe`, or `Clear Keyframes` to edit the
+keyframes. For more information, please read the `official Blender
+documentation on keyframes
+<https://docs.blender.org/manual/en/latest/animation/keyframes/index.html>`_.
 
-In order for BVTK to actually update the values of the keyframed properties, the Global Time Keeper node need to be inserted
-into the node tree. After pressing update and each frame change, it will query and update all keyframed properties with
-the current value. It also shows all properties in the node tree that currently have keyframes along
-with the keyframe values. 
+In order for BVTKNodes to actually update the values of the keyframed
+properties, the Global Time Keeper node must be inserted into the node
+tree. Running **Update Node** after a frame change will update all
+keyframed property values. The node also shows all properties in the
+node tree that currently have keyframes along with the keyframe
+values.
 
 .. image:: images/global_time_keeper.png
 
-On each frame change, the Global Time Keeper first updates all keyframed properties, if their value has changed, and 
-later updates all conversion nodes that are connected to the keyframed nodes.
-
-.. note::
-  Since this implementation is an unofficial reimplementation of the animation feature, 
-  it does not support all features:
+.. note:: Since this implementation is an unofficial reimplementation
+  of the animation feature, it does not support all features:
 
   * The keyframes are not accessible over the `Dope Sheet` or `Graph Editor`
   * Interpolation mode is always set to linear for all properties
@@ -743,38 +786,20 @@ thresholding. It is always possible to provide these as Custom Code,
 but to make the node easier to
 use, the code for *class VTKThreshold* was copied to file
 *VTKFilters.py*, modified and commented, and *add_class* and
-*TYPENAMES.append* commands needed for registering were added. The
-main work is done in the function *apply_properties*. Please feel free
-to submit such node code customizations at `github issues page`_!
+*TYPENAMES.append* commands needed for registering were added.
+Please feel free to submit such node code customizations at
+`github issues page`_!
 
 
-Error Messages
---------------
+Information and Error Messages
+------------------------------
 
-It is normal to occasionally see pop-up of *vtkInformation* errors
-from *vtkCompositeDataPipeline*, like the following, often repeated
-many times. These occur during pipeline execution when input of a VTK
-node is either missing or empty. You need to run **Update** on the
-final *VTK To Blender (Mesh)* node to force update of preceding
-nodes. No new error messages should appear when the pipeline is
-up-to-date and values in nodes are correct. Typical error message::
-
-  vtkCompositeDataPipeline (0x7f0,5d2,f02,f40): Algorithm vtkPassArrays(0x7f0,5d3,c37,420) returned failure for request: vtkInformation (0x7f0,5d3,58d,980)
-    Debug: Off
-    Modified Time: 28215
-    Reference Count: 1
-    Registered Events: (none)
-    Request: REQUEST_DATA_OBJECT
-    ALGORITHM_AFTER_FORWARD: 1
-    FORWARD_DIRECTION: 0
-
-Another common warning shown in the terminal is
-*pyrna_enum_to_py*. These warnings occur when a selection list is
-empty, which happens when the pipeline in not up-to-date,
-e.g. immediately after loading a Blender file. Running **Update**
-should clear these as well::
-
-  WARN (bpy.rna): /home/sources/buildbot-worker-linux_centos7/linux_lts_283/blender.git/source/blender/python/intern/bpy_rna.c:1479 pyrna_enum_to_py: current value '4' matches no enum in 'BVTK_Node_ColorMapperType', 'Color Mapper', 'color_by'
+Nodes show messages at the UI message box at node top, if any text is
+available. These messages are used to show information and also errors
+for the user. In addition, node is shown in red color if an error is
+encountered. Unfortunately, VTK level error messages are not currently
+captured to this message, so you may need to see debugging messages
+(see below) when trying to find out cause for a failure.
 
 
 Debug Messages
@@ -797,6 +822,8 @@ with contents
   import logging
   logging.basicConfig(format='%(funcName)s: %(message)s', level=logging.DEBUG)
 
+Please check the :ref:`development` section for more information for developers.
+
 
 Other Resources
 ---------------
@@ -813,7 +840,7 @@ You are free to ask and give advice for specific use cases at
 Please check this list first though:
 
 * Read through these docs first, and view examples in :ref:`ug_nodes`.
-* Run **Update** on the final *VTK To Blender* node to update the
+* Run **Force Update** on the final *VTK To Blender Mesh* node to update the
   preceding nodes.
 * For time dependent data, try to change frame number in Blender
   Timeline Editor.

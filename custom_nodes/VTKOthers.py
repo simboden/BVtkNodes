@@ -22,6 +22,9 @@ class BVTK_ImplicitFunction:
     position/rotation/etc. Called every second.
     '''
 
+    # DO NOT USE, TO BE REMOVED. This seems to conflict with the new
+    # update system introduced in core_refactor branch.
+
     # TODO: Seems to contain stuff similar to core.py BVTK_Node, check
     # if can be inherited.
 
@@ -67,8 +70,7 @@ class BVTK_ImplicitFunction:
         bpy.ops.node.bvtk_link_object(object_name=ob.name, node_path=node_path(self))
         self.object = ob.name
 
-    @show_custom_code
-    def draw_buttons(self, context, layout):
+    def draw_buttons_special(self, context, layout):
         # Options to get orientation from a Blender Object
         row = layout.row(align=True)
         row.label(text="Orientation Object:")
@@ -90,8 +92,8 @@ class BVTK_ImplicitFunction:
                 row.prop(self, m_properties[i])
 
 
-    @run_custom_code
-    def apply_properties(self,vtkobj):
+    def apply_properties_special(self):
+        vtk_obj = self.get_vtk_obj()
         if self.using_object and self.object in bpy.data.objects:
             self.properties_from_obj(bpy.data.objects[self.object])
         m_properties=self.m_properties()
@@ -99,19 +101,23 @@ class BVTK_ImplicitFunction:
             # SetXFileName(Y)
             if 'FileName' in x:
                 value = os.path.realpath(bpy.path.abspath(getattr(self, x)))
-                cmd = 'vtkobj.Set' + x[2:] + '(value)'
+                cmd = 'vtk_obj.Set' + x[2:] + '(value)'
             # SetXToY()
             elif x.startswith('e_'):
                 value = getattr(self, x)
-                cmd = 'vtkobj.Set'+x[2:]+'To'+value+'()'
+                cmd = 'vtk_obj.Set'+x[2:]+'To'+value+'()'
              # SetX(self.Y)
             else:
-                cmd = 'vtkobj.Set'+x[2:]+'(self.'+x+')'
+                cmd = 'vtk_obj.Set'+x[2:]+'(self.'+x+')'
+            # TODO: Error handling
             exec(cmd, globals(), locals())
-
+        return 'up-to-date'
 
 class BVTK_OT_LinkObject(bpy.types.Operator):
     '''Operator to assign properties from linked object at 1 s interval'''
+
+    # DO NOT USE, TO BE REMOVED. This seems to conflict with the new
+    # update system introduced in core_refactor branch.
 
     # Usage example: Connect a VTKPlane node with a plane object
     # or an empty. Sets m_Normal and m_Origin of the node
@@ -162,38 +168,29 @@ add_ui_class(BVTK_OT_LinkObject)
 
 # --------------------------------------------------------------
 
-useless_list = {}
-# Needed for dynamic enum. Blender doc: "Warning: There is a known bug
-# with using a callback, Python must keep a reference to the strings
-# returned or Blender will misbehave or even crash."
-
-
-class VTKPlane(BVTK_ImplicitFunction, Node, BVTK_Node):
-    '''Manually modified version of VTK Plane'''
+class VTKPlane(Node, BVTK_Node):
+    '''Customized VTK Plane, optionally get orientation from a Blender object'''
     bl_idname = 'VTKPlaneType'
     bl_label = 'vtkPlane'
 
-    m_Normal: bpy.props.FloatVectorProperty(name='Normal', default=[0.0, 0.0, 1.0], size=3)
-    m_Origin: bpy.props.FloatVectorProperty(name='Origin', default=[0.0, 0.0, 0.0], size=3)
+    m_Normal: bpy.props.FloatVectorProperty(name='Normal', default=[0.0, 0.0, 1.0], size=3, update=BVTK_Node.outdate_vtk_status)
+    m_Origin: bpy.props.FloatVectorProperty(name='Origin', default=[0.0, 0.0, 0.0], size=3, update=BVTK_Node.outdate_vtk_status)
+    orientation_object: bpy.props.StringProperty(default="", name="Orientation Object", update=BVTK_Node.outdate_vtk_status)
 
-    b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
-
-    use_wire = True
+    b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties(self):
-        return ['m_Normal', 'm_Origin', ]
+        return ['m_Normal', 'm_Origin', 'orientation_object']
 
     def m_connections(self):
-        return ([], [], ['Transform'], ['self'])
+        return ([], [], ['Transform'], ['output'])
 
-    def new_object(self):
-        bpy.ops.mesh.primitive_plane_add(size=5)
-
-    def objects_list(self, context):
-        '''Return all planes and empties names. Obj is considered
-        a plane if its mesh has 4 vertices'''
-        items = []
-        i = 0
+    def orientation_object_enum_generator(self, context=None):
+        '''Return all planes and empties names. Mesh object is considered a
+        plane if it has 4 vertices.
+        '''
+        items = [('None', 'Empty (clear value)', 'Empty (clear value)', ENUM_ICON, 0)]
+        i = 1
         for ob in bpy.data.objects:
             if ob.type == 'EMPTY':
                 items.append((ob.name, ob.name, ob.name, 'OUTLINER_OB_EMPTY', i))
@@ -201,15 +198,42 @@ class VTKPlane(BVTK_ImplicitFunction, Node, BVTK_Node):
             elif hasattr(ob.data, 'vertices') and len(ob.data.vertices) == 4:
                 items.append((ob.name, ob.name, ob.name, 'MESH_PLANE', i))
                 i += 1
-        items.append(('New Plane', 'New Plane', 'New Plane', '', i))
-        useless_list[self.name] = items
         return items
 
-    object: bpy.props.EnumProperty(items=objects_list)
+    def orientation_object_set_value(self, context=None):
+        '''Set value of StringProprety using value from EnumProperty'''
+        if self.orientation_object_enum == 'None':
+            self.orientation_object = ""
+        else:
+            self.orientation_object = str(self.orientation_object_enum)
+
+    orientation_object_enum: bpy.props.EnumProperty(items=orientation_object_enum_generator, update=orientation_object_set_value, name="Choices")
+
+    def validate_and_update_values_special(self):
+        '''Check that provided orientation information has no issues.
+        '''
+        # If there's no object name, use normal and origin from node values.
+        # Otherwise specified object needs to exist.
+        if len(self.orientation_object) < 1:
+            return None
+        orientation_object_enum_list = first_elements(self.orientation_object_enum_generator())
+        if not self.orientation_object in orientation_object_enum_list:
+            return "No Blender object %r (must be an Empty or a Plane)" % self.orientation_object
+
+    def draw_buttons_special(self, context, layout):
+        row = layout.row(align=True)
+        row.prop(self, 'orientation_object')
+        row.prop(self, 'orientation_object_enum', icon_only=True)
+        row = layout.row(align=True)
+        row.prop(self, 'm_Origin')
+        row = layout.row(align=True)
+        row.prop(self, 'm_Normal')
 
     def properties_from_obj(self, ob):
+        '''Set origin and normal from a Blender object.
+        '''
         mat = ob.matrix_world
-        if ob.data:  # if it has data it's not an empty
+        if ob.data: # if it has data it's not an empty
             mesh = ob.data.copy()
             mesh.transform(mat)
             face = mesh.polygons[0]
@@ -220,6 +244,23 @@ class VTKPlane(BVTK_ImplicitFunction, Node, BVTK_Node):
             v = mathutils.Vector((0,0,1))
             self.m_Normal = rot @ v
             self.m_Origin = ob.location
+
+    def apply_properties_special(self):
+        # Update values from orientation object if needed.
+        if len(self.orientation_object) > 0:
+            ob = bpy.data.objects[self.orientation_object]
+            self.properties_from_obj(ob)
+
+        # Set origin and normal
+        vtk_obj = self.get_vtk_obj()
+        vtk_obj.SetOrigin(self.m_Origin)
+        vtk_obj.SetNormal(self.m_Normal)
+        return 'up-to-date'
+
+    def init_vtk(self):
+        self.set_vtk_status('out-of-date')
+        vtk_obj = vtk.vtkPlane()
+        return vtk_obj
 
 add_class(VTKPlane)
 
@@ -264,5 +305,7 @@ class VTKSphere(BVTK_ImplicitFunction, Node, BVTK_Node):
         self.m_Radius = ob.empty_draw_size*ob.scale[0]  # assuming scale x = y = z
         self.m_Center = ob.location
 
-add_class(VTKSphere)
+# TODO: Upgrade customized version (supporting location and scale from
+# Blender Sphere Empty object). Similar implementation as for vtkPlane.
+#add_class(VTKSphere)
 

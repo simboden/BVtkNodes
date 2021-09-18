@@ -4,7 +4,7 @@ import sys
 import os
 import numpy as np
 sys.path.append(os.path.dirname(__file__))
-from test_blender_script import run_update_all, assert_quit
+from test_blender_script import check_node_statuses, assert_quit
 
 def check_cone_validity(cone_node, cone_mesh):
     vertices = np.zeros(shape=[len(cone_mesh.data.vertices), 3])
@@ -29,6 +29,7 @@ def test_frame_updates():
     keyframes = np.concatenate([np.linspace(.5, .5, num=4), np.linspace(.5, 2.5, num=6)])
 
     for frame in range(1, 11):
+        print("Testing frame %d" % frame)
         keyframe = keyframes[frame-1]
         bpy.context.scene.frame_current = frame
         bpy.context.view_layer.update()
@@ -40,7 +41,7 @@ def test_frame_updates():
 
 if __name__ == "__main__":
     try:
-        run_update_all()
+        check_node_statuses()
         test_frame_updates()
     except Exception as ex:
         print(str(ex), file=sys.stderr)

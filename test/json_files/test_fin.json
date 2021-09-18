@@ -3,7 +3,7 @@
         {
             "from_node_name": "Color Mapper.001",
             "from_socket_identifier": "output",
-            "to_node_name": "VTK To Blender.002",
+            "to_node_name": "VTK To Blender Mesh.002",
             "to_socket_identifier": "input"
         },
         {
@@ -20,7 +20,7 @@
         },
         {
             "from_node_name": "vtkPlane",
-            "from_socket_identifier": "self",
+            "from_socket_identifier": "output",
             "to_node_name": "vtkCutter",
             "to_socket_identifier": "CutFunction"
         },
@@ -39,13 +39,13 @@
         {
             "from_node_name": "Color Mapper",
             "from_socket_identifier": "output",
-            "to_node_name": "VTK To Blender",
+            "to_node_name": "VTK To Blender Mesh",
             "to_socket_identifier": "input"
         },
         {
             "from_node_name": "vtkPolyDataNormals",
             "from_socket_identifier": "output",
-            "to_node_name": "VTK To Blender.001",
+            "to_node_name": "VTK To Blender Mesh.001",
             "to_socket_identifier": "input"
         },
         {
@@ -93,7 +93,7 @@
     ],
     "nodes": [
         {
-            "bl_idname": "BVTK_Node_VTKToBlenderType",
+            "bl_idname": "BVTK_Node_VTKToBlenderMeshType",
             "color": [
                 0.5,
                 0.5,
@@ -110,14 +110,14 @@
             ],
             "m_Name": "arrows",
             "mute": false,
-            "name": "VTK To Blender.002",
+            "name": "VTK To Blender Mesh.002",
             "show_options": true,
             "show_preview": false,
             "smooth": false,
             "width": 200.0
         },
         {
-            "bl_idname": "BVTK_Node_VTKToBlenderType",
+            "bl_idname": "BVTK_Node_VTKToBlenderMeshType",
             "color": [
                 0.5,
                 0.5,
@@ -134,7 +134,7 @@
             ],
             "m_Name": "outline",
             "mute": false,
-            "name": "VTK To Blender.001",
+            "name": "VTK To Blender Mesh.001",
             "show_options": true,
             "show_preview": false,
             "smooth": false,
@@ -148,7 +148,7 @@
                 0.5,
                 0.5
             ],
-            "color_by": "E",
+            "color_by": "P_GlyphScale",
             "custom_code": "",
             "height": 5.5,
             "hide": false,
@@ -412,7 +412,7 @@
                 0.5,
                 0.5
             ],
-            "color_by": "E",
+            "color_by": "P_Density",
             "custom_code": "",
             "height": 5.5,
             "hide": false,
@@ -432,7 +432,7 @@
             "width": 200.0
         },
         {
-            "bl_idname": "BVTK_Node_VTKToBlenderType",
+            "bl_idname": "BVTK_Node_VTKToBlenderMeshType",
             "color": [
                 0.5,
                 0.5,
@@ -449,7 +449,7 @@
             ],
             "m_Name": "slice",
             "mute": false,
-            "name": "VTK To Blender",
+            "name": "VTK To Blender Mesh",
             "show_options": true,
             "show_preview": false,
             "smooth": false,
@@ -632,30 +632,6 @@
             "name": "vtkArrowSource",
             "show_options": true,
             "show_preview": false,
-            "width": 200.0
-        },
-        {
-            "bl_idname": "BVTK_Node_UpdateAllType",
-            "color": [
-                0.5,
-                0.5,
-                0.5
-            ],
-            "custom_code": "",
-            "error_count": 0,
-            "height": 100.0,
-            "hide": false,
-            "label": "",
-            "location": [
-                -808.3812866210938,
-                210.21173095703125
-            ],
-            "mute": false,
-            "name": "Update All",
-            "show_options": true,
-            "show_preview": false,
-            "update_all_converters": true,
-            "update_all_writers": true,
             "width": 200.0
         }
     ]

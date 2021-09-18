@@ -15,7 +15,7 @@
         {
             "from_node_name": "Color Mapper",
             "from_socket_identifier": "output",
-            "to_node_name": "VTK To Blender",
+            "to_node_name": "VTK To Blender Mesh",
             "to_socket_identifier": "input"
         },
         {
@@ -27,7 +27,7 @@
     ],
     "nodes": [
         {
-            "bl_idname": "BVTK_Node_VTKToBlenderType",
+            "bl_idname": "BVTK_Node_VTKToBlenderMeshType",
             "color": [
                 0.5,
                 0.5,
@@ -44,7 +44,7 @@
             ],
             "m_Name": "mesh",
             "mute": false,
-            "name": "VTK To Blender",
+            "name": "VTK To Blender Mesh",
             "show_options": true,
             "show_preview": false,
             "smooth": false,
@@ -129,7 +129,7 @@
                 0.5,
                 0.5
             ],
-            "color_by": "E",
+            "color_by": "P_Elevation",
             "custom_code": "",
             "height": 5.5,
             "hide": false,
@@ -218,30 +218,6 @@
             "name": "Color Ramp",
             "show_options": true,
             "show_preview": false,
-            "width": 200.0
-        },
-        {
-            "bl_idname": "BVTK_Node_UpdateAllType",
-            "color": [
-                0.5,
-                0.5,
-                0.5
-            ],
-            "custom_code": "",
-            "error_count": 0,
-            "height": 100.0,
-            "hide": false,
-            "label": "",
-            "location": [
-                -102.10497283935547,
-                495.8902587890625
-            ],
-            "mute": false,
-            "name": "Update All",
-            "show_options": true,
-            "show_preview": false,
-            "update_all_converters": true,
-            "update_all_writers": true,
             "width": 200.0
         }
     ]

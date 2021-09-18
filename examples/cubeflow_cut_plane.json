@@ -1,13 +1,31 @@
 {
     "links": [
         {
-            "from_node_name": "vtkConeSource",
+            "from_node_name": "vtkOpenFOAMReader",
             "from_socket_identifier": "output",
-            "to_node_name": "vtkElevationFilter",
+            "to_node_name": "Time Selector",
             "to_socket_identifier": "input"
         },
         {
-            "from_node_name": "vtkElevationFilter",
+            "from_node_name": "Time Selector",
+            "from_socket_identifier": "output",
+            "to_node_name": "Multi Block Leaf",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "Multi Block Leaf",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkCutter",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkPlane",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkCutter",
+            "to_socket_identifier": "CutFunction"
+        },
+        {
+            "from_node_name": "vtkCutter",
             "from_socket_identifier": "output",
             "to_node_name": "Color Mapper",
             "to_socket_identifier": "input"
@@ -27,7 +45,7 @@
     ],
     "nodes": [
         {
-            "bl_idname": "VTKConeSourceType",
+            "bl_idname": "VTKOpenFOAMReaderType",
             "color": [
                 0.5,
                 0.5,
@@ -38,32 +56,29 @@
             "hide": false,
             "label": "",
             "location": [
-                -500.0,
-                300.0
+                -850,
+                250
             ],
-            "m_Angle": 26.565052032470703,
-            "m_Capping": true,
-            "m_Center": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "m_Direction": [
-                1.0,
-                0.0,
-                0.0
-            ],
-            "m_Height": 1.0,
-            "m_Radius": 0.5,
-            "m_Resolution": 6,
+            "m_AddDimensionsToArrayNames": false,
+            "m_CacheMesh": true,
+            "m_CopyDataToCellZones": false,
+            "m_CreateCellToPoint": true,
+            "m_DecomposePolyhedra": false,
+            "m_FileName": "$/cubeflow/case.foam",
+            "m_ListTimeStepsByControlDict": false,
+            "m_PositionsIsIn13Format": false,
+            "m_ReadZones": false,
+            "m_SkipZeroTime": false,
+            "m_Use64BitFloats": true,
+            "m_Use64BitLabels": false,
             "mute": false,
-            "name": "vtkConeSource",
+            "name": "vtkOpenFOAMReader",
             "show_options": true,
             "show_preview": false,
             "width": 200.0
         },
         {
-            "bl_idname": "VTKElevationFilterType",
+            "bl_idname": "BVTK_Node_TimeSelectorType",
             "color": [
                 0.5,
                 0.5,
@@ -74,25 +89,92 @@
             "hide": false,
             "label": "",
             "location": [
-                -250.0,
-                300.0
-            ],
-            "m_HighPoint": [
-                0.0,
-                0.0,
-                1.0
-            ],
-            "m_LowPoint": [
-                0.0,
-                0.0,
-                -1.0
-            ],
-            "m_ScalarRange": [
-                0.0,
-                1.0
+                -600,
+                250
             ],
             "mute": false,
-            "name": "vtkElevationFilter",
+            "name": "Time Selector",
+            "show_options": true,
+            "show_preview": false,
+            "time_index": 5,
+            "use_scene_time": true,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "BVTK_Node_MultiBlockLeafType",
+            "block": "internalMesh",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -330,
+                250
+            ],
+            "mute": false,
+            "name": "Multi Block Leaf",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTKPlaneType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -330,
+                30
+            ],
+            "m_Normal": [
+                1.0,
+                0.0,
+                0.0
+            ],
+            "m_Origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "mute": false,
+            "name": "vtkPlane",
+            "orientation_object": "",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTKCutterType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "e_SortBy": "SortByValue",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -70,
+                250
+            ],
+            "m_GenerateCutScalars": false,
+            "m_GenerateTriangles": false,
+            "m_NumberOfContours": 1,
+            "mute": false,
+            "name": "vtkCutter",
             "show_options": true,
             "show_preview": false,
             "width": 200.0
@@ -160,8 +242,8 @@
             "hide": false,
             "label": "",
             "location": [
-                -250.0,
-                0.0
+                -70,
+                -80
             ],
             "mute": false,
             "name": "Color Ramp",
@@ -177,23 +259,23 @@
                 0.5,
                 0.5
             ],
-            "color_by": "P_Elevation",
+            "color_by": "P_p",
             "custom_code": "",
             "height": 5.5,
             "hide": false,
             "label": "",
             "location": [
-                0.0,
-                300.0
+                180,
+                250
             ],
             "lut": false,
-            "max": 0.7165063619613647,
-            "min": 0.28349363803863525,
+            "max": 0.02137661725282669,
+            "min": 0.017684537917375565,
             "mute": false,
             "name": "Color Mapper",
             "show_options": true,
             "show_preview": false,
-            "width": 200.0
+            "width": 251.1839599609375
         },
         {
             "bl_idname": "BVTK_Node_VTKToBlenderMeshType",
@@ -202,7 +284,7 @@
                 0.5,
                 0.5
             ],
-            "create_all_verts": false,
+            "create_all_verts": true,
             "create_edges": true,
             "create_faces": true,
             "custom_code": "",
@@ -211,8 +293,8 @@
             "hide": false,
             "label": "",
             "location": [
-                250.0,
-                300.0
+                510,
+                250
             ],
             "m_Name": "mesh",
             "mute": false,

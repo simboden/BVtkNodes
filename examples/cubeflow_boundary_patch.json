@@ -1,67 +1,66 @@
 {
     "links": [
         {
-            "from_node_name": "vtkSphereSource",
+            "from_node_name": "vtkOpenFOAMReader",
             "from_socket_identifier": "output",
-            "to_node_name": "vtkClipPolyData",
+            "to_node_name": "Time Selector",
             "to_socket_identifier": "input"
         },
         {
-            "from_node_name": "vtkPlane",
+            "from_node_name": "Time Selector",
             "from_socket_identifier": "output",
-            "to_node_name": "vtkClipPolyData",
-            "to_socket_identifier": "ClipFunction"
+            "to_node_name": "Multi Block Leaf",
+            "to_socket_identifier": "input"
         },
         {
-            "from_node_name": "vtkClipPolyData",
-            "from_socket_identifier": "output 0",
+            "from_node_name": "Multi Block Leaf",
+            "from_socket_identifier": "output",
+            "to_node_name": "Multi Block Leaf.001",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "Multi Block Leaf.001",
+            "from_socket_identifier": "output",
             "to_node_name": "VTK To Blender Mesh",
-            "to_socket_identifier": "input"
-        },
-        {
-            "from_node_name": "vtkClipPolyData",
-            "from_socket_identifier": "output 1",
-            "to_node_name": "VTK To Blender Mesh.001",
             "to_socket_identifier": "input"
         }
     ],
     "nodes": [
         {
-            "bl_idname": "VTKSphereSourceType",
+            "bl_idname": "VTKOpenFOAMReaderType",
             "color": [
                 0.5,
                 0.5,
                 0.5
             ],
-            "custom_code": "",
+            "custom_code": "EnableAllPatchArrays()",
             "height": 100.0,
             "hide": false,
             "label": "",
             "location": [
-                -400.0,
-                300.0
+                -550.0,
+                250.0
             ],
-            "m_Center": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "m_EndPhi": 180.0,
-            "m_EndTheta": 360.0,
-            "m_LatLongTessellation": true,
-            "m_PhiResolution": 20,
-            "m_Radius": 1.0,
-            "m_StartPhi": 0.0,
-            "m_StartTheta": 0.0,
-            "m_ThetaResolution": 20,
+            "m_AddDimensionsToArrayNames": false,
+            "m_CacheMesh": true,
+            "m_CopyDataToCellZones": false,
+            "m_CreateCellToPoint": true,
+            "m_DecomposePolyhedra": false,
+            "m_FileName": "$/cubeflow/case.foam",
+            "m_ListTimeStepsByControlDict": false,
+            "m_PositionsIsIn13Format": false,
+            "m_ReadZones": false,
+            "m_SkipZeroTime": false,
+            "m_Use64BitFloats": true,
+            "m_Use64BitLabels": false,
             "mute": false,
-            "name": "vtkSphereSource",
+            "name": "vtkOpenFOAMReader",
             "show_options": true,
             "show_preview": false,
             "width": 200.0
         },
         {
-            "bl_idname": "VTKPlaneType",
+            "bl_idname": "BVTK_Node_TimeSelectorType",
             "color": [
                 0.5,
                 0.5,
@@ -72,28 +71,20 @@
             "hide": false,
             "label": "",
             "location": [
-                -400.0,
-                -100.0
-            ],
-            "m_Normal": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "m_Origin": [
-                0.0,
-                0.0,
-                0.0
+                -300.0,
+                250.0
             ],
             "mute": false,
-            "name": "vtkPlane",
-            "orientation_object": "",
+            "name": "Time Selector",
             "show_options": true,
             "show_preview": false,
-            "width": 285.1534118652344
+            "time_index": 5,
+            "use_scene_time": true,
+            "width": 200.0
         },
         {
-            "bl_idname": "VTKClipPolyDataType",
+            "bl_idname": "BVTK_Node_MultiBlockLeafType",
+            "block": "Patches",
             "color": [
                 0.5,
                 0.5,
@@ -104,15 +95,33 @@
             "hide": false,
             "label": "",
             "location": [
-                0.0,
-                300.0
+                -30.0,
+                250.0
             ],
-            "m_GenerateClipScalars": true,
-            "m_GenerateClippedOutput": true,
-            "m_InsideOut": true,
-            "m_Value": 0.0,
             "mute": false,
-            "name": "vtkClipPolyData",
+            "name": "Multi Block Leaf",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "BVTK_Node_MultiBlockLeafType",
+            "block": "inlet",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                240,
+                250
+            ],
+            "mute": false,
+            "name": "Multi Block Leaf.001",
             "show_options": true,
             "show_preview": false,
             "width": 200.0
@@ -124,49 +133,21 @@
                 0.5,
                 0.5
             ],
-            "create_all_verts": false,
+            "create_all_verts": true,
             "create_edges": true,
             "create_faces": true,
             "custom_code": "",
-            "generate_material": false,
+            "generate_material": true,
             "height": 100.0,
             "hide": false,
             "label": "",
             "location": [
-                300.0,
-                300.0
+                500.0,
+                250.0
             ],
             "m_Name": "mesh",
             "mute": false,
             "name": "VTK To Blender Mesh",
-            "recalc_norms": false,
-            "show_options": true,
-            "show_preview": false,
-            "smooth": false,
-            "width": 200.0
-        },
-        {
-            "bl_idname": "BVTK_Node_VTKToBlenderMeshType",
-            "color": [
-                0.5,
-                0.5,
-                0.5
-            ],
-            "create_all_verts": false,
-            "create_edges": true,
-            "create_faces": true,
-            "custom_code": "",
-            "generate_material": false,
-            "height": 100.0,
-            "hide": false,
-            "label": "",
-            "location": [
-                300.0,
-                -40.0
-            ],
-            "m_Name": "mesh2",
-            "mute": false,
-            "name": "VTK To Blender Mesh.001",
             "recalc_norms": false,
             "show_options": true,
             "show_preview": false,

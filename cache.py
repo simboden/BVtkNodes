@@ -2,15 +2,11 @@ import logging
 import bpy
 import vtk
 import functools
+from . import core
 
 l = logging.getLogger(__name__)
 
-nodeMaxId:int = 1   # Maximum node id number. 0 means invalid
-nodesIdMap:dict = {}  # node_id -> node
-treeIdMap:dict = {}  # node_id -> node
-vtkCache:dict = {}  # node_id -> vtkobj
-last_update_id:dict = {} # node_id -> last update ID
-
+# TODO: Modify Global Time Keeper and remove these?
 persistent_storage = {"nodes": {}}
 
 #It is sometimes not possible to save instance variables in a class, which is why we use this node
@@ -24,65 +20,48 @@ class PersistentStorageUser():
             persistent_storage["nodes"][self.name] = {}
         return persistent_storage["nodes"][self.name]
 
+nodeMaxId:int = 0    # Maximum node id number. 0 means not assigned.
+nodeIdMap:dict = {}  # node_id -> node
+treeIdMap:dict = {}  # node_id -> node tree
+vtkCache:dict = {}   # node_id -> VTK object
+
+
 class BVTKCache:
-    '''Class for accessing vtkCache and nodemap
+    '''Class for navigation between nodes and VTK objects.
+    node_id property is used as key in map dictionaries.
+    All VTK nodes must have an entry in the cache dictionaries.
+    vtkCache entry can be None if there is no VTK object.
     '''
 
     @classmethod
-    def init(cls):
-        ''' Initialzed cache/node ids
+    def reset_cache(cls):
+        '''Create new empty node cache variables.
         '''
-        cls.reload()
-        cls.check_cache()
-
-    @classmethod
-    def reload(cls):
-        '''Resets the caches to be recreated from scratch
-        '''
-        global nodeMaxId, nodesIdMap, vtkCache, last_update_id
-
-        nodeMaxId = 1
-        nodesIdMap = {}
+        # Zero the map dictionaries
+        global nodeMaxId, nodeIdMap, treeIdMap, vtkCache
+        nodeMaxId = 0
+        nodeIdMap = {}
         treeIdMap = {}
         vtkCache = {}
-        last_update_id = {}
 
     @classmethod
-    def check_cache(cls):
-        '''Rebuild Node Cache. Called by all operators. Cache is out of sync
-        if an operator is called and at the same time NodesMaxId=1.
-        This happens after reloading addons. Cache is rebuilt, and the
-        operator must be interrupted, but the next operator call will work
-        OK.
+    def add_new_node(cls, node):
+        '''Create VTK object for argument node and add mapping between node
+        and VTK object.
         '''
-        # After F8 or FileOpen VTKCache is empty and NodesMaxId == 1
-        # any previous node_id must be invalidated
-        if nodeMaxId == 1:
-            for nt in bpy.data.node_groups:
-                if nt.bl_idname == 'BVTK_NodeTreeType':
-                    for n in nt.nodes:
-                        n.node_id = 0
-
-        # For each node check if it has a node_id
-        # and if it has a vtk_obj associated
-        for nt in bpy.data.node_groups:
-            if nt.bl_idname == 'BVTK_NodeTreeType':
-                for n in nt.nodes:
-                    if n.node_id == 0:
-                        cls.map_node(n, tree=nt)
-                    if cls.get_vtkobj(n) == None:
-                        cls.init_vtkobj(n)
-
-    @classmethod
-    def update_necessary(cls, node, update_id):
-        global last_update_id
-        node_id = node.node_id
-        return (not node_id in last_update_id or update_id != last_update_id[node_id])
-
-    @classmethod
-    def update_id(cls, node, update_iter):
-        global last_update_id
-        last_update_id[node.node_id] = update_iter
+        if node.bl_label.startswith('vtk'):
+            vtk_class = getattr(vtk, node.bl_label, None)
+            if vtk_class is None:
+                node.vtk_status = 'none'
+                l.error("Bad VTK class name " + node.bl_label)
+                return
+            vtk_obj = vtk_class()
+            vtkCache[node] = vtk_obj
+            nodeCache[vtk_obj] = node
+            node.vtk_status = 'uninitialized'
+            l.debug("Created VTK object of type " + node.bl_label)
+        else:
+            node.vtk_status = 'none'
 
     @classmethod
     def init_vtkobj(cls, node):
@@ -101,70 +80,110 @@ class BVTKCache:
         else:
             vtkCache[node.node_id] = None
 
-    @classmethod
-    def map_node(cls, node, tree=None, force=False):
-        '''Assigned new node its unique ID and adds node to node map.
-        Called when building the cache
-        '''
-        global nodeMaxId, nodesIdMap, treeIdMap, vtkCache
+        # Rebuild from existing nodes
+        bvtk_nodes = core.get_all_bvtk_nodes()
 
-        if node.node_id == 0 or force:
+        for node in bvtk_nodes:
+            # Uninitialized node, create VTK object
+            if node.node_id == 0 or BVTKCache.get_vtk_obj(node.node_id) == None:
+                vtk_obj = node.init_vtk()
+                cls.map_node(node, vtk_obj)
+            # Update nodeMaxId if needed, to avoid doubles
+            if node.node_id > nodeMaxId:
+                nodeMaxId = node.node_id
+
+        # Force resetting of VTK connections
+        for node in bvtk_nodes:
+            node.connected_input_names = "" # Reset namelist to force update
+            node.update()
+
+    @classmethod
+    def update_all(cls):
+        '''Go through all nodes and update those that are not up-to-date.
+        '''
+        bvtk_nodes = core.get_all_bvtk_nodes()
+        for node in bvtk_nodes:
+            if node.vtk_status != 'up-to-date':
+                node.update_vtk()
+
+    @classmethod
+    def map_node(cls, node, vtk_obj=None):
+        '''Assign node ID to node and add VTK object and mappings to cache.
+        '''
+        global nodeMaxId, nodeIdMap, treeIdMap, vtkCache
+
+        # node_id value 0 indicates a new node, for which a new number
+        # is to be assigned. For existing nodes use old node_id number.
+        if node.node_id == 0:
+            nodeMaxId += 1
             node.node_id = nodeMaxId
-            l.debug("Initialize new node: %s, id %d" % (node.name, node.node_id))
-            vtkCache[node.node_id] = None
-            nodesIdMap[node.node_id] = node
-            treeIdMap[node.node_id] = tree
-            nodeMaxId += 1 # Index node id for next created node
+        if node.node_id in vtkCache:
+            raise ValueError("Internal Error: Cache already contains node_id #%d" % node.node_id)
+        vtkCache[node.node_id] = vtk_obj
+        nodeIdMap[node.node_id] = node
+        tree = node.id_data
+        treeIdMap[node.node_id] = tree
+
+        if node.node_id == nodeMaxId:
+            l.debug("Mapped new node: %s, id %d" % (node.name, node.node_id))
+        else:
+            l.debug("Remapped old node: %s, id %d" % (node.name, node.node_id))
 
     @classmethod
     def unmap_node(cls, node):
         '''Remove node from cache. To be called from node.free().
-        Remove node from NodesMap and its vtkobj from VTKCache
+        Remove node from cache dictionaries.
         '''
-        global nodesIdMap, vtkCache
+        global nodeIdMap, treeIdMap, vtkCache
 
-        if node.node_id in nodesIdMap:
-            del nodesIdMap[node.node_id]
-
+        if node.node_id in nodeIdMap:
+            del nodeIdMap[node.node_id]
+        if node.node_id in treeIdMap:
+            del treeIdMap[node.node_id]
         if node.node_id in vtkCache:
-            obj = vtkCache[node.node_id]
-            # if obj: 
-            #     obj.UnRegister(obj)  # vtkObjects have no Delete in Python -- maybe is not needed
             del vtkCache[node.node_id]
-        l.debug("deleted " + node.bl_label + " " + str(node.node_id))
+        l.debug("Unmapped node: %s, id %d" % (node.name, node.node_id))
 
     @classmethod
     def get_node(cls, node_id:int):
-        '''Get node corresponding to node_id. Called by BVTK_OT_NodeWrite'''
-        global nodesIdMap
+        '''Get node corresponding to node_id.
+        Called by Node Write and Edit/Save Custom Code.
+        '''
+        global nodeIdMap
 
-        if node_id in nodesIdMap:
-            return nodesIdMap[node_id]
+        if node_id in nodeIdMap:
+            return nodeIdMap[node_id]
         else:
-            l.error("not found node_id " + str(node_id))
-            return None
+            raise Exception("not found node_id " + str(node_id))
 
     @classmethod
     def get_tree(cls, node_id:int):
-        '''Get node tree corresponding to node_id. Called in BVTK_OT_Edit_Custom_Code'''
+        '''Get node tree corresponding to node_id.
+        Called by Node Write and Edit/Save Custom Code.
+        '''
         global treeIdMap
 
         if node_id in treeIdMap:
             return treeIdMap[node_id]
         else:
-            l.error("not found node_id " + str(node_id))
-            return None
+            raise Exception("not found node_id " + str(node_id))
 
     @classmethod
-    def get_vtkobj(cls, node):
-        '''Get the VTK object associated to a node'''
+    def get_vtk_obj(cls, node_id:int):
+        '''Get the VTK object from vtkCache by node ID number.
+        '''
         global vtkCache
-        
-        if node is None:
-            l.error("bad node " + str(node))
-            return None
 
-        if not node.node_id in vtkCache:
-            return None
+        if node_id in vtkCache:
+            return vtkCache[node_id]
+        return None
 
-        return vtkCache[node.node_id]
+    @classmethod
+    def vtk_obj_in_cache(cls, node_id:int):
+        '''Return True if an object (or None) is in cache.
+        '''
+        global vtkCache
+
+        if node_id in vtkCache:
+            return True
+        return False
