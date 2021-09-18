@@ -287,12 +287,16 @@ Source* fall inside the domain at voxel center points.
 
 When the *Update Node* has been run for the *VTK To OpenVDB Exporter*
 node, an intermediate .json file is saved to the location of the
-Blender file, which can be converted to .vdb format according to
-instructions in the node documentation (see
+Blender file. This JSON file can be converted to .vdb format according
+to instructions in the node documentation (see
 :ref:`VTKToOpenVDBExporter`). After that, the OpenVDB file can be
-imported to Blender as a Volume Object.
+imported to Blender as a Volume Object. A small example vdb file
+(`volume_00005.vdb <https://raw.githubusercontent.com/tkeskita/BVtkNodes/master/examples_data/volume_00005.vdb>`_)
+is included in the repository *example_data* folder for testing
+purposes.
 
-After importing OpenVDB file(s), you must add a volumetric material to
+After importing OpenVDB file(s) as a Volume Object into Blender,
+you must add a volumetric material to
 the Volume Object in Blender Shader Editor. An example material node
 setup is shown below, with rendering of the result (volume_00005.vdb,
 viewed from above, using Eevee render engine), when lit only by a
