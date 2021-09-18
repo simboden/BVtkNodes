@@ -1231,131 +1231,6 @@ def export_vdb_data(filepath, background_value, dims, density_data,
 
 
 # -----------------------------------------------------------------------------
-# Auto update scan functions
-# -----------------------------------------------------------------------------
-
-def map(node, pmap = None):
-    '''Create node property map (pmap). The map represent the status
-    (m_properties and inputs) of every preceding node connected
-    to node.
-    '''
-    # {} map:        node name -> (nodeprops, nodeinputs)
-    # {} nodeprops:  property name -> property value
-    # {} nodeinputs: input name -> connected node name
-
-    if not pmap:
-        pmap = {}
-    props = {}
-    for prop in node.m_properties():
-        val = getattr(node, prop)
-        # Special for arrays. Any other type to include?
-        if val.__class__.__name__ == 'bpy_prop_array':
-            val = [x for x in val]
-        props[prop] = val
-
-    if hasattr(node, 'special_properties'):
-        # you can add to a node a function called special_properties
-        # to make auto update notice differences outside of m_properties
-        props['special_properties'] = node.special_properties()
-
-    links = {}
-    for input in node.inputs:
-        links[input.name] = ''
-        for link in input.links:
-            links[input.name] = link.from_node.name
-            pmap = map(link.from_node, pmap)
-    pmap[node.name] = (props, links)
-    return pmap
-
-
-def differences(map1, map2):
-    '''Generate differences in properties and inputs of argument maps'''
-    props = {}   # differences in properties
-    inputs = {}  # differences in inputs
-    for node in map1:
-        nodeprops1, nodeinputs1 = map1[node]
-        if node not in map2:
-            props[node] = nodeprops1.keys()
-            inputs[node] = nodeinputs1.keys()
-        else:
-            nodeprops2, nodeinputs2 = map2[node]
-            props[node] = compare(nodeprops1, nodeprops2)
-            if not props[node]:
-                props.pop(node)
-            inputs[node] = compare(nodeinputs1, nodeinputs2)
-            if not inputs[node]:
-                inputs.pop(node)
-    return props, inputs
-
-
-def compare(dict1, dict2):
-    '''Compare two dictionaries. Return a list of mismatching keys'''
-    diff = []
-    for k in dict1:
-        if k not in dict2:
-            diff.append(k)
-        else:
-            val1 = dict1[k]
-            val2 = dict2[k]
-            if val1 != val2:
-                diff.append(k)
-    for k in dict2:
-        if k not in dict1:
-            diff.append(k)
-    return diff
-
-
-class BVTK_OT_AutoUpdateScan(bpy.types.Operator):
-    '''BVTK Auto Update Scan'''
-    bl_idname = "node.bvtk_auto_update_scan"
-    bl_label = "Auto Update"
-
-    # TODO: Remove
-
-    _timer = None
-    node_name: bpy.props.StringProperty()
-    tree_name: bpy.props.StringProperty()
-
-    def modal(self, context, event):
-        if event.type == 'TIMER':
-            if self.node_is_valid():
-                actual_map = map(self.node)
-                props, conn = differences(actual_map, self.last_map)
-                if props or conn:
-                    self.last_map = actual_map
-                    BVTKCache.check_cache()
-                    try:
-                        no_queue_update(self.node, self.node.update_cb)
-                    except Exception as e:
-                        l.error('ERROR UPDATING ' + str(e))
-            else:
-                self.cancel(context)
-                return {'CANCELLED'}
-        return {'PASS_THROUGH'}
-
-    def node_is_valid(self):
-        '''Node validity test. Return false if node has been deleted or auto
-        update has been turned off.
-        '''
-        return self.node.name in self.tree and self.node.auto_update
-
-    def execute(self, context):
-        self.tree = bpy.data.node_groups[self.tree_name].nodes
-        self.node = bpy.data.node_groups[self.tree_name].nodes[self.node_name]
-        self.last_map = map(self.node)
-        bpy.ops.node.bvtk_node_update(node_path=node_path(self.node))
-        wm = context.window_manager
-        self._timer = wm.event_timer_add(0.01, window=context.window)
-        wm.modal_handler_add(self)
-        return {'RUNNING_MODAL'}
-
-    def cancel(self, context):
-        wm = context.window_manager
-        wm.event_timer_remove(self._timer)
-
-
-
-# -----------------------------------------------------------------------------
 # Help functions
 # -----------------------------------------------------------------------------
 
@@ -1394,34 +1269,6 @@ def warn_if_not_exist_object(name):
     if not name in bpy.data.objects:
         return "Object %r does not exist!" % name
 
-
-def texture_material(me, name, texture=None, texturetype='IMAGE'):
-    '''Get or create a material and link with given texture,
-    then apply it to given object.
-    '''
-    # TODO: Remove this function after image textures work OK
-    l.error("Blender 2.8 no longer supports brush textures to be used for texturing via mat.texture_slots, that was only for Blender Internal")
-    return None, None
-
-    if not texture:
-        texture = get_item(bpy.data.textures, name, texturetype)
-        texture.type = texturetype
-    mat = get_item(bpy.data.materials, name)
-    if mat.name not in me.materials:
-        me.materials.append(mat)
-    # Disable other textures
-    for ts in mat.texture_slots:
-        if ts:
-            ts.use = False
-    if texture.name not in mat.texture_slots:
-        ts=mat.texture_slots.add()
-        ts.texture = texture
-        ts.texture_coords = 'UV'
-    else:
-        ts = mat.texture_slots[texture.name]
-    ts.use = True
-
-    return texture, mat
 
 def create_material(ob, texture_name=None):
     '''Create default material for final output node mesh object.
@@ -1679,33 +1526,6 @@ def imgdata_to_blender(data, name):
     #tex.image = img
 
 
-class BVTK_OT_NodeUpdate(bpy.types.Operator):
-    '''Node Update Operator'''
-    bl_idname = "node.bvtk_node_update"
-    bl_label = "Update Node"
-    # TODO: Move to core.py
-
-    node_path: bpy.props.StringProperty()
-    #use_queue: bpy.props.BoolProperty(default = True)
-
-    def execute(self, context):
-        node = eval(self.node_path)
-        node.update_vtk()
-
-        # old implementation:
-        # BVTKCache.check_cache()
-        # node = eval(self.node_path)
-        # if node:
-        #     if self.use_queue:
-        #         l.debug('Updating with queue from node: '+ node.name)
-        #         Update(node, node.update_cb)
-        #     else:
-        #         l.debug('Updating without queue from node: '+ node.name)
-        #         no_queue_update(node, node.update_cb)
-        # self.use_queue = True
-
-        return {'FINISHED'}
-
 
 # Add classes and menu items
 TYPENAMES = []
@@ -1727,7 +1547,4 @@ add_class(BVTK_Node_VTKToOpenVDBExporter)
 TYPENAMES.append('BVTK_Node_VTKToOpenVDBExporterType')
 menu_items = [NodeItem(x) for x in TYPENAMES]
 CATEGORIES.append(BVTK_NodeCategory("Converters", "Converters", items=menu_items))
-
-add_class(BVTK_OT_NodeUpdate)
-add_ui_class(BVTK_OT_AutoUpdateScan)
 

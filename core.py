@@ -701,6 +701,18 @@ class BVTK_Node:
 # Node Update Operators
 # -----------------------------------------------------------------------------
 
+class BVTK_OT_NodeUpdate(bpy.types.Operator):
+    '''Node Update Operator'''
+    bl_idname = "node.bvtk_node_update"
+    bl_label = "Update Node"
+
+    node_path: bpy.props.StringProperty()
+
+    def execute(self, context):
+        node = eval(self.node_path)
+        node.update_vtk()
+        return {'FINISHED'}
+
 class BVTK_OT_NodeForceUpdateUpstream(bpy.types.Operator):
     '''Force All Upstream Nodes and This Node to be Updated'''
     bl_idname = "node.bvtk_node_force_update_upstream"
@@ -768,6 +780,7 @@ def check_b_properties():
 # Register classes
 add_class(BVTK_NodeTree)
 add_class(BVTK_NodeSocket)
+add_ui_class(BVTK_OT_NodeUpdate)
 add_ui_class(BVTK_OT_NodeForceUpdateUpstream)
 add_ui_class(BVTK_OT_NodeWrite)
 
