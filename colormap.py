@@ -307,11 +307,6 @@ class BVTK_Node_ColorRamp(Node, BVTK_Node):
         lut.Build()
         return lut
 
-    def special_properties(self):
-        '''Make auto_update scanner notice changes in the color ramp'''
-        raise Exception("Check is this needed any more")
-        return self.export_properties()['elements']
-
     def export_properties(self):
         '''Export colormap properties. Called by export operator'''
         t = self.get_texture()

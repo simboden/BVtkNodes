@@ -63,9 +63,6 @@ class BVTK_ContourHelper:
                 cmd = 'vtkobj.Set' + x[2:] + '(self.' + x + ')'
                 exec(cmd, globals(), locals())
 
-    def special_properties(self):
-        return [x.value for x in self.m_ContourValues]
-
     def export_properties(self):
         '''Export properties'''
         return {'m_ContourValues':[x.value for x in self.m_ContourValues]}
