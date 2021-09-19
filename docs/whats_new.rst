@@ -29,5 +29,15 @@ Version 0.7 (2021-09-18)
 Previous versions
 -----------------
 
-- TBA
+- A testing framework helps developers catch regression bugs.
 
+- **Global Time Keeper** node allows animation of many node properties
+  by Blender's Keyframes feature.
+
+- Improved Custom Code editing.
+
+- Matplotlib color maps are available as presets in Color Ramp node.
+
+- Several bug fixes and small usability improvements.
+
+- More information in `pull requests at github <https://github.com/tkeskita/BVtkNodes/pulls?q=is%3Apr>`_.
