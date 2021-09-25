@@ -1,10 +1,11 @@
-from .core import l # Import logging
+from .core import l  # Import logging
 from .core import *
 from .cache import BVTKCache
 import bmesh
 
 try:
     import pyopenvdb
+
     with_pyopenvdb = True
 except ImportError:
     l.warning("pyopenvdb was not found (this is normal)")
@@ -16,51 +17,57 @@ except ImportError:
 # Mesh Converters
 # -----------------------------------------------------------------------------
 
-class BVTK_Node_VTKToBlender(Node, BVTK_Node):
-    '''Legacy node for converting output from VTK Node to Blender Mesh Object.
-    Note: Not upgraded to new core.py. Superceded by VTK To Blender Mesh Node.
-    '''
-    bl_idname = 'BVTK_Node_VTKToBlenderType' # type name
-    bl_label  = 'VTK To Blender'  # label for nice name display
 
-    m_Name: bpy.props.StringProperty(name='Name', default='mesh')
-    smooth: bpy.props.BoolProperty(name='Smooth', default=False)
-    generate_material: bpy.props.BoolProperty(name='Generate Material', default=False)
+class BVTK_Node_VTKToBlender(Node, BVTK_Node):
+    """Legacy node for converting output from VTK Node to Blender Mesh Object.
+    Note: Not upgraded to new core.py. Superceded by VTK To Blender Mesh Node.
+    """
+
+    bl_idname = "BVTK_Node_VTKToBlenderType"  # type name
+    bl_label = "VTK To Blender"  # label for nice name display
+
+    m_Name: bpy.props.StringProperty(name="Name", default="mesh")
+    smooth: bpy.props.BoolProperty(name="Smooth", default=False)
+    generate_material: bpy.props.BoolProperty(name="Generate Material", default=False)
 
     def start_scan(self, context):
         if context:
             if self.auto_update:
                 bpy.ops.node.bvtk_auto_update_scan(
-                    node_name=self.name,
-                    tree_name=context.space_data.node_tree.name)
+                    node_name=self.name, tree_name=context.space_data.node_tree.name
+                )
 
     auto_update: bpy.props.BoolProperty(default=False, update=start_scan)
 
     def m_properties(self):
-        return ['m_Name', 'smooth', 'generate_material']
+        return ["m_Name", "smooth", "generate_material"]
 
     def m_connections(self):
-        return ( ['input'],[],[],[] )
+        return (["input"], [], [], [])
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'm_Name')
-        layout.prop(self, 'auto_update', text='Auto update')
-        layout.prop(self, 'smooth', text='Smooth')
-        layout.prop(self, 'generate_material')
+        layout.prop(self, "m_Name")
+        layout.prop(self, "auto_update", text="Auto update")
+        layout.prop(self, "smooth", text="Smooth")
+        layout.prop(self, "generate_material")
         layout.separator()
-        layout.operator("node.bvtk_node_update", text="update").node_path = node_path(self)
+        layout.operator("node.bvtk_node_update", text="update").node_path = node_path(
+            self
+        )
 
     def update_cb(self):
-        '''Update node color bar and update Blender object'''
-        input_node, vtkobj = self.get_input_node('input')
+        """Update node color bar and update Blender object"""
+        input_node, vtkobj = self.get_input_node("input")
         color_mapper = None
-        if input_node and input_node.bl_idname == 'BVTK_Node_ColorMapperType':
+        if input_node and input_node.bl_idname == "BVTK_Node_ColorMapperType":
             color_mapper = input_node
-            color_mapper.update()    # setting auto range
-            input_node, vtkobj = input_node.get_input_node('input')
+            color_mapper.update()  # setting auto range
+            input_node, vtkobj = input_node.get_input_node("input")
         if vtkobj:
             vtkobj = resolve_algorithm_output(vtkobj)
-            vtkdata_to_blender(vtkobj, self.m_Name, color_mapper, self.smooth, self.generate_material)
+            vtkdata_to_blender(
+                vtkobj, self.m_Name, color_mapper, self.smooth, self.generate_material
+            )
             update_3d_view()
 
     def apply_properties(self, vtkobj):
@@ -68,9 +75,9 @@ class BVTK_Node_VTKToBlender(Node, BVTK_Node):
 
 
 def unwrap_and_color_the_mesh(ob, vtk_obj, name, color_mapper, bm, generate_material):
-    '''Create UV unwrap corresponding to a generated color image to color
+    """Create UV unwrap corresponding to a generated color image to color
     the mesh. Also generates material if needed.
-    '''
+    """
 
     # Set colors and color legend
     if color_mapper and color_mapper.color_by:
@@ -91,11 +98,11 @@ def unwrap_and_color_the_mesh(ob, vtk_obj, name, color_mapper, bm, generate_mate
             return error_text
         type_letter = color_mapper.color_by[0]
         array_name = color_mapper.color_by[2:]
-        if type_letter == 'P' or type_letter == 'p':
+        if type_letter == "P" or type_letter == "p":
             bm, val = point_unwrap(bm, vtk_obj, array_name, vrange)
             if val:
                 return val
-        elif type_letter == 'C' or type_letter == 'c':
+        elif type_letter == "C" or type_letter == "c":
             bm, val = face_unwrap(bm, vtk_obj, array_name, vrange)
             if val:
                 return val
@@ -109,25 +116,27 @@ def unwrap_and_color_the_mesh(ob, vtk_obj, name, color_mapper, bm, generate_mate
         create_material(ob, None)
 
 
-def vtkdata_to_blender(data, name, color_mapper=None, smooth=False, generate_material=False):
-    '''Convert VTK data to Blender mesh object, using optionally
+def vtkdata_to_blender(
+    data, name, color_mapper=None, smooth=False, generate_material=False
+):
+    """Convert VTK data to Blender mesh object, using optionally
     given color mapper and normal smoothing. Optionally generates default
     material, which includes also color information if color_mapper is given.
 
     Note: This is the original implementation and does not consider
     VTK cell types (vertex semantics) in conversion, so it works best
     with polygon generators like vtkGeometryFilter.
-    '''
+    """
     if not data:
-        l.error('no data!')
+        l.error("no data!")
         return
     if issubclass(data.__class__, vtk.vtkImageData):
         imgdata_to_blender(data, name)
         return
     me, ob = mesh_and_object(name)
     if me.is_editmode:
-        bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
-    err = 0 # Number of errors encountered
+        bpy.ops.object.mode_set(mode="OBJECT", toggle=False)
+    err = 0  # Number of errors encountered
     bm = bmesh.new()
     # bm.from_mesh(me) # fill it in from a Mesh
 
@@ -140,7 +149,9 @@ def vtkdata_to_blender(data, name, color_mapper=None, smooth=False, generate_mat
         data_pi = data.GetCell(i).GetPointIds()
         # Error is raised if a face already exists. Count errors.
         try:
-            face_verts = [verts[data_pi.GetId(x)] for x in range(data_pi.GetNumberOfIds())]
+            face_verts = [
+                verts[data_pi.GetId(x)] for x in range(data_pi.GetNumberOfIds())
+            ]
 
             # Remove last vert if it is same as first vert
             if face_verts[-1] == face_verts[0]:
@@ -154,7 +165,7 @@ def vtkdata_to_blender(data, name, color_mapper=None, smooth=False, generate_mat
         except:
             err += 1
     if err:
-        l.error('number of errors: ' + str(err))
+        l.error("number of errors: " + str(err))
 
     # Set normals
     point_normals = data.GetPointData().GetNormals()
@@ -170,77 +181,109 @@ def vtkdata_to_blender(data, name, color_mapper=None, smooth=False, generate_mat
     # Set colors and color legend
     unwrap_and_color_the_mesh(ob, data, name, color_mapper, bm, generate_material)
     bm.to_mesh(me)  # store bmesh to mesh
-    l.info('conversion successful, verts = ' + str(len(verts)))
+    l.info("conversion successful, verts = " + str(len(verts)))
 
 
 class BVTK_Node_VTKToBlenderMesh(Node, BVTK_Node):
-    '''New surface mesh coverter node. Convert output from a VTK Node to a
+    """New surface mesh coverter node. Convert output from a VTK Node to a
     Blender Mesh Object. Converts linear VTK cell types into a boundary mesh.
-    '''
-    bl_idname = 'BVTK_Node_VTKToBlenderMeshType' # type name
-    bl_label  = 'VTK To Blender Mesh' # label for nice name display
+    """
 
-    m_Name: bpy.props.StringProperty(name='Name', default='mesh', update=BVTK_Node.outdate_vtk_status)
-    create_all_verts: bpy.props.BoolProperty(name='Create All Verts', default=False, update=BVTK_Node.outdate_vtk_status)
-    create_edges: bpy.props.BoolProperty(name='Create Edges', default=True, update=BVTK_Node.outdate_vtk_status)
-    create_faces: bpy.props.BoolProperty(name='Create Faces', default=True, update=BVTK_Node.outdate_vtk_status)
-    smooth: bpy.props.BoolProperty(name='Smooth', default=False, update=BVTK_Node.outdate_vtk_status)
-    recalc_norms: bpy.props.BoolProperty(name='Recalculate Normals', default=False, update=BVTK_Node.outdate_vtk_status)
-    generate_material: bpy.props.BoolProperty(name='Generate Material', default=False, update=BVTK_Node.outdate_vtk_status)
+    bl_idname = "BVTK_Node_VTKToBlenderMeshType"  # type name
+    bl_label = "VTK To Blender Mesh"  # label for nice name display
+
+    m_Name: bpy.props.StringProperty(
+        name="Name", default="mesh", update=BVTK_Node.outdate_vtk_status
+    )
+    create_all_verts: bpy.props.BoolProperty(
+        name="Create All Verts", default=False, update=BVTK_Node.outdate_vtk_status
+    )
+    create_edges: bpy.props.BoolProperty(
+        name="Create Edges", default=True, update=BVTK_Node.outdate_vtk_status
+    )
+    create_faces: bpy.props.BoolProperty(
+        name="Create Faces", default=True, update=BVTK_Node.outdate_vtk_status
+    )
+    smooth: bpy.props.BoolProperty(
+        name="Smooth", default=False, update=BVTK_Node.outdate_vtk_status
+    )
+    recalc_norms: bpy.props.BoolProperty(
+        name="Recalculate Normals", default=False, update=BVTK_Node.outdate_vtk_status
+    )
+    generate_material: bpy.props.BoolProperty(
+        name="Generate Material", default=False, update=BVTK_Node.outdate_vtk_status
+    )
 
     def m_properties(self):
-        return ['m_Name', 'create_all_verts', 'create_edges', 'create_faces',
-                'smooth', 'recalc_norms', 'generate_material']
+        return [
+            "m_Name",
+            "create_all_verts",
+            "create_edges",
+            "create_faces",
+            "smooth",
+            "recalc_norms",
+            "generate_material",
+        ]
 
     def m_connections(self):
-        return ( ['input'],[],[],[] )
+        return (["input"], [], [], [])
 
     def draw_buttons_special(self, context, layout):
-        '''Custom draw buttons function, to show force update button. Force
+        """Custom draw buttons function, to show force update button. Force
         update is sometimes necessary for e.g. vtkPlane when using
         Blender object for specifying the plane. Changing Blender
         object properties does not trigger property outdating for
         nodes, so user must have an option for force updating the
         upstream pipeline.
-        '''
-        layout.prop(self, 'm_Name')
-        layout.prop(self, 'create_all_verts')
-        layout.prop(self, 'create_edges')
-        layout.prop(self, 'create_faces')
-        layout.prop(self, 'smooth')
-        layout.prop(self, 'recalc_norms')
-        layout.prop(self, 'generate_material')
-        layout.operator("node.bvtk_node_force_update_upstream").node_path = node_path(self)
+        """
+        layout.prop(self, "m_Name")
+        layout.prop(self, "create_all_verts")
+        layout.prop(self, "create_edges")
+        layout.prop(self, "create_faces")
+        layout.prop(self, "smooth")
+        layout.prop(self, "recalc_norms")
+        layout.prop(self, "generate_material")
+        layout.operator("node.bvtk_node_force_update_upstream").node_path = node_path(
+            self
+        )
 
     def apply_properties_special(self):
-        '''Generate Blender mesh object from VTK object'''
-        input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects()
+        """Generate Blender mesh object from VTK object"""
+        (
+            input_node,
+            vtk_output_obj,
+            vtk_connection,
+        ) = self.get_input_node_and_output_vtk_objects()
         color_mapper = None
-        if input_node and input_node.bl_idname == 'BVTK_Node_ColorMapperType':
+        if input_node and input_node.bl_idname == "BVTK_Node_ColorMapperType":
             color_mapper = input_node
-        val = vtkdata_to_blender_mesh (vtk_output_obj, self.m_Name, smooth=self.smooth,
-                                       create_all_verts=self.create_all_verts,
-                                       create_edges=self.create_edges,
-                                       create_faces=self.create_faces,
-                                       recalc_norms=self.recalc_norms,
-                                       generate_material=self.generate_material,
-                                       color_mapper=color_mapper)
+        val = vtkdata_to_blender_mesh(
+            vtk_output_obj,
+            self.m_Name,
+            smooth=self.smooth,
+            create_all_verts=self.create_all_verts,
+            create_edges=self.create_edges,
+            create_faces=self.create_faces,
+            recalc_norms=self.recalc_norms,
+            generate_material=self.generate_material,
+            color_mapper=color_mapper,
+        )
         if val:
             self.ui_message = val
-            return 'error'
+            return "error"
         update_3d_view()
-        return 'up-to-date'
+        return "up-to-date"
 
     def init_vtk(self):
-        self.set_vtk_status('out-of-date')
+        self.set_vtk_status("out-of-date")
         return None
 
 
 def map_elements(vals, slist):
-    '''Create list of elements (possibly recursing into embedded lists)
+    """Create list of elements (possibly recursing into embedded lists)
     with same structure as index list slist, where each element has
     been mapped to a value in vals.
-    '''
+    """
     dlist = []
     for elem in slist:
         if isinstance(elem, list):
@@ -251,21 +294,21 @@ def map_elements(vals, slist):
 
 
 def vtk_cell_to_edges_and_faces(cell_type, vis, polyfacelist):
-    '''Create lists of edge vertices and face vertices from argument VTK
+    """Create lists of edge vertices and face vertices from argument VTK
     cell type and VTK vertex ids. Polyfacelist is face stream for polyhedrons.
-    '''
+    """
 
     # List of VTK cell types:
     # https://vtk.org/doc/nightly/html/vtkCellType_8h_source.html
     # https://lorensen.github.io/VTKExamples/site/VTKFileFormats/
 
     def get_polyhedron_fis(polyfacelist):
-        '''Generate face vertex indices (fis) from argument polyhedron face
+        """Generate face vertex indices (fis) from argument polyhedron face
         stream list
-        '''
+        """
         # https://vtk.org/Wiki/VTK/Polyhedron_Support
         next_number_is_vertex_count = True
-        fis = [] # list of vertex index lists, to be generated here
+        fis = []  # list of vertex index lists, to be generated here
         for n in polyfacelist[1:]:
             if next_number_is_vertex_count:
                 numVerts = n
@@ -279,76 +322,108 @@ def vtk_cell_to_edges_and_faces(cell_type, vis, polyfacelist):
         return fis
 
     # Generate edge vertex lists and face vertex lists for each cell type
-    if cell_type < 3: # VTK_VERTEX or VTK_POLY_VERTEX are ignored here
+    if cell_type < 3:  # VTK_VERTEX or VTK_POLY_VERTEX are ignored here
         return [None], [None]
 
-    elif cell_type == 3: # VTK_LINE
+    elif cell_type == 3:  # VTK_LINE
         return [vis], [None]
 
-    elif cell_type == 4: # VTK_POLY_LINE
-        edgelist = [[vis[i], vis[i+1]] for i in range(len(vis) - 1)]
+    elif cell_type == 4:  # VTK_POLY_LINE
+        edgelist = [[vis[i], vis[i + 1]] for i in range(len(vis) - 1)]
         return edgelist, [None]
 
-    elif cell_type == 5: # VTK_TRIANGLE
+    elif cell_type == 5:  # VTK_TRIANGLE
         return [None], [vis]
 
-    elif cell_type == 6: # VTK_TRIANGLE_STRIP
+    elif cell_type == 6:  # VTK_TRIANGLE_STRIP
         facelist = []
         from math import floor
+
         # Pairwise triangle generation to get correct normal directions
-        for i in range(0, floor(len(vis)/2), 2):
-            facelist.append([vis[i], vis[i+1], vis[i+2]])
-            facelist.append([vis[i+1], vis[i+3], vis[i+2]])
+        for i in range(0, floor(len(vis) / 2), 2):
+            facelist.append([vis[i], vis[i + 1], vis[i + 2]])
+            facelist.append([vis[i + 1], vis[i + 3], vis[i + 2]])
         # Last odd triangle
         if len(vis) % 2 == 1:
             facelist.append([vis[-3], vis[-2], vis[-1]])
         return [None], facelist
 
-    elif cell_type == 7: # VTK_POLYGON
+    elif cell_type == 7:  # VTK_POLYGON
         return [None], [vis]
 
-    elif cell_type == 8: # VTK_PIXEL
+    elif cell_type == 8:  # VTK_PIXEL
         return [None], [[vis[0], vis[1], vis[3], vis[2]]]
 
-    elif cell_type == 9: # VTK_QUAD
+    elif cell_type == 9:  # VTK_QUAD
         return [None], [vis]
 
-    elif cell_type == 10: # VTK_TETRA
-        fis = [[0,2,1], [0,1,3], [1,2,3], [0,3,2]]
+    elif cell_type == 10:  # VTK_TETRA
+        fis = [[0, 2, 1], [0, 1, 3], [1, 2, 3], [0, 3, 2]]
         facelist = map_elements(vis, fis)
         return [None], facelist
 
-    elif cell_type == 11: # VTK_VOXEL
-        fis = [[0,1,5,4], [0,4,6,2], [4,5,7,6], [1,3,7,5], [0,2,3,1], [6,7,3,2]]
+    elif cell_type == 11:  # VTK_VOXEL
+        fis = [
+            [0, 1, 5, 4],
+            [0, 4, 6, 2],
+            [4, 5, 7, 6],
+            [1, 3, 7, 5],
+            [0, 2, 3, 1],
+            [6, 7, 3, 2],
+        ]
         facelist = map_elements(vis, fis)
         return [None], facelist
 
-    elif cell_type == 12: # VTK_HEXAHEDRON
-        fis = [[0,3,2,1], [0,1,5,4], [1,2,6,5], [2,3,7,6], [3,0,4,7], [7,4,5,6]]
+    elif cell_type == 12:  # VTK_HEXAHEDRON
+        fis = [
+            [0, 3, 2, 1],
+            [0, 1, 5, 4],
+            [1, 2, 6, 5],
+            [2, 3, 7, 6],
+            [3, 0, 4, 7],
+            [7, 4, 5, 6],
+        ]
         facelist = map_elements(vis, fis)
         return [None], facelist
 
-    elif cell_type == 13: # VTK_WEDGE (=prism)
-        fis = [[0,1,2], [0,3,4,1], [1,4,5,2], [2,5,3,0], [3,5,4]]
+    elif cell_type == 13:  # VTK_WEDGE (=prism)
+        fis = [[0, 1, 2], [0, 3, 4, 1], [1, 4, 5, 2], [2, 5, 3, 0], [3, 5, 4]]
         facelist = map_elements(vis, fis)
         return [None], facelist
 
-    elif cell_type == 14: # VTK_PYRAMID
-        fis = [[0,3,2,1], [0,4,3], [3,4,2], [2,4,1], [1,4,0]]
+    elif cell_type == 14:  # VTK_PYRAMID
+        fis = [[0, 3, 2, 1], [0, 4, 3], [3, 4, 2], [2, 4, 1], [1, 4, 0]]
         facelist = map_elements(vis, fis)
         return [None], facelist
 
-    elif cell_type == 15: # VTK_PENTAGONAL_PRISM
-        fis = [[0,1,2,3,4], [0,5,6,1], [1,6,7,2], [2,7,8,3], [3,8,9,4], [4,9,5,0], [9,8,7,6,5]]
+    elif cell_type == 15:  # VTK_PENTAGONAL_PRISM
+        fis = [
+            [0, 1, 2, 3, 4],
+            [0, 5, 6, 1],
+            [1, 6, 7, 2],
+            [2, 7, 8, 3],
+            [3, 8, 9, 4],
+            [4, 9, 5, 0],
+            [9, 8, 7, 6, 5],
+        ]
         facelist = map_elements(vis, fis)
         return [None], facelist
 
-    elif cell_type == 16: # VTK_HEXAGONAL_PRISM
-        fis = [[0,1,2,3,4,5], [0,6,7,1], [1,7,8,2], [2,8,9,3], [3,9,10,4], [4,10,11,5], [5,11,6,0], [11,10,9,8,7,6]]
+    elif cell_type == 16:  # VTK_HEXAGONAL_PRISM
+        fis = [
+            [0, 1, 2, 3, 4, 5],
+            [0, 6, 7, 1],
+            [1, 7, 8, 2],
+            [2, 8, 9, 3],
+            [3, 9, 10, 4],
+            [4, 10, 11, 5],
+            [5, 11, 6, 0],
+            [11, 10, 9, 8, 7, 6],
+        ]
         facelist = map_elements(vis, fis)
         return [None], facelist
 
-    elif cell_type == 42: # VTK_POLYHEDRON
+    elif cell_type == 42:  # VTK_POLYHEDRON
         facelist = get_polyhedron_fis(polyfacelist)
         return [None], facelist
 
@@ -357,7 +432,7 @@ def vtk_cell_to_edges_and_faces(cell_type, vis, polyfacelist):
 
 
 def process_cell_edge(edges, verts):
-    '''Add argument cell edge verts to edges dictionary'''
+    """Add argument cell edge verts to edges dictionary"""
 
     key = str(sorted(verts))
     edges[key] = verts
@@ -365,7 +440,7 @@ def process_cell_edge(edges, verts):
 
 
 def process_cell_face(faces, verts):
-    '''Add (or remove) argument cell face verts to (from) faces dictionary'''
+    """Add (or remove) argument cell face verts to (from) faces dictionary"""
 
     # First make sure first vertex is not repeated at end
     if verts[0] == verts[-1]:
@@ -385,17 +460,25 @@ def process_cell_face(faces, verts):
     return faces
 
 
-def edges_and_faces_to_bmesh(edges, faces, vcoords, smooth, bm,
-                             create_all_verts, create_edges, create_faces,
-                             recalc_norms):
-    '''Add argument verts, edges and faces using vertex coordinates
+def edges_and_faces_to_bmesh(
+    edges,
+    faces,
+    vcoords,
+    smooth,
+    bm,
+    create_all_verts,
+    create_edges,
+    create_faces,
+    recalc_norms,
+):
+    """Add argument verts, edges and faces using vertex coordinates
     vcoords to bmesh bm.
-    '''
+    """
 
-    vertmap = {} # dictionary to map from VTK vertex index to BMVert
+    vertmap = {}  # dictionary to map from VTK vertex index to BMVert
 
     def add_vert(vi, vertmap, vcoords, bm):
-        '''Add vertex index vi to bmesh if vertex is not there already'''
+        """Add vertex index vi to bmesh if vertex is not there already"""
         if vi not in vertmap:
             v = bm.verts.new(vcoords[vi])
             vertmap[vi] = v
@@ -420,9 +503,9 @@ def edges_and_faces_to_bmesh(edges, faces, vcoords, smooth, bm,
         f.smooth = smooth
 
     if not create_faces:
-        bmesh.ops.delete(bm, geom=bm.faces, context='FACES_ONLY')
+        bmesh.ops.delete(bm, geom=bm.faces, context="FACES_ONLY")
     if not create_edges and not create_faces:
-        bmesh.ops.delete(bm, geom=bm.edges, context='EDGES_FACES')
+        bmesh.ops.delete(bm, geom=bm.edges, context="EDGES_FACES")
 
     if recalc_norms:
         bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
@@ -435,13 +518,20 @@ def edges_and_faces_to_bmesh(edges, faces, vcoords, smooth, bm,
             v.normal_update()
 
 
-def vtkdata_to_blender_mesh(vtk_obj, name, create_all_verts=False,
-                            create_edges=True, create_faces=True,
-                            color_mapper=None, smooth=False, recalc_norms=False,
-                            generate_material=False):
-    '''Convert linear and polyhedron VTK cells into a boundary Blender
+def vtkdata_to_blender_mesh(
+    vtk_obj,
+    name,
+    create_all_verts=False,
+    create_edges=True,
+    create_faces=True,
+    color_mapper=None,
+    smooth=False,
+    recalc_norms=False,
+    generate_material=False,
+):
+    """Convert linear and polyhedron VTK cells into a boundary Blender
     surface mesh object.
-    '''
+    """
     if not vtk_obj:
         return "No VTK object on input"
     if issubclass(vtk_obj.__class__, vtk.vtkImageData):
@@ -449,14 +539,14 @@ def vtkdata_to_blender_mesh(vtk_obj, name, create_all_verts=False,
         return
     me, ob = mesh_and_object(name)
     if me.is_editmode:
-        bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
+        bpy.ops.object.mode_set(mode="OBJECT", toggle=False)
 
     # Get all VTK vertex coordinates
     data_p = vtk_obj.GetPoints()
     vcoords = [data_p.GetPoint(i) for i in range(vtk_obj.GetNumberOfPoints())]
 
-    faces = {} # dictionary of boundary face vertices to be created
-    edges = {} # dictionary of non-face edges to be created
+    faces = {}  # dictionary of boundary face vertices to be created
+    edges = {}  # dictionary of non-face edges to be created
 
     # Process all VTK cells
     for i in range(vtk_obj.GetNumberOfCells()):
@@ -472,9 +562,11 @@ def vtkdata_to_blender_mesh(vtk_obj, name, create_all_verts=False,
             vtk_obj.GetFaceStream(i, fs)
             polyfacelist = [fs.GetId(ind) for ind in range(fs.GetNumberOfIds())]
 
-        edge_vis, face_vis = vtk_cell_to_edges_and_faces(cell_type, vert_ids, polyfacelist)
+        edge_vis, face_vis = vtk_cell_to_edges_and_faces(
+            cell_type, vert_ids, polyfacelist
+        )
 
-        #l.debug("cell %d: edge_vis: %s" % (i, str(edge_vis))
+        # l.debug("cell %d: edge_vis: %s" % (i, str(edge_vis))
         #        + " face_vis: %s" % str(face_vis))
 
         for vis in edge_vis:
@@ -489,44 +581,61 @@ def vtkdata_to_blender_mesh(vtk_obj, name, create_all_verts=False,
 
     # Create mesh from remaining faces
     bm = bmesh.new()
-    edges_and_faces_to_bmesh(edges, faces, vcoords, smooth, bm, create_all_verts,
-                             create_edges, create_faces, recalc_norms)
-    val = unwrap_and_color_the_mesh(ob, vtk_obj, name, color_mapper, bm, generate_material)
+    edges_and_faces_to_bmesh(
+        edges,
+        faces,
+        vcoords,
+        smooth,
+        bm,
+        create_all_verts,
+        create_edges,
+        create_faces,
+        recalc_norms,
+    )
+    val = unwrap_and_color_the_mesh(
+        ob, vtk_obj, name, color_mapper, bm, generate_material
+    )
     bm.to_mesh(me)
     if val:
         start_info = "Coloring failed,"
     else:
         start_info = "Conversion successful,"
 
-    l.info(start_info + ' verts:%d' % len(bm.verts)
-           + ' edges:%d' % len(bm.edges)
-           + ' faces:%d' % len(bm.faces))
+    l.info(
+        start_info
+        + " verts:%d" % len(bm.verts)
+        + " edges:%d" % len(bm.edges)
+        + " faces:%d" % len(bm.faces)
+    )
     return val
+
 
 # -----------------------------------------------------------------------------
 # Particle converter
 # -----------------------------------------------------------------------------
 
+
 class BVTK_OT_InitializeParticleSystem(bpy.types.Operator):
-    '''Operator to initialize Blender Particle system for VTK To Blender
+    """Operator to initialize Blender Particle system for VTK To Blender
     Particles node.
-    '''
-    bl_idname = 'node.bvtk_initialize_particle_system'
-    bl_label = 'Initialize Particles'
+    """
+
+    bl_idname = "node.bvtk_initialize_particle_system"
+    bl_label = "Initialize Particles"
 
     def execute(self, context):
         nSystems = 0
         for node_group in bpy.data.node_groups:
             for node in node_group.nodes:
-                if node.bl_idname == 'BVTK_Node_VTKToBlenderParticlesType':
+                if node.bl_idname == "BVTK_Node_VTKToBlenderParticlesType":
                     nSystems += 1
                     zero_particle_system(node)
-        self.report({'INFO'}, "Initialized %d Particle Systems." % nSystems)
-        return {'FINISHED'}
+        self.report({"INFO"}, "Initialized %d Particle Systems." % nSystems)
+        return {"FINISHED"}
 
 
 def zero_particle_system(node):
-    '''Reinitialize Blender Particle System for argument node'''
+    """Reinitialize Blender Particle System for argument node"""
 
     obname = node.ob_name
     glyph_obname = node.glyph_name
@@ -536,8 +645,8 @@ def zero_particle_system(node):
     if obname in bpy.data.objects:
         bpy.context.view_layer.objects.active = bpy.data.objects[obname]
         mesh = bpy.data.objects[obname].data
-        bpy.ops.object.mode_set(mode='OBJECT')
-        bpy.ops.object.select_all(action='DESELECT')
+        bpy.ops.object.mode_set(mode="OBJECT")
+        bpy.ops.object.select_all(action="DESELECT")
         bpy.data.objects[obname].select_set(True)
         bpy.ops.object.particle_system_remove()
         bpy.ops.object.parent_clear()
@@ -559,9 +668,9 @@ def zero_particle_system(node):
     ob.select_set(True)
 
     # Must have some geometry from where to emit particles
-    bpy.ops.object.mode_set(mode='EDIT')
-    bpy.ops.mesh.primitive_cube_add(size=1e-6) # TODO: Improve
-    bpy.ops.object.mode_set(mode='OBJECT')
+    bpy.ops.object.mode_set(mode="EDIT")
+    bpy.ops.mesh.primitive_cube_add(size=1e-6)  # TODO: Improve
+    bpy.ops.object.mode_set(mode="OBJECT")
 
     # Set glyph material to particles object
     bpy.ops.object.material_slot_add()
@@ -569,7 +678,7 @@ def zero_particle_system(node):
 
     # Add and parent particle system
     bpy.ops.object.particle_system_add()
-    bpy.ops.object.select_all(action='DESELECT')
+    bpy.ops.object.select_all(action="DESELECT")
     bpy.data.objects[glyph_obname].select_set(True)
     bpy.ops.object.parent_set()
 
@@ -577,32 +686,50 @@ def zero_particle_system(node):
     ob.particle_systems[0].settings.frame_start = 0
     ob.particle_systems[0].settings.frame_end = 0
     ob.particle_systems[0].settings.lifetime = 1000000
-    ob.particle_systems[0].settings.physics_type = 'NO'
-    ob.particle_systems[0].settings.render_type = 'OBJECT'
+    ob.particle_systems[0].settings.physics_type = "NO"
+    ob.particle_systems[0].settings.render_type = "OBJECT"
     ob.particle_systems[0].settings.particle_size = 1.0
     ob.particle_systems[0].settings.instance_object = bpy.data.objects[glyph_obname]
-    ob.particle_systems[0].settings.emit_from = 'VERT'
+    ob.particle_systems[0].settings.emit_from = "VERT"
     ob.particle_systems[0].settings.normal_factor = 0.0
-    #ob.particle_systems[0].settings.object_align_factor[1] = 1.0
+    # ob.particle_systems[0].settings.object_align_factor[1] = 1.0
 
     ob.show_instancer_for_viewport = True
 
 
 class BVTK_Node_VTKToBlenderParticles(Node, BVTK_Node):
-    '''Convert output from VTK Node to Blender Particle System'''
-    bl_idname = 'BVTK_Node_VTKToBlenderParticlesType' # type name
-    bl_label  = 'VTK To Blender Particles' # label for nice name display
+    """Convert output from VTK Node to Blender Particle System"""
 
-    ob_name: bpy.props.StringProperty(name='Name', default='particles', update=BVTK_Node.outdate_vtk_status)
-    glyph_name: bpy.props.StringProperty(name='Glyph Name', default='glyph', update=BVTK_Node.outdate_vtk_status)
-    vec_name: bpy.props.StringProperty(name='Direction Vector Array Name', default='', update=BVTK_Node.outdate_vtk_status)
-    scale_name: bpy.props.StringProperty(name='Scale Value or Name', default='', update=BVTK_Node.outdate_vtk_status)
-    color_name: bpy.props.StringProperty(name='Color Value Array Name', default='', update=BVTK_Node.outdate_vtk_status)
-    np: bpy.props.IntProperty(name='Particle Count', default=1000, min=1, update=BVTK_Node.outdate_vtk_status)
-    generate_material: bpy.props.BoolProperty(name='Generate Material', default=True, update=BVTK_Node.outdate_vtk_status)
+    bl_idname = "BVTK_Node_VTKToBlenderParticlesType"  # type name
+    bl_label = "VTK To Blender Particles"  # label for nice name display
+
+    ob_name: bpy.props.StringProperty(
+        name="Name", default="particles", update=BVTK_Node.outdate_vtk_status
+    )
+    glyph_name: bpy.props.StringProperty(
+        name="Glyph Name", default="glyph", update=BVTK_Node.outdate_vtk_status
+    )
+    vec_name: bpy.props.StringProperty(
+        name="Direction Vector Array Name",
+        default="",
+        update=BVTK_Node.outdate_vtk_status,
+    )
+    scale_name: bpy.props.StringProperty(
+        name="Scale Value or Name", default="", update=BVTK_Node.outdate_vtk_status
+    )
+    color_name: bpy.props.StringProperty(
+        name="Color Value Array Name", default="", update=BVTK_Node.outdate_vtk_status
+    )
+    np: bpy.props.IntProperty(
+        name="Particle Count", default=1000, min=1, update=BVTK_Node.outdate_vtk_status
+    )
+    generate_material: bpy.props.BoolProperty(
+        name="Generate Material", default=True, update=BVTK_Node.outdate_vtk_status
+    )
 
     # Data storage for point data from VTK
     from typing import List
+
     locs: List[float]
     scales: List[float]
     color_values: List[float]
@@ -610,33 +737,45 @@ class BVTK_Node_VTKToBlenderParticles(Node, BVTK_Node):
     nParticles: float
 
     def m_properties(self):
-        return ['ob_name', 'glyph_name', 'vec_name', 'scale_name', 'color_name', 'np', 'generate_material']
+        return [
+            "ob_name",
+            "glyph_name",
+            "vec_name",
+            "scale_name",
+            "color_name",
+            "np",
+            "generate_material",
+        ]
 
     def m_connections(self):
-        return (['input'],[],[],[])
+        return (["input"], [], [], [])
 
     def draw_buttons_special(self, context, layout):
-        layout.prop(self, 'ob_name')
-        layout.prop(self, 'glyph_name')
-        layout.prop(self, 'vec_name')
-        layout.prop(self, 'scale_name')
-        layout.prop(self, 'color_name')
-        layout.prop(self, 'np')
-        layout.prop(self, 'generate_material')
+        layout.prop(self, "ob_name")
+        layout.prop(self, "glyph_name")
+        layout.prop(self, "vec_name")
+        layout.prop(self, "scale_name")
+        layout.prop(self, "color_name")
+        layout.prop(self, "np")
+        layout.prop(self, "generate_material")
         layout.operator("node.bvtk_initialize_particle_system", text="Initialize")
 
     def update_particle_system(self, depsgraph):
-        '''Updates Blender Particle System from point data in vtkPolyData'''
-        input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects()
+        """Updates Blender Particle System from point data in vtkPolyData"""
+        (
+            input_node,
+            vtk_output_obj,
+            vtk_connection,
+        ) = self.get_input_node_and_output_vtk_objects()
         if not vtk_output_obj:
             return
 
         l.debug("Updating Particle System for Object %r" % self.ob_name)
         if not vtk_output_obj:
-            l.error('No vtkdata!')
+            l.error("No vtkdata!")
             return
         if not issubclass(vtk_output_obj.__class__, vtk.vtkPolyData):
-            l.error('Data is not vtkPolyData!')
+            l.error("Data is not vtkPolyData!")
             return
 
         npoints = get_vtk_particle_data(self, vtk_output_obj)
@@ -649,18 +788,18 @@ class BVTK_Node_VTKToBlenderParticles(Node, BVTK_Node):
         warning_text = warn_if_not_exist_object(self.glyph_name)
         if warning_text:
             self.ui_message = warning_text
-            return 'error'
+            return "error"
         # Note: update_particle_system is called from on_frame_change
         # and not here, because it requires depsgraph.
-        return 'up-to-date'
+        return "up-to-date"
 
     def init_vtk(self):
-        self.set_vtk_status('out-of-date')
+        self.set_vtk_status("out-of-date")
         return None
 
 
 def truncate_or_pad_list(slist, n):
-    '''Truncate or pad the argument list slist to contain exacly n entries'''
+    """Truncate or pad the argument list slist to contain exacly n entries"""
 
     # Truncate
     length = len(slist)
@@ -681,7 +820,7 @@ def truncate_or_pad_list(slist, n):
 
 
 def get_array_data(pointdata, array_name):
-    '''Return vtkArray from VTK point data for given array name'''
+    """Return vtkArray from VTK point data for given array name"""
 
     narrays = pointdata.GetNumberOfArrays()
     if narrays == 0:
@@ -695,20 +834,20 @@ def get_array_data(pointdata, array_name):
 
 
 def color_scale(vals):
-    '''Scale list of values to 0.0 <= x <= 1.0'''
+    """Scale list of values to 0.0 <= x <= 1.0"""
     minval = min(vals)
     maxval = max(vals)
     # Force a small difference to avoid div by zero
     if maxval <= minval:
         minval = 0.99999 * minval
         maxval = 1.00001 * minval
-    return [(v - minval)/(maxval - minval) for v in vals]
+    return [(v - minval) / (maxval - minval) for v in vals]
 
 
 def get_vtk_particle_data(self, vtkdata):
-    '''Get lists of particle properties from vtkPolyData and store those
+    """Get lists of particle properties from vtkPolyData and store those
     to self storage variables.
-    '''
+    """
     n = vtkdata.GetNumberOfPoints()
     if n == 0:
         return 0
@@ -720,7 +859,7 @@ def get_vtk_particle_data(self, vtkdata):
     # Flatten the list
     self.locs = [i for sublist in locs for i in sublist]
 
-    pdata=vtkdata.GetPointData()
+    pdata = vtkdata.GetPointData()
 
     # Direction vectors
     vecs_array = get_array_data(pdata, self.vec_name)
@@ -734,7 +873,8 @@ def get_vtk_particle_data(self, vtkdata):
     # https://stackoverflow.com/questions/1171849/finding-quaternion-representing-the-rotation-from-one-vector-to-another
     from mathutils import Vector
     from math import sqrt
-    quats = [] # List where to append quaternion coefficients w, x, y and z
+
+    quats = []  # List where to append quaternion coefficients w, x, y and z
 
     # Assume glyph object points towards positive X axis
     v1 = Vector((0.0, -1.0, 0.0))
@@ -774,8 +914,9 @@ def get_vtk_particle_data(self, vtkdata):
     self.color_values = color_values
     return n
 
+
 def vtkdata_to_blender_particles(self, depsgraph):
-    '''Populate Blender Particle System with data'''
+    """Populate Blender Particle System with data"""
 
     obname = self.ob_name
     ob = bpy.data.objects[obname]
@@ -794,7 +935,7 @@ def vtkdata_to_blender_particles(self, depsgraph):
 
 
 def reset_particle_material(ob, matname):
-    '''Create default particle material setup for object'''
+    """Create default particle material setup for object"""
 
     if matname in bpy.data.materials:
         mat = bpy.data.materials[matname]
@@ -810,16 +951,16 @@ def reset_particle_material(ob, matname):
     for i in nodes:
         nodes.remove(i)
 
-    node1 = nodes.new('ShaderNodeOutputMaterial')
+    node1 = nodes.new("ShaderNodeOutputMaterial")
     node1.location = (300, 300)
 
-    node2 = nodes.new('ShaderNodeBsdfPrincipled')
+    node2 = nodes.new("ShaderNodeBsdfPrincipled")
     node2.location = (0, 300)
-    links.new(node2.outputs['BSDF'], node1.inputs['Surface'])
+    links.new(node2.outputs["BSDF"], node1.inputs["Surface"])
 
-    node3 = nodes.new('ShaderNodeValToRGB')
+    node3 = nodes.new("ShaderNodeValToRGB")
     node3.location = (-300, 300)
-    links.new(node3.outputs['Color'], node2.inputs['Base Color'])
+    links.new(node3.outputs["Color"], node2.inputs["Base Color"])
 
     # Create a blue-to-red rainbow color ramp as a default
     elems = node3.color_ramp.elements
@@ -833,9 +974,9 @@ def reset_particle_material(ob, matname):
     a = elems.new(1.0)
     a.color = (1.0, 0.0, 0.0, 1.0)
 
-    node4 = nodes.new('ShaderNodeParticleInfo')
+    node4 = nodes.new("ShaderNodeParticleInfo")
     node4.location = (-500, 300)
-    links.new(node4.outputs['Lifetime'], node3.inputs['Fac'])
+    links.new(node4.outputs["Lifetime"], node3.inputs["Fac"])
 
     # Assign material
     if ob.data.materials:
@@ -844,29 +985,38 @@ def reset_particle_material(ob, matname):
         ob.data.materials.append(mat)
     return mat
 
+
 # -----------------------------------------------------------------------------
 # Blender Volume (OpenVDB) converter
 # -----------------------------------------------------------------------------
 
+
 class BVTK_Node_VTKToBlenderVolume(Node, BVTK_Node):
-    '''Convert output from VTK Node to Blender Volume Object.
+    """Convert output from VTK Node to Blender Volume Object.
     Note: Not upgraded to new core.py. Requires pyopenvdb, which is
     not (at least not yet) inlcuded in Blender by default.
     https://devtalk.blender.org/t/build-pyopenvdb-as-part-of-make-deps/14148
     Currently it is better to maintain and use VTK To OpenVDB Exporter node,
     at least until such a time when pyopenvdb is included in Blender.
-    '''
-    bl_idname = 'BVTK_Node_VTKToBlenderVolumeType'
-    bl_label  = 'VTK To Blender Volume'
+    """
 
-    ob_name: bpy.props.StringProperty(name='Name', default='volume')
-    density_name: bpy.props.StringProperty(name='Density Field Name', default='')
-    color_name: bpy.props.StringProperty(name='Color Field Name', default='')
-    flame_name: bpy.props.StringProperty(name='Flame Field Name', default='')
-    temperature_name: bpy.props.StringProperty(name='Temperature Field Name', default='')
-    generate_material: bpy.props.BoolProperty(name='Generate Material', default=True)
-    use_copy_from_array: bpy.props.BoolProperty(name='Use copyFromArray()', default=False)
-    export_file_sequence: bpy.props.BoolProperty(name='Export File Sequence', default=False)
+    bl_idname = "BVTK_Node_VTKToBlenderVolumeType"
+    bl_label = "VTK To Blender Volume"
+
+    ob_name: bpy.props.StringProperty(name="Name", default="volume")
+    density_name: bpy.props.StringProperty(name="Density Field Name", default="")
+    color_name: bpy.props.StringProperty(name="Color Field Name", default="")
+    flame_name: bpy.props.StringProperty(name="Flame Field Name", default="")
+    temperature_name: bpy.props.StringProperty(
+        name="Temperature Field Name", default=""
+    )
+    generate_material: bpy.props.BoolProperty(name="Generate Material", default=True)
+    use_copy_from_array: bpy.props.BoolProperty(
+        name="Use copyFromArray()", default=False
+    )
+    export_file_sequence: bpy.props.BoolProperty(
+        name="Export File Sequence", default=False
+    )
 
     def start_scan(self, context):
         if not context:
@@ -874,18 +1024,25 @@ class BVTK_Node_VTKToBlenderVolume(Node, BVTK_Node):
         if not self.auto_update:
             return
         bpy.ops.node.bvtk_auto_update_scan(
-            node_name=self.name,
-            tree_name=context.space_data.node_tree.name)
+            node_name=self.name, tree_name=context.space_data.node_tree.name
+        )
 
     auto_update: bpy.props.BoolProperty(default=False, update=start_scan)
 
     def m_properties(self):
-        return ['ob_name', 'density_name', 'color_name', 'flame_name',
-                'temperature_name', 'generate_material', 'use_copy_from_array',
-                'export_file_sequence']
+        return [
+            "ob_name",
+            "density_name",
+            "color_name",
+            "flame_name",
+            "temperature_name",
+            "generate_material",
+            "use_copy_from_array",
+            "export_file_sequence",
+        ]
 
     def m_connections(self):
-        return (['input'],[],[],[])
+        return (["input"], [], [], [])
 
     def draw_buttons(self, context, layout):
         global with_pyopenvdb
@@ -893,29 +1050,31 @@ class BVTK_Node_VTKToBlenderVolume(Node, BVTK_Node):
             layout.label(text="Error: Missing pyopenvdb!")
             layout.label(text="Please read node docs for more info")
             return
-        layout.prop(self, 'ob_name')
-        layout.prop(self, 'density_name')
-        layout.prop(self, 'color_name')
-        layout.prop(self, 'flame_name')
-        layout.prop(self, 'temperature_name')
+        layout.prop(self, "ob_name")
+        layout.prop(self, "density_name")
+        layout.prop(self, "color_name")
+        layout.prop(self, "flame_name")
+        layout.prop(self, "temperature_name")
         # Do not expose use_copy_from_array - it's not working correctly. TODO: Why?
         # layout.prop(self, 'use_copy_from_array')
-        layout.prop(self, 'generate_material')
-        layout.prop(self, 'export_file_sequence')
+        layout.prop(self, "generate_material")
+        layout.prop(self, "export_file_sequence")
         layout.separator()
-        layout.operator("node.bvtk_node_update", text="Update").node_path = node_path(self)
+        layout.operator("node.bvtk_node_update", text="Update").node_path = node_path(
+            self
+        )
 
     def update_volume(self):
-        '''Update Blender Volume data from vtkImageData'''
-        input_node, vtkobj = self.get_input_node('input')
+        """Update Blender Volume data from vtkImageData"""
+        input_node, vtkobj = self.get_input_node("input")
         l.debug("Updating Volume Object %r" % self.ob_name)
         if vtkobj:
             vtkdata = resolve_algorithm_output(vtkobj)
             if not vtkdata:
-                l.error('No vtkdata!')
+                l.error("No vtkdata!")
                 return
             if not issubclass(vtkdata.__class__, vtk.vtkImageData):
-                l.error('Data is not vtkImageData!')
+                l.error("Data is not vtkImageData!")
                 return
 
             vtk_image_data_to_volume_object(self, vtkdata)
@@ -928,26 +1087,33 @@ class BVTK_Node_VTKToBlenderVolume(Node, BVTK_Node):
         pass
 
 
-def create_grid_from_data_array(imgdata, data_name, grid_name,
-                                background_value, tolerance,
-                                use_copy_from_array=False, atype='scalar'):
-    '''Return OpenVDB grid containing data copied from vtkImageData array'''
+def create_grid_from_data_array(
+    imgdata,
+    data_name,
+    grid_name,
+    background_value,
+    tolerance,
+    use_copy_from_array=False,
+    atype="scalar",
+):
+    """Return OpenVDB grid containing data copied from vtkImageData array"""
 
     import numpy
     from vtk.util import numpy_support
+
     vdb = pyopenvdb
 
-    if data_name == '':
+    if data_name == "":
         return None
 
     dims = list(imgdata.GetDimensions())
 
-    if atype == 'scalar':
+    if atype == "scalar":
         data = imgdata.GetPointData().GetScalars(data_name)
         if not data:
             raise ValueError("Input data %r not found" % data_name)
         grid = vdb.FloatGrid(background_value)
-    elif atype == 'vector':
+    elif atype == "vector":
         data = imgdata.GetPointData().GetVectors(data_name)
         if not data:
             raise ValueError("Input data %r not found" % data_name)
@@ -972,19 +1138,19 @@ def create_grid_from_data_array(imgdata, data_name, grid_name,
         for i in range(dims[0]):
             for j in range(dims[1]):
                 for k in range(dims[2]):
-                    idx = i + j*dims[0] + k*dims[0]*dims[1];
-                    if atype == 'scalar':
-                        value = data.GetTuple1(idx);
+                    idx = i + j * dims[0] + k * dims[0] * dims[1]
+                    if atype == "scalar":
+                        value = data.GetTuple1(idx)
                         if value > background_value:
                             acc.setValueOn((i, j, k), value)
-                    elif atype == 'vector':
-                        value = data.GetTuple3(idx);
+                    elif atype == "vector":
+                        value = data.GetTuple3(idx)
                         acc.setValueOn((i, j, k), value)
     return grid
 
 
 def count_active_voxels(grids):
-    '''Counts the number of active voxels in list of OpenVDB grids'''
+    """Counts the number of active voxels in list of OpenVDB grids"""
     n = 0
     for grid in grids:
         n += grid.activeVoxelCount()
@@ -992,9 +1158,9 @@ def count_active_voxels(grids):
 
 
 def delete_objects_startswith(ob_name):
-    '''Deletes object(s) whose name starts with argument object name'''
+    """Deletes object(s) whose name starts with argument object name"""
 
-    bpy.ops.object.select_all(action='DESELECT')
+    bpy.ops.object.select_all(action="DESELECT")
     objects = [ob for ob in bpy.data.objects if ob.name.startswith(ob_name)]
     for ob in objects:
         ob.select_set(True)
@@ -1002,9 +1168,10 @@ def delete_objects_startswith(ob_name):
     bpy.ops.object.delete(confirm=False)
 
 
-def import_volume_object(ob_name, filename, bounding_box=None,
-                         dims=None, generate_material=False):
-    '''Import OpenVDB volume object from given file name into scene'''
+def import_volume_object(
+    ob_name, filename, bounding_box=None, dims=None, generate_material=False
+):
+    """Import OpenVDB volume object from given file name into scene"""
 
     bpy.ops.object.volume_import(filepath=filename)
     objects = [ob for ob in bpy.data.objects if ob.name.startswith(ob_name)]
@@ -1040,7 +1207,7 @@ def import_volume_object(ob_name, filename, bounding_box=None,
 
 
 def reset_volume_material(ob, matname):
-    '''Reset volume material to a default'''
+    """Reset volume material to a default"""
 
     if matname in bpy.data.materials:
         mat = bpy.data.materials[matname]
@@ -1056,18 +1223,18 @@ def reset_volume_material(ob, matname):
     for i in nodes:
         nodes.remove(i)
 
-    node1 = nodes.new('ShaderNodeOutputMaterial')
+    node1 = nodes.new("ShaderNodeOutputMaterial")
     node1.location = (300, 300)
 
-    node2 = nodes.new('ShaderNodeVolumePrincipled')
+    node2 = nodes.new("ShaderNodeVolumePrincipled")
     node2.location = (0, 300)
-    links.new(node2.outputs['Volume'], node1.inputs['Volume'])
+    links.new(node2.outputs["Volume"], node1.inputs["Volume"])
 
-    node3 = nodes.new('ShaderNodeVolumeInfo')
+    node3 = nodes.new("ShaderNodeVolumeInfo")
     node3.location = (-300, 300)
-    links.new(node3.outputs['Color'], node2.inputs['Color'])
-    links.new(node3.outputs['Density'], node2.inputs['Density'])
-    links.new(node3.outputs['Flame'], node2.inputs['Emission Strength'])
+    links.new(node3.outputs["Color"], node2.inputs["Color"])
+    links.new(node3.outputs["Density"], node2.inputs["Density"])
+    links.new(node3.outputs["Flame"], node2.inputs["Emission Strength"])
 
     # Assign material
     if ob.data.materials:
@@ -1078,32 +1245,56 @@ def reset_volume_material(ob, matname):
 
 
 def vtk_image_data_to_volume_object(node, imgdata):
-    '''Update Blender Volume data from vtkImageData'''
+    """Update Blender Volume data from vtkImageData"""
 
     vdb = pyopenvdb
-    background_value = 0.0 # Zero value for OpenVDB grid
-    tolerance = 1e-6 # Tolerance for value being zero
+    background_value = 0.0  # Zero value for OpenVDB grid
+    tolerance = 1e-6  # Tolerance for value being zero
 
-    density_grid = create_grid_from_data_array( \
-        imgdata, node.density_name, "density", \
-        background_value, tolerance, node.use_copy_from_array, 'scalar')
-    color_grid = create_grid_from_data_array( \
-        imgdata, node.color_name, "color", \
-        background_value, tolerance, node.use_copy_from_array, 'vector')
-    flame_grid = create_grid_from_data_array( \
-        imgdata, node.flame_name, "flame", \
-        background_value, tolerance, node.use_copy_from_array, 'scalar')
-    temperature_grid = create_grid_from_data_array( \
-        imgdata, node.temperature_name, "temperature", \
-        background_value, tolerance, node.use_copy_from_array, 'scalar')
+    density_grid = create_grid_from_data_array(
+        imgdata,
+        node.density_name,
+        "density",
+        background_value,
+        tolerance,
+        node.use_copy_from_array,
+        "scalar",
+    )
+    color_grid = create_grid_from_data_array(
+        imgdata,
+        node.color_name,
+        "color",
+        background_value,
+        tolerance,
+        node.use_copy_from_array,
+        "vector",
+    )
+    flame_grid = create_grid_from_data_array(
+        imgdata,
+        node.flame_name,
+        "flame",
+        background_value,
+        tolerance,
+        node.use_copy_from_array,
+        "scalar",
+    )
+    temperature_grid = create_grid_from_data_array(
+        imgdata,
+        node.temperature_name,
+        "temperature",
+        background_value,
+        tolerance,
+        node.use_copy_from_array,
+        "scalar",
+    )
 
     if not node.export_file_sequence:
-        basename = node.ob_name + '.vdb'
+        basename = node.ob_name + ".vdb"
     else:
         seq = "_%05d" % bpy.context.scene.frame_current
-        basename = node.ob_name + seq + '.vdb'
+        basename = node.ob_name + seq + ".vdb"
 
-    filename = os.path.join(bpy.path.abspath('//'), basename)
+    filename = os.path.join(bpy.path.abspath("//"), basename)
     grids = [density_grid, color_grid, flame_grid, temperature_grid]
     grids = [g for g in grids if g is not None]
     nvoxels = count_active_voxels(grids)
@@ -1120,81 +1311,112 @@ def vtk_image_data_to_volume_object(node, imgdata):
 
 
 class BVTK_Node_VTKToOpenVDBExporter(Node, BVTK_Node):
-    '''Convert image data from VTK Node to OpenVDB Exporter JSON file'''
-    bl_idname = 'BVTK_Node_VTKToOpenVDBExporterType'
-    bl_label  = 'VTK To OpenVDB Exporter'
+    """Convert image data from VTK Node to OpenVDB Exporter JSON file"""
 
-    ob_name: bpy.props.StringProperty(name='Name', default='volume', update=BVTK_Node.outdate_vtk_status)
-    density_name: bpy.props.StringProperty(name='Density Field Name', default='', update=BVTK_Node.outdate_vtk_status)
-    color_name: bpy.props.StringProperty(name='Color Field Name', default='', update=BVTK_Node.outdate_vtk_status)
-    flame_name: bpy.props.StringProperty(name='Flame Field Name', default='', update=BVTK_Node.outdate_vtk_status)
-    temperature_name: bpy.props.StringProperty(name='Temperature Field Name', default='', update=BVTK_Node.outdate_vtk_status)
+    bl_idname = "BVTK_Node_VTKToOpenVDBExporterType"
+    bl_label = "VTK To OpenVDB Exporter"
+
+    ob_name: bpy.props.StringProperty(
+        name="Name", default="volume", update=BVTK_Node.outdate_vtk_status
+    )
+    density_name: bpy.props.StringProperty(
+        name="Density Field Name", default="", update=BVTK_Node.outdate_vtk_status
+    )
+    color_name: bpy.props.StringProperty(
+        name="Color Field Name", default="", update=BVTK_Node.outdate_vtk_status
+    )
+    flame_name: bpy.props.StringProperty(
+        name="Flame Field Name", default="", update=BVTK_Node.outdate_vtk_status
+    )
+    temperature_name: bpy.props.StringProperty(
+        name="Temperature Field Name", default="", update=BVTK_Node.outdate_vtk_status
+    )
 
     def m_properties(self):
-        return ['ob_name', 'density_name', 'color_name', 'flame_name',
-                'temperature_name']
+        return [
+            "ob_name",
+            "density_name",
+            "color_name",
+            "flame_name",
+            "temperature_name",
+        ]
 
     def m_connections(self):
-        return (['input'],[],[],[])
+        return (["input"], [], [], [])
 
     def apply_properties_special(self):
-        '''Export vtkImageData into OpenVDB Volume data'''
-        input_node, vtk_output_obj, vtk_connection = self.get_input_node_and_output_vtk_objects()
+        """Export vtkImageData into OpenVDB Volume data"""
+        (
+            input_node,
+            vtk_output_obj,
+            vtk_connection,
+        ) = self.get_input_node_and_output_vtk_objects()
         if not vtk_output_obj:
-            self.ui_message = 'Error: No VTK data on input!'
-            return 'error'
+            self.ui_message = "Error: No VTK data on input!"
+            return "error"
 
         if not issubclass(vtk_output_obj.__class__, vtk.vtkImageData):
-            self.ui_message = 'Error: Input is not vtkImageData!'
-            return 'error'
+            self.ui_message = "Error: Input is not vtkImageData!"
+            return "error"
         dims = vtk_image_data_to_openvdb_export(self, vtk_output_obj)
-        self.ui_message = 'Exported dimensions: %s' % str(dims)
+        self.ui_message = "Exported dimensions: %s" % str(dims)
         update_3d_view()
         l.debug("Exported OpenVDB data for %r" % self.ob_name)
-        return 'up-to-date'
+        return "up-to-date"
 
     def init_vtk(self):
-        self.set_vtk_status('out-of-date')
+        self.set_vtk_status("out-of-date")
         return None
 
 
 def vtk_image_data_to_openvdb_export(node, imgdata):
-    '''Create text export files from vtkImageData for convert_to_vdb.py script'''
+    """Create text export files from vtkImageData for convert_to_vdb.py script"""
 
-    background_value = 0.0 # Zero value for OpenVDB grid
+    background_value = 0.0  # Zero value for OpenVDB grid
 
-    density_data = create_data_from_data_array( \
-        imgdata, node.density_name, background_value, 'scalar')
-    color_data = create_data_from_data_array( \
-        imgdata, node.color_name, background_value, 'vector')
-    flame_data = create_data_from_data_array( \
-        imgdata, node.flame_name, background_value, 'scalar')
-    temperature_data = create_data_from_data_array( \
-        imgdata, node.temperature_name, background_value, 'scalar')
+    density_data = create_data_from_data_array(
+        imgdata, node.density_name, background_value, "scalar"
+    )
+    color_data = create_data_from_data_array(
+        imgdata, node.color_name, background_value, "vector"
+    )
+    flame_data = create_data_from_data_array(
+        imgdata, node.flame_name, background_value, "scalar"
+    )
+    temperature_data = create_data_from_data_array(
+        imgdata, node.temperature_name, background_value, "scalar"
+    )
 
     seq = "_%05d" % bpy.context.scene.frame_current
-    basename = node.ob_name + seq + '.json'
-    filepath = os.path.join(bpy.path.abspath('//'), basename)
+    basename = node.ob_name + seq + ".json"
+    filepath = os.path.join(bpy.path.abspath("//"), basename)
     dims = list(imgdata.GetDimensions())
-    export_vdb_data(filepath, background_value, dims, \
-        density_data, color_data, flame_data, temperature_data)
+    export_vdb_data(
+        filepath,
+        background_value,
+        dims,
+        density_data,
+        color_data,
+        flame_data,
+        temperature_data,
+    )
     l.info("Saved %r (dims %s)" % (filepath, str(dims)))
     return dims
 
 
 def create_data_from_data_array(imgdata, data_name, background_value, atype):
-    '''Return array values from vtkImageData'''
+    """Return array values from vtkImageData"""
 
-    if data_name == '':
+    if data_name == "":
         return None
 
     dims = list(imgdata.GetDimensions())
 
-    if atype == 'scalar':
+    if atype == "scalar":
         data = imgdata.GetPointData().GetScalars(data_name)
         if not data:
             raise ValueError("Input data %r not found" % data_name)
-    elif atype == 'vector':
+    elif atype == "vector":
         data = imgdata.GetPointData().GetVectors(data_name)
         if not data:
             raise ValueError("Input data %r not found" % data_name)
@@ -1203,27 +1425,41 @@ def create_data_from_data_array(imgdata, data_name, background_value, atype):
 
     # Create grid by looping over points with accessor
     vals = []
-    MAXVAL = 9.999999e+37
+    MAXVAL = 9.999999e37
     for idx in range(dims[0] * dims[1] * dims[2]):
-        if atype == 'scalar':
-            value = data.GetTuple1(idx);
+        if atype == "scalar":
+            value = data.GetTuple1(idx)
             if value > background_value and value < MAXVAL:
                 vals.append(value)
             else:
                 vals.append(None)
-        elif atype == 'vector':
-            value = data.GetTuple3(idx);
+        elif atype == "vector":
+            value = data.GetTuple3(idx)
             vals.append(value)
     return vals
 
 
-def export_vdb_data(filepath, background_value, dims, density_data,
-                    color_data, flame_data, temperature_data):
+def export_vdb_data(
+    filepath,
+    background_value,
+    dims,
+    density_data,
+    color_data,
+    flame_data,
+    temperature_data,
+):
     """Exports data objects to JSON file."""
 
     import json
-    data = (background_value, dims, density_data, color_data,
-            flame_data, temperature_data)
+
+    data = (
+        background_value,
+        dims,
+        density_data,
+        color_data,
+        flame_data,
+        temperature_data,
+    )
     with open(filepath, "w") as outfile:
         json.dump(data, outfile)
 
@@ -1234,14 +1470,14 @@ def export_vdb_data(filepath, background_value, dims, density_data,
 
 
 def mesh_and_object(name):
-    '''Get mesh object and mesh'''
+    """Get mesh object and mesh"""
     me = get_item(bpy.data.meshes, name)
     ob = get_object(name, me)
     return me, ob
 
 
 def get_item(data, *args):
-    '''Get or create item with key args[0] from data'''
+    """Get or create item with key args[0] from data"""
     item = data.get(args[0])
     if not item:
         item = data.new(*args)
@@ -1249,13 +1485,13 @@ def get_item(data, *args):
 
 
 def set_link(data, item):
-    '''Link item to data'''
+    """Link item to data"""
     if item.name not in data:
         data.link(item)
 
 
 def get_object(name, data):
-    '''Initialize mesh object name with data into current scene'''
+    """Initialize mesh object name with data into current scene"""
     ob = get_item(bpy.data.objects, name, data)
     ob.data = data
     set_link(bpy.context.collection.objects, ob)
@@ -1263,15 +1499,15 @@ def get_object(name, data):
 
 
 def warn_if_not_exist_object(name):
-    '''Return warning if argument object name does not exist'''
+    """Return warning if argument object name does not exist"""
     if not name in bpy.data.objects:
         return "Object %r does not exist!" % name
 
 
 def create_material(ob, texture_name=None):
-    '''Create default material for final output node mesh object.
+    """Create default material for final output node mesh object.
     Add image coloring nodes if texture name is given.
-    '''
+    """
 
     if ob.name in bpy.data.materials:
         mat = bpy.data.materials[ob.name]
@@ -1286,27 +1522,27 @@ def create_material(ob, texture_name=None):
     for i in nodes:
         nodes.remove(i)
 
-    node1 = nodes.new('ShaderNodeOutputMaterial')
+    node1 = nodes.new("ShaderNodeOutputMaterial")
     node1.location = (300, 300)
 
-    node2 = nodes.new('ShaderNodeBsdfPrincipled')
+    node2 = nodes.new("ShaderNodeBsdfPrincipled")
     node2.location = (0, 300)
-    links.new(node2.outputs['BSDF'], node1.inputs['Surface'])
+    links.new(node2.outputs["BSDF"], node1.inputs["Surface"])
 
     # Add UV related nodes for colored materials
     if texture_name:
-        node3 = nodes.new('ShaderNodeTexImage')
+        node3 = nodes.new("ShaderNodeTexImage")
         node3.image = bpy.data.images[texture_name]
         node3.location = (-300, 300)
-        links.new(node3.outputs['Color'], node2.inputs['Base Color'])
+        links.new(node3.outputs["Color"], node2.inputs["Base Color"])
 
-        node4 = nodes.new('ShaderNodeMapping')
+        node4 = nodes.new("ShaderNodeMapping")
         node4.location = (-700, 300)
-        links.new(node4.outputs['Vector'], node3.inputs['Vector'])
+        links.new(node4.outputs["Vector"], node3.inputs["Vector"])
 
-        node5 = nodes.new('ShaderNodeTexCoord')
+        node5 = nodes.new("ShaderNodeTexCoord")
         node5.location = (-900, 300)
-        links.new(node5.outputs['UV'], node4.inputs['Vector'])
+        links.new(node5.outputs["UV"], node4.inputs["Vector"])
 
     # Assign material
     if ob.data.materials:
@@ -1316,7 +1552,7 @@ def create_material(ob, texture_name=None):
 
 
 def image_from_ramp(ramp, name, length):
-    '''Create image (size 4 px) from color ramp'''
+    """Create image (size 4 px) from color ramp"""
     # Blender requires minimum image dimension 3 px to correctly
     # show up images longer than 256 pixels. Bug is reported:
     # https://developer.blender.org/T65309
@@ -1324,56 +1560,56 @@ def image_from_ramp(ramp, name, length):
     height = 4
     img = get_item(bpy.data.images, name, length, height)
     for j in range(length):
-        for i,val in enumerate(ramp.evaluate(j/length)):
+        for i, val in enumerate(ramp.evaluate(j / length)):
             for k in range(height):
-                img.pixels[height*k*length + height*j + i] = val
+                img.pixels[height * k * length + height * j + i] = val
     # Pack color ramp image so it will be saved with blend file,
     # to show it correctly when blend file is reloaded
     img.pack()
 
-        # TODO: Delete below
-        #p.extend(ramp.evaluate(j/length))
-    #img.pixels = p
-    #return img
+    # TODO: Delete below
+    # p.extend(ramp.evaluate(j/length))
+    # img.pixels = p
+    # return img
 
 
 def face_unwrap(bm, vtk_obj, array_name, vrange):
-    '''Unwrap by cell data'''
+    """Unwrap by cell data"""
 
-    scalars = get_vtk_array_data(vtk_obj, array_name, array_type='C')
+    scalars = get_vtk_array_data(vtk_obj, array_name, array_type="C")
     minr, maxr = vrange
     uv_layer = bm.loops.layers.uv.verify()
     for face in bm.faces:
         for loop in face.loops:
-            v = (scalars.GetValue(face.index) - minr)/(maxr - minr)
-            v = min(0.999, max(0.001, v)) # Force value inside range
+            v = (scalars.GetValue(face.index) - minr) / (maxr - minr)
+            v = min(0.999, max(0.001, v))  # Force value inside range
             loop[uv_layer].uv = (v, 0.5)
     return bm, None
 
 
 def point_unwrap(bm, vtk_obj, array_name, vrange):
-    '''Unwrap by point data'''
+    """Unwrap by point data"""
 
-    scalars = get_vtk_array_data(vtk_obj, array_name, array_type='P')
+    scalars = get_vtk_array_data(vtk_obj, array_name, array_type="P")
     minr, maxr = vrange
     uv_layer = bm.loops.layers.uv.verify()
     for face in bm.faces:
         for loop in face.loops:
-            v = (scalars.GetValue(loop.vert.index) - minr)/(maxr - minr)
-            v = min(0.999, max(0.001, v)) # Force value inside range
+            v = (scalars.GetValue(loop.vert.index) - minr) / (maxr - minr)
+            v = min(0.999, max(0.001, v))  # Force value inside range
             loop[uv_layer].uv = (v, 0.5)
     return bm, None
 
 
-def get_vtk_array_data(vtk_obj, array_name, array_type='P'):
-    '''Get VTK data array from data set with given name and type (point or
+def get_vtk_array_data(vtk_obj, array_name, array_type="P"):
+    """Get VTK data array from data set with given name and type (point or
     cell data)
-    '''
+    """
     if not vtk_obj:
         return None
-    if array_type in ('P', 'p'):
+    if array_type in ("P", "p"):
         data = vtk_obj.GetPointData()
-    elif array_type in ('C', 'c'):
+    elif array_type in ("C", "c"):
         data = vtk_obj.GetCellData()
     else:
         raise ValueError("Unknown array type %r" % array_type)
@@ -1388,16 +1624,17 @@ def get_vtk_array_data(vtk_obj, array_name, array_type='P'):
 # Color legend
 # -----------------------------------------------------------------------------
 
+
 def text(name, body):
-    '''Get a text data block'''
-    font = get_item(bpy.data.curves, name, 'FONT')
+    """Get a text data block"""
+    font = get_item(bpy.data.curves, name, "FONT")
     ob = get_object(name, font)
     font.body = body
     return ob
 
 
 def delete_texts(name):
-    '''Delete text data block'''
+    """Delete text data block"""
     for ob in bpy.data.objects:
         if ob.name.startswith(name):
             curve = ob.data
@@ -1405,19 +1642,23 @@ def delete_texts(name):
             bpy.data.curves.remove(curve)
 
 
-def create_lut(name, vrange, n_div, texture, b=0.5, h=5.5, x=5, y=0, z=0, fontsize=0.35, roundto=2):
-    '''Create value labels and color legends and add to current scene'''
-    name = name + '_colormap'
-    delete_texts(name + '_lab') # Delete old labels
+def create_lut(
+    name, vrange, n_div, texture, b=0.5, h=5.5, x=5, y=0, z=0, fontsize=0.35, roundto=2
+):
+    """Create value labels and color legends and add to current scene"""
+    name = name + "_colormap"
+    delete_texts(name + "_lab")  # Delete old labels
 
     # Create plane and UVs
     plane = bmesh.new()
-    plane.faces.new((
-        plane.verts.new((0, 0, 0)),
-        plane.verts.new((b, 0, 0)),
-        plane.verts.new((b, 0, h)),
-        plane.verts.new((0, 0, h)),
-    ))
+    plane.faces.new(
+        (
+            plane.verts.new((0, 0, 0)),
+            plane.verts.new((b, 0, 0)),
+            plane.verts.new((b, 0, h)),
+            plane.verts.new((0, 0, h)),
+        )
+    )
     uv_layer = plane.loops.layers.uv.verify()
     plane.faces.ensure_lookup_table()
     plane.faces[0].loops[0][uv_layer].uv = (0, 1)
@@ -1426,38 +1667,39 @@ def create_lut(name, vrange, n_div, texture, b=0.5, h=5.5, x=5, y=0, z=0, fontsi
     plane.faces[0].loops[3][uv_layer].uv = (1, 1)
     me, ob = mesh_and_object(name)
     plane.to_mesh(me)
-    ob.location = x,y,z
-    #texture_material(me, name, texture)
+    ob.location = x, y, z
+    # texture_material(me, name, texture)
 
     # Calculate label interval
     min, max = vrange
     if min > max or h <= 0:
-        l.error('vrange maximum greater than minimum')
+        l.error("vrange maximum greater than minimum")
         return
     import math
-    idealspace = (max-min)/(h)
+
+    idealspace = (max - min) / (h)
     exponent = math.floor(math.log10(idealspace))
-    mantissa = idealspace/(10**exponent)
+    mantissa = idealspace / (10 ** exponent)
     if mantissa < 2.5:
         step = 10 ** exponent
     elif mantissa < 7.5:
-        step = 5*10**exponent
+        step = 5 * 10 ** exponent
     else:
-        step = 10*10**exponent
-    start = math.ceil(min/step)*step
-    delta = max-min
-    if step>delta:
+        step = 10 * 10 ** exponent
+    start = math.ceil(min / step) * step
+    delta = max - min
+    if step > delta:
         return
-    starth = (h*(start-min))/delta
-    steph = (h*step)/delta
+    starth = (h * (start - min)) / delta
+    steph = (h * step) / delta
 
     # Add labels as texts
-    for i in range(int(math.floor((max-start)/step))+1):
-        t = text(name+'_lab'+str(i), '{:.15}'.format(float(start+i*step)))
+    for i in range(int(math.floor((max - start) / step)) + 1):
+        t = text(name + "_lab" + str(i), "{:.15}".format(float(start + i * step)))
         t.data.size = fontsize
-        t.rotation_mode = 'XYZ'
+        t.rotation_mode = "XYZ"
         t.rotation_euler = (1.5707963705062866, 0.0, 0.0)
-        t.location = b+b/5, 0, starth+steph*i
+        t.location = b + b / 5, 0, starth + steph * i
         t.parent = ob
 
 
@@ -1465,8 +1707,9 @@ def create_lut(name, vrange, n_div, texture, b=0.5, h=5.5, x=5, y=0, z=0, fontsi
 #  Image data conversion
 # -----------------------------------------------------------------------------
 
+
 def imgdata_to_blender(data, name):
-    '''Convert vtkImageData to a Blender image'''
+    """Convert vtkImageData to a Blender image"""
 
     wm = bpy.context.window_manager
     scalars = data.GetPointData().GetScalars()
@@ -1487,29 +1730,31 @@ def imgdata_to_blender(data, name):
         if len(t) == 1:
             p.extend([t[0] / 255, t[0] / 255, t[0] / 255, 1])
         else:
-            alpha = 1 if len(t)<4 else t[3]/255
-            p.extend([t[0]/255, t[1]/255, t[2]/255, alpha])
+            alpha = 1 if len(t) < 4 else t[3] / 255
+            p.extend([t[0] / 255, t[1] / 255, t[2] / 255, alpha])
 
-        prog = int(j/n_tuples*100)
+        prog = int(j / n_tuples * 100)
         if prog != l_prog:
             l_prog = prog
             wm.progress_update(prog)
-            l.debug('Converting to img: ' + str(prog) + '%')
+            l.debug("Converting to img: " + str(prog) + "%")
     img.pixels = p
     wm.progress_end()
-    l.info('Image data conversion succesful, num pixels = ' + str(n_tuples))
+    l.info("Image data conversion succesful, num pixels = " + str(n_tuples))
 
     # Create plane mesh with UVs to show the image
     spacing = data.GetSpacing()
     x = dim[0] * spacing[0]
     y = dim[1] * spacing[0]
     plane = bmesh.new()
-    plane.faces.new((
-        plane.verts.new((0, 0, 0)),
-        plane.verts.new((x, 0, 0)),
-        plane.verts.new((x, y, 0)),
-        plane.verts.new((0, y, 0)),
-    ))
+    plane.faces.new(
+        (
+            plane.verts.new((0, 0, 0)),
+            plane.verts.new((x, 0, 0)),
+            plane.verts.new((x, y, 0)),
+            plane.verts.new((0, y, 0)),
+        )
+    )
     uv_layer = plane.loops.layers.uv.verify()
     plane.faces.ensure_lookup_table()
     plane.faces[0].loops[0][uv_layer].uv = (0, 0)
@@ -1519,10 +1764,9 @@ def imgdata_to_blender(data, name):
     me, ob = mesh_and_object(name)
     ob.location = data.GetOrigin()
     plane.to_mesh(me)
-    #tex, mat = texture_material(me, 'VTK' + name)
-    #mat.use_shadeless = True
-    #tex.image = img
-
+    # tex, mat = texture_material(me, 'VTK' + name)
+    # mat.use_shadeless = True
+    # tex.image = img
 
 
 # Add classes and menu items
@@ -1532,17 +1776,16 @@ TYPENAMES = []
 # add_class(BVTK_Node_VTKToBlender)
 # TYPENAMES.append('BVTK_Node_VTKToBlenderType')
 add_class(BVTK_Node_VTKToBlenderMesh)
-TYPENAMES.append('BVTK_Node_VTKToBlenderMeshType')
+TYPENAMES.append("BVTK_Node_VTKToBlenderMeshType")
 add_class(BVTK_OT_InitializeParticleSystem)
 add_class(BVTK_Node_VTKToBlenderParticles)
-TYPENAMES.append('BVTK_Node_VTKToBlenderParticlesType')
+TYPENAMES.append("BVTK_Node_VTKToBlenderParticlesType")
 
 # Disabled VTK To Blender Volume, it's not upgraded to new core.py.
 # You can use VTK To OpenVDB Exporter node instead.
-#add_class(BVTK_Node_VTKToBlenderVolume)
-#TYPENAMES.append('BVTK_Node_VTKToBlenderVolumeType')
+# add_class(BVTK_Node_VTKToBlenderVolume)
+# TYPENAMES.append('BVTK_Node_VTKToBlenderVolumeType')
 add_class(BVTK_Node_VTKToOpenVDBExporter)
-TYPENAMES.append('BVTK_Node_VTKToOpenVDBExporterType')
+TYPENAMES.append("BVTK_Node_VTKToOpenVDBExporterType")
 menu_items = [NodeItem(x) for x in TYPENAMES]
 CATEGORIES.append(BVTK_NodeCategory("Converters", "Converters", items=menu_items))
-

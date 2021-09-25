@@ -1,22 +1,22 @@
 # <pep8 compliant>
 
-#---------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------
 # ADDON HEADER SECTION
-#---------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------
 
 bl_info = {
     "name": "BVTKNodes, Blender VTK Nodes",
     "author": "BVTKNodes Developers",
     "version": (0, 7),
-    "blender": (2, 83,  0),
+    "blender": (2, 83, 0),
     "location": "BVTK Node Tree Editor > New",
     "description": "Create and execute VTK pipelines in Blender Node Editor",
     "warning": "Experimental",
     "wiki_url": "https://github.com/tkeskita/BVtkNodes",
     "tracker_url": "https://github.com/tkeskita/BVtkNodes/issues",
-    "support": 'COMMUNITY',
+    "support": "COMMUNITY",
     "category": "Node",
-    }
+}
 
 # Nomenclature
 # ============
@@ -74,14 +74,14 @@ except:
 try:
     dir(vtk)
 except:
-    message = '''
+    message = """
     BVTKNodes add-on failed to access the VTK library. You must
     compile and install Python library corresponding to the Python
     library version used by Blender, and then compile and install
     VTK on top of it. Finally you must customize environment variables
     to use the compiled Python library before starting Blender.
     Please refer to BVTKNodes documentation for help.
-    '''
+    """
     raise Exception(message)
 
 need_reloading = "bpy" in locals()
@@ -109,7 +109,7 @@ if need_reloading:
 
     importlib.reload(generated_nodes.gen_VTKWriters)
     importlib.reload(custom_nodes.VTKWriters)
-    
+
     importlib.reload(generated_nodes.gen_VTKFilters1)
     importlib.reload(generated_nodes.gen_VTKFilters2)
     importlib.reload(generated_nodes.gen_VTKFilters)
@@ -124,9 +124,9 @@ if need_reloading:
 
 else:
     import bpy
-    from   bpy.app.handlers import persistent
+    from bpy.app.handlers import persistent
     import nodeitems_utils
-    from   nodeitems_utils import NodeItem
+    from nodeitems_utils import NodeItem
 
     from . import core
     from . import b_properties
@@ -143,10 +143,10 @@ else:
     from .custom_nodes import VTKReaders
     from .custom_nodes import VTKWriters
     from .custom_nodes import VTKFilters
-    
+
     from .custom_nodes import VTKOthers
 
-from .core import l # Import logging
+from .core import l  # Import logging
 
 if need_reloading:
     l.debug("Reloaded modules")
@@ -162,15 +162,32 @@ class BVTKNodes_Settings(bpy.types.PropertyGroup):
         name="Update Mode",
         description="Update Mode for BVTK Node Tree",
         items={
-            ('no-automatic-updates', 'No Automatic Updates', 'Nothing is automatically updated after node changes', 0),
-            ('update-current', 'Update Current Automatically', 'Update only the changed node automatically', 1),
-            ('update-all', 'Update All Automatically', 'Update changes to all nodes automatically', 2)},
-        default='update-current',
+            (
+                "no-automatic-updates",
+                "No Automatic Updates",
+                "Nothing is automatically updated after node changes",
+                0,
+            ),
+            (
+                "update-current",
+                "Update Current Automatically",
+                "Update only the changed node automatically",
+                1,
+            ),
+            (
+                "update-all",
+                "Update All Automatically",
+                "Update changes to all nodes automatically",
+                2,
+            ),
+        },
+        default="update-current",
     )
+
 
 @persistent
 def on_file_loaded(scene):
-    '''Initialize cache and VTK objects after Blender file has been opened'''
+    """Initialize cache and VTK objects after Blender file has been opened"""
     l.debug("Triggered")
     # Reset the node cache
     cache.BVTKCache.reset_cache()
@@ -179,7 +196,7 @@ def on_file_loaded(scene):
     # to force correct initialization upon first update.
     bvtk_nodes = core.get_all_bvtk_nodes()
     for node in bvtk_nodes:
-        node.set_vtk_status('out-of-date')
+        node.set_vtk_status("out-of-date")
         node.connected_input_names = ""
         # Update nodeMaxId
         if node.node_id > cache.nodeMaxId:
@@ -187,12 +204,13 @@ def on_file_loaded(scene):
 
     # Update if needed
     update_mode = bpy.context.scene.bvtknodes_settings.update_mode
-    if update_mode == 'update-all':
+    if update_mode == "update-all":
         cache.BVTKCache.update_all()
+
 
 @persistent
 def compareGeneratedAndCurrentVTKVersion():
-    '''Check if the vtk version with which the files were generated is equal to the current vtk version and log a warning if not'''
+    """Check if the vtk version with which the files were generated is equal to the current vtk version and log a warning if not"""
     import re
     import os
     from .generated_nodes import gen_VTKFilters
@@ -200,7 +218,7 @@ def compareGeneratedAndCurrentVTKVersion():
     vtk_re = re.compile("^\# VTK version\: (\S*).*$")
 
     gen_vtk_path = os.path.abspath(gen_VTKFilters.__file__)
-    gen_vtk_f = open(gen_vtk_path, 'r')
+    gen_vtk_f = open(gen_vtk_path, "r")
     lines = gen_vtk_f.readlines()
     vtk_version = vtk.vtkVersion().GetVTKVersion()
     gen_vtk_version = None
@@ -216,30 +234,35 @@ def compareGeneratedAndCurrentVTKVersion():
     if gen_vtk_version is None:
         l.warning("Warning: Generated VTK file did not provide a VTK version")
 
-    elif gen_vtk_version != vtk_version :
-        l.warning("Warning: Generated VTK file has version %s, but Blender's VTK version is %s" % (gen_vtk_version, vtk_version))
+    elif gen_vtk_version != vtk_version:
+        l.warning(
+            "Warning: Generated VTK file has version %s, but Blender's VTK version is %s"
+            % (gen_vtk_version, vtk_version)
+        )
+
 
 compareGeneratedAndCurrentVTKVersion()
 
+
 @persistent
 def on_frame_change(scene, depsgraph):
-    '''Updates done after frame number (time step) changes'''
+    """Updates done after frame number (time step) changes"""
     l.debug("Triggered")
 
     bvtk_nodes = core.get_all_bvtk_nodes()
 
     # Update always special converters requiring depsgraph
     for node in bvtk_nodes:
-        if node.bl_idname == 'BVTK_Node_VTKToBlenderParticlesType':
+        if node.bl_idname == "BVTK_Node_VTKToBlenderParticlesType":
             node.update_particle_system(depsgraph)
 
     def time_changed(bvtk_nodes):
-        '''Return True if time point has changed'''
+        """Return True if time point has changed"""
         for node in bvtk_nodes:
-            if node.bl_idname == 'BVTK_Node_TimeSelectorType' and node.use_scene_time:
+            if node.bl_idname == "BVTK_Node_TimeSelectorType" and node.use_scene_time:
                 if node.time_index != scene.frame_current:
                     return True
-            elif node.bl_idname == 'BVTK_Node_GlobalTimeKeeperType':
+            elif node.bl_idname == "BVTK_Node_GlobalTimeKeeperType":
                 if node.global_time != scene.frame_current:
                     return True
         return False
@@ -251,41 +274,43 @@ def on_frame_change(scene, depsgraph):
 
     # Set no automatic updates to avoid triggering multiple updates
     update_mode = bpy.context.scene.bvtknodes_settings.update_mode
-    bpy.context.scene.bvtknodes_settings.update_mode = 'no-automatic-updates'
+    bpy.context.scene.bvtknodes_settings.update_mode = "no-automatic-updates"
 
     # Update Time Selectors or Global Time Keeper
     for node in bvtk_nodes:
         # Outdate all nodes. Maybe it is possible to outdate only some
         # nodes, but using this simple approach for now.
-        node.set_vtk_status('out-of-date')
+        node.set_vtk_status("out-of-date")
 
         # Note: This is a workaround to enable transient data traversal
         # while this issue remains: https://developer.blender.org/T66392
-        if node.bl_idname == 'BVTK_Node_TimeSelectorType' and node.use_scene_time:
+        if node.bl_idname == "BVTK_Node_TimeSelectorType" and node.use_scene_time:
             node.time_index = scene.frame_current
             node.time_index_update()
             l.debug("Time Selector time step %d" % node.time_index)
 
-        elif node.bl_idname == 'BVTK_Node_GlobalTimeKeeperType':
+        elif node.bl_idname == "BVTK_Node_GlobalTimeKeeperType":
             node.global_time = scene.frame_current
             node.update_time(bpy.context)
             l.debug("Global Time Keeper time step %d" % node.global_time)
 
     # Restore update_mode and update if needed
     bpy.context.scene.bvtknodes_settings.update_mode = update_mode
-    if update_mode == 'update-all':
+    if update_mode == "update-all":
         cache.BVTKCache.update_all()
+
 
 @persistent
 def on_depsgraph_update(scene, depsgraph):
-    '''Updates done after depsgraph changes'''
+    """Updates done after depsgraph changes"""
     l.debug("Triggered")
     on_frame_change(scene, depsgraph)
 
+
 def custom_register_node_categories():
-    '''Custom registering of node categories to prevent node categories to
+    """Custom registering of node categories to prevent node categories to
     be shown on the tool-shelf
-    '''
+    """
     identifier = "VTK_NODES"
     cat_list = core.CATEGORIES
 
@@ -307,42 +332,52 @@ def custom_register_node_categories():
 
     menu_types = []
     for cat in cat_list:
-        menu_type = type(\
-            "NODE_MT_category_" + cat.identifier, (bpy.types.Menu,), {
-                "bl_space_type": 'NODE_EDITOR',
+        menu_type = type(
+            "NODE_MT_category_" + cat.identifier,
+            (bpy.types.Menu,),
+            {
+                "bl_space_type": "NODE_EDITOR",
                 "bl_label": cat.name,
                 "category": cat,
                 "poll": cat.poll,
                 "draw": draw_node_item,
-            })
+            },
+        )
         menu_types.append(menu_type)
         bpy.utils.register_class(menu_type)
 
-    nodeitems_utils._node_categories[identifier] = \
-        (cat_list, draw_add_menu, menu_types, []) # , panel_types)
+    nodeitems_utils._node_categories[identifier] = (
+        cat_list,
+        draw_add_menu,
+        menu_types,
+        [],
+    )  # , panel_types)
+
 
 def register():
-    '''Register function. CLASSES and CATEGORIES are defined in core.py and
+    """Register function. CLASSES and CATEGORIES are defined in core.py and
     filled in all the gen_VTK*.py and VTK*.py files
-    '''
+    """
     bpy.app.handlers.load_post.append(on_file_loaded)
     bpy.app.handlers.frame_change_post.append(on_frame_change)
     bpy.app.handlers.depsgraph_update_post.append(on_depsgraph_update)
-    core.check_b_properties() # delayed to here to allow class overriding
+    core.check_b_properties()  # delayed to here to allow class overriding
     for c in core.UI_CLASSES:
         try:
             bpy.utils.register_class(c)
         except:
-            l.critical('error registering ' + str(c))
+            l.critical("error registering " + str(c))
     for c in sorted(core.CLASSES.keys()):
         try:
             bpy.utils.register_class(core.CLASSES[c])
         except:
-            l.critical('error registering ' + str(c))
+            l.critical("error registering " + str(c))
     custom_register_node_categories()
     bpy.utils.register_class(BVTKNodes_Settings)
-    bpy.types.Scene.bvtknodes_settings = \
-        bpy.props.PointerProperty(type=BVTKNodes_Settings)
+    bpy.types.Scene.bvtknodes_settings = bpy.props.PointerProperty(
+        type=BVTKNodes_Settings
+    )
+
 
 def unregister():
     nodeitems_utils.unregister_node_categories("VTK_NODES")
@@ -354,4 +389,3 @@ def unregister():
     bpy.app.handlers.frame_change_post.remove(on_frame_change)
     bpy.utils.unregister_class(BVTKNodes_Settings)
     del bpy.types.Scene.bvtknodes_settings
-
