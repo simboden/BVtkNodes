@@ -74,7 +74,9 @@ class BVTK_Node_VTKToBlender(Node, BVTK_Node):
         pass
 
 
-def unwrap_and_color_the_mesh(ob, vtk_obj, name, color_mapper, bm, generate_material):
+def unwrap_and_color_the_mesh(
+    ob, vtk_obj, name, color_mapper, bm, generate_material, vimap
+):
     """Create UV unwrap corresponding to a generated color image to color
     the mesh. Also generates material if needed.
     """
@@ -99,7 +101,7 @@ def unwrap_and_color_the_mesh(ob, vtk_obj, name, color_mapper, bm, generate_mate
         type_letter = color_mapper.color_by[0]
         array_name = color_mapper.color_by[2:]
         if type_letter == "P" or type_letter == "p":
-            bm, val = point_unwrap(bm, vtk_obj, array_name, vrange)
+            bm, val = point_unwrap(bm, vtk_obj, array_name, vrange, vimap)
             if val:
                 return val
         elif type_letter == "C" or type_letter == "c":
@@ -476,6 +478,8 @@ def edges_and_faces_to_bmesh(
     """
 
     vertmap = {}  # dictionary to map from VTK vertex index to BMVert
+    vimap = {}  # map from bmesh vertex index to VTK vertex index
+    viset = set()  # set to store added VTK vertex indices for fast access
 
     def add_vert(vi, vertmap, vcoords, bm):
         """Add vertex index vi to bmesh if vertex is not there already"""
@@ -483,22 +487,34 @@ def edges_and_faces_to_bmesh(
             v = bm.verts.new(vcoords[vi])
             vertmap[vi] = v
 
+    def add_vi(vi, vimap, viset):
+        """Add index of vertex to map from bmesh vertex index to VTK vertex index"""
+        if vi in viset:
+            return
+        i = len(vimap)
+        vimap[i] = vi
+        viset.add(vi)
+
     # Create BMVerts
     if create_all_verts:
         for vi in range(len(vcoords)):
             add_vert(vi, vertmap, vcoords, bm)
+            add_vi(vi, vimap, viset)
 
     # Create BMEdges
     if create_edges:
         for vi1, vi2 in edges.values():
             add_vert(vi1, vertmap, vcoords, bm)
             add_vert(vi2, vertmap, vcoords, bm)
+            add_vi(vi1, vimap, viset)
+            add_vi(vi2, vimap, viset)
             bm.edges.new([vertmap[vi1], vertmap[vi2]])
 
     # Create BMFaces
     for vis in faces.values():
         for vi in vis:
             add_vert(vi, vertmap, vcoords, bm)
+            add_vi(vi, vimap, viset)
         f = bm.faces.new(map_elements(vertmap, vis))
         f.smooth = smooth
 
@@ -516,6 +532,8 @@ def edges_and_faces_to_bmesh(
             f.normal_update()
         for v in bm.verts:
             v.normal_update()
+
+    return vimap
 
 
 def vtkdata_to_blender_mesh(
@@ -581,7 +599,7 @@ def vtkdata_to_blender_mesh(
 
     # Create mesh from remaining faces
     bm = bmesh.new()
-    edges_and_faces_to_bmesh(
+    vimap = edges_and_faces_to_bmesh(
         edges,
         faces,
         vcoords,
@@ -593,7 +611,7 @@ def vtkdata_to_blender_mesh(
         recalc_norms,
     )
     val = unwrap_and_color_the_mesh(
-        ob, vtk_obj, name, color_mapper, bm, generate_material
+        ob, vtk_obj, name, color_mapper, bm, generate_material, vimap
     )
     bm.to_mesh(me)
     if val:
@@ -1587,7 +1605,7 @@ def face_unwrap(bm, vtk_obj, array_name, vrange):
     return bm, None
 
 
-def point_unwrap(bm, vtk_obj, array_name, vrange):
+def point_unwrap(bm, vtk_obj, array_name, vrange, vimap):
     """Unwrap by point data"""
 
     scalars = get_vtk_array_data(vtk_obj, array_name, array_type="P")
@@ -1595,7 +1613,7 @@ def point_unwrap(bm, vtk_obj, array_name, vrange):
     uv_layer = bm.loops.layers.uv.verify()
     for face in bm.faces:
         for loop in face.loops:
-            v = (scalars.GetValue(loop.vert.index) - minr) / (maxr - minr)
+            v = (scalars.GetValue(vimap[loop.vert.index]) - minr) / (maxr - minr)
             v = min(0.999, max(0.001, v))  # Force value inside range
             loop[uv_layer].uv = (v, 0.5)
     return bm, None
