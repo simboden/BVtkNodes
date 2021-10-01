@@ -473,6 +473,10 @@ following additions:
 - **Create Faces**: If enabled, creates boundary faces (faces used by
   only one VTK cell). Internal faces (faces shared by two
   3D cells) are not exported.
+- **Force Update Upstream**: This operator will force an update on the
+  upstream nodes and this node. This was added for special cases where
+  the update system does not detect a possible need for running an
+  update.
 
 .. image:: images/vtk_to_blender_mesh_node.png
 
@@ -698,6 +702,8 @@ processed.
   that are not aware of time (e.g. `vtkPolyDataReader`, which can read
   point and surface data from .vtk files).
 
+.. _global_time_keeper:
+
 Global Time Keeper
 ^^^^^^^^^^^^^^^^^^
 
@@ -840,7 +846,7 @@ You are free to ask and give advice for specific use cases at
 Please check this list first though:
 
 * Read through these docs first, and view examples in :ref:`ug_nodes`.
-* Run **Force Update** on the final *VTK To Blender Mesh* node to update the
+* Run **Force Update Upstream** on the final *VTK To Blender Mesh* node to update the
   preceding nodes.
 * For time dependent data, try to change frame number in Blender
   Timeline Editor.

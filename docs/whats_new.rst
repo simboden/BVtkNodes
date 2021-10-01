@@ -22,6 +22,9 @@ Version 0.7 (2021-09-18)
   run updates on nodes. This allows full pre-definition of node trees
   e.g. for JSON imports.
 
+- several new *cubeflow* node tree examples (in
+  :ref:`json_importexport` Tab) available for :ref:`ug_nodes`.
+
 - Development for this release was made in 
   `pull request #46 <https://github.com/tkeskita/BVtkNodes/pull/46>`_.
 
@@ -31,7 +34,7 @@ Previous versions
 
 - A testing framework helps developers catch regression bugs.
 
-- **Global Time Keeper** node allows animation of many node properties
+- :ref:`global_time_keeper` node allows animation of many node properties
   by Blender's Keyframes feature.
 
 - Improved Custom Code editing.
