@@ -1,5 +1,5 @@
 # Generated definitions for VTK class group: Source
-# VTK version: 9.0.1
+# VTK version: 9.1.0
 
 from ..core import *    
 TYPENAMES = []
@@ -68,7 +68,7 @@ class VTKArrowSource(Node, BVTK_Node):
     def m_properties( self ):
         return ['m_Invert','m_ShaftResolution','m_TipResolution','m_ShaftRadius','m_TipLength','m_TipRadius',]
     def m_connections( self ):
-        return ([], ['output'], [], []) 
+        return ([], ['output'], ['ArrowOrigin'], []) 
     
 add_class( VTKArrowSource )        
 TYPENAMES.append('VTKArrowSourceType' )
@@ -144,6 +144,25 @@ class VTKBoundedPointSource(Node, BVTK_Node):
     
 add_class( VTKBoundedPointSource )        
 TYPENAMES.append('VTKBoundedPointSourceType' )
+
+#--------------------------------------------------------------
+class VTKCameraHandleSource(Node, BVTK_Node):
+
+    bl_idname = 'VTKCameraHandleSourceType'
+    bl_label  = 'vtkCameraHandleSource'
+    
+    m_Directional: bpy.props.BoolProperty(name='Directional', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_Size: bpy.props.FloatProperty(name='Size', default=0.5, update=BVTK_Node.outdate_vtk_status)
+    
+    b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+
+    def m_properties( self ):
+        return ['m_Directional','m_Size',]
+    def m_connections( self ):
+        return ([], ['output'], [], []) 
+    
+add_class( VTKCameraHandleSource )        
+TYPENAMES.append('VTKCameraHandleSourceType' )
 
 #--------------------------------------------------------------
 class VTKCapsuleSource(Node, BVTK_Node):
@@ -830,6 +849,7 @@ class VTKPSphereSource(Node, BVTK_Node):
     bl_idname = 'VTKPSphereSourceType'
     bl_label  = 'vtkPSphereSource'
     
+    m_GenerateNormals: bpy.props.BoolProperty(name='GenerateNormals', default=True, update=BVTK_Node.outdate_vtk_status)
     m_LatLongTessellation: bpy.props.BoolProperty(name='LatLongTessellation', default=True, update=BVTK_Node.outdate_vtk_status)
     m_PhiResolution: bpy.props.IntProperty(name='PhiResolution', default=8, update=BVTK_Node.outdate_vtk_status)
     m_ThetaResolution: bpy.props.IntProperty(name='ThetaResolution', default=8, update=BVTK_Node.outdate_vtk_status)
@@ -840,10 +860,10 @@ class VTKPSphereSource(Node, BVTK_Node):
     m_StartTheta: bpy.props.FloatProperty(name='StartTheta', default=0.0, update=BVTK_Node.outdate_vtk_status)
     m_Center: bpy.props.FloatVectorProperty(name='Center', default=[0.0, 0.0, 0.0], size=3, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=9, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=10, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_LatLongTessellation','m_PhiResolution','m_ThetaResolution','m_EndPhi','m_EndTheta','m_Radius','m_StartPhi','m_StartTheta','m_Center',]
+        return ['m_GenerateNormals','m_LatLongTessellation','m_PhiResolution','m_ThetaResolution','m_EndPhi','m_EndTheta','m_Radius','m_StartPhi','m_StartTheta','m_Center',]
     def m_connections( self ):
         return ([], ['output'], [], []) 
     
@@ -873,6 +893,42 @@ class VTKParametricFunctionSource(Node, BVTK_Node):
     
 add_class( VTKParametricFunctionSource )        
 TYPENAMES.append('VTKParametricFunctionSourceType' )
+
+#--------------------------------------------------------------
+class VTKPartitionedDataSetCollectionSource(Node, BVTK_Node):
+
+    bl_idname = 'VTKPartitionedDataSetCollectionSourceType'
+    bl_label  = 'vtkPartitionedDataSetCollectionSource'
+    
+    m_NumberOfShapes: bpy.props.IntProperty(name='NumberOfShapes', default=7, update=BVTK_Node.outdate_vtk_status)
+    
+    b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+
+    def m_properties( self ):
+        return ['m_NumberOfShapes',]
+    def m_connections( self ):
+        return ([], ['output'], [], []) 
+    
+add_class( VTKPartitionedDataSetCollectionSource )        
+TYPENAMES.append('VTKPartitionedDataSetCollectionSourceType' )
+
+#--------------------------------------------------------------
+class VTKPartitionedDataSetSource(Node, BVTK_Node):
+
+    bl_idname = 'VTKPartitionedDataSetSourceType'
+    bl_label  = 'vtkPartitionedDataSetSource'
+    
+    m_NumberOfPartitions: bpy.props.IntProperty(name='NumberOfPartitions', default=0, update=BVTK_Node.outdate_vtk_status)
+    
+    b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+
+    def m_properties( self ):
+        return ['m_NumberOfPartitions',]
+    def m_connections( self ):
+        return ([], ['output'], ['ParametricFunction'], []) 
+    
+add_class( VTKPartitionedDataSetSource )        
+TYPENAMES.append('VTKPartitionedDataSetSourceType' )
 
 #--------------------------------------------------------------
 class VTKPlaneSource(Node, BVTK_Node):
@@ -918,6 +974,25 @@ add_class( VTKPlatonicSolidSource )
 TYPENAMES.append('VTKPlatonicSolidSourceType' )
 
 #--------------------------------------------------------------
+class VTKPointHandleSource(Node, BVTK_Node):
+
+    bl_idname = 'VTKPointHandleSourceType'
+    bl_label  = 'vtkPointHandleSource'
+    
+    m_Directional: bpy.props.BoolProperty(name='Directional', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_Size: bpy.props.FloatProperty(name='Size', default=0.5, update=BVTK_Node.outdate_vtk_status)
+    
+    b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+
+    def m_properties( self ):
+        return ['m_Directional','m_Size',]
+    def m_connections( self ):
+        return ([], ['output'], [], []) 
+    
+add_class( VTKPointHandleSource )        
+TYPENAMES.append('VTKPointHandleSourceType' )
+
+#--------------------------------------------------------------
 class VTKPointLoad(Node, BVTK_Node):
 
     bl_idname = 'VTKPointLoadType'
@@ -926,13 +1001,12 @@ class VTKPointLoad(Node, BVTK_Node):
     m_ComputeEffectiveStress: bpy.props.BoolProperty(name='ComputeEffectiveStress', default=True, update=BVTK_Node.outdate_vtk_status)
     m_LoadValue: bpy.props.FloatProperty(name='LoadValue', default=1.0, update=BVTK_Node.outdate_vtk_status)
     m_PoissonsRatio: bpy.props.FloatProperty(name='PoissonsRatio', default=0.3, update=BVTK_Node.outdate_vtk_status)
-    m_SampleDimensions: bpy.props.IntVectorProperty(name='SampleDimensions', default=[50, 50, 50], size=3, update=BVTK_Node.outdate_vtk_status)
     m_ModelBounds: bpy.props.FloatVectorProperty(name='ModelBounds', default=[-1.0, 1.0, -1.0, 1.0, -1.0, 1.0], size=6, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_ComputeEffectiveStress','m_LoadValue','m_PoissonsRatio','m_SampleDimensions','m_ModelBounds',]
+        return ['m_ComputeEffectiveStress','m_LoadValue','m_PoissonsRatio','m_ModelBounds',]
     def m_connections( self ):
         return ([], ['output'], [], []) 
     
@@ -1075,12 +1149,11 @@ class VTKRandomHyperTreeGridSource(Node, BVTK_Node):
     m_Seed: bpy.props.IntProperty(name='Seed', default=0, update=BVTK_Node.outdate_vtk_status)
     m_SplitFraction: bpy.props.FloatProperty(name='SplitFraction', default=0.5, update=BVTK_Node.outdate_vtk_status)
     m_Dimensions: bpy.props.IntVectorProperty(name='Dimensions', default=[6, 6, 3], size=3, update=BVTK_Node.outdate_vtk_status)
-    m_OutputBounds: bpy.props.FloatVectorProperty(name='OutputBounds', default=[-10.0, 10.0, -10.0, 10.0, -10.0, 10.0], size=6, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_MaxDepth','m_Seed','m_SplitFraction','m_Dimensions','m_OutputBounds',]
+        return ['m_MaxDepth','m_Seed','m_SplitFraction','m_Dimensions',]
     def m_connections( self ):
         return ([], ['output'], [], []) 
     
@@ -1138,6 +1211,27 @@ class VTKRegularPolygonSource(Node, BVTK_Node):
     
 add_class( VTKRegularPolygonSource )        
 TYPENAMES.append('VTKRegularPolygonSourceType' )
+
+#--------------------------------------------------------------
+class VTKResizingWindowToImageFilter(Node, BVTK_Node):
+
+    bl_idname = 'VTKResizingWindowToImageFilterType'
+    bl_label  = 'vtkResizingWindowToImageFilter'
+    e_InputBufferType_items=[ (x,x,x) for x in ['RGB', 'RGBA', 'ZBuffer']]
+    
+    m_SizeLimit: bpy.props.IntProperty(name='SizeLimit', default=4000, update=BVTK_Node.outdate_vtk_status)
+    e_InputBufferType: bpy.props.EnumProperty(name='InputBufferType', default="RGB", items=e_InputBufferType_items, update=BVTK_Node.outdate_vtk_status)
+    m_Size: bpy.props.IntVectorProperty(name='Size', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
+    
+    b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+
+    def m_properties( self ):
+        return ['m_SizeLimit','e_InputBufferType','m_Size',]
+    def m_connections( self ):
+        return ([], ['output'], ['Input'], []) 
+    
+add_class( VTKResizingWindowToImageFilter )        
+TYPENAMES.append('VTKResizingWindowToImageFilterType' )
 
 #--------------------------------------------------------------
 class VTKRowQueryToTable(Node, BVTK_Node):
@@ -1232,8 +1326,9 @@ class VTKSelectionSource(Node, BVTK_Node):
     bl_idname = 'VTKSelectionSourceType'
     bl_label  = 'vtkSelectionSource'
     
-    m_ArrayName: bpy.props.StringProperty(name='ArrayName', default="", update=BVTK_Node.outdate_vtk_status)
-    m_QueryString: bpy.props.StringProperty(name='QueryString', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ArrayName: bpy.props.StringProperty(name='ArrayName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_AssemblyName: bpy.props.StringProperty(name='AssemblyName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_QueryString: bpy.props.StringProperty(name='QueryString', default="None", update=BVTK_Node.outdate_vtk_status)
     m_ArrayComponent: bpy.props.IntProperty(name='ArrayComponent', default=0, update=BVTK_Node.outdate_vtk_status)
     m_CompositeIndex: bpy.props.IntProperty(name='CompositeIndex', default=-1, update=BVTK_Node.outdate_vtk_status)
     m_ContainingCells: bpy.props.IntProperty(name='ContainingCells', default=1, update=BVTK_Node.outdate_vtk_status)
@@ -1244,10 +1339,10 @@ class VTKSelectionSource(Node, BVTK_Node):
     m_Inverse: bpy.props.IntProperty(name='Inverse', default=0, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfLayers: bpy.props.IntProperty(name='NumberOfLayers', default=0, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=11, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=12, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_ArrayName','m_QueryString','m_ArrayComponent','m_CompositeIndex','m_ContainingCells','m_ContentType','m_FieldType','m_HierarchicalIndex','m_HierarchicalLevel','m_Inverse','m_NumberOfLayers',]
+        return ['m_ArrayName','m_AssemblyName','m_QueryString','m_ArrayComponent','m_CompositeIndex','m_ContainingCells','m_ContentType','m_FieldType','m_HierarchicalIndex','m_HierarchicalLevel','m_Inverse','m_NumberOfLayers',]
     def m_connections( self ):
         return ([], ['output'], [], []) 
     
@@ -1294,6 +1389,7 @@ class VTKSphereSource(Node, BVTK_Node):
     bl_idname = 'VTKSphereSourceType'
     bl_label  = 'vtkSphereSource'
     
+    m_GenerateNormals: bpy.props.BoolProperty(name='GenerateNormals', default=True, update=BVTK_Node.outdate_vtk_status)
     m_LatLongTessellation: bpy.props.BoolProperty(name='LatLongTessellation', default=True, update=BVTK_Node.outdate_vtk_status)
     m_PhiResolution: bpy.props.IntProperty(name='PhiResolution', default=8, update=BVTK_Node.outdate_vtk_status)
     m_ThetaResolution: bpy.props.IntProperty(name='ThetaResolution', default=8, update=BVTK_Node.outdate_vtk_status)
@@ -1304,10 +1400,10 @@ class VTKSphereSource(Node, BVTK_Node):
     m_StartTheta: bpy.props.FloatProperty(name='StartTheta', default=0.0, update=BVTK_Node.outdate_vtk_status)
     m_Center: bpy.props.FloatVectorProperty(name='Center', default=[0.0, 0.0, 0.0], size=3, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=9, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=10, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_LatLongTessellation','m_PhiResolution','m_ThetaResolution','m_EndPhi','m_EndTheta','m_Radius','m_StartPhi','m_StartTheta','m_Center',]
+        return ['m_GenerateNormals','m_LatLongTessellation','m_PhiResolution','m_ThetaResolution','m_EndPhi','m_EndTheta','m_Radius','m_StartPhi','m_StartTheta','m_Center',]
     def m_connections( self ):
         return ([], ['output'], [], []) 
     
@@ -1395,7 +1491,7 @@ class VTKTextSource(Node, BVTK_Node):
     bl_label  = 'vtkTextSource'
     
     m_Backing: bpy.props.BoolProperty(name='Backing', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_Text: bpy.props.StringProperty(name='Text', default="", update=BVTK_Node.outdate_vtk_status)
+    m_Text: bpy.props.StringProperty(name='Text', default="None", update=BVTK_Node.outdate_vtk_status)
     m_BackgroundColor: bpy.props.FloatVectorProperty(name='BackgroundColor', default=[0.0, 0.0, 0.0], size=3, update=BVTK_Node.outdate_vtk_status)
     m_ForegroundColor: bpy.props.FloatVectorProperty(name='ForegroundColor', default=[1.0, 1.0, 1.0], size=3, update=BVTK_Node.outdate_vtk_status)
     
@@ -1546,7 +1642,7 @@ class VTKVectorText(Node, BVTK_Node):
     bl_idname = 'VTKVectorTextType'
     bl_label  = 'vtkVectorText'
     
-    m_Text: bpy.props.StringProperty(name='Text', default="", update=BVTK_Node.outdate_vtk_status)
+    m_Text: bpy.props.StringProperty(name='Text', default="None", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -1640,7 +1736,7 @@ class VTKWordCloud(Node, BVTK_Node):
     def m_properties( self ):
         return ['m_BWMask','m_BackgroundColorName','m_ColorSchemeName','m_FileName','m_FontFileName','m_MaskColorName','m_MaskFileName','m_StopListFileName','m_Title','m_WordColorName','m_DPI','m_FontMultiplier','m_Gap','m_MaxFontSize','m_MinFontSize','m_MinFrequency',]
     def m_connections( self ):
-        return ([], ['output'], ['Orientations'], []) 
+        return ([], ['output'], [], []) 
     
 add_class( VTKWordCloud )        
 TYPENAMES.append('VTKWordCloudType' )
