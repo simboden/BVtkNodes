@@ -1,6 +1,7 @@
 # ------------------------------------------------------------------------------
 # populate_db.py - Populate VTK aclass definition database
 # Run example: python3 generate/populate_db.py 2>&1 | tee populate_db.log
+# Tested and run with Python 3.9
 # ------------------------------------------------------------------------------
 
 # import vtk
@@ -126,6 +127,7 @@ Weird = 13
 TypeMap = {}
 TypeMap["bool"] = (2, 1)
 TypeMap["string"] = (3, 1)
+TypeMap["str"] = (3, 1)  # VTK 9.1.0 upgrade addition
 TypeMap["int"] = (4, 1)
 TypeMap["float"] = (5, 1)
 TypeMap["enum"] = (6, 1)

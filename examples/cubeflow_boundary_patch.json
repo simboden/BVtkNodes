@@ -84,7 +84,7 @@
         },
         {
             "bl_idname": "BVTK_Node_MultiBlockLeafType",
-            "block": "Patches",
+            "block": "boundary",
             "color": [
                 0.5,
                 0.5,

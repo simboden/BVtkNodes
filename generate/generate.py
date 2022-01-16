@@ -2,11 +2,14 @@
 # generate.py - Generate gen_VTK*.py files from vtkdb.sqlite database
 # Install jinja2: pip3 install jinja2 --user
 # Run example: python3 generate/generate.py
+# Tested and run with Python 3.9
 # ------------------------------------------------------------------------------
 import sqlite3
 import os
 import os.path
 from jinja2 import Template
+
+debug_print = False
 
 # Variable type map
 TypeMap = {}
@@ -22,6 +25,7 @@ TypeMap["FloatVector"] = "FloatVectorProperty"
 # Property: id, class, banned, editable, name, args, value, type, size, items, note
 
 
+
 def get_classes(group):
     """Generate classes dictionary from vtkdb.sqlite"""
     c_list = []
@@ -35,6 +39,8 @@ def get_classes(group):
     classes = cursor.fetchall()
 
     for c in classes:
+        if debug_print:
+            print("Processing " + c[1])
         dic = {
             "name": c[1],
             "props": [],
@@ -63,6 +69,8 @@ def get_classes(group):
                 items = [x[1] for x in eval(items)]
 
             if not ptype in TypeMap:
+                if debug_print:
+                    print("  missing TypeMap for " + pname + ", type " + str(ptype))
                 dic["extra_connections"].append(pname)
                 continue  # not a property
 
@@ -74,6 +82,9 @@ def get_classes(group):
                 value = value.replace('"""', '""')
                 if value.startswith("\n") or value.startswith("\\n"):
                     value = " "
+                # Workaround for VTK 9.1.0 default (^M) gives unicode problems
+                if pname == "UnicodeRecordDelimiters":
+                    value = '""'
 
             if ptype == "BoolProperty" and value != "True" and value != "False":
                 if value[0] != 0:

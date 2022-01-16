@@ -6,6 +6,7 @@ import json
 
 # Import the addon to be able to import the node tree
 from BVtkNodes.tree import insert_into_node_tree
+from BVtkNodes.cache import BVTKCache
 
 
 def assert_quit(condition, message):
@@ -70,10 +71,18 @@ def import_json_node_tree(json_fname):
         with open(json_fname, "r") as json_file:
             json_data = json.load(json_file)
 
+        # Disable updating nodes during node creation
+        bpy.context.scene.bvtknodes_settings.update_mode = "no-automatic-updates"
+
+        # Import nodes
         node_tree_name = "NodeTree"
         assert_quit(node_tree_name in bpy.data.node_groups, "Found no BVTK NodeTree")
         node_tree = bpy.data.node_groups[node_tree_name]
         insert_into_node_tree(node_tree, json_data["nodes"], json_data["links"])
+
+        # Set automatic update mode and update
+        bpy.context.scene.bvtknodes_settings.update_mode = "update-all"
+        BVTKCache.update_all()
 
     except Exception as ex:
         assert_quit(False, "Importing the json node tree failed with %s" % (ex))

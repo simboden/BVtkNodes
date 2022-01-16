@@ -1,8 +1,8 @@
 #Dependencies in pip
-$PWD/blender/2.83/python/bin/python3.7m -m ensurepip
-$PWD/blender/2.83/python/bin/python3.7m -m pip install --upgrade pip
-$PWD/blender/2.83/python/bin/python3.7m -m pip install vtk==9.0.1 pyvista
+$PWD/blender/2.93/python/bin/python3.9 -m ensurepip
+$PWD/blender/2.93/python/bin/python3.9 -m pip install --upgrade pip
+$PWD/blender/2.93/python/bin/python3.9 -m pip install vtk==9.1.0 pyvista
 
 #Install the addon
-mkdir $PWD/blender/2.83/scripts/addons/BVtkNodes
-unzip BVtkNodes.zip -d $PWD/blender/2.83/scripts/addons/BVtkNodes
+mkdir $PWD/blender/2.93/scripts/addons/BVtkNodes
+unzip BVtkNodes.zip -d $PWD/blender/2.93/scripts/addons/BVtkNodes

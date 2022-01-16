@@ -204,12 +204,13 @@ def node_tree_from_dict(context, node_tree_dict):
     update_mode = bpy.context.scene.bvtknodes_settings.update_mode
     old_mode = str(update_mode)
     bpy.context.scene.bvtknodes_settings.update_mode = "no-automatic-updates"
-
+    l.debug("Starting node import, set update mode to no-automatic-updates")
     node_tree = space.node_tree
     insert_into_node_tree(node_tree, node_tree_dict["nodes"], node_tree_dict["links"])
 
     # Restore Update Mode and update if needed
     bpy.context.scene.bvtknodes_settings.update_mode = old_mode
+    l.debug("Stopping node import, restored update mode to " + old_mode)
     if update_mode == "update-all":
         BVTKCache.update_all()
 

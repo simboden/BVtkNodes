@@ -220,7 +220,7 @@
             "m_NonlinearSubdivisionLevel": 1,
             "m_OriginalCellIdsName": "vtkOriginalCellIds",
             "m_OriginalPointIdsName": "vtkOriginalPointIds",
-            "m_PassThroughCellIds": true,
+            "m_PassThroughCellIds": false,
             "m_PassThroughPointIds": true,
             "m_PieceInvariant": 0,
             "m_RegionArrayName": "material",

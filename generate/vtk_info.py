@@ -9,7 +9,7 @@ import vtk
 # from .vtk_patch import vtk
 
 skip_count = 0
-
+debug_print = False
 
 def print_skip(name):
     """Prints class name that was not included in class database"""
@@ -209,6 +209,10 @@ BannedNames = (
     "vtkPBGLBreadthFirstSearch",
     "vtkTryDowncast",
     "vtkVariantBoostSerialization",
+    #
+    # VTK 9.1.0 additions, with problematic method names
+    #
+    "vtkWebApplication",  # double free or corruption (fasttop)
 )
 
 HiddenMethods = (
@@ -328,6 +332,51 @@ InterestingClasses = (
     vtk.vtkInitialValueProblemSolver,  # Integrator
     vtk.vtkParametricFunction,  # parametric function
 )
+
+def text_in_parenthesis(s):
+    """Return substring of s which is inside parenthesis"""
+    return s[s.find("(")+1:s.find(")")]
+
+def remove_argument_names(s):
+    """Remove argument names from argument text string of arguments, e.g.
+    'self, _arg1:float, _arg2:float' -> 'float, float'
+    """
+    args = []
+    for x in s.split(","):
+        if x == 'self':
+            continue
+        if ":" in x:
+            args.append(x.split(":")[1].strip())
+        else:
+            args.append(x.strip())
+    return ",".join(args)
+
+def extract_args(s):
+    """Extract return variable types from VTK Python doc strings for both
+    Set and Get methods.
+    """
+
+    # Examples used for developing extraction:
+    # Processing vtk3DLinearGridCrinkleExtractor.SetCopyCellData
+    # setter_doc: SetCopyCellData(self, _arg:bool) -> None
+    # getter_doc: GetCopyCellData(self) -> bool
+    # Processing vtkAxes.SetOrigin
+    # setter_doc: SetOrigin(self, _arg1:float, _arg2:float, _arg3:float) -> None
+    # getter_doc: GetOrigin(self) -> (float, float, float)
+    # Processing vtkExtractBlockUsingDataAssembly.SetSelector
+    # setter_doc: SetSelector(self, selector:str) -> None
+    # getter_doc: GetSelector(self, index:int) -> str
+
+    if ">" in s:
+        if s.startswith("Get"):
+            s = s.split(">")[1]  # take text right to ->
+        if s.startswith("Set"):
+            s = s.split(">")[0]  # take text left to ->
+    if "(" in s:
+        s = text_in_parenthesis(s)
+    s = remove_argument_names(s)
+    return s
+
 # -------------------------------------------------
 # collect infos
 # -------------------------------------------------
@@ -405,41 +454,43 @@ for name in sorted(dir(vtk)):
 
     # scan methods searching for properties
     for x in m:
+        if debug_print:
+            print("Processing " + str(name) + "." + str(x))
+
+        # Handle function pairs like SetXyz and GetXyz
         if (
             x.startswith("Set") and "Get" + x[3:] in m
-        ):  # if method is a Setter and there is a matching Getter
+        ):
             p = x[3:]
             setter = getattr(o, "Set" + p)
             getter = getattr(o, "Get" + p)
 
-            # the first line in the method doc is the python-function-signature --- example: SetXXX(int) -- GetXXX()->int
+            # Assumes that first line in the method doc is the Python
+            # function signature. If no end parenthesis is found, add
+            # also second line.
             setter_doc = setter.__doc__.split("\n")[0]
-            getter_doc = getter.__doc__.split("\n")[0]
+            if not ")" in setter_doc:
+                setter_doc += setter.__doc__.split("\n")[1]
+            setter_arg = extract_args(setter_doc)
 
-            # extract the arguments.
-            # sometime getter have no '->' - meaning that they return the value in the arguments,
-            # in some case these properties are reduntant, so lets ignore them
-            setter_arg = setter_doc.split("(")[1].replace(")", "").replace(" ", "")
-            if ">" in getter_doc:
-                getter_arg = (
-                    getter_doc.split(">")[1]
-                    .replace(")", "")
-                    .replace("(", "")
-                    .replace(" ", "")
-                )
-            else:
-                getter_arg = "none"
+            getter_doc = getter.__doc__.split("\n")[0]
+            if not ")" in getter_doc:
+                getter_doc += getter.__doc__.split("\n")[1]
+            getter_arg = extract_args(getter_doc)
 
             p_note = ""
-            # setter and getter args should match
+
+            # Setter and getter args should match
+            if debug_print:
+                print("setter_doc: " + str(setter_doc))  # + " -- detected args: " + setter_arg)
+                print("getter_doc: " + str(getter_doc))  # + " -- detected args: " + getter_arg)
             if setter_arg != getter_arg:
                 setter_doc = setter_doc.replace("V.", "").replace(p, "")
                 getter_doc = getter_doc.replace("V.", "").replace(p, "")
-                p_note = "# ko: arg mismatch " + setter_doc + " " + getter_doc
+                p_note = "# ko: arg mismatch " + setter_doc + " :: " + getter_doc
                 # print( 'ko ', p.ljust(30), 'args mismatch:', setter_doc, getter_doc)
             else:
-
-                # it this property return a vtkObject, which is already created, this is an optional-input-property
+                # if this property returns a vtkObject, which is already created, then this is an optional input property
                 if not "," in getter_arg and getter_arg.startswith("vtk"):
                     po = getter()
                     if po:
@@ -448,7 +499,11 @@ for name in sorted(dir(vtk)):
                     else:
                         p_value = "0"
                 else:
-                    value = getter()  # get the default value by calling the getter
+                    # Get the default value by calling the getter
+                    try:
+                        value = getter()
+                    except:
+                        value = 0
                     if value == float("inf"):
                         value = 1e300
                     if value == float("-inf"):
@@ -488,6 +543,9 @@ for name in sorted(dir(vtk)):
                             for x in enum_value_to_name.keys()
                         ]
                         p_items.sort()
+
+            if "p_value" not in locals():
+                raise Exception("No p_value for " + str(name) + "." + str(p))
 
             props.append(
                 {

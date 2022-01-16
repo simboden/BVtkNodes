@@ -97,8 +97,8 @@ This version was demonstrated in the
 2. `tkeskita/bvtknodes <https://github.com/tkeskita/BVtkNodes>`_
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Upgraded and developed version for Blender 2.83 LTS series using VTK
-9.0.1. Uses a new update system and a new mesh generator node
+Upgraded and developed version for Blender 2.93 LTS series using VTK
+9.1.0. Uses a new update system and a new mesh generator node
 *VTK To Blender Mesh* instead of the legacy *VKT To Blender* node.
 
 .. note::
@@ -862,6 +862,7 @@ Please check this list first though:
     import vtk
     vtk.vtkVersion().GetVTKVersion()
 
+  See instructions for `install VTK into Blender Python via Pip <https://github.com/tkeskita/BVtkNodes/blob/master/pip_install_vtk.md>`_.
 * Please provide an image of your node setup with a resolution high
   enough to read the node contents.
 * Please include output of an :ref:`info-node` node in an image, so it
