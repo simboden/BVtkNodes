@@ -23,7 +23,7 @@ class BVTK_PT_Inspect(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        from BVtkNodes import bl_info
+        from . import bl_info
 
         layout.label(
             text="BVTKNodes version: " + ".".join(str(i) for i in bl_info["version"])

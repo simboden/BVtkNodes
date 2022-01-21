@@ -64,10 +64,18 @@ BVTKNodes includes a testing framework (located in the `test` directory) that sh
 Executing Tests
 ***************
 * First, make sure that BVTKNodes is correctly installed (see :ref:`general_installation`) by running one of the examples located in the Tree Tab.
+* Tests require that BVTKNodes is importable to Python by command
+  `import BVtkNodes`. This requires that the root folder name of
+  BVTKNodes is named exactly as `BVtkNodes`. If you've installed
+  BVTKNodes by downloading zip file from Github, the folder name is
+  most likely `BVtkNodes-master` (you can see the full path in Blender
+  Preferences -> Add-ons list), and the tests fail. In this case you
+  can disable BVTKNodes add-on in Blender, rename the folder, and
+  re-enable the add-on.
 * Set environment variable *BLENDER_PATH* to the Blender executable that you want to test.
 * Run ``python test/test_main.py`` with a Python environment that has NumPy (and optionally PyVista, best installed using pip) package installed.
 
-Running the tests should result in an output similar to the following:
+Running the tests should result in an "OK" output similar to the following:
 
 .. code-block:: bash
 
