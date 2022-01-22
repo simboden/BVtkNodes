@@ -512,6 +512,9 @@ def edges_and_faces_to_bmesh(
 
     # Create BMFaces
     for vis in faces.values():
+        if len(vis) < 3:
+            l.debug("Warning: Skipping face with verts: " + str(vis))
+            continue
         for vi in vis:
             add_vert(vi, vertmap, vcoords, bm)
             add_vi(vi, vimap, viset)
