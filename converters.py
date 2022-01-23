@@ -295,6 +295,15 @@ def map_elements(vals, slist):
     return dlist
 
 
+def add_verts_to_facelist(verts, facelist):
+    """Help function to check and add verts to facelist"""
+    if len(set(verts)) > 2:
+        facelist.append(verts)
+    else:
+        l.debug("Skipping face, not enough unique verts: " + str(verts))
+    return facelist
+
+
 def vtk_cell_to_edges_and_faces(cell_type, vis, polyfacelist):
     """Create lists of edge vertices and face vertices from argument VTK
     cell type and VTK vertex ids. Polyfacelist is face stream for polyhedrons.
@@ -343,11 +352,14 @@ def vtk_cell_to_edges_and_faces(cell_type, vis, polyfacelist):
 
         # Pairwise triangle generation to get correct normal directions
         for i in range(0, floor(len(vis) / 2), 2):
-            facelist.append([vis[i], vis[i + 1], vis[i + 2]])
-            facelist.append([vis[i + 1], vis[i + 3], vis[i + 2]])
+            verts = [vis[i], vis[i + 1], vis[i + 2]]
+            facelist = add_verts_to_facelist(verts, facelist)
+            verts = [vis[i + 1], vis[i + 3], vis[i + 2]]
+            facelist = add_verts_to_facelist(verts, facelist)
         # Last odd triangle
         if len(vis) % 2 == 1:
-            facelist.append([vis[-3], vis[-2], vis[-1]])
+            verts=[vis[-3], vis[-2], vis[-1]]
+            facelist = add_verts_to_facelist(verts, facelist)
         return [None], facelist
 
     elif cell_type == 7:  # VTK_POLYGON
@@ -451,7 +463,7 @@ def process_cell_face(faces, verts):
     # Discard face if same vertices are used many times.
     # At least vtkContourFilter can produce such bad triangles.
     if not (sorted(verts) == sorted(set(verts))):
-        l.warning("Discarding illegal face (verts %s)" % str(verts))
+        l.debug("Discarding illegal face (verts %s)" % str(verts))
         return faces
 
     key = str(sorted(verts))
@@ -512,8 +524,8 @@ def edges_and_faces_to_bmesh(
 
     # Create BMFaces
     for vis in faces.values():
-        if len(vis) < 3:
-            l.debug("Warning: Skipping face with verts: " + str(vis))
+        if len(set(vis)) < 3:
+            l.debug("Skipping face with verts " + str(vis))
             continue
         for vi in vis:
             add_vert(vi, vertmap, vcoords, bm)
