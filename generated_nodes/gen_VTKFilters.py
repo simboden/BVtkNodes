@@ -1725,7 +1725,7 @@ class VTKTemporalPathLineFilter(Node, BVTK_Node):
     
     m_BackwardTime: bpy.props.BoolProperty(name='BackwardTime', default=False, update=BVTK_Node.outdate_vtk_status)
     m_KeepDeadTrails: bpy.props.BoolProperty(name='KeepDeadTrails', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_IdChannelArray: bpy.props.StringProperty(name='IdChannelArray', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_IdChannelArray: bpy.props.StringProperty(name='IdChannelArray', default="", update=BVTK_Node.outdate_vtk_status)
     m_MaskPoints: bpy.props.IntProperty(name='MaskPoints', default=200, update=BVTK_Node.outdate_vtk_status)
     m_MaxTrackLength: bpy.props.IntProperty(name='MaxTrackLength', default=10, update=BVTK_Node.outdate_vtk_status)
     m_MaxStepDistance: bpy.props.FloatVectorProperty(name='MaxStepDistance', default=[1.0, 1.0, 1.0], size=3, update=BVTK_Node.outdate_vtk_status)

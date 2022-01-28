@@ -257,7 +257,7 @@ class VTKAngularPeriodicFilter(Node, BVTK_Node):
     e_RotationMode_items=[ (x,x,x) for x in ['DirectAngle', 'ArrayValue']]
     
     m_ComputeRotationsOnTheFly: bpy.props.BoolProperty(name='ComputeRotationsOnTheFly', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_RotationArrayName: bpy.props.StringProperty(name='RotationArrayName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_RotationArrayName: bpy.props.StringProperty(name='RotationArrayName', default="", update=BVTK_Node.outdate_vtk_status)
     m_NumberOfPeriods: bpy.props.IntProperty(name='NumberOfPeriods', default=1, update=BVTK_Node.outdate_vtk_status)
     m_RotationAngle: bpy.props.FloatProperty(name='RotationAngle', default=180.0, update=BVTK_Node.outdate_vtk_status)
     e_IterationMode: bpy.props.EnumProperty(name='IterationMode', default="Max", items=e_IterationMode_items, update=BVTK_Node.outdate_vtk_status)
@@ -414,7 +414,7 @@ class VTKAppendPoints(Node, BVTK_Node):
     bl_idname = 'VTKAppendPointsType'
     bl_label  = 'vtkAppendPoints'
     
-    m_InputIdArrayName: bpy.props.StringProperty(name='InputIdArrayName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_InputIdArrayName: bpy.props.StringProperty(name='InputIdArrayName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -502,7 +502,7 @@ class VTKArrayCalculator(Node, BVTK_Node):
     m_ReplaceInvalidValues: bpy.props.BoolProperty(name='ReplaceInvalidValues', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ResultNormals: bpy.props.BoolProperty(name='ResultNormals', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ResultTCoords: bpy.props.BoolProperty(name='ResultTCoords', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_Function: bpy.props.StringProperty(name='Function', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_Function: bpy.props.StringProperty(name='Function', default="", update=BVTK_Node.outdate_vtk_status)
     m_ResultArrayName: bpy.props.StringProperty(name='ResultArrayName', default="resultArray", update=BVTK_Node.outdate_vtk_status)
     m_ResultArrayType: bpy.props.IntProperty(name='ResultArrayType', default=11, update=BVTK_Node.outdate_vtk_status)
     m_ReplacementValue: bpy.props.FloatProperty(name='ReplacementValue', default=0.0, update=BVTK_Node.outdate_vtk_status)
@@ -603,7 +603,7 @@ class VTKBlankStructuredGrid(Node, BVTK_Node):
     bl_idname = 'VTKBlankStructuredGridType'
     bl_label  = 'vtkBlankStructuredGrid'
     
-    m_ArrayName: bpy.props.StringProperty(name='ArrayName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_ArrayName: bpy.props.StringProperty(name='ArrayName', default="", update=BVTK_Node.outdate_vtk_status)
     m_ArrayId: bpy.props.IntProperty(name='ArrayId', default=-1, update=BVTK_Node.outdate_vtk_status)
     m_Component: bpy.props.IntProperty(name='Component', default=0, update=BVTK_Node.outdate_vtk_status)
     m_MaxBlankingValue: bpy.props.FloatProperty(name='MaxBlankingValue', default=1e+30, update=BVTK_Node.outdate_vtk_status)
@@ -1321,7 +1321,7 @@ class VTKCutMaterial(Node, BVTK_Node):
     bl_idname = 'VTKCutMaterialType'
     bl_label  = 'vtkCutMaterial'
     
-    m_ArrayName: bpy.props.StringProperty(name='ArrayName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_ArrayName: bpy.props.StringProperty(name='ArrayName', default="", update=BVTK_Node.outdate_vtk_status)
     m_MaterialArrayName: bpy.props.StringProperty(name='MaterialArrayName', default="material", update=BVTK_Node.outdate_vtk_status)
     m_Material: bpy.props.IntProperty(name='Material', default=0, update=BVTK_Node.outdate_vtk_status)
     m_UpVector: bpy.props.FloatVectorProperty(name='UpVector', default=[0.0, 0.0, 1.0], size=3, update=BVTK_Node.outdate_vtk_status)
@@ -1556,7 +1556,7 @@ class VTKDateToNumeric(Node, BVTK_Node):
     bl_idname = 'VTKDateToNumericType'
     bl_label  = 'vtkDateToNumeric'
     
-    m_DateFormat: bpy.props.StringProperty(name='DateFormat', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_DateFormat: bpy.props.StringProperty(name='DateFormat', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -2999,10 +2999,10 @@ class VTKGradientFilter(Node, BVTK_Node):
     m_ComputeQCriterion: bpy.props.BoolProperty(name='ComputeQCriterion', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ComputeVorticity: bpy.props.BoolProperty(name='ComputeVorticity', default=True, update=BVTK_Node.outdate_vtk_status)
     m_FasterApproximation: bpy.props.BoolProperty(name='FasterApproximation', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_DivergenceArrayName: bpy.props.StringProperty(name='DivergenceArrayName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_QCriterionArrayName: bpy.props.StringProperty(name='QCriterionArrayName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_ResultArrayName: bpy.props.StringProperty(name='ResultArrayName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_VorticityArrayName: bpy.props.StringProperty(name='VorticityArrayName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_DivergenceArrayName: bpy.props.StringProperty(name='DivergenceArrayName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_QCriterionArrayName: bpy.props.StringProperty(name='QCriterionArrayName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ResultArrayName: bpy.props.StringProperty(name='ResultArrayName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_VorticityArrayName: bpy.props.StringProperty(name='VorticityArrayName', default="", update=BVTK_Node.outdate_vtk_status)
     m_ContributingCellOption: bpy.props.IntProperty(name='ContributingCellOption', default=0, update=BVTK_Node.outdate_vtk_status)
     m_ReplacementValueOption: bpy.props.IntProperty(name='ReplacementValueOption', default=0, update=BVTK_Node.outdate_vtk_status)
     
@@ -5797,7 +5797,7 @@ class VTKKdTreeSelector(Node, BVTK_Node):
     bl_label  = 'vtkKdTreeSelector'
     
     m_SingleSelection: bpy.props.BoolProperty(name='SingleSelection', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_SelectionFieldName: bpy.props.StringProperty(name='SelectionFieldName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_SelectionFieldName: bpy.props.StringProperty(name='SelectionFieldName', default="", update=BVTK_Node.outdate_vtk_status)
     m_SelectionAttribute: bpy.props.IntProperty(name='SelectionAttribute', default=-1, update=BVTK_Node.outdate_vtk_status)
     m_SingleSelectionThreshold: bpy.props.FloatProperty(name='SingleSelectionThreshold', default=1.0, update=BVTK_Node.outdate_vtk_status)
     
@@ -6012,7 +6012,7 @@ class VTKMapArrayValues(Node, BVTK_Node):
     bl_label  = 'vtkMapArrayValues'
     
     m_PassArray: bpy.props.BoolProperty(name='PassArray', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_InputArrayName: bpy.props.StringProperty(name='InputArrayName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_InputArrayName: bpy.props.StringProperty(name='InputArrayName', default="", update=BVTK_Node.outdate_vtk_status)
     m_OutputArrayName: bpy.props.StringProperty(name='OutputArrayName', default="ArrayMap", update=BVTK_Node.outdate_vtk_status)
     m_FieldType: bpy.props.IntProperty(name='FieldType', default=0, update=BVTK_Node.outdate_vtk_status)
     m_OutputArrayType: bpy.props.IntProperty(name='OutputArrayType', default=6, update=BVTK_Node.outdate_vtk_status)
@@ -6289,10 +6289,10 @@ class VTKMergeVectorComponents(Node, BVTK_Node):
     bl_label  = 'vtkMergeVectorComponents'
     e_AttributeType_items=[ (x,x,x) for x in ['PointData', 'CellData']]
     
-    m_OutputVectorName: bpy.props.StringProperty(name='OutputVectorName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_XArrayName: bpy.props.StringProperty(name='XArrayName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_YArrayName: bpy.props.StringProperty(name='YArrayName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_ZArrayName: bpy.props.StringProperty(name='ZArrayName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_OutputVectorName: bpy.props.StringProperty(name='OutputVectorName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_XArrayName: bpy.props.StringProperty(name='XArrayName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_YArrayName: bpy.props.StringProperty(name='YArrayName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ZArrayName: bpy.props.StringProperty(name='ZArrayName', default="", update=BVTK_Node.outdate_vtk_status)
     e_AttributeType: bpy.props.EnumProperty(name='AttributeType', default="PointData", items=e_AttributeType_items, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
@@ -7095,8 +7095,8 @@ class VTKParallelVectors(Node, BVTK_Node):
     bl_idname = 'VTKParallelVectorsType'
     bl_label  = 'vtkParallelVectors'
     
-    m_FirstVectorFieldName: bpy.props.StringProperty(name='FirstVectorFieldName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_SecondVectorFieldName: bpy.props.StringProperty(name='SecondVectorFieldName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FirstVectorFieldName: bpy.props.StringProperty(name='FirstVectorFieldName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_SecondVectorFieldName: bpy.props.StringProperty(name='SecondVectorFieldName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -9108,9 +9108,9 @@ class VTKTableToPolyData(Node, BVTK_Node):
     
     m_Create2DPoints: bpy.props.BoolProperty(name='Create2DPoints', default=False, update=BVTK_Node.outdate_vtk_status)
     m_PreserveCoordinateColumnsAsDataArrays: bpy.props.BoolProperty(name='PreserveCoordinateColumnsAsDataArrays', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_XColumn: bpy.props.StringProperty(name='XColumn', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_YColumn: bpy.props.StringProperty(name='YColumn', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_ZColumn: bpy.props.StringProperty(name='ZColumn', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_XColumn: bpy.props.StringProperty(name='XColumn', default="", update=BVTK_Node.outdate_vtk_status)
+    m_YColumn: bpy.props.StringProperty(name='YColumn', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ZColumn: bpy.props.StringProperty(name='ZColumn', default="", update=BVTK_Node.outdate_vtk_status)
     m_XColumnIndex: bpy.props.IntProperty(name='XColumnIndex', default=-1, update=BVTK_Node.outdate_vtk_status)
     m_XComponent: bpy.props.IntProperty(name='XComponent', default=0, update=BVTK_Node.outdate_vtk_status)
     m_YColumnIndex: bpy.props.IntProperty(name='YColumnIndex', default=-1, update=BVTK_Node.outdate_vtk_status)
@@ -9134,9 +9134,9 @@ class VTKTableToStructuredGrid(Node, BVTK_Node):
     bl_idname = 'VTKTableToStructuredGridType'
     bl_label  = 'vtkTableToStructuredGrid'
     
-    m_XColumn: bpy.props.StringProperty(name='XColumn', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_YColumn: bpy.props.StringProperty(name='YColumn', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_ZColumn: bpy.props.StringProperty(name='ZColumn', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_XColumn: bpy.props.StringProperty(name='XColumn', default="", update=BVTK_Node.outdate_vtk_status)
+    m_YColumn: bpy.props.StringProperty(name='YColumn', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ZColumn: bpy.props.StringProperty(name='ZColumn', default="", update=BVTK_Node.outdate_vtk_status)
     m_XComponent: bpy.props.IntProperty(name='XComponent', default=0, update=BVTK_Node.outdate_vtk_status)
     m_YComponent: bpy.props.IntProperty(name='YComponent', default=0, update=BVTK_Node.outdate_vtk_status)
     m_ZComponent: bpy.props.IntProperty(name='ZComponent', default=0, update=BVTK_Node.outdate_vtk_status)
@@ -9157,7 +9157,7 @@ class VTKTemporalArrayOperatorFilter(Node, BVTK_Node):
     bl_idname = 'VTKTemporalArrayOperatorFilterType'
     bl_label  = 'vtkTemporalArrayOperatorFilter'
     
-    m_OutputArrayNameSuffix: bpy.props.StringProperty(name='OutputArrayNameSuffix', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_OutputArrayNameSuffix: bpy.props.StringProperty(name='OutputArrayNameSuffix', default="", update=BVTK_Node.outdate_vtk_status)
     m_FirstTimeStepIndex: bpy.props.IntProperty(name='FirstTimeStepIndex', default=0, update=BVTK_Node.outdate_vtk_status)
     m_Operator: bpy.props.IntProperty(name='Operator', default=0, update=BVTK_Node.outdate_vtk_status)
     m_SecondTimeStepIndex: bpy.props.IntProperty(name='SecondTimeStepIndex', default=0, update=BVTK_Node.outdate_vtk_status)
@@ -9966,7 +9966,7 @@ class VTKUnstructuredGridQuadricDecimation(Node, BVTK_Node):
     bl_idname = 'VTKUnstructuredGridQuadricDecimationType'
     bl_label  = 'vtkUnstructuredGridQuadricDecimation'
     
-    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="", update=BVTK_Node.outdate_vtk_status)
     m_AutoAddCandidates: bpy.props.IntProperty(name='AutoAddCandidates', default=1, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfCandidates: bpy.props.IntProperty(name='NumberOfCandidates', default=8, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfEdgesToDecimate: bpy.props.IntProperty(name='NumberOfEdgesToDecimate', default=0, update=BVTK_Node.outdate_vtk_status)
@@ -10287,10 +10287,10 @@ class VTKWeightedTransformFilter(Node, BVTK_Node):
     bl_label  = 'vtkWeightedTransformFilter'
     
     m_AddInputValues: bpy.props.BoolProperty(name='AddInputValues', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_CellDataTransformIndexArray: bpy.props.StringProperty(name='CellDataTransformIndexArray', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_CellDataWeightArray: bpy.props.StringProperty(name='CellDataWeightArray', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TransformIndexArray: bpy.props.StringProperty(name='TransformIndexArray', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_WeightArray: bpy.props.StringProperty(name='WeightArray', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_CellDataTransformIndexArray: bpy.props.StringProperty(name='CellDataTransformIndexArray', default="", update=BVTK_Node.outdate_vtk_status)
+    m_CellDataWeightArray: bpy.props.StringProperty(name='CellDataWeightArray', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TransformIndexArray: bpy.props.StringProperty(name='TransformIndexArray', default="", update=BVTK_Node.outdate_vtk_status)
+    m_WeightArray: bpy.props.StringProperty(name='WeightArray', default="", update=BVTK_Node.outdate_vtk_status)
     m_NumberOfTransforms: bpy.props.IntProperty(name='NumberOfTransforms', default=0, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
@@ -10519,10 +10519,10 @@ class VTKmGradient(Node, BVTK_Node):
     m_ComputeVorticity: bpy.props.BoolProperty(name='ComputeVorticity', default=True, update=BVTK_Node.outdate_vtk_status)
     m_FasterApproximation: bpy.props.BoolProperty(name='FasterApproximation', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ForceVTKm: bpy.props.BoolProperty(name='ForceVTKm', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_DivergenceArrayName: bpy.props.StringProperty(name='DivergenceArrayName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_QCriterionArrayName: bpy.props.StringProperty(name='QCriterionArrayName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_ResultArrayName: bpy.props.StringProperty(name='ResultArrayName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_VorticityArrayName: bpy.props.StringProperty(name='VorticityArrayName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_DivergenceArrayName: bpy.props.StringProperty(name='DivergenceArrayName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_QCriterionArrayName: bpy.props.StringProperty(name='QCriterionArrayName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ResultArrayName: bpy.props.StringProperty(name='ResultArrayName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_VorticityArrayName: bpy.props.StringProperty(name='VorticityArrayName', default="", update=BVTK_Node.outdate_vtk_status)
     m_ContributingCellOption: bpy.props.IntProperty(name='ContributingCellOption', default=0, update=BVTK_Node.outdate_vtk_status)
     m_ReplacementValueOption: bpy.props.IntProperty(name='ReplacementValueOption', default=0, update=BVTK_Node.outdate_vtk_status)
     

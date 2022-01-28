@@ -11,7 +11,7 @@ class VTKAMREnzoParticlesReader(Node, BVTK_Node):
     bl_label  = 'vtkAMREnzoParticlesReader'
     
     m_FilterLocation: bpy.props.BoolProperty(name='FilterLocation', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_Frequency: bpy.props.IntProperty(name='Frequency', default=1, update=BVTK_Node.outdate_vtk_status)
     m_ParticleType: bpy.props.IntProperty(name='ParticleType', default=-1, update=BVTK_Node.outdate_vtk_status)
     
@@ -33,7 +33,7 @@ class VTKAMREnzoReader(Node, BVTK_Node):
     
     m_ConvertToCGS: bpy.props.BoolProperty(name='ConvertToCGS', default=True, update=BVTK_Node.outdate_vtk_status)
     m_EnableCaching: bpy.props.BoolProperty(name='EnableCaching', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -52,7 +52,7 @@ class VTKAMRFlashParticlesReader(Node, BVTK_Node):
     bl_label  = 'vtkAMRFlashParticlesReader'
     
     m_FilterLocation: bpy.props.BoolProperty(name='FilterLocation', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_Frequency: bpy.props.IntProperty(name='Frequency', default=1, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
@@ -72,7 +72,7 @@ class VTKAMRFlashReader(Node, BVTK_Node):
     bl_label  = 'vtkAMRFlashReader'
     
     m_EnableCaching: bpy.props.BoolProperty(name='EnableCaching', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -91,7 +91,7 @@ class VTKAMRVelodyneReader(Node, BVTK_Node):
     bl_label  = 'vtkAMRVelodyneReader'
     
     m_EnableCaching: bpy.props.BoolProperty(name='EnableCaching', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -110,7 +110,7 @@ class VTKAMReXGridReader(Node, BVTK_Node):
     bl_label  = 'vtkAMReXGridReader'
     
     m_EnableCaching: bpy.props.BoolProperty(name='EnableCaching', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -129,7 +129,7 @@ class VTKAMReXParticlesReader(Node, BVTK_Node):
     bl_label  = 'vtkAMReXParticlesReader'
     
     m_ParticleType: bpy.props.StringProperty(name='ParticleType', default="particles", update=BVTK_Node.outdate_vtk_status)
-    m_PlotFileName: bpy.props.StringProperty(name='PlotFileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_PlotFileName: bpy.props.StringProperty(name='PlotFileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -149,7 +149,7 @@ class VTKAVSucdReader(Node, BVTK_Node):
     e_ByteOrder_items=[ (x,x,x) for x in ['BigEndian', 'LittleEndian']]
     
     m_BinaryFile: bpy.props.BoolProperty(name='BinaryFile', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     e_ByteOrder: bpy.props.EnumProperty(name='ByteOrder', default="BigEndian", items=e_ByteOrder_items, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
@@ -169,7 +169,7 @@ class VTKArrayDataReader(Node, BVTK_Node):
     bl_label  = 'vtkArrayDataReader'
     
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_InputString: bpy.props.StringProperty(name='InputString', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
@@ -189,7 +189,7 @@ class VTKArrayReader(Node, BVTK_Node):
     bl_label  = 'vtkArrayReader'
     
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_InputString: bpy.props.StringProperty(name='InputString', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
@@ -213,9 +213,9 @@ class VTKBMPReader(Node, BVTK_Node):
     m_Allow8BitBMP: bpy.props.BoolProperty(name='Allow8BitBMP', default=True, update=BVTK_Node.outdate_vtk_status)
     m_FileLowerLeft: bpy.props.BoolProperty(name='FileLowerLeft', default=True, update=BVTK_Node.outdate_vtk_status)
     m_SwapBytes: bpy.props.BoolProperty(name='SwapBytes', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_FilePattern: bpy.props.StringProperty(name='FilePattern', default="%s.%d", update=BVTK_Node.outdate_vtk_status)
-    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="", update=BVTK_Node.outdate_vtk_status)
     m_ScalarArrayName: bpy.props.StringProperty(name='ScalarArrayName', default="ImageFile", update=BVTK_Node.outdate_vtk_status)
     m_DataMask: bpy.props.IntProperty(name='DataMask', default=1000000000, update=BVTK_Node.outdate_vtk_status)
     m_FileDimensionality: bpy.props.IntProperty(name='FileDimensionality', default=2, update=BVTK_Node.outdate_vtk_status)
@@ -249,11 +249,11 @@ class VTKBYUReader(Node, BVTK_Node):
     m_ReadDisplacement: bpy.props.BoolProperty(name='ReadDisplacement', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadScalar: bpy.props.BoolProperty(name='ReadScalar', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadTexture: bpy.props.BoolProperty(name='ReadTexture', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_DisplacementFileName: bpy.props.StringProperty(name='DisplacementFileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_GeometryFileName: bpy.props.StringProperty(name='GeometryFileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_ScalarFileName: bpy.props.StringProperty(name='ScalarFileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_TextureFileName: bpy.props.StringProperty(name='TextureFileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_DisplacementFileName: bpy.props.StringProperty(name='DisplacementFileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_GeometryFileName: bpy.props.StringProperty(name='GeometryFileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_ScalarFileName: bpy.props.StringProperty(name='ScalarFileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_TextureFileName: bpy.props.StringProperty(name='TextureFileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_PartNumber: bpy.props.IntProperty(name='PartNumber', default=0, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=9, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
@@ -280,14 +280,14 @@ class VTKBiomTableReader(Node, BVTK_Node):
     m_ReadAllTensors: bpy.props.BoolProperty(name='ReadAllTensors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadAllVectors: bpy.props.BoolProperty(name='ReadAllVectors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -333,7 +333,7 @@ class VTKCGNSReader(Node, BVTK_Node):
     m_LoadMesh: bpy.props.BoolProperty(name='LoadMesh', default=True, update=BVTK_Node.outdate_vtk_status)
     m_Use3DVector: bpy.props.BoolProperty(name='Use3DVector', default=True, update=BVTK_Node.outdate_vtk_status)
     m_UseUnsteadyPattern: bpy.props.BoolProperty(name='UseUnsteadyPattern', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=11, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -351,7 +351,7 @@ class VTKCMLMoleculeReader(Node, BVTK_Node):
     bl_idname = 'VTKCMLMoleculeReaderType'
     bl_label  = 'vtkCMLMoleculeReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -369,7 +369,7 @@ class VTKCONVERGECFDReader(Node, BVTK_Node):
     bl_idname = 'VTKCONVERGECFDReaderType'
     bl_label  = 'vtkCONVERGECFDReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -387,7 +387,7 @@ class VTKCPExodusIIInSituReader(Node, BVTK_Node):
     bl_idname = 'VTKCPExodusIIInSituReaderType'
     bl_label  = 'vtkCPExodusIIInSituReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_CurrentTimeStep: bpy.props.IntProperty(name='CurrentTimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
@@ -406,7 +406,7 @@ class VTKChacoGraphReader(Node, BVTK_Node):
     bl_idname = 'VTKChacoGraphReaderType'
     bl_label  = 'vtkChacoGraphReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -428,7 +428,7 @@ class VTKChacoReader(Node, BVTK_Node):
     m_GenerateGlobalElementIdArray: bpy.props.BoolProperty(name='GenerateGlobalElementIdArray', default=True, update=BVTK_Node.outdate_vtk_status)
     m_GenerateGlobalNodeIdArray: bpy.props.BoolProperty(name='GenerateGlobalNodeIdArray', default=True, update=BVTK_Node.outdate_vtk_status)
     m_GenerateVertexWeightArrays: bpy.props.BoolProperty(name='GenerateVertexWeightArrays', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_BaseName: bpy.props.StringProperty(name='BaseName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_BaseName: bpy.props.StringProperty(name='BaseName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -447,7 +447,7 @@ class VTKCityGMLReader(Node, BVTK_Node):
     bl_label  = 'vtkCityGMLReader'
     
     m_UseTransparencyAsOpacity: bpy.props.BoolProperty(name='UseTransparencyAsOpacity', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_BeginBuildingIndex: bpy.props.IntProperty(name='BeginBuildingIndex', default=0, update=BVTK_Node.outdate_vtk_status)
     m_EndBuildingIndex: bpy.props.IntProperty(name='EndBuildingIndex', default=1000000000, update=BVTK_Node.outdate_vtk_status)
     m_LOD: bpy.props.IntProperty(name='LOD', default=3, update=BVTK_Node.outdate_vtk_status)
@@ -477,14 +477,14 @@ class VTKCompositeDataReader(Node, BVTK_Node):
     m_ReadAllTensors: bpy.props.BoolProperty(name='ReadAllTensors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadAllVectors: bpy.props.BoolProperty(name='ReadAllVectors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -503,7 +503,7 @@ class VTKDEMReader(Node, BVTK_Node):
     bl_label  = 'vtkDEMReader'
     e_ElevationReference_items=[ (x,x,x) for x in ['SeaLevel', 'ElevationBounds']]
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     e_ElevationReference: bpy.props.EnumProperty(name='ElevationReference', default="ElevationBounds", items=e_ElevationReference_items, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
@@ -526,10 +526,10 @@ class VTKDICOMImageReader(Node, BVTK_Node):
     
     m_FileLowerLeft: bpy.props.BoolProperty(name='FileLowerLeft', default=True, update=BVTK_Node.outdate_vtk_status)
     m_SwapBytes: bpy.props.BoolProperty(name='SwapBytes', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_DirectoryName: bpy.props.StringProperty(name='DirectoryName', default="None", subtype='DIR_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_DirectoryName: bpy.props.StringProperty(name='DirectoryName', default="", subtype='DIR_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_FilePattern: bpy.props.StringProperty(name='FilePattern', default="%s.%d", update=BVTK_Node.outdate_vtk_status)
-    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="", update=BVTK_Node.outdate_vtk_status)
     m_FileDimensionality: bpy.props.IntProperty(name='FileDimensionality', default=2, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceOffset: bpy.props.IntProperty(name='FileNameSliceOffset', default=0, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceSpacing: bpy.props.IntProperty(name='FileNameSliceSpacing', default=1, update=BVTK_Node.outdate_vtk_status)
@@ -557,9 +557,9 @@ class VTKDIMACSGraphReader(Node, BVTK_Node):
     bl_idname = 'VTKDIMACSGraphReaderType'
     bl_label  = 'vtkDIMACSGraphReader'
     
-    m_EdgeAttributeArrayName: bpy.props.StringProperty(name='EdgeAttributeArrayName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_VertexAttributeArrayName: bpy.props.StringProperty(name='VertexAttributeArrayName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_EdgeAttributeArrayName: bpy.props.StringProperty(name='EdgeAttributeArrayName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_VertexAttributeArrayName: bpy.props.StringProperty(name='VertexAttributeArrayName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -585,14 +585,14 @@ class VTKDataObjectReader(Node, BVTK_Node):
     m_ReadAllTensors: bpy.props.BoolProperty(name='ReadAllTensors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadAllVectors: bpy.props.BoolProperty(name='ReadAllVectors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -618,14 +618,14 @@ class VTKDataReader(Node, BVTK_Node):
     m_ReadAllTensors: bpy.props.BoolProperty(name='ReadAllTensors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadAllVectors: bpy.props.BoolProperty(name='ReadAllVectors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -651,14 +651,14 @@ class VTKDataSetReader(Node, BVTK_Node):
     m_ReadAllTensors: bpy.props.BoolProperty(name='ReadAllTensors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadAllVectors: bpy.props.BoolProperty(name='ReadAllVectors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -687,13 +687,13 @@ class VTKDelimitedTextReader(Node, BVTK_Node):
     m_TrimWhitespacePriorToNumericConversion: bpy.props.BoolProperty(name='TrimWhitespacePriorToNumericConversion', default=False, update=BVTK_Node.outdate_vtk_status)
     m_UseStringDelimiter: bpy.props.BoolProperty(name='UseStringDelimiter', default=True, update=BVTK_Node.outdate_vtk_status)
     m_FieldDelimiterCharacters: bpy.props.StringProperty(name='FieldDelimiterCharacters', default=",", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_PedigreeIdArrayName: bpy.props.StringProperty(name='PedigreeIdArrayName', default="id", update=BVTK_Node.outdate_vtk_status)
     m_StringDelimiter: bpy.props.StringProperty(name='StringDelimiter', default="", update=BVTK_Node.outdate_vtk_status)
     m_UTF8FieldDelimiters: bpy.props.StringProperty(name='UTF8FieldDelimiters', default=",", update=BVTK_Node.outdate_vtk_status)
     m_UTF8RecordDelimiters: bpy.props.StringProperty(name='UTF8RecordDelimiters', default="\n", update=BVTK_Node.outdate_vtk_status)
     m_UTF8StringDelimiters: bpy.props.StringProperty(name='UTF8StringDelimiters', default="", update=BVTK_Node.outdate_vtk_status)
-    m_UnicodeCharacterSet: bpy.props.StringProperty(name='UnicodeCharacterSet', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_UnicodeCharacterSet: bpy.props.StringProperty(name='UnicodeCharacterSet', default="", update=BVTK_Node.outdate_vtk_status)
     m_UnicodeFieldDelimiters: bpy.props.StringProperty(name='UnicodeFieldDelimiters', default=",", update=BVTK_Node.outdate_vtk_status)
     m_UnicodeRecordDelimiters: bpy.props.StringProperty(name='UnicodeRecordDelimiters', default="", update=BVTK_Node.outdate_vtk_status)
     m_UnicodeStringDelimiters: bpy.props.StringProperty(name='UnicodeStringDelimiters', default="", update=BVTK_Node.outdate_vtk_status)
@@ -721,8 +721,8 @@ class VTKEnSight6BinaryReader(Node, BVTK_Node):
     
     m_ParticleCoordinatesByIndex: bpy.props.BoolProperty(name='ParticleCoordinatesByIndex', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadAllVariables: bpy.props.BoolProperty(name='ReadAllVariables', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_CaseFileName: bpy.props.StringProperty(name='CaseFileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_FilePath: bpy.props.StringProperty(name='FilePath', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_CaseFileName: bpy.props.StringProperty(name='CaseFileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FilePath: bpy.props.StringProperty(name='FilePath', default="", update=BVTK_Node.outdate_vtk_status)
     m_TimeValue: bpy.props.FloatProperty(name='TimeValue', default=0.0, update=BVTK_Node.outdate_vtk_status)
     e_ByteOrder: bpy.props.EnumProperty(name='ByteOrder', default="BigEndian", items=e_ByteOrder_items, update=BVTK_Node.outdate_vtk_status)
     
@@ -745,8 +745,8 @@ class VTKEnSight6Reader(Node, BVTK_Node):
     
     m_ParticleCoordinatesByIndex: bpy.props.BoolProperty(name='ParticleCoordinatesByIndex', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadAllVariables: bpy.props.BoolProperty(name='ReadAllVariables', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_CaseFileName: bpy.props.StringProperty(name='CaseFileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_FilePath: bpy.props.StringProperty(name='FilePath', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_CaseFileName: bpy.props.StringProperty(name='CaseFileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FilePath: bpy.props.StringProperty(name='FilePath', default="", update=BVTK_Node.outdate_vtk_status)
     m_TimeValue: bpy.props.FloatProperty(name='TimeValue', default=0.0, update=BVTK_Node.outdate_vtk_status)
     e_ByteOrder: bpy.props.EnumProperty(name='ByteOrder', default="BigEndian", items=e_ByteOrder_items, update=BVTK_Node.outdate_vtk_status)
     
@@ -769,8 +769,8 @@ class VTKEnSightGoldBinaryReader(Node, BVTK_Node):
     
     m_ParticleCoordinatesByIndex: bpy.props.BoolProperty(name='ParticleCoordinatesByIndex', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadAllVariables: bpy.props.BoolProperty(name='ReadAllVariables', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_CaseFileName: bpy.props.StringProperty(name='CaseFileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_FilePath: bpy.props.StringProperty(name='FilePath', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_CaseFileName: bpy.props.StringProperty(name='CaseFileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FilePath: bpy.props.StringProperty(name='FilePath', default="", update=BVTK_Node.outdate_vtk_status)
     m_TimeValue: bpy.props.FloatProperty(name='TimeValue', default=0.0, update=BVTK_Node.outdate_vtk_status)
     e_ByteOrder: bpy.props.EnumProperty(name='ByteOrder', default="BigEndian", items=e_ByteOrder_items, update=BVTK_Node.outdate_vtk_status)
     
@@ -793,8 +793,8 @@ class VTKEnSightGoldReader(Node, BVTK_Node):
     
     m_ParticleCoordinatesByIndex: bpy.props.BoolProperty(name='ParticleCoordinatesByIndex', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadAllVariables: bpy.props.BoolProperty(name='ReadAllVariables', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_CaseFileName: bpy.props.StringProperty(name='CaseFileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_FilePath: bpy.props.StringProperty(name='FilePath', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_CaseFileName: bpy.props.StringProperty(name='CaseFileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FilePath: bpy.props.StringProperty(name='FilePath', default="", update=BVTK_Node.outdate_vtk_status)
     m_TimeValue: bpy.props.FloatProperty(name='TimeValue', default=0.0, update=BVTK_Node.outdate_vtk_status)
     e_ByteOrder: bpy.props.EnumProperty(name='ByteOrder', default="BigEndian", items=e_ByteOrder_items, update=BVTK_Node.outdate_vtk_status)
     
@@ -817,8 +817,8 @@ class VTKEnSightMasterServerReader(Node, BVTK_Node):
     
     m_ParticleCoordinatesByIndex: bpy.props.BoolProperty(name='ParticleCoordinatesByIndex', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadAllVariables: bpy.props.BoolProperty(name='ReadAllVariables', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_CaseFileName: bpy.props.StringProperty(name='CaseFileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_FilePath: bpy.props.StringProperty(name='FilePath', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_CaseFileName: bpy.props.StringProperty(name='CaseFileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FilePath: bpy.props.StringProperty(name='FilePath', default="", update=BVTK_Node.outdate_vtk_status)
     m_CurrentPiece: bpy.props.IntProperty(name='CurrentPiece', default=-1, update=BVTK_Node.outdate_vtk_status)
     m_TimeValue: bpy.props.FloatProperty(name='TimeValue', default=0.0, update=BVTK_Node.outdate_vtk_status)
     e_ByteOrder: bpy.props.EnumProperty(name='ByteOrder', default="BigEndian", items=e_ByteOrder_items, update=BVTK_Node.outdate_vtk_status)
@@ -851,8 +851,8 @@ class VTKExodusIIReader(Node, BVTK_Node):
     m_IgnoreFileTime: bpy.props.BoolProperty(name='IgnoreFileTime', default=False, update=BVTK_Node.outdate_vtk_status)
     m_SqueezePoints: bpy.props.BoolProperty(name='SqueezePoints', default=True, update=BVTK_Node.outdate_vtk_status)
     m_UseLegacyBlockNames: bpy.props.BoolProperty(name='UseLegacyBlockNames', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_XMLFileName: bpy.props.StringProperty(name='XMLFileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_XMLFileName: bpy.props.StringProperty(name='XMLFileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_DisplayType: bpy.props.IntProperty(name='DisplayType', default=0, update=BVTK_Node.outdate_vtk_status)
     m_FileId: bpy.props.IntProperty(name='FileId', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
@@ -877,7 +877,7 @@ class VTKFLUENTReader(Node, BVTK_Node):
     bl_label  = 'vtkFLUENTReader'
     e_DataByteOrder_items=[ (x,x,x) for x in ['BigEndian', 'LittleEndian']]
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     e_DataByteOrder: bpy.props.EnumProperty(name='DataByteOrder', default="LittleEndian", items=e_DataByteOrder_items, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
@@ -896,7 +896,7 @@ class VTKFacetReader(Node, BVTK_Node):
     bl_idname = 'VTKFacetReaderType'
     bl_label  = 'vtkFacetReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -916,7 +916,7 @@ class VTKFixedWidthTextReader(Node, BVTK_Node):
     
     m_HaveHeaders: bpy.props.BoolProperty(name='HaveHeaders', default=False, update=BVTK_Node.outdate_vtk_status)
     m_StripWhiteSpace: bpy.props.BoolProperty(name='StripWhiteSpace', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_FieldWidth: bpy.props.IntProperty(name='FieldWidth', default=10, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
@@ -935,7 +935,7 @@ class VTKGAMBITReader(Node, BVTK_Node):
     bl_idname = 'VTKGAMBITReaderType'
     bl_label  = 'vtkGAMBITReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -957,16 +957,16 @@ class VTKGESignaReader(Node, BVTK_Node):
     
     m_FileLowerLeft: bpy.props.BoolProperty(name='FileLowerLeft', default=True, update=BVTK_Node.outdate_vtk_status)
     m_SwapBytes: bpy.props.BoolProperty(name='SwapBytes', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_Date: bpy.props.StringProperty(name='Date', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_Date: bpy.props.StringProperty(name='Date', default="", update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_FilePattern: bpy.props.StringProperty(name='FilePattern', default="%s.%d", update=BVTK_Node.outdate_vtk_status)
-    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_ImageNumber: bpy.props.StringProperty(name='ImageNumber', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_Modality: bpy.props.StringProperty(name='Modality', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_PatientID: bpy.props.StringProperty(name='PatientID', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_PatientName: bpy.props.StringProperty(name='PatientName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_Series: bpy.props.StringProperty(name='Series', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_Study: bpy.props.StringProperty(name='Study', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ImageNumber: bpy.props.StringProperty(name='ImageNumber', default="", update=BVTK_Node.outdate_vtk_status)
+    m_Modality: bpy.props.StringProperty(name='Modality', default="", update=BVTK_Node.outdate_vtk_status)
+    m_PatientID: bpy.props.StringProperty(name='PatientID', default="", update=BVTK_Node.outdate_vtk_status)
+    m_PatientName: bpy.props.StringProperty(name='PatientName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_Series: bpy.props.StringProperty(name='Series', default="", update=BVTK_Node.outdate_vtk_status)
+    m_Study: bpy.props.StringProperty(name='Study', default="", update=BVTK_Node.outdate_vtk_status)
     m_FileDimensionality: bpy.props.IntProperty(name='FileDimensionality', default=2, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceOffset: bpy.props.IntProperty(name='FileNameSliceOffset', default=0, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceSpacing: bpy.props.IntProperty(name='FileNameSliceSpacing', default=1, update=BVTK_Node.outdate_vtk_status)
@@ -995,7 +995,7 @@ class VTKGLTFReader(Node, BVTK_Node):
     bl_label  = 'vtkGLTFReader'
     
     m_ApplyDeformationsToGeometry: bpy.props.BoolProperty(name='ApplyDeformationsToGeometry', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_CurrentScene: bpy.props.IntProperty(name='CurrentScene', default=0, update=BVTK_Node.outdate_vtk_status)
     m_FrameRate: bpy.props.IntProperty(name='FrameRate', default=60, update=BVTK_Node.outdate_vtk_status)
     
@@ -1015,7 +1015,7 @@ class VTKGaussianCubeReader(Node, BVTK_Node):
     bl_idname = 'VTKGaussianCubeReaderType'
     bl_label  = 'vtkGaussianCubeReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_BScale: bpy.props.FloatProperty(name='BScale', default=1.0, update=BVTK_Node.outdate_vtk_status)
     m_HBScale: bpy.props.FloatProperty(name='HBScale', default=1.0, update=BVTK_Node.outdate_vtk_status)
     
@@ -1035,7 +1035,7 @@ class VTKGaussianCubeReader2(Node, BVTK_Node):
     bl_idname = 'VTKGaussianCubeReader2Type'
     bl_label  = 'vtkGaussianCubeReader2'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -1061,14 +1061,14 @@ class VTKGenericDataObjectReader(Node, BVTK_Node):
     m_ReadAllTensors: bpy.props.BoolProperty(name='ReadAllTensors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadAllVectors: bpy.props.BoolProperty(name='ReadAllVectors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -1089,8 +1089,8 @@ class VTKGenericEnSightReader(Node, BVTK_Node):
     
     m_ParticleCoordinatesByIndex: bpy.props.BoolProperty(name='ParticleCoordinatesByIndex', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadAllVariables: bpy.props.BoolProperty(name='ReadAllVariables', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_CaseFileName: bpy.props.StringProperty(name='CaseFileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_FilePath: bpy.props.StringProperty(name='FilePath', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_CaseFileName: bpy.props.StringProperty(name='CaseFileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FilePath: bpy.props.StringProperty(name='FilePath', default="", update=BVTK_Node.outdate_vtk_status)
     m_TimeValue: bpy.props.FloatProperty(name='TimeValue', default=0.0, update=BVTK_Node.outdate_vtk_status)
     e_ByteOrder: bpy.props.EnumProperty(name='ByteOrder', default="BigEndian", items=e_ByteOrder_items, update=BVTK_Node.outdate_vtk_status)
     
@@ -1113,9 +1113,9 @@ class VTKGeoJSONReader(Node, BVTK_Node):
     m_OutlinePolygons: bpy.props.BoolProperty(name='OutlinePolygons', default=False, update=BVTK_Node.outdate_vtk_status)
     m_StringInputMode: bpy.props.BoolProperty(name='StringInputMode', default=False, update=BVTK_Node.outdate_vtk_status)
     m_TriangulatePolygons: bpy.props.BoolProperty(name='TriangulatePolygons', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_SerializedPropertiesArrayName: bpy.props.StringProperty(name='SerializedPropertiesArrayName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_StringInput: bpy.props.StringProperty(name='StringInput', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_SerializedPropertiesArrayName: bpy.props.StringProperty(name='SerializedPropertiesArrayName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_StringInput: bpy.props.StringProperty(name='StringInput', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -1141,14 +1141,14 @@ class VTKGraphReader(Node, BVTK_Node):
     m_ReadAllTensors: bpy.props.BoolProperty(name='ReadAllTensors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadAllVectors: bpy.props.BoolProperty(name='ReadAllVectors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -1169,10 +1169,10 @@ class VTKH5PartReader(Node, BVTK_Node):
     m_CombineVectorComponents: bpy.props.BoolProperty(name='CombineVectorComponents', default=True, update=BVTK_Node.outdate_vtk_status)
     m_GenerateVertexCells: bpy.props.BoolProperty(name='GenerateVertexCells', default=True, update=BVTK_Node.outdate_vtk_status)
     m_MaskOutOfTimeRangeOutput: bpy.props.BoolProperty(name='MaskOutOfTimeRangeOutput', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_Xarray: bpy.props.StringProperty(name='Xarray', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_Yarray: bpy.props.StringProperty(name='Yarray', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_Zarray: bpy.props.StringProperty(name='Zarray', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_Xarray: bpy.props.StringProperty(name='Xarray', default="", update=BVTK_Node.outdate_vtk_status)
+    m_Yarray: bpy.props.StringProperty(name='Yarray', default="", update=BVTK_Node.outdate_vtk_status)
+    m_Zarray: bpy.props.StringProperty(name='Zarray', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -1190,7 +1190,7 @@ class VTKH5RageReader(Node, BVTK_Node):
     bl_idname = 'VTKH5RageReaderType'
     bl_label  = 'vtkH5RageReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_CurrentTimeStep: bpy.props.IntProperty(name='CurrentTimeStep', default=-1, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
@@ -1209,7 +1209,7 @@ class VTKHDFReader(Node, BVTK_Node):
     bl_idname = 'VTKHDFReaderType'
     bl_label  = 'vtkHDFReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -1231,9 +1231,9 @@ class VTKHDRReader(Node, BVTK_Node):
     
     m_FileLowerLeft: bpy.props.BoolProperty(name='FileLowerLeft', default=True, update=BVTK_Node.outdate_vtk_status)
     m_SwapBytes: bpy.props.BoolProperty(name='SwapBytes', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_FilePattern: bpy.props.StringProperty(name='FilePattern', default="%s.%d", update=BVTK_Node.outdate_vtk_status)
-    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="", update=BVTK_Node.outdate_vtk_status)
     m_ScalarArrayName: bpy.props.StringProperty(name='ScalarArrayName', default="ImageFile", update=BVTK_Node.outdate_vtk_status)
     m_DataMask: bpy.props.IntProperty(name='DataMask', default=1000000000, update=BVTK_Node.outdate_vtk_status)
     m_FileDimensionality: bpy.props.IntProperty(name='FileDimensionality', default=2, update=BVTK_Node.outdate_vtk_status)
@@ -1271,7 +1271,7 @@ class VTKIOSSReader(Node, BVTK_Node):
     m_ReadQAAndInformationRecords: bpy.props.BoolProperty(name='ReadQAAndInformationRecords', default=True, update=BVTK_Node.outdate_vtk_status)
     m_RemoveUnusedPoints: bpy.props.BoolProperty(name='RemoveUnusedPoints', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ScanForRelatedFiles: bpy.props.BoolProperty(name='ScanForRelatedFiles', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_DatabaseTypeOverride: bpy.props.StringProperty(name='DatabaseTypeOverride', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_DatabaseTypeOverride: bpy.props.StringProperty(name='DatabaseTypeOverride', default="", update=BVTK_Node.outdate_vtk_status)
     m_FileName: bpy.props.StringProperty(name='FileName', default="0", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_Selector: bpy.props.StringProperty(name='Selector', default="0", update=BVTK_Node.outdate_vtk_status)
     m_FileStride: bpy.props.IntProperty(name='FileStride', default=1, update=BVTK_Node.outdate_vtk_status)
@@ -1294,7 +1294,7 @@ class VTKISIReader(Node, BVTK_Node):
     bl_label  = 'vtkISIReader'
     
     m_Delimiter: bpy.props.StringProperty(name='Delimiter', default=";", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_MaxRecords: bpy.props.IntProperty(name='MaxRecords', default=0, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
@@ -1317,9 +1317,9 @@ class VTKImageReader(Node, BVTK_Node):
     
     m_FileLowerLeft: bpy.props.BoolProperty(name='FileLowerLeft', default=True, update=BVTK_Node.outdate_vtk_status)
     m_SwapBytes: bpy.props.BoolProperty(name='SwapBytes', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_FilePattern: bpy.props.StringProperty(name='FilePattern', default="%s.%d", update=BVTK_Node.outdate_vtk_status)
-    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="", update=BVTK_Node.outdate_vtk_status)
     m_ScalarArrayName: bpy.props.StringProperty(name='ScalarArrayName', default="ImageFile", update=BVTK_Node.outdate_vtk_status)
     m_DataMask: bpy.props.IntProperty(name='DataMask', default=1000000000, update=BVTK_Node.outdate_vtk_status)
     m_FileDimensionality: bpy.props.IntProperty(name='FileDimensionality', default=2, update=BVTK_Node.outdate_vtk_status)
@@ -1354,9 +1354,9 @@ class VTKImageReader2(Node, BVTK_Node):
     
     m_FileLowerLeft: bpy.props.BoolProperty(name='FileLowerLeft', default=True, update=BVTK_Node.outdate_vtk_status)
     m_SwapBytes: bpy.props.BoolProperty(name='SwapBytes', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_FilePattern: bpy.props.StringProperty(name='FilePattern', default="%s.%d", update=BVTK_Node.outdate_vtk_status)
-    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="", update=BVTK_Node.outdate_vtk_status)
     m_FileDimensionality: bpy.props.IntProperty(name='FileDimensionality', default=2, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceOffset: bpy.props.IntProperty(name='FileNameSliceOffset', default=0, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceSpacing: bpy.props.IntProperty(name='FileNameSliceSpacing', default=1, update=BVTK_Node.outdate_vtk_status)
@@ -1388,9 +1388,9 @@ class VTKJPEGReader(Node, BVTK_Node):
     
     m_FileLowerLeft: bpy.props.BoolProperty(name='FileLowerLeft', default=True, update=BVTK_Node.outdate_vtk_status)
     m_SwapBytes: bpy.props.BoolProperty(name='SwapBytes', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_FilePattern: bpy.props.StringProperty(name='FilePattern', default="%s.%d", update=BVTK_Node.outdate_vtk_status)
-    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="", update=BVTK_Node.outdate_vtk_status)
     m_FileDimensionality: bpy.props.IntProperty(name='FileDimensionality', default=2, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceOffset: bpy.props.IntProperty(name='FileNameSliceOffset', default=0, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceSpacing: bpy.props.IntProperty(name='FileNameSliceSpacing', default=1, update=BVTK_Node.outdate_vtk_status)
@@ -1423,7 +1423,7 @@ class VTKLSDynaReader(Node, BVTK_Node):
     m_RemoveDeletedCells: bpy.props.BoolProperty(name='RemoveDeletedCells', default=True, update=BVTK_Node.outdate_vtk_status)
     m_DatabaseDirectory: bpy.props.StringProperty(name='DatabaseDirectory', default="", update=BVTK_Node.outdate_vtk_status)
     m_FileName: bpy.props.StringProperty(name='FileName', default="/d3plot", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_InputDeck: bpy.props.StringProperty(name='InputDeck', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_InputDeck: bpy.props.StringProperty(name='InputDeck', default="", update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     
@@ -1447,8 +1447,8 @@ class VTKMCubesReader(Node, BVTK_Node):
     m_FlipNormals: bpy.props.BoolProperty(name='FlipNormals', default=True, update=BVTK_Node.outdate_vtk_status)
     m_Normals: bpy.props.BoolProperty(name='Normals', default=True, update=BVTK_Node.outdate_vtk_status)
     m_SwapBytes: bpy.props.BoolProperty(name='SwapBytes', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_LimitsFileName: bpy.props.StringProperty(name='LimitsFileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_LimitsFileName: bpy.props.StringProperty(name='LimitsFileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_HeaderSize: bpy.props.IntProperty(name='HeaderSize', default=0, update=BVTK_Node.outdate_vtk_status)
     e_DataByteOrder: bpy.props.EnumProperty(name='DataByteOrder', default="BigEndian", items=e_DataByteOrder_items, update=BVTK_Node.outdate_vtk_status)
     
@@ -1468,7 +1468,7 @@ class VTKMFIXReader(Node, BVTK_Node):
     bl_idname = 'VTKMFIXReaderType'
     bl_label  = 'vtkMFIXReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     
@@ -1493,9 +1493,9 @@ class VTKMINCImageReader(Node, BVTK_Node):
     m_FileLowerLeft: bpy.props.BoolProperty(name='FileLowerLeft', default=True, update=BVTK_Node.outdate_vtk_status)
     m_RescaleRealValues: bpy.props.BoolProperty(name='RescaleRealValues', default=True, update=BVTK_Node.outdate_vtk_status)
     m_SwapBytes: bpy.props.BoolProperty(name='SwapBytes', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_FilePattern: bpy.props.StringProperty(name='FilePattern', default="%s.%d", update=BVTK_Node.outdate_vtk_status)
-    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="", update=BVTK_Node.outdate_vtk_status)
     m_FileDimensionality: bpy.props.IntProperty(name='FileDimensionality', default=2, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceOffset: bpy.props.IntProperty(name='FileNameSliceOffset', default=0, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceSpacing: bpy.props.IntProperty(name='FileNameSliceSpacing', default=1, update=BVTK_Node.outdate_vtk_status)
@@ -1524,7 +1524,7 @@ class VTKMNIObjectReader(Node, BVTK_Node):
     bl_idname = 'VTKMNIObjectReaderType'
     bl_label  = 'vtkMNIObjectReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -1542,7 +1542,7 @@ class VTKMNITagPointReader(Node, BVTK_Node):
     bl_idname = 'VTKMNITagPointReaderType'
     bl_label  = 'vtkMNITagPointReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -1560,7 +1560,7 @@ class VTKMNITransformReader(Node, BVTK_Node):
     bl_idname = 'VTKMNITransformReaderType'
     bl_label  = 'vtkMNITransformReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -1583,7 +1583,7 @@ class VTKMPASReader(Node, BVTK_Node):
     m_ProjectLatLon: bpy.props.BoolProperty(name='ProjectLatLon', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ShowMultilayerView: bpy.props.BoolProperty(name='ShowMultilayerView', default=False, update=BVTK_Node.outdate_vtk_status)
     m_UseDimensionedArrayNames: bpy.props.BoolProperty(name='UseDimensionedArrayNames', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_VerticalDimension: bpy.props.StringProperty(name='VerticalDimension', default="nVertLevels", update=BVTK_Node.outdate_vtk_status)
     m_LayerThickness: bpy.props.IntProperty(name='LayerThickness', default=10000, update=BVTK_Node.outdate_vtk_status)
     m_VerticalLevel: bpy.props.IntProperty(name='VerticalLevel', default=-1, update=BVTK_Node.outdate_vtk_status)
@@ -1604,7 +1604,7 @@ class VTKMRCReader(Node, BVTK_Node):
     bl_idname = 'VTKMRCReaderType'
     bl_label  = 'vtkMRCReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -1626,16 +1626,16 @@ class VTKMedicalImageReader2(Node, BVTK_Node):
     
     m_FileLowerLeft: bpy.props.BoolProperty(name='FileLowerLeft', default=True, update=BVTK_Node.outdate_vtk_status)
     m_SwapBytes: bpy.props.BoolProperty(name='SwapBytes', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_Date: bpy.props.StringProperty(name='Date', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_Date: bpy.props.StringProperty(name='Date', default="", update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_FilePattern: bpy.props.StringProperty(name='FilePattern', default="%s.%d", update=BVTK_Node.outdate_vtk_status)
-    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_ImageNumber: bpy.props.StringProperty(name='ImageNumber', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_Modality: bpy.props.StringProperty(name='Modality', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_PatientID: bpy.props.StringProperty(name='PatientID', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_PatientName: bpy.props.StringProperty(name='PatientName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_Series: bpy.props.StringProperty(name='Series', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_Study: bpy.props.StringProperty(name='Study', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ImageNumber: bpy.props.StringProperty(name='ImageNumber', default="", update=BVTK_Node.outdate_vtk_status)
+    m_Modality: bpy.props.StringProperty(name='Modality', default="", update=BVTK_Node.outdate_vtk_status)
+    m_PatientID: bpy.props.StringProperty(name='PatientID', default="", update=BVTK_Node.outdate_vtk_status)
+    m_PatientName: bpy.props.StringProperty(name='PatientName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_Series: bpy.props.StringProperty(name='Series', default="", update=BVTK_Node.outdate_vtk_status)
+    m_Study: bpy.props.StringProperty(name='Study', default="", update=BVTK_Node.outdate_vtk_status)
     m_FileDimensionality: bpy.props.IntProperty(name='FileDimensionality', default=2, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceOffset: bpy.props.IntProperty(name='FileNameSliceOffset', default=0, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceSpacing: bpy.props.IntProperty(name='FileNameSliceSpacing', default=1, update=BVTK_Node.outdate_vtk_status)
@@ -1667,9 +1667,9 @@ class VTKMetaImageReader(Node, BVTK_Node):
     
     m_FileLowerLeft: bpy.props.BoolProperty(name='FileLowerLeft', default=True, update=BVTK_Node.outdate_vtk_status)
     m_SwapBytes: bpy.props.BoolProperty(name='SwapBytes', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_FilePattern: bpy.props.StringProperty(name='FilePattern', default="%s.%d", update=BVTK_Node.outdate_vtk_status)
-    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="", update=BVTK_Node.outdate_vtk_status)
     m_FileDimensionality: bpy.props.IntProperty(name='FileDimensionality', default=2, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceOffset: bpy.props.IntProperty(name='FileNameSliceOffset', default=0, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceSpacing: bpy.props.IntProperty(name='FileNameSliceSpacing', default=1, update=BVTK_Node.outdate_vtk_status)
@@ -1697,7 +1697,7 @@ class VTKMotionFXCFGReader(Node, BVTK_Node):
     bl_idname = 'VTKMotionFXCFGReaderType'
     bl_label  = 'vtkMotionFXCFGReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_TimeResolution: bpy.props.IntProperty(name='TimeResolution', default=100, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
@@ -1726,10 +1726,10 @@ class VTKMultiBlockPLOT3DReader(Node, BVTK_Node):
     m_MultiGrid: bpy.props.BoolProperty(name='MultiGrid', default=True, update=BVTK_Node.outdate_vtk_status)
     m_PreserveIntermediateFunctions: bpy.props.BoolProperty(name='PreserveIntermediateFunctions', default=True, update=BVTK_Node.outdate_vtk_status)
     m_TwoDimensionalGeometry: bpy.props.BoolProperty(name='TwoDimensionalGeometry', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_FunctionFileName: bpy.props.StringProperty(name='FunctionFileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_QFileName: bpy.props.StringProperty(name='QFileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_XYZFileName: bpy.props.StringProperty(name='XYZFileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FunctionFileName: bpy.props.StringProperty(name='FunctionFileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_QFileName: bpy.props.StringProperty(name='QFileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_XYZFileName: bpy.props.StringProperty(name='XYZFileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_ScalarFunctionNumber: bpy.props.IntProperty(name='ScalarFunctionNumber', default=100, update=BVTK_Node.outdate_vtk_status)
     m_VectorFunctionNumber: bpy.props.IntProperty(name='VectorFunctionNumber', default=202, update=BVTK_Node.outdate_vtk_status)
     m_Gamma: bpy.props.FloatProperty(name='Gamma', default=1.4, update=BVTK_Node.outdate_vtk_status)
@@ -1760,14 +1760,14 @@ class VTKMultiNewickTreeReader(Node, BVTK_Node):
     m_ReadAllTensors: bpy.props.BoolProperty(name='ReadAllTensors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadAllVectors: bpy.props.BoolProperty(name='ReadAllVectors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -1791,9 +1791,9 @@ class VTKNIFTIImageReader(Node, BVTK_Node):
     m_PlanarRGB: bpy.props.BoolProperty(name='PlanarRGB', default=False, update=BVTK_Node.outdate_vtk_status)
     m_SwapBytes: bpy.props.BoolProperty(name='SwapBytes', default=True, update=BVTK_Node.outdate_vtk_status)
     m_TimeAsVector: bpy.props.BoolProperty(name='TimeAsVector', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_FilePattern: bpy.props.StringProperty(name='FilePattern', default="%s.%d", update=BVTK_Node.outdate_vtk_status)
-    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="", update=BVTK_Node.outdate_vtk_status)
     m_FileDimensionality: bpy.props.IntProperty(name='FileDimensionality', default=2, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceOffset: bpy.props.IntProperty(name='FileNameSliceOffset', default=0, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceSpacing: bpy.props.IntProperty(name='FileNameSliceSpacing', default=1, update=BVTK_Node.outdate_vtk_status)
@@ -1824,7 +1824,7 @@ class VTKNetCDFCFReader(Node, BVTK_Node):
     
     m_ReplaceFillValueWithNan: bpy.props.BoolProperty(name='ReplaceFillValueWithNan', default=True, update=BVTK_Node.outdate_vtk_status)
     m_SphericalCoordinates: bpy.props.BoolProperty(name='SphericalCoordinates', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_VerticalBias: bpy.props.FloatProperty(name='VerticalBias', default=0.0, update=BVTK_Node.outdate_vtk_status)
     m_VerticalScale: bpy.props.FloatProperty(name='VerticalScale', default=1.0, update=BVTK_Node.outdate_vtk_status)
     e_OutputType: bpy.props.EnumProperty(name='OutputType', default="Automatic", items=e_OutputType_items, update=BVTK_Node.outdate_vtk_status)
@@ -1845,7 +1845,7 @@ class VTKNetCDFPOPReader(Node, BVTK_Node):
     bl_idname = 'VTKNetCDFPOPReaderType'
     bl_label  = 'vtkNetCDFPOPReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_Stride: bpy.props.IntVectorProperty(name='Stride', default=[1, 1, 1], size=3, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
@@ -1865,7 +1865,7 @@ class VTKNetCDFReader(Node, BVTK_Node):
     bl_label  = 'vtkNetCDFReader'
     
     m_ReplaceFillValueWithNan: bpy.props.BoolProperty(name='ReplaceFillValueWithNan', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -1891,14 +1891,14 @@ class VTKNewickTreeReader(Node, BVTK_Node):
     m_ReadAllTensors: bpy.props.BoolProperty(name='ReadAllTensors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadAllVectors: bpy.props.BoolProperty(name='ReadAllVectors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -1920,9 +1920,9 @@ class VTKNrrdReader(Node, BVTK_Node):
     
     m_FileLowerLeft: bpy.props.BoolProperty(name='FileLowerLeft', default=True, update=BVTK_Node.outdate_vtk_status)
     m_SwapBytes: bpy.props.BoolProperty(name='SwapBytes', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_FilePattern: bpy.props.StringProperty(name='FilePattern', default="%s.%d", update=BVTK_Node.outdate_vtk_status)
-    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="", update=BVTK_Node.outdate_vtk_status)
     m_ScalarArrayName: bpy.props.StringProperty(name='ScalarArrayName', default="ImageFile", update=BVTK_Node.outdate_vtk_status)
     m_DataMask: bpy.props.IntProperty(name='DataMask', default=1000000000, update=BVTK_Node.outdate_vtk_status)
     m_FileDimensionality: bpy.props.IntProperty(name='FileDimensionality', default=2, update=BVTK_Node.outdate_vtk_status)
@@ -1953,7 +1953,7 @@ class VTKOBJReader(Node, BVTK_Node):
     bl_idname = 'VTKOBJReaderType'
     bl_label  = 'vtkOBJReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -1978,9 +1978,9 @@ class VTKOMETIFFReader(Node, BVTK_Node):
     m_OriginSpecifiedFlag: bpy.props.BoolProperty(name='OriginSpecifiedFlag', default=False, update=BVTK_Node.outdate_vtk_status)
     m_SpacingSpecifiedFlag: bpy.props.BoolProperty(name='SpacingSpecifiedFlag', default=False, update=BVTK_Node.outdate_vtk_status)
     m_SwapBytes: bpy.props.BoolProperty(name='SwapBytes', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_FilePattern: bpy.props.StringProperty(name='FilePattern', default="%s.%d", update=BVTK_Node.outdate_vtk_status)
-    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="", update=BVTK_Node.outdate_vtk_status)
     m_FileDimensionality: bpy.props.IntProperty(name='FileDimensionality', default=2, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceOffset: bpy.props.IntProperty(name='FileNameSliceOffset', default=0, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceSpacing: bpy.props.IntProperty(name='FileNameSliceSpacing', default=1, update=BVTK_Node.outdate_vtk_status)
@@ -2011,7 +2011,7 @@ class VTKOMFReader(Node, BVTK_Node):
     
     m_ColumnMajorOrdering: bpy.props.BoolProperty(name='ColumnMajorOrdering', default=False, update=BVTK_Node.outdate_vtk_status)
     m_WriteOutTextures: bpy.props.BoolProperty(name='WriteOutTextures', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -2040,7 +2040,7 @@ class VTKOpenFOAMReader(Node, BVTK_Node):
     m_SkipZeroTime: bpy.props.BoolProperty(name='SkipZeroTime', default=False, update=BVTK_Node.outdate_vtk_status)
     m_Use64BitFloats: bpy.props.BoolProperty(name='Use64BitFloats', default=True, update=BVTK_Node.outdate_vtk_status)
     m_Use64BitLabels: bpy.props.BoolProperty(name='Use64BitLabels', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_TimeValue: bpy.props.FloatProperty(name='TimeValue', default=0.0, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=13, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
@@ -2063,7 +2063,7 @@ class VTKPChacoReader(Node, BVTK_Node):
     m_GenerateGlobalElementIdArray: bpy.props.BoolProperty(name='GenerateGlobalElementIdArray', default=True, update=BVTK_Node.outdate_vtk_status)
     m_GenerateGlobalNodeIdArray: bpy.props.BoolProperty(name='GenerateGlobalNodeIdArray', default=True, update=BVTK_Node.outdate_vtk_status)
     m_GenerateVertexWeightArrays: bpy.props.BoolProperty(name='GenerateVertexWeightArrays', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_BaseName: bpy.props.StringProperty(name='BaseName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_BaseName: bpy.props.StringProperty(name='BaseName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -2081,7 +2081,7 @@ class VTKPDBReader(Node, BVTK_Node):
     bl_idname = 'VTKPDBReaderType'
     bl_label  = 'vtkPDBReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_BScale: bpy.props.FloatProperty(name='BScale', default=1.0, update=BVTK_Node.outdate_vtk_status)
     m_HBScale: bpy.props.FloatProperty(name='HBScale', default=1.0, update=BVTK_Node.outdate_vtk_status)
     
@@ -2101,7 +2101,7 @@ class VTKPDataSetReader(Node, BVTK_Node):
     bl_idname = 'VTKPDataSetReaderType'
     bl_label  = 'vtkPDataSetReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -2131,10 +2131,10 @@ class VTKPExodusIIReader(Node, BVTK_Node):
     m_IgnoreFileTime: bpy.props.BoolProperty(name='IgnoreFileTime', default=False, update=BVTK_Node.outdate_vtk_status)
     m_SqueezePoints: bpy.props.BoolProperty(name='SqueezePoints', default=True, update=BVTK_Node.outdate_vtk_status)
     m_UseLegacyBlockNames: bpy.props.BoolProperty(name='UseLegacyBlockNames', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_FilePattern: bpy.props.StringProperty(name='FilePattern', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_XMLFileName: bpy.props.StringProperty(name='XMLFileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FilePattern: bpy.props.StringProperty(name='FilePattern', default="", update=BVTK_Node.outdate_vtk_status)
+    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="", update=BVTK_Node.outdate_vtk_status)
+    m_XMLFileName: bpy.props.StringProperty(name='XMLFileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_DisplayType: bpy.props.IntProperty(name='DisplayType', default=0, update=BVTK_Node.outdate_vtk_status)
     m_FileId: bpy.props.IntProperty(name='FileId', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
@@ -2164,7 +2164,7 @@ class VTKPIOReader(Node, BVTK_Node):
     m_HyperTreeGrid: bpy.props.BoolProperty(name='HyperTreeGrid', default=False, update=BVTK_Node.outdate_vtk_status)
     m_Tracers: bpy.props.BoolProperty(name='Tracers', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="CycleIndex", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_CurrentTimeStep: bpy.props.IntProperty(name='CurrentTimeStep', default=-1, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
@@ -2188,7 +2188,7 @@ class VTKPLSDynaReader(Node, BVTK_Node):
     m_RemoveDeletedCells: bpy.props.BoolProperty(name='RemoveDeletedCells', default=True, update=BVTK_Node.outdate_vtk_status)
     m_DatabaseDirectory: bpy.props.StringProperty(name='DatabaseDirectory', default="", update=BVTK_Node.outdate_vtk_status)
     m_FileName: bpy.props.StringProperty(name='FileName', default="/d3plot", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_InputDeck: bpy.props.StringProperty(name='InputDeck', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_InputDeck: bpy.props.StringProperty(name='InputDeck', default="", update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     
@@ -2210,7 +2210,7 @@ class VTKPLYReader(Node, BVTK_Node):
     
     m_DuplicatePointsForFaceTexture: bpy.props.BoolProperty(name='DuplicatePointsForFaceTexture', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_FaceTextureTolerance: bpy.props.FloatProperty(name='FaceTextureTolerance', default=9.999999974752427e-07, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
@@ -2234,9 +2234,9 @@ class VTKPNGReader(Node, BVTK_Node):
     m_FileLowerLeft: bpy.props.BoolProperty(name='FileLowerLeft', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadSpacingFromFile: bpy.props.BoolProperty(name='ReadSpacingFromFile', default=False, update=BVTK_Node.outdate_vtk_status)
     m_SwapBytes: bpy.props.BoolProperty(name='SwapBytes', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_FilePattern: bpy.props.StringProperty(name='FilePattern', default="%s.%d", update=BVTK_Node.outdate_vtk_status)
-    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="", update=BVTK_Node.outdate_vtk_status)
     m_FileDimensionality: bpy.props.IntProperty(name='FileDimensionality', default=2, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceOffset: bpy.props.IntProperty(name='FileNameSliceOffset', default=0, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceSpacing: bpy.props.IntProperty(name='FileNameSliceSpacing', default=1, update=BVTK_Node.outdate_vtk_status)
@@ -2268,9 +2268,9 @@ class VTKPNMReader(Node, BVTK_Node):
     
     m_FileLowerLeft: bpy.props.BoolProperty(name='FileLowerLeft', default=True, update=BVTK_Node.outdate_vtk_status)
     m_SwapBytes: bpy.props.BoolProperty(name='SwapBytes', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_FilePattern: bpy.props.StringProperty(name='FilePattern', default="%s.%d", update=BVTK_Node.outdate_vtk_status)
-    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="", update=BVTK_Node.outdate_vtk_status)
     m_ScalarArrayName: bpy.props.StringProperty(name='ScalarArrayName', default="ImageFile", update=BVTK_Node.outdate_vtk_status)
     m_DataMask: bpy.props.IntProperty(name='DataMask', default=1000000000, update=BVTK_Node.outdate_vtk_status)
     m_FileDimensionality: bpy.props.IntProperty(name='FileDimensionality', default=2, update=BVTK_Node.outdate_vtk_status)
@@ -2312,7 +2312,7 @@ class VTKPOpenFOAMReader(Node, BVTK_Node):
     m_SkipZeroTime: bpy.props.BoolProperty(name='SkipZeroTime', default=False, update=BVTK_Node.outdate_vtk_status)
     m_Use64BitFloats: bpy.props.BoolProperty(name='Use64BitFloats', default=True, update=BVTK_Node.outdate_vtk_status)
     m_Use64BitLabels: bpy.props.BoolProperty(name='Use64BitLabels', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_TimeValue: bpy.props.FloatProperty(name='TimeValue', default=0.0, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=13, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
@@ -2336,7 +2336,7 @@ class VTKPTSReader(Node, BVTK_Node):
     m_LimitReadToBounds: bpy.props.BoolProperty(name='LimitReadToBounds', default=False, update=BVTK_Node.outdate_vtk_status)
     m_LimitToMaxNumberOfPoints: bpy.props.BoolProperty(name='LimitToMaxNumberOfPoints', default=False, update=BVTK_Node.outdate_vtk_status)
     m_OutputDataTypeIsDouble: bpy.props.BoolProperty(name='OutputDataTypeIsDouble', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_MaxNumberOfPoints: bpy.props.IntProperty(name='MaxNumberOfPoints', default=1000000, update=BVTK_Node.outdate_vtk_status)
     m_ReadBounds: bpy.props.FloatVectorProperty(name='ReadBounds', default=[1e+30, -1e+30, 1e+30, -1e+30, 1e+30, -1e+30], size=6, update=BVTK_Node.outdate_vtk_status)
     
@@ -2360,7 +2360,7 @@ class VTKParticleReader(Node, BVTK_Node):
     
     m_HasScalar: bpy.props.BoolProperty(name='HasScalar', default=True, update=BVTK_Node.outdate_vtk_status)
     m_SwapBytes: bpy.props.BoolProperty(name='SwapBytes', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     e_DataByteOrder: bpy.props.EnumProperty(name='DataByteOrder', default="LittleEndian", items=e_DataByteOrder_items, update=BVTK_Node.outdate_vtk_status)
     e_FileType: bpy.props.EnumProperty(name='FileType', default="Unknown", items=e_FileType_items, update=BVTK_Node.outdate_vtk_status)
     
@@ -2382,7 +2382,7 @@ class VTKPhyloXMLTreeReader(Node, BVTK_Node):
     
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="TimeValue", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     
@@ -2402,7 +2402,7 @@ class VTKPlot3DMetaReader(Node, BVTK_Node):
     bl_idname = 'VTKPlot3DMetaReaderType'
     bl_label  = 'vtkPlot3DMetaReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -2428,14 +2428,14 @@ class VTKPolyDataReader(Node, BVTK_Node):
     m_ReadAllTensors: bpy.props.BoolProperty(name='ReadAllTensors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadAllVectors: bpy.props.BoolProperty(name='ReadAllVectors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -2453,7 +2453,7 @@ class VTKProStarReader(Node, BVTK_Node):
     bl_idname = 'VTKProStarReaderType'
     bl_label  = 'vtkProStarReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_ScaleFactor: bpy.props.FloatProperty(name='ScaleFactor', default=1.0, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
@@ -2473,7 +2473,7 @@ class VTKRISReader(Node, BVTK_Node):
     bl_label  = 'vtkRISReader'
     
     m_Delimiter: bpy.props.StringProperty(name='Delimiter', default=";", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_MaxRecords: bpy.props.IntProperty(name='MaxRecords', default=0, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
@@ -2494,7 +2494,7 @@ class VTKRTXMLPolyDataReader(Node, BVTK_Node):
     
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="TimeValue", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     
@@ -2522,14 +2522,14 @@ class VTKRectilinearGridReader(Node, BVTK_Node):
     m_ReadAllTensors: bpy.props.BoolProperty(name='ReadAllTensors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadAllVectors: bpy.props.BoolProperty(name='ReadAllVectors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -2567,7 +2567,7 @@ class VTKSLACParticleReader(Node, BVTK_Node):
     bl_idname = 'VTKSLACParticleReaderType'
     bl_label  = 'vtkSLACParticleReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -2588,7 +2588,7 @@ class VTKSLACReader(Node, BVTK_Node):
     m_ReadExternalSurface: bpy.props.BoolProperty(name='ReadExternalSurface', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadInternalVolume: bpy.props.BoolProperty(name='ReadInternalVolume', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadMidpoints: bpy.props.BoolProperty(name='ReadMidpoints', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_MeshFileName: bpy.props.StringProperty(name='MeshFileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_MeshFileName: bpy.props.StringProperty(name='MeshFileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -2610,9 +2610,9 @@ class VTKSLCReader(Node, BVTK_Node):
     
     m_FileLowerLeft: bpy.props.BoolProperty(name='FileLowerLeft', default=True, update=BVTK_Node.outdate_vtk_status)
     m_SwapBytes: bpy.props.BoolProperty(name='SwapBytes', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_FilePattern: bpy.props.StringProperty(name='FilePattern', default="%s.%d", update=BVTK_Node.outdate_vtk_status)
-    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="", update=BVTK_Node.outdate_vtk_status)
     m_FileDimensionality: bpy.props.IntProperty(name='FileDimensionality', default=2, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceOffset: bpy.props.IntProperty(name='FileNameSliceOffset', default=0, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceSpacing: bpy.props.IntProperty(name='FileNameSliceSpacing', default=1, update=BVTK_Node.outdate_vtk_status)
@@ -2659,7 +2659,7 @@ class VTKSTLReader(Node, BVTK_Node):
     
     m_Merging: bpy.props.BoolProperty(name='Merging', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ScalarTags: bpy.props.BoolProperty(name='ScalarTags', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -2680,7 +2680,7 @@ class VTKSegYReader(Node, BVTK_Node):
     
     m_Force2D: bpy.props.BoolProperty(name='Force2D', default=False, update=BVTK_Node.outdate_vtk_status)
     m_StructuredGrid: bpy.props.BoolProperty(name='StructuredGrid', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_VerticalCRS: bpy.props.IntProperty(name='VerticalCRS', default=0, update=BVTK_Node.outdate_vtk_status)
     m_XCoordByte: bpy.props.IntProperty(name='XCoordByte', default=73, update=BVTK_Node.outdate_vtk_status)
     m_YCoordByte: bpy.props.IntProperty(name='YCoordByte', default=77, update=BVTK_Node.outdate_vtk_status)
@@ -2702,7 +2702,7 @@ class VTKSimplePointsReader(Node, BVTK_Node):
     bl_idname = 'VTKSimplePointsReaderType'
     bl_label  = 'vtkSimplePointsReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -2728,14 +2728,14 @@ class VTKStructuredGridReader(Node, BVTK_Node):
     m_ReadAllTensors: bpy.props.BoolProperty(name='ReadAllTensors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadAllVectors: bpy.props.BoolProperty(name='ReadAllVectors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -2761,14 +2761,14 @@ class VTKStructuredPointsReader(Node, BVTK_Node):
     m_ReadAllTensors: bpy.props.BoolProperty(name='ReadAllTensors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadAllVectors: bpy.props.BoolProperty(name='ReadAllVectors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -2790,9 +2790,9 @@ class VTKTGAReader(Node, BVTK_Node):
     
     m_FileLowerLeft: bpy.props.BoolProperty(name='FileLowerLeft', default=True, update=BVTK_Node.outdate_vtk_status)
     m_SwapBytes: bpy.props.BoolProperty(name='SwapBytes', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_FilePattern: bpy.props.StringProperty(name='FilePattern', default="%s.%d", update=BVTK_Node.outdate_vtk_status)
-    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="", update=BVTK_Node.outdate_vtk_status)
     m_FileDimensionality: bpy.props.IntProperty(name='FileDimensionality', default=2, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceOffset: bpy.props.IntProperty(name='FileNameSliceOffset', default=0, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceSpacing: bpy.props.IntProperty(name='FileNameSliceSpacing', default=1, update=BVTK_Node.outdate_vtk_status)
@@ -2827,9 +2827,9 @@ class VTKTIFFReader(Node, BVTK_Node):
     m_OriginSpecifiedFlag: bpy.props.BoolProperty(name='OriginSpecifiedFlag', default=False, update=BVTK_Node.outdate_vtk_status)
     m_SpacingSpecifiedFlag: bpy.props.BoolProperty(name='SpacingSpecifiedFlag', default=False, update=BVTK_Node.outdate_vtk_status)
     m_SwapBytes: bpy.props.BoolProperty(name='SwapBytes', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_FilePattern: bpy.props.StringProperty(name='FilePattern', default="%s.%d", update=BVTK_Node.outdate_vtk_status)
-    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="", update=BVTK_Node.outdate_vtk_status)
     m_FileDimensionality: bpy.props.IntProperty(name='FileDimensionality', default=2, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceOffset: bpy.props.IntProperty(name='FileNameSliceOffset', default=0, update=BVTK_Node.outdate_vtk_status)
     m_FileNameSliceSpacing: bpy.props.IntProperty(name='FileNameSliceSpacing', default=1, update=BVTK_Node.outdate_vtk_status)
@@ -2858,7 +2858,7 @@ class VTKTRUCHASReader(Node, BVTK_Node):
     bl_idname = 'VTKTRUCHASReaderType'
     bl_label  = 'vtkTRUCHASReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -2884,14 +2884,14 @@ class VTKTableReader(Node, BVTK_Node):
     m_ReadAllTensors: bpy.props.BoolProperty(name='ReadAllTensors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadAllVectors: bpy.props.BoolProperty(name='ReadAllVectors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -2928,7 +2928,7 @@ class VTKTecplotTableReader(Node, BVTK_Node):
     
     m_GeneratePedigreeIds: bpy.props.BoolProperty(name='GeneratePedigreeIds', default=False, update=BVTK_Node.outdate_vtk_status)
     m_OutputPedigreeIds: bpy.props.BoolProperty(name='OutputPedigreeIds', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_PedigreeIdArrayName: bpy.props.StringProperty(name='PedigreeIdArrayName', default="id", update=BVTK_Node.outdate_vtk_status)
     m_ColumnNamesOnLine: bpy.props.IntProperty(name='ColumnNamesOnLine', default=1, update=BVTK_Node.outdate_vtk_status)
     m_HeaderLines: bpy.props.IntProperty(name='HeaderLines', default=2, update=BVTK_Node.outdate_vtk_status)
@@ -2963,14 +2963,14 @@ class VTKTemporalDelimitedTextReader(Node, BVTK_Node):
     m_TrimWhitespacePriorToNumericConversion: bpy.props.BoolProperty(name='TrimWhitespacePriorToNumericConversion', default=False, update=BVTK_Node.outdate_vtk_status)
     m_UseStringDelimiter: bpy.props.BoolProperty(name='UseStringDelimiter', default=True, update=BVTK_Node.outdate_vtk_status)
     m_FieldDelimiterCharacters: bpy.props.StringProperty(name='FieldDelimiterCharacters', default=",", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_PedigreeIdArrayName: bpy.props.StringProperty(name='PedigreeIdArrayName', default="id", update=BVTK_Node.outdate_vtk_status)
     m_StringDelimiter: bpy.props.StringProperty(name='StringDelimiter', default="", update=BVTK_Node.outdate_vtk_status)
     m_TimeColumnName: bpy.props.StringProperty(name='TimeColumnName', default="", update=BVTK_Node.outdate_vtk_status)
     m_UTF8FieldDelimiters: bpy.props.StringProperty(name='UTF8FieldDelimiters', default=",", update=BVTK_Node.outdate_vtk_status)
     m_UTF8RecordDelimiters: bpy.props.StringProperty(name='UTF8RecordDelimiters', default="\n", update=BVTK_Node.outdate_vtk_status)
     m_UTF8StringDelimiters: bpy.props.StringProperty(name='UTF8StringDelimiters', default="", update=BVTK_Node.outdate_vtk_status)
-    m_UnicodeCharacterSet: bpy.props.StringProperty(name='UnicodeCharacterSet', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_UnicodeCharacterSet: bpy.props.StringProperty(name='UnicodeCharacterSet', default="", update=BVTK_Node.outdate_vtk_status)
     m_UnicodeFieldDelimiters: bpy.props.StringProperty(name='UnicodeFieldDelimiters', default=",", update=BVTK_Node.outdate_vtk_status)
     m_UnicodeRecordDelimiters: bpy.props.StringProperty(name='UnicodeRecordDelimiters', default="", update=BVTK_Node.outdate_vtk_status)
     m_UnicodeStringDelimiters: bpy.props.StringProperty(name='UnicodeStringDelimiters', default="", update=BVTK_Node.outdate_vtk_status)
@@ -3004,14 +3004,14 @@ class VTKTreeReader(Node, BVTK_Node):
     m_ReadAllTensors: bpy.props.BoolProperty(name='ReadAllTensors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadAllVectors: bpy.props.BoolProperty(name='ReadAllVectors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -3029,7 +3029,7 @@ class VTKTulipReader(Node, BVTK_Node):
     bl_idname = 'VTKTulipReaderType'
     bl_label  = 'vtkTulipReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -3055,14 +3055,14 @@ class VTKUnstructuredGridReader(Node, BVTK_Node):
     m_ReadAllTensors: bpy.props.BoolProperty(name='ReadAllTensors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadAllVectors: bpy.props.BoolProperty(name='ReadAllVectors', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
-    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FieldDataName: bpy.props.StringProperty(name='FieldDataName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_LookupTableName: bpy.props.StringProperty(name='LookupTableName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_NormalsName: bpy.props.StringProperty(name='NormalsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ScalarsName: bpy.props.StringProperty(name='ScalarsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TCoordsName: bpy.props.StringProperty(name='TCoordsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_TensorsName: bpy.props.StringProperty(name='TensorsName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_VectorsName: bpy.props.StringProperty(name='VectorsName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=16, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -3080,7 +3080,7 @@ class VTKVASPAnimationReader(Node, BVTK_Node):
     bl_idname = 'VTKVASPAnimationReaderType'
     bl_label  = 'vtkVASPAnimationReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -3098,7 +3098,7 @@ class VTKVASPTessellationReader(Node, BVTK_Node):
     bl_idname = 'VTKVASPTessellationReaderType'
     bl_label  = 'vtkVASPTessellationReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -3116,7 +3116,7 @@ class VTKVPICReader(Node, BVTK_Node):
     bl_idname = 'VTKVPICReaderType'
     bl_label  = 'vtkVPICReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_Stride: bpy.props.IntVectorProperty(name='Stride', default=[1, 1, 1], size=3, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
@@ -3135,7 +3135,7 @@ class VTKVeraOutReader(Node, BVTK_Node):
     bl_idname = 'VTKVeraOutReaderType'
     bl_label  = 'vtkVeraOutReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -3156,7 +3156,7 @@ class VTKVolume16Reader(Node, BVTK_Node):
     
     m_SwapBytes: bpy.props.BoolProperty(name='SwapBytes', default=True, update=BVTK_Node.outdate_vtk_status)
     m_FilePattern: bpy.props.StringProperty(name='FilePattern', default="%s.%d", update=BVTK_Node.outdate_vtk_status)
-    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_FilePrefix: bpy.props.StringProperty(name='FilePrefix', default="", update=BVTK_Node.outdate_vtk_status)
     m_DataMask: bpy.props.IntProperty(name='DataMask', default=0, update=BVTK_Node.outdate_vtk_status)
     m_HeaderSize: bpy.props.IntProperty(name='HeaderSize', default=0, update=BVTK_Node.outdate_vtk_status)
     e_DataByteOrder: bpy.props.EnumProperty(name='DataByteOrder', default="LittleEndian", items=e_DataByteOrder_items, update=BVTK_Node.outdate_vtk_status)
@@ -3181,8 +3181,8 @@ class VTKWindBladeReader(Node, BVTK_Node):
     bl_idname = 'VTKWindBladeReaderType'
     bl_label  = 'vtkWindBladeReader'
     
-    m_Filename: bpy.props.StringProperty(name='Filename', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_SubExtent: bpy.props.IntVectorProperty(name='SubExtent', default=[1000000000, 678650990, 1000000000, 1000000000, 828863073, 1000000000], size=6, update=BVTK_Node.outdate_vtk_status)
+    m_Filename: bpy.props.StringProperty(name='Filename', default="", update=BVTK_Node.outdate_vtk_status)
+    m_SubExtent: bpy.props.IntVectorProperty(name='SubExtent', default=[0, 0, 0, 0, 0, 0], size=6, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -3200,7 +3200,7 @@ class VTKXGMLReader(Node, BVTK_Node):
     bl_idname = 'VTKXGMLReaderType'
     bl_label  = 'vtkXGMLReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -3220,7 +3220,7 @@ class VTKXMLGenericDataObjectReader(Node, BVTK_Node):
     
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="TimeValue", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     
@@ -3242,7 +3242,7 @@ class VTKXMLHierarchicalBoxDataReader(Node, BVTK_Node):
     
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="TimeValue", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_MaximumLevelsToReadByDefault: bpy.props.IntProperty(name='MaximumLevelsToReadByDefault', default=1, update=BVTK_Node.outdate_vtk_status)
     m_PieceDistribution: bpy.props.IntProperty(name='PieceDistribution', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
@@ -3266,7 +3266,7 @@ class VTKXMLHierarchicalDataReader(Node, BVTK_Node):
     
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="TimeValue", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_PieceDistribution: bpy.props.IntProperty(name='PieceDistribution', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
@@ -3289,7 +3289,7 @@ class VTKXMLHyperTreeGridReader(Node, BVTK_Node):
     
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="TimeValue", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_FixedLevel: bpy.props.IntProperty(name='FixedLevel', default=1000000000, update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
@@ -3313,7 +3313,7 @@ class VTKXMLImageDataReader(Node, BVTK_Node):
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
     m_WholeSlices: bpy.props.BoolProperty(name='WholeSlices', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="TimeValue", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     
@@ -3335,7 +3335,7 @@ class VTKXMLMultiBlockDataReader(Node, BVTK_Node):
     
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="TimeValue", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_PieceDistribution: bpy.props.IntProperty(name='PieceDistribution', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
@@ -3358,7 +3358,7 @@ class VTKXMLMultiGroupDataReader(Node, BVTK_Node):
     
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="TimeValue", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_PieceDistribution: bpy.props.IntProperty(name='PieceDistribution', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
@@ -3381,7 +3381,7 @@ class VTKXMLPHyperTreeGridReader(Node, BVTK_Node):
     
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="TimeValue", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     
@@ -3403,7 +3403,7 @@ class VTKXMLPImageDataReader(Node, BVTK_Node):
     
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="TimeValue", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     
@@ -3425,7 +3425,7 @@ class VTKXMLPPolyDataReader(Node, BVTK_Node):
     
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="TimeValue", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     
@@ -3447,7 +3447,7 @@ class VTKXMLPRectilinearGridReader(Node, BVTK_Node):
     
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="TimeValue", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     
@@ -3469,7 +3469,7 @@ class VTKXMLPStructuredGridReader(Node, BVTK_Node):
     
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="TimeValue", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     
@@ -3491,7 +3491,7 @@ class VTKXMLPTableReader(Node, BVTK_Node):
     
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="TimeValue", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     
@@ -3513,7 +3513,7 @@ class VTKXMLPUnstructuredGridReader(Node, BVTK_Node):
     
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="TimeValue", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     
@@ -3535,7 +3535,7 @@ class VTKXMLPartitionedDataSetCollectionReader(Node, BVTK_Node):
     
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="TimeValue", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_PieceDistribution: bpy.props.IntProperty(name='PieceDistribution', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
@@ -3558,7 +3558,7 @@ class VTKXMLPartitionedDataSetReader(Node, BVTK_Node):
     
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="TimeValue", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_PieceDistribution: bpy.props.IntProperty(name='PieceDistribution', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
@@ -3581,7 +3581,7 @@ class VTKXMLPolyDataReader(Node, BVTK_Node):
     
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="TimeValue", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     
@@ -3604,7 +3604,7 @@ class VTKXMLRectilinearGridReader(Node, BVTK_Node):
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
     m_WholeSlices: bpy.props.BoolProperty(name='WholeSlices', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="TimeValue", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     
@@ -3627,7 +3627,7 @@ class VTKXMLStructuredGridReader(Node, BVTK_Node):
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
     m_WholeSlices: bpy.props.BoolProperty(name='WholeSlices', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="TimeValue", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     
@@ -3649,7 +3649,7 @@ class VTKXMLTableReader(Node, BVTK_Node):
     
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="TimeValue", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     
@@ -3675,9 +3675,9 @@ class VTKXMLTreeReader(Node, BVTK_Node):
     m_ReadCharData: bpy.props.BoolProperty(name='ReadCharData', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ReadTagName: bpy.props.BoolProperty(name='ReadTagName', default=True, update=BVTK_Node.outdate_vtk_status)
     m_EdgePedigreeIdArrayName: bpy.props.StringProperty(name='EdgePedigreeIdArrayName', default="edge id", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_VertexPedigreeIdArrayName: bpy.props.StringProperty(name='VertexPedigreeIdArrayName', default="vertex id", update=BVTK_Node.outdate_vtk_status)
-    m_XMLString: bpy.props.StringProperty(name='XMLString', default="None", update=BVTK_Node.outdate_vtk_status)
+    m_XMLString: bpy.props.StringProperty(name='XMLString', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=9, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
@@ -3697,7 +3697,7 @@ class VTKXMLUniformGridAMRReader(Node, BVTK_Node):
     
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="TimeValue", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_MaximumLevelsToReadByDefault: bpy.props.IntProperty(name='MaximumLevelsToReadByDefault', default=1, update=BVTK_Node.outdate_vtk_status)
     m_PieceDistribution: bpy.props.IntProperty(name='PieceDistribution', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
@@ -3721,7 +3721,7 @@ class VTKXMLUnstructuredGridReader(Node, BVTK_Node):
     
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ActiveTimeDataArrayName: bpy.props.StringProperty(name='ActiveTimeDataArrayName', default="TimeValue", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_TimeStepRange: bpy.props.IntVectorProperty(name='TimeStepRange', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     
@@ -3741,7 +3741,7 @@ class VTKXYZMolReader(Node, BVTK_Node):
     bl_idname = 'VTKXYZMolReaderType'
     bl_label  = 'vtkXYZMolReader'
     
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_TimeStep: bpy.props.IntProperty(name='TimeStep', default=0, update=BVTK_Node.outdate_vtk_status)
     m_BScale: bpy.props.FloatProperty(name='BScale', default=1.0, update=BVTK_Node.outdate_vtk_status)
     m_HBScale: bpy.props.FloatProperty(name='HBScale', default=1.0, update=BVTK_Node.outdate_vtk_status)
@@ -3781,8 +3781,8 @@ class VTKXdmfReader(Node, BVTK_Node):
     bl_label  = 'vtkXdmfReader'
     
     m_ReadFromInputString: bpy.props.BoolProperty(name='ReadFromInputString', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_DomainName: bpy.props.StringProperty(name='DomainName', default="None", update=BVTK_Node.outdate_vtk_status)
-    m_FileName: bpy.props.StringProperty(name='FileName', default="None", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
+    m_DomainName: bpy.props.StringProperty(name='DomainName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_FileName: bpy.props.StringProperty(name='FileName', default="", subtype='FILE_PATH', update=BVTK_Node.outdate_vtk_status)
     m_Stride: bpy.props.IntVectorProperty(name='Stride', default=[1, 1, 1], size=3, update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)

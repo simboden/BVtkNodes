@@ -510,7 +510,7 @@ for name in sorted(dir(vtk)):
                         value = -1e300
                     p_value = str(value)
 
-                if getter_arg == "string":
+                if getter_arg == "string" or getter_arg == "str":
                     if p_value is None or p_value == "None":
                         p_value = '""'
 
