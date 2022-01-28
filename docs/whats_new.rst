@@ -16,6 +16,7 @@ Version 0.8 (2022-01-16)
 Version 0.7 (2021-09-18)
 ------------------------
 
+- Supported Blender LTS version 2.83 and VTK 9.0.1.
 - New node update system, where VTK updates are independent of node
   editing actions. User has now option to change **Update Mode** in
   the Inspect Panel, which determines when changes in nodes are

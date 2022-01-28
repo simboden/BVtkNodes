@@ -846,6 +846,7 @@ You are free to ask and give advice for specific use cases at
 Please check this list first though:
 
 * Read through these docs first, and view examples in :ref:`ug_nodes`.
+* Note the new **Update Mode** option located in the Inspect Panel. This global option dictates what triggers node updates. See also :ref:`whats_new`.
 * Run **Force Update Upstream** on the final *VTK To Blender Mesh* node to update the
   preceding nodes.
 * For time dependent data, try to change frame number in Blender
