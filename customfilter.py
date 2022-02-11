@@ -248,6 +248,57 @@ class BVTK_Node_MultiBlockLeaf(Node, BVTK_Node):
 # ----------------------------------------------------------------
 
 
+def get_number_list_from_basename(basename, extension):
+    """Return a list of the number part of file names ending with
+    extension. Argument basename includes absolute or relative
+    directory path and a file name start part at the end.
+
+    It is assumed that file name is composed of the basename
+    (e.g. "/path/folder/data_" or "//data_" or "./data_" or just
+    "data_"), an integer number (with or without padding, not
+    necessarily continuous series), and an extension (e.g. ".vtk").
+    """
+    import os
+    import re
+    sep = os.path.sep  # Path folder separator character
+
+    # Get directory name and file name start part
+    if sep in basename:
+        dirname = bpy.path.abspath(basename)
+        # Unpack possible relative path parts
+        dirname = os.path.abspath(dirname)
+        # Remove file name start part from directory name
+        dirname = sep.join(dirname.split(sep)[0:-1])
+        # Separate the file name start part
+        filename_start_part = basename.split(sep)[-1].split(".")[0]
+    else:
+        dirname = "."
+        filename_start_part = basename.split(".")[0]
+
+    # l.debug("Parsed directory name: %r " % dirname)
+    # l.debug("File name start part: %r" % filename_start_part)
+
+    numbers = []
+    rec1 = re.compile(r"(.*?)(\d+)(\.\w+)$", re.M)
+
+    for root, dirs, filenames in os.walk(dirname):
+        for filename in filenames:
+            regex1 = rec1.search(filename)
+            if regex1:
+                name = regex1.group(1)
+                if name != filename_start_part:
+                    continue
+                extension = regex1.group(3)
+                if not filename.endswith(extension):
+                    continue
+                number = regex1.group(2)
+                numbers.append(int(number))
+
+    dir_and_filename_skeleton = dirname + sep + filename_start_part
+    numbers = sorted(numbers)
+    return numbers, dir_and_filename_skeleton
+
+
 def update_timestep_in_filename(filename, time_index):
     """Return file name, where time definition integer string (assumed to
     be located just before dot at end of file name) has been replaced
@@ -255,16 +306,25 @@ def update_timestep_in_filename(filename, time_index):
     """
     import re
 
-    rec1 = re.compile(r"(\d+)\.\w+$", re.M)
+    # Regex to match base name, number and file extension parts
+    rec1 = re.compile(r"(.*?)(\d+)(\.\w+)$", re.M)
     regex1 = rec1.search(filename)
     if regex1:
-        numbers = regex1.group(1)
+        basename = regex1.group(1)
+        extension = regex1.group(3)
+        numbers, dir_and_filename_skeleton = \
+            get_number_list_from_basename(basename, extension)
+
+        # Data is looped from beginning after last data file. Subtract
+        # index by one to make frame 1 correspond to first data file
         n = len(numbers)
-        defstr = "%0" + str(n) + "d"
-        replacement = defstr % time_index
-        # Replace with dot at end to increase odds for correct substitution
-        newname = filename.replace(numbers + ".", replacement + ".")
+        number = numbers[(time_index - 1) % n]
+
+        newname = dir_and_filename_skeleton + str(number) + extension
+        l.debug("Time index %d corresponds to %r" % (time_index, newname))
         return newname
+
+    l.warning("No time steps detected for " + filename)
     return filename
 
 
@@ -332,7 +392,7 @@ class BVTK_Node_TimeSelector(Node, BVTK_Node):
     def time_index_update(self, context=None):
         """Custom time_index out-of-date routine"""
         time_values = self.get_time_values()
-        l.debug("time_values " + str(time_values))
+        # l.debug("time_values " + str(time_values))
         if not time_values:
             self.update_time_unaware_reader_node()
         self.outdate_vtk_status(context)
