@@ -195,6 +195,10 @@ class BVTKNodes_Settings(bpy.types.PropertyGroup):
 def on_file_loaded(scene):
     """Initialize cache and VTK objects after Blender file has been opened"""
     l.debug("Triggered")
+
+    # Force guard variable off
+    bpy.context.scene.bvtknodes_settings.on_frame_change_is_running = False
+
     # Reset the node cache
     cache.BVTKCache.reset_cache()
 
@@ -284,6 +288,7 @@ def on_frame_change(scene, depsgraph):
     # from depsgraph update.
     if not time_changed(bvtk_nodes):
         l.debug("Time unchanged, exiting on_frame_change")
+        scene.bvtknodes_settings.on_frame_change_is_running = False
         return None
 
     # Set no automatic updates to avoid triggering multiple updates
@@ -321,14 +326,25 @@ def on_frame_change(scene, depsgraph):
 def on_depsgraph_update(scene, depsgraph):
     """Updates done after depsgraph changes"""
 
-    # Call on_frame_change() only if it's not already running
-    if not scene.bvtknodes_settings.on_frame_change_is_running:
-        l.debug("Depsgraph update, calling on_frame_change()")
-        on_frame_change(scene, depsgraph)
-    else:
-        l.debug(
-            "Depsgraph update, but on_frame_change() is already running, so not calling it now"
-        )
+    import time
+
+    # Call on_frame_change() only when it's not anymore running.
+    i = 1
+    while i > 0:
+        if scene.bvtknodes_settings.on_frame_change_is_running:
+            l.debug(
+                "Depsgraph update, waiting for on_frame_change(), "
+                + "(iteration %d)" % (i + 1)
+            )
+            time.sleep(0.5)
+        else:
+            break
+        i += 1
+        if i > 10000:
+            raise Exception("Giving up, on_frame_change_is_running forever")
+
+    l.debug("Depsgraph update, calling on_frame_change()")
+    on_frame_change(scene, depsgraph)
 
 
 def custom_register_node_categories():
