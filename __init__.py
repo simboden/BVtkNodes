@@ -264,7 +264,7 @@ def on_frame_change(scene, depsgraph):
 
     # Set internal guard state to avoid running this also from
     # on_depsgraph_update()
-    scene.bvtknodes_settings.on_frame_change_is_running = True
+    bpy.context.scene.bvtknodes_settings.on_frame_change_is_running = True
 
     bvtk_nodes = core.get_all_bvtk_nodes()
 
@@ -288,7 +288,7 @@ def on_frame_change(scene, depsgraph):
     # from depsgraph update.
     if not time_changed(bvtk_nodes):
         l.debug("Time unchanged, exiting on_frame_change")
-        scene.bvtknodes_settings.on_frame_change_is_running = False
+        bpy.context.scene.bvtknodes_settings.on_frame_change_is_running = False
         return None
 
     # Set no automatic updates to avoid triggering multiple updates
@@ -318,7 +318,7 @@ def on_frame_change(scene, depsgraph):
     if update_mode == "update-all":
         cache.BVTKCache.update_all()
 
-    scene.bvtknodes_settings.on_frame_change_is_running = False
+    bpy.context.scene.bvtknodes_settings.on_frame_change_is_running = False
     l.debug("Frame update completed!")
 
 
@@ -331,7 +331,7 @@ def on_depsgraph_update(scene, depsgraph):
     # Call on_frame_change() only when it's not anymore running.
     i = 1
     while i > 0:
-        if scene.bvtknodes_settings.on_frame_change_is_running:
+        if bpy.context.scene.bvtknodes_settings.on_frame_change_is_running:
             l.debug(
                 "Depsgraph update, waiting for on_frame_change(), "
                 + "(iteration %d)" % (i + 1)
