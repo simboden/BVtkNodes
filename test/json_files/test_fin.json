@@ -237,6 +237,7 @@
             "name": "Color Ramp.001",
             "show_options": true,
             "show_preview": false,
+            "texture_name": "default2",
             "width": 200.0
         },
         {
@@ -402,6 +403,7 @@
             "name": "Color Ramp",
             "show_options": true,
             "show_preview": false,
+            "texture_name": "default",
             "width": 200.0
         },
         {

@@ -18,18 +18,35 @@ with open(current_dir + "/colormaps/colormaps_rgb.json") as json_file:
     colormaps_rgb = json.load(json_file)
 
 
-def get_default_texture(name):
+def get_random_name():
+    """Generate a random four letter string to be used for texture name
+    """
+    import random, string
+
+    random.seed()
+    name = "".join(random.choices(string.ascii_uppercase, k=4))
+    return name
+
+
+def get_default_texture(name=None):
     """Create and return a new color ramp BLEND type brush texture"""
+
+    # Generate random texture name if no texture name is provided
+    if not name:
+        name = get_random_name()
     if name not in bpy.data.textures:
         tex = bpy.data.textures.new(name, "BLEND")
     else:
         tex = bpy.data.textures[name]
+        return tex, name
+
     tex.use_color_ramp = True
 
     # Force saving of blend texture, so that ramp is correct when
     # blend file is loaded. TODO: Is there better way to fix this?
     tex.use_fake_user = True
 
+    # Default texture is blue-white-red
     elements = tex.color_ramp.elements
     elements[0].color = (10 / 255, 10 / 255, 180 / 255, 1)
     elements[0].position = 0.05
@@ -41,7 +58,8 @@ def get_default_texture(name):
     e.color = (221 / 255, 221 / 255, 221 / 255, 1)
     e = elements.new(0.575)
     e.color = (243 / 255, 148 / 255, 117 / 255, 1)
-    return tex
+
+    return tex, name
 
 
 def get_matplotlib_colormap(texture_name, cm_name, cm_nr_values):
@@ -95,9 +113,10 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
         "Node which specifies the variable and value range for coloring of surfaces"
     )
 
-    my_texture_name: bpy.props.StringProperty(
+    texture_name: bpy.props.StringProperty(
         default="",
-        name="Name of Blender Texture used for color information",
+        name="Texture Name",
+        description="Name of Blender Brush Texture (specify only if no Color Ramp Node is connected)",
         update=BVTK_Node.outdate_vtk_status,
     )
     lut: bpy.props.BoolProperty(
@@ -165,8 +184,16 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
         if self.min >= self.max:
             return "Error: Range min >= range max, can't unwrap."
 
-        if len(self.inputs["lookuptable"].links) != 1:
+        if len(self.texture_name) == 0 and len(self.inputs["lookuptable"].links) != 1:
             return "Error: No Color Ramp Node connected"
+
+        if len(self.texture_name) > 0 and len(self.inputs["lookuptable"].links) == 1:
+            return (
+                "Error: Both specified: Texture Name and Color Ramp Node is connected"
+            )
+
+        if len(self.texture_name) > 0 and self.texture_name not in bpy.data.textures:
+            return "Error: Texture Name %r doesn't exist in Blender" % self.texture_name
 
     def color_by_enum_generator(self, context=None):
         """Enum list generator for color_by property.
@@ -222,7 +249,7 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
     )
 
     def m_properties(self):
-        return ["color_by", "auto_range", "lut", "min", "max", "height"]
+        return ["texture_name", "color_by", "auto_range", "lut", "min", "max", "height"]
 
     def m_connections(self):
         return (["input", "lookuptable"], [], [], ["output"])
@@ -231,25 +258,32 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
         return "up-to-date"
 
     def get_texture(self):
-        """Dig up the texture from the Color Ramp node connected to lookuptable input.
+        """Return a Blender Texture to be used for generating color map image
         """
+        # Get texture primarily from Color Ramp node connected to lookuptable
         in_links = self.inputs["lookuptable"].links
         if len(in_links) > 0:
             return in_links[0].from_node.get_texture()
-        if self.my_texture_name:
-            if self.my_texture_name in bpy.data.textures:
-                return bpy.data.textures[self.my_texture_name]
-        new_texture = get_default_texture(self.name)
-        self.my_texture_name = new_texture.name
+
+        # Otherwise use the texture name specified in Color Mapper
+        if self.texture_name:
+            if self.texture_name in bpy.data.textures:
+                return bpy.data.textures[self.texture_name]
+
+        # Last option is to generate a new texture
+        new_texture, new_texture_name = get_default_texture()
+        self.texture_name = new_texture_name
         return new_texture
 
     def free(self):
-        if self.my_texture_name:
-            if self.my_texture_name in bpy.data.textures:
-                bpy.data.textures.remove(bpy.data.textures[self.my_texture_name])
+        if self.texture_name:
+            if self.texture_name in bpy.data.textures:
+                bpy.data.textures.remove(bpy.data.textures[self.texture_name])
         BVTKCache.unmap_node(self)
 
     def draw_buttons_special(self, context, layout):
+        # Texture Name is not shown -> user must connect a Color Ramp Node
+        # layout.prop(self, "texture_name")
         layout.prop(self, "lut")
         if self.lut:
             layout.prop(self, "height")
@@ -285,20 +319,24 @@ class BVTK_Node_ColorRamp(Node, BVTK_Node):
     bl_label = "Color Ramp"
     bl_description = "Node for providing VTK Lookup Table for colors of a color palette"
 
-    my_texture: bpy.props.StringProperty()
-
-    def preset_name_from_ind(self, ind):
-        return self.cm_preset_items[ind][0]
+    texture_name: bpy.props.StringProperty(
+        default="",
+        name="Texture Name",
+        description="Name of Blender Brush Texture for the Color Ramp",
+        update=BVTK_Node.outdate_vtk_status,
+    )
 
     def update_colorbar_preset(self, context):
         self.notify_downstream(vtk_status="out-of-date")
         # Custom color map will not be modified
         if self.cm_preset == "custom":
             return
+        if not self.texture_name:
+            self.texture_name = get_random_name()
         new_texture = get_matplotlib_colormap(
-            self.name, self.cm_preset, self.cm_nr_values
+            self.texture_name, self.cm_preset, self.cm_nr_values
         )
-        self.my_texture = new_texture.name
+        self.texture_name = new_texture.name
 
     def update_colorbar_nr(self, context):
         self.notify_downstream(vtk_status="out-of-date")
@@ -324,15 +362,15 @@ class BVTK_Node_ColorRamp(Node, BVTK_Node):
     )
 
     def m_properties(self):
-        return ["cm_preset", "cm_nr_values"]
+        return ["texture_name", "cm_preset", "cm_nr_values"]
 
     def m_connections(self):
         return ([], [], [], ["lookupTable"])
 
     def copy_special(self, node):
-        """Copy color ramp from argument node to self"""
-        new_texture = get_default_texture(self.name)
-        self.my_texture = new_texture.name
+        """Create a new texture and copy texture contents from argument node"""
+        new_texture, name = get_default_texture()
+        self.texture_name = name
         old_texture = node.get_texture()
         if old_texture:
             elements = new_texture.color_ramp.elements
@@ -348,31 +386,43 @@ class BVTK_Node_ColorRamp(Node, BVTK_Node):
                     e.color = new_el.color
 
     def get_texture(self):
-        if self.my_texture not in bpy.data.textures.keys():
-            return None
-        return bpy.data.textures[self.my_texture]
+        """Return a Blender Texture for this node
+        """
+        # Create new if texture name is empty
+        if not self.texture_name:
+            new_texture, new_texture_name = get_default_texture()
+            self.texture_name = new_texture_name
+            return new_texture
+
+        # Create a new texture if name is given but texture is missing
+        elif self.texture_name not in bpy.data.textures.keys():
+            new_texture, new_texture_name = get_default_texture(self.texture_name)
+            return new_texture
+
+        # Otherwise return existing texture
+        return bpy.data.textures[self.texture_name]
 
     def free(self):
-        if self.my_texture in bpy.data.textures:
-            bpy.data.textures.remove(bpy.data.textures[self.my_texture])
+        if self.texture_name in bpy.data.textures:
+            bpy.data.textures.remove(bpy.data.textures[self.texture_name])
         BVTKCache.unmap_node(self)
 
     def draw_buttons_special(self, context, layout):
-        if self.my_texture in bpy.data.textures.keys():
+        layout.prop(self, "texture_name")
+        layout.prop(self, "cm_preset")
+        layout.prop(self, "cm_nr_values")
+        if self.texture_name in bpy.data.textures.keys():
             layout.template_color_ramp(
-                bpy.data.textures[self.my_texture], "color_ramp", expand=False
+                bpy.data.textures[self.texture_name], "color_ramp", expand=False
             )
-        row = layout.row()
-        row.prop(self, "cm_preset")
-        row = layout.row()
-        row.prop(self, "cm_nr_values")
 
     def apply_properties_special(self):
         return "up-to-date"
 
     def init_vtk(self):
-        new_texture = get_default_texture(self.name)
-        self.my_texture = new_texture.name
+        new_texture, texture_name = get_default_texture(self.texture_name)
+        if texture_name != self.texture_name:
+            self.texture_name = texture_name
         lut = vtk.vtkLookupTable()
         lut.Build()
         return lut
@@ -389,7 +439,7 @@ class BVTK_Node_ColorRamp(Node, BVTK_Node):
 
     def import_properties(self, dict):
         """Import colormap properties. Called by import operator"""
-        l.debug("importing colormap " + str(self.name))
+        l.debug("importing colormap for node " + str(self.name))
         t = self.get_texture()
         new_elements = dict["elements"]
         if t:

@@ -249,6 +249,7 @@
             "name": "Color Ramp",
             "show_options": true,
             "show_preview": false,
+            "texture_name": "texture1",
             "width": 200.0
         },
         {

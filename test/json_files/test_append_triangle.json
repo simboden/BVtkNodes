@@ -314,6 +314,7 @@
             "name": "Color Ramp",
             "show_options": true,
             "show_preview": false,
+            "texture_name": "default",
             "width": 200.0
         },
         {
