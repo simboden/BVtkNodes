@@ -184,6 +184,12 @@ class BVTKNodes_Settings(bpy.types.PropertyGroup):
         default="update-current",
     )
 
+    on_frame_change_is_running: bpy.props.BoolProperty(
+        name="on_frame_change() is running",
+        description="Internal boolean state to detect whether on_frame_change() is running",
+        default=False,
+    )
+
 
 @persistent
 def on_file_loaded(scene):
@@ -247,7 +253,14 @@ compareGeneratedAndCurrentVTKVersion()
 @persistent
 def on_frame_change(scene, depsgraph):
     """Updates done after frame number (time step) changes"""
-    l.debug("Triggered")
+    l.debug(
+        "Triggered frame update at frame %d (Update Mode %r)"
+        % (scene.frame_current, str(scene.bvtknodes_settings.update_mode))
+    )
+
+    # Set internal guard state to avoid running this also from
+    # on_depsgraph_update()
+    scene.bvtknodes_settings.on_frame_change_is_running = True
 
     bvtk_nodes = core.get_all_bvtk_nodes()
 
@@ -270,6 +283,7 @@ def on_frame_change(scene, depsgraph):
     # This check is needed because this routine can be triggered also
     # from depsgraph update.
     if not time_changed(bvtk_nodes):
+        l.debug("Time unchanged, exiting on_frame_change")
         return None
 
     # Set no automatic updates to avoid triggering multiple updates
@@ -299,12 +313,22 @@ def on_frame_change(scene, depsgraph):
     if update_mode == "update-all":
         cache.BVTKCache.update_all()
 
+    scene.bvtknodes_settings.on_frame_change_is_running = False
+    l.debug("Frame update completed!")
+
 
 @persistent
 def on_depsgraph_update(scene, depsgraph):
     """Updates done after depsgraph changes"""
-    l.debug("Triggered")
-    on_frame_change(scene, depsgraph)
+
+    # Call on_frame_change() only if it's not already running
+    if not scene.bvtknodes_settings.on_frame_change_is_running:
+        l.debug("Depsgraph update, calling on_frame_change()")
+        on_frame_change(scene, depsgraph)
+    else:
+        l.debug(
+            "Depsgraph update, but on_frame_change() is already running, so not calling it now"
+        )
 
 
 def custom_register_node_categories():
