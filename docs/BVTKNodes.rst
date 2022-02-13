@@ -697,10 +697,21 @@ processed.
 
 - If the VTK Reader is not aware of time data, and if File Name of the
   Reader node contains integers at the end of the File Name, then the
-  integer part of the File Name is updated to correspond to Timeline
+  integer part of the File Name is updated to match the file name
+  corresponding to the Timeline
   frame number. This allows animation of time series data for readers
   that are not aware of time (e.g. `vtkPolyDataReader`, which can read
   point and surface data from .vtk files).
+
+  The file name matching with the frame number is made as follows: A
+  file list is generated from files in the data directory, which
+  follow the same file naming convention (file name characters +
+  integer number + extension) as the current File Name. Then the list
+  is sorted by the integer number part, and the file name matching the
+  (modulo of the) frame number is selected. Data files are looped
+  continuously when frame number exceeds number of data files, to
+  allow looping animations. The integer number part can be arbitrary
+  (not necessarily a continuous sequence of numbers).
 
 .. _global_time_keeper:
 
