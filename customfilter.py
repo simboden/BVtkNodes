@@ -292,10 +292,10 @@ def get_number_list_from_basename(basename, extension):
                 if not filename.endswith(extension):
                     continue
                 number = regex1.group(2)
-                numbers.append(int(number))
+                numbers.append(str(number))
 
     dir_and_filename_skeleton = dirname + sep + filename_start_part
-    numbers = sorted(numbers)
+    numbers = sorted(numbers, key=int)
     return numbers, dir_and_filename_skeleton
 
 
