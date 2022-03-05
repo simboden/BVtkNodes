@@ -1568,6 +1568,7 @@ def create_material(ob, texture_name=None):
         node3.image = bpy.data.images[texture_name]
         node3.location = (-300, 300)
         links.new(node3.outputs["Color"], node2.inputs["Base Color"])
+        links.new(node3.outputs["Alpha"], node2.inputs["Alpha"])
 
         node4 = nodes.new("ShaderNodeMapping")
         node4.location = (-700, 300)
