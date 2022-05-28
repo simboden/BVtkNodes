@@ -97,7 +97,15 @@ class BVTK_Node_Info(Node, BVTK_Node):
 
                 if name is None or data_type_name is None or n_comps is None:
                     text += (
-                        "Warning: Invalid array encountered, number " + str(i) + "\n"
+                        "Warning: Invalid array encountered: number="
+                        + str(i)
+                        + " name="
+                        + str(name)
+                        + " data_type_name="
+                        + str(data_type_name)
+                        + " n_comps="
+                        + str(n_comps)
+                        + "\n"
                     )
 
                 range_text = ""
