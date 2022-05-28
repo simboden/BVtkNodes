@@ -358,7 +358,7 @@ def vtk_cell_to_edges_and_faces(cell_type, vis, polyfacelist):
             facelist = add_verts_to_facelist(verts, facelist)
         # Last odd triangle
         if len(vis) % 2 == 1:
-            verts=[vis[-3], vis[-2], vis[-1]]
+            verts = [vis[-3], vis[-2], vis[-1]]
             facelist = add_verts_to_facelist(verts, facelist)
         return [None], facelist
 
@@ -1742,6 +1742,99 @@ def create_lut(
 # -----------------------------------------------------------------------------
 
 
+class BVTK_Node_VTKToBlenderImage(Node, BVTK_Node):
+    """Convert vtkImageData output into a Blender Image Texture.
+    """
+
+    bl_idname = "BVTK_Node_VTKToBlenderImageType"  # type name
+    bl_label = "VTK To Blender Image"  # label for nice name display
+
+    m_Name: bpy.props.StringProperty(
+        name="Image Name", default="vtk_image", update=BVTK_Node.outdate_vtk_status
+    )
+    field_name: bpy.props.StringProperty(
+        name="Field Name", default="", update=BVTK_Node.outdate_vtk_status
+    )
+
+    def m_properties(self):
+        return ["m_Name", "field_name"]
+
+    def m_connections(self):
+        return (["input"], [], [], [])
+
+    def draw_buttons_special(self, context, layout):
+        """Custom draw buttons function, to show force update button.
+        """
+        layout.prop(self, "m_Name")
+        layout.prop(self, "field_name")
+        layout.operator("node.bvtk_node_force_update_upstream").node_path = node_path(
+            self
+        )
+
+    def apply_properties_special(self):
+        """Generate Blender image from VTK Image Data"""
+        (
+            input_node,
+            vtk_output_obj,
+            vtk_connection,
+        ) = self.get_input_node_and_output_vtk_objects()
+        val = image_data_to_blender(vtk_output_obj, self.m_Name, self.field_name)
+        if val:
+            self.ui_message = val
+            return "error"
+        update_3d_view()
+        return "up-to-date"
+
+    def init_vtk(self):
+        self.set_vtk_status("out-of-date")
+        return None
+
+
+def image_data_to_blender(vtk_data, name, field_name):
+    """Convert vtkImageData to a Blender Image"""
+
+    if not vtk_data:
+        return "No VTK object on input"
+    if not issubclass(vtk_data.__class__, vtk.vtkImageData):
+        return "Input type is not VTK Image Data"
+
+    # Determine which axis indices produce a 2D image
+    dim = vtk_data.GetDimensions()
+    if sum(dim) < 4:
+        return "Image data is missing resolution (sum(dim) was %d)" % sum(dim)
+    if dim[0] == 1:
+        dim1 = 1
+        dim2 = 2
+    elif dim[1] == 1:
+        dim1 = 0
+        dim2 = 2
+    else:
+        dim1 = 0
+        dim2 = 1
+
+    if name in bpy.data.images:
+        bpy.data.images.remove(bpy.data.images[name])
+    img = bpy.data.images.new(name, dim[dim1], dim[dim2])
+
+    scalars = vtk_data.GetPointData().GetScalars(field_name)
+    if not scalars:
+        return "Did not find data in input point data"
+    n_tuples = scalars.GetNumberOfTuples()
+    pixels = []
+    for j in range(n_tuples):
+        vals = scalars.GetTuple(j)
+        if len(vals) == 1:
+            pixels.extend([vals[0], vals[0], vals[0], 1])
+        else:
+            alpha = 1 if len(vals) < 4 else vals[3]
+            pixels.extend([vals[0], vals[1], vals[2], alpha])
+
+    img.pixels = pixels
+
+
+# Old image data converter for the original VTK To Blender node
+
+
 def imgdata_to_blender(data, name):
     """Convert vtkImageData to a Blender image"""
 
@@ -1814,6 +1907,8 @@ TYPENAMES.append("BVTK_Node_VTKToBlenderMeshType")
 add_class(BVTK_OT_InitializeParticleSystem)
 add_class(BVTK_Node_VTKToBlenderParticles)
 TYPENAMES.append("BVTK_Node_VTKToBlenderParticlesType")
+add_class(BVTK_Node_VTKToBlenderImage)
+TYPENAMES.append("BVTK_Node_VTKToBlenderImageType")
 
 # Disabled VTK To Blender Volume, it's not upgraded to new core.py.
 # You can use VTK To OpenVDB Exporter node instead.
