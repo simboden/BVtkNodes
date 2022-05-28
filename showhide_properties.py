@@ -29,7 +29,7 @@ class BVTK_PT_ShowHide_Properties(bpy.types.Panel):
             row.prop(active_node, "b_properties", index=i)
             # Take property name from m_properties
             mp = m_properties[i]
-            if mp.startswith("m_"):
+            if mp.startswith("m_") or mp.startswith("e_"):
                 mp = mp[2:]
             row.label(text=mp)
 
