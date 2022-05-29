@@ -481,6 +481,23 @@ following additions:
 .. image:: images/vtk_to_blender_mesh_node.png
 
 
+VTK To Blender Image
+^^^^^^^^^^^^^^^^^^^^
+
+This node converts VTK Image Data (*vtkImageData*) into a Blender
+Image, viewable in Blender Image Editor. The node requires two
+options:
+
+- **Image Name** is the name shown for the picture in Blender
+  Image Editor.
+- **Field Name** specifies the VTK field name, values from which are
+  used for the image.
+
+**Tip:** You may use e.g. *vtkResampleToImage* to convert planar data into
+VTK image data, see `VTK To Blender Image example
+<https://github.com/tkeskita/BVtkNodes/issues/85#issuecomment-1140251002>`_.
+
+
 VTK To Blender Particles
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
