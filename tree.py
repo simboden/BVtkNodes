@@ -223,11 +223,11 @@ def node_from_dict(nodes, node_dict):
     #    l.error('Node type not found ' + idname)
     # else:
     new_node = nodes.new(type=idname)
+    additional_property_values = None
     for prop in node_dict:
         value = node_dict[prop]
         if prop == "additional_properties":
-            if hasattr(new_node, "import_properties"):
-                new_node.import_properties(value)
+            additional_property_values = value
         else:
             if "FileName" in prop and value.startswith("$/"):
                 value = value.replace("$/", examples_data_dir)
@@ -235,6 +235,10 @@ def node_from_dict(nodes, node_dict):
                 setattr(new_node, prop, value)
             except:
                 l.error("setattr failed for " + str(prop) + " " + str(value))
+
+    # Set additional properties after all the other properties
+    if additional_property_values and hasattr(new_node, "import_properties"):
+        new_node.import_properties(additional_property_values)
 
     # Reset vtk_status to out-of-date to ensure correct initialization
     new_node.set_vtk_status("out-of-date")

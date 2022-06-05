@@ -439,7 +439,7 @@ class BVTK_Node_ColorRamp(Node, BVTK_Node):
 
     def import_properties(self, dict):
         """Import colormap properties. Called by import operator"""
-        l.debug("importing colormap for node " + str(self.name))
+        l.debug("Importing colormap for node " + str(self.name))
         t = self.get_texture()
         new_elements = dict["elements"]
         if t:

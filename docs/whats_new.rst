@@ -9,6 +9,8 @@ This information applies to the
 Version 0.9
 -----------
 
+- 2022-06-05: Fixed importing of colors for Color Ramp node.
+
 - 2022-05-28: Fixed Property listing bug for Blender 2.93 (properties were not
   shown).
 
