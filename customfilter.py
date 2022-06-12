@@ -17,22 +17,36 @@ class BVTK_Node_CustomFilter(Node, BVTK_Node):
     bl_idname = "BVTK_Node_CustomFilterType"
     bl_label = "Custom Filter"
 
-    def texts(self, context):
-        """Generate list of text objects to choose"""
-        t = []
+    text: bpy.props.StringProperty(
+        default="custom_filter", name="Text", update=BVTK_Node.outdate_vtk_status
+    )
+    func: bpy.props.StringProperty(
+        default="custom_func", name="Function", update=BVTK_Node.outdate_vtk_status
+    )
+
+    def text_enum_generator(self, context=None):
+        """Generate an enum list of text block names"""
+        t = [("None", "Empty (clear value)", "Empty (clear value)", ENUM_ICON, 0)]
         i = 0
         for text in bpy.data.texts:
             t.append((text.name, text.name, text.name, "TEXT", i))
             i += 1
-        if not t:
-            t.append(("No texts found", "No texts found", "No texts found", "TEXT", i))
         return t
 
-    text: bpy.props.EnumProperty(items=texts, name="text")
+    def text_set_value(self, context=None):
+        """Set value of StringProprety using value from EnumProperty"""
+        if self.text_enum == "None":
+            self.text = ""
+        else:
+            self.text = str(self.text_enum)
 
-    def functions(self, context=None):
+    text_enum: bpy.props.EnumProperty(
+        items=text_enum_generator, update=text_set_value, name="Function"
+    )
+
+    def func_enum_generator(self, context=None):
         """Generate list of functions to choose"""
-        f = []
+        f = [("None", "Empty (clear value)", "Empty (clear value)", ENUM_ICON, 0)]
         if self.text in bpy.data.texts:
             t = bpy.data.texts[self.text].as_string()
             for func in t.split("def ")[1:]:
@@ -41,24 +55,48 @@ class BVTK_Node_CustomFilter(Node, BVTK_Node):
                     f.append((name, name, name))
         return f
 
-    func: bpy.props.EnumProperty(items=functions, name="function")
+    def func_set_value(self, context=None):
+        """Set value of StringProprety using value from EnumProperty"""
+        if self.func_enum == "None":
+            self.func = ""
+        else:
+            self.func = str(self.func_enum)
+
+    func_enum: bpy.props.EnumProperty(
+        items=func_enum_generator, update=func_set_value, name="Function"
+    )
+
+    def validate_and_update_values_special(self):
+        """Check that value in text and func properties exist
+        """
+        if self.text not in bpy.data.texts:
+            return "Did not find Blender Text Block %r" % self.text
+
+        t = bpy.data.texts[self.text].as_string()
+        func_names = []
+        for func in t.split("def ")[1:]:
+            if "(" in func:
+                name = func.split("(")[0].replace(" ", "")
+                func_names.append(name)
+        if not self.func in func_names:
+            return "Did not find Function Definition %r" % self.func
 
     def m_properties(self):
-        return []
+        return ["text", "func"]
 
     def m_connections(self):
-        return (["input"], ["output"], [], [])
+        return (["aux_in1"], ["output"], [], [])
 
     def draw_buttons_special(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, "text")
+        row.prop(self, "text_enum", icon_only=True)
         op = row.operator("node.bvtk_new_text", icon="ZOOM_IN", text="")
-        op.name = "customfilter.py"
+        op.name = "custom_filter"
         op.body = self.__doc__.replace("    ", "")
-        if len(self.functions()):
-            layout.prop(self, "func")
-        else:
-            layout.label(text="No functions found in specified text")
+        row = layout.row(align=True)
+        row.prop(self, "func")
+        row.prop(self, "func_enum", icon_only=True)
 
     def apply_properties_special(self):
         return "up-to-date"
@@ -71,7 +109,7 @@ class BVTK_Node_CustomFilter(Node, BVTK_Node):
             input_node,
             vtk_output_obj,
             vtk_connection,
-        ) = self.get_input_node_and_output_vtk_objects()
+        ) = self.get_input_node_and_output_vtk_objects(input_socket_name="aux_in1")
         if self.text in bpy.data.texts:
             t = bpy.data.texts[self.text].as_string()
             try:
@@ -107,7 +145,12 @@ class BVTK_Node_CustomFilter(Node, BVTK_Node):
 
     def import_properties(self, dict):
         """Import node properties"""
-        bpy.ops.node.bvtk_new_text(body=dict["text_as_string"], name=dict["text_name"])
+        body = dict["text_as_string"]
+        name = dict["text_name"]
+        if not name in bpy.data.texts:
+            text = bpy.ops.node.bvtk_new_text(body="", name=name)
+        text = bpy.data.texts[name]
+        text.from_string(body)
 
     def init_vtk(self):
         self.set_vtk_status("out-of-date")
@@ -118,14 +161,18 @@ class BVTK_OT_NewText(bpy.types.Operator):
     """New text operator"""
 
     bl_idname = "node.bvtk_new_text"
-    bl_label = "Create a new text"
+    bl_label = "Create a new text block"
 
-    name: bpy.props.StringProperty(default="New text")
+    name: bpy.props.StringProperty(default="custom_func")
     body: bpy.props.StringProperty()
 
     def execute(self, context):
         text = bpy.data.texts.new(self.name)
-        text.from_string(self.body)
+        text.from_string(
+            "# Write VTK code for custom filter here\n" + \
+            "def custom_func(input_obj):\n" + \
+            "    return input_obj"
+        )
         flag = True
         areas = context.screen.areas
         for area in areas:

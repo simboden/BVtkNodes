@@ -779,22 +779,23 @@ for BVTKNodes:
 
 Additionally, there is a *Custom Filter* node available, which allows
 user to write all of the Python code in a Blender Text Block, which is
-run at node location. For example, this code returns first block from
+run at node location. Both the Text block name and Function name must be
+supplied in the node. For example, this code returns first block from
 the input, similar to *Multi Block Leaf* node::
 
-  def get_first_block(input):
-    return input.GetProducer().GetOutput(0).GetBlock(0)
+  def custom_func(input_obj):
+    return input_obj.GetBlock(0)
 
 Here is another example of a *Custom Filter* which calls
 *vtkThreshold* with custom parameter values::
 
-  def myThreshold(input):
+  def myThreshold(input_obj):
     vtkobj = vtk.vtkThreshold()
-    vtkobj.SetInputData(input)
-    attr_name = "p" # Array name for thresholding
+    vtkobj.SetInputData(input_obj)
+    attr_name = "p"  # Array name for thresholding
     attr_type = vtk.vtkDataObject.FIELD_ASSOCIATION_CELLS
-    value1 = float("0.01") # min value
-    value2 = float("0.02") # max value
+    value1 = float("0.01")  # min value
+    value2 = float("0.02")  # max value
     vtkobj.ThresholdBetween(value1, value2)
     vtkobj.SetInputArrayToProcess(0, 0, 0, attr_type, attr_name)
     vtkobj.Update()
