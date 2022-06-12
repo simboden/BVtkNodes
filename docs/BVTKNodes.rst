@@ -245,7 +245,7 @@ show the current status. Main node statuses include
 - **Error** (red) - Setting a value from node to VTK Object, or running of a
   VTK command, has failed. Execution has been stopped.
 
-Using these statuses, it is possible to build different VTK level
+Using these statuses, it was possible to build different VTK level
 updating systems, without binding node editing operations with updates
 (see Update Mode in :ref:`inspect` Panel).
 
@@ -287,7 +287,7 @@ Inspect
 
 This tab contains global settings, tools for debugging and information.
 
-- Inspect tab shows the VTK version at the top.
+- Inspect tab shows the add-on and VTK versions at the top.
 
 - **Update Mode** is a global setting which determines when changes
   made in node properties are updated to the corresponding VTK Object
@@ -301,11 +301,14 @@ This tab contains global settings, tools for debugging and information.
   - **Update All Automatically** will update upstream nodes (if
     needed), the current node and downstream nodes automatically.
 
+The following operators are available, depending on which node is active:
+
 - **Update Node** operator will call a node specific update routine on
   the active node. The update routine initializes a VTK object (if no
   VTK Object exists), sets properties from node to the VTK Object and
-  runs VTK level update command(s). This operator is available also on
-  nodes, but only if the node status is not *Up-to-date*.
+  runs VTK level update command(s). This operator is available also 
+  as a button on every node, but only if the node status is not
+  *Up-to-date*.
 - **Documentation** will show doc string of the VTK object in the
   BVTK Text Block in the Text Editor.
 - **Node Status** will show status of the VTK object in the
@@ -333,6 +336,8 @@ Tree
 Node tree related operations.
 
 - **Export JSON** exports the current node tree as JSON file.
+  Please note that exported information includes full path names
+  e.g. in VTK data reader nodes.
 - **Import JSON** imports the current node tree as JSON file.
 - **Arrange** will try to arrange node tree for a clean view.
   Warning: Does not work well for complex node trees.
@@ -847,8 +852,8 @@ debug messages to the terminal where Blender is started, but only when
 Python Logging is configured properly (see Configuring Logging chapter
 in `Logging from Python code in Blender
 <https://code.blender.org/2016/05/logging-from-python-code-in-blender/>`_).
-These messages may be helpful for debugging purposes.  In the simplest
-case on Linux, you can create a text file
+These messages may be helpful for debugging purposes. To see the debug
+messages (on Linux in this example), you can create a text file
 ``$HOME/.config/blender/{version}/scripts/startup/setup_logging.py``
 with contents
 
@@ -875,7 +880,8 @@ You are free to ask and give advice for specific use cases at
 Please check this list first though:
 
 * Read through these docs first, and view examples in :ref:`ug_nodes`.
-* Note the new **Update Mode** option located in the Inspect Panel. This global option dictates what triggers node updates. See also :ref:`whats_new`.
+* Note the new **Update Mode** option located in the Inspect Panel. This global option dictates what triggers node updates.
+* See :ref:`whats_new`.
 * Run **Force Update Upstream** on the final *VTK To Blender Mesh* node to update the
   preceding nodes.
 * For time dependent data, try to change frame number in Blender
