@@ -406,6 +406,16 @@ Customized VTK Nodes
 Various VTK nodes have been customized to ease use in Blender
 (see `Customization of Node Python Code`_):
 
+vtkContourFilter
+^^^^^^^^^^^^^^^^
+
+Contour values are specified in two fields: First value is input in
+**Single Value** field, and the rest in the **Additional Values**
+field, as a comma separated text string of values. The Single Value
+field can be keyframed in Blender, to create an animation of the
+changing value.
+
+
 vtkPlane
 ^^^^^^^^
 
