@@ -695,11 +695,14 @@ Preview** or **Rendered**.
   name. Second character is not used. For example, "P_pressure"
   specifies coloring by point data in "pressure" array. If preceding
   nodes are up-to-date, the dropdown menu on the right will provide a
-  list for selection.
+  list for selection. If the array is a vector array, then magnitude of
+  the vector is used for the color scale.
 - **Auto Range** will update the value range for the data array
   specified in *Color By* automatically during update, if enabled.
 - **min** and **max** specify the value range (if *Auto Range* is disabled).
 - **output** connector should be attached to a *VTK To Blender Mesh* node.
+
+
 
 Multi Block Leaf
 ^^^^^^^^^^^^^^^^

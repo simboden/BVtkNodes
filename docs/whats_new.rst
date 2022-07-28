@@ -9,6 +9,10 @@ This information applies to the
 Version 0.9
 -----------
 
+- 2022-07-28: Color Mapper Node now supports vector arrays as well as
+  scalar arrays as input. For vectors, magnitude of the vector is used
+  for the color scale.
+
 - 2022-06-12: Changed Custom Filter to fix it's tree import/export.
 
 - 2022-06-05: Fixed importing of colors for Color Ramp node.
