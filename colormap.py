@@ -167,6 +167,8 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
 
         # Update range
         if self.auto_range:
+            import sys
+
             # Disable triggering of automatic node update when updating range
             # values (properties with update=BVTK_Node.outdate_vtk_status).
             # TODO: Refactor to core if some other nodes need this as well.
@@ -174,9 +176,23 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
             old_mode = str(update_mode)
             bpy.context.scene.bvtknodes_settings.update_mode = "no-automatic-updates"
 
-            value_range = d.GetRange()
-            self.max = value_range[1]
-            self.min = value_range[0]
+            num_comps = d.GetNumberOfComponents()
+            num_tups = d.GetNumberOfTuples()
+            self.min = sys.float_info.max   # These assume floating
+            self.max = sys.float_info.min   # precision but shouldn't
+            for i in range(num_tups):
+                tup = d.GetTuple(i)
+                v = 0.0
+                # Get Euclidean norm (magnitude) of the data vector.
+                # This should leave scalars unchanged
+                for j in range(num_comps):
+                    v += tup[j] ** 2
+                v = v ** 0.5
+
+                if v < self.min:
+                    self.min = v
+                if v > self.max:
+                    self.max = v
 
             # Restore Update Mode and update if needed
             bpy.context.scene.bvtknodes_settings.update_mode = old_mode

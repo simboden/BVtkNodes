@@ -1610,12 +1610,20 @@ def image_from_ramp(ramp, name, length):
 def face_unwrap(bm, vtk_obj, array_name, vrange):
     """Unwrap by cell data"""
 
-    scalars = get_vtk_array_data(vtk_obj, array_name, array_type="C")
+    array_data = get_vtk_array_data(vtk_obj, array_name, array_type="C")
+    num_comps = array_data.GetNumberOfComponents()
     minr, maxr = vrange
     uv_layer = bm.loops.layers.uv.verify()
     for face in bm.faces:
         for loop in face.loops:
-            v = (scalars.GetValue(face.index) - minr) / (maxr - minr)
+            tup = array_data.GetTuple(face.index)
+            v = 0.0
+            # Get Euclidean norm (magnitude) of the data vector.
+            # This should leave scalars unchanged
+            for i in range(num_comps):
+                v += tup[i] ** 2
+            v = v ** 0.5
+            v = (v - minr) / (maxr - minr)
             v = min(0.999, max(0.001, v))  # Force value inside range
             loop[uv_layer].uv = (v, 0.5)
     return bm, None
@@ -1624,12 +1632,20 @@ def face_unwrap(bm, vtk_obj, array_name, vrange):
 def point_unwrap(bm, vtk_obj, array_name, vrange, vimap):
     """Unwrap by point data"""
 
-    scalars = get_vtk_array_data(vtk_obj, array_name, array_type="P")
+    array_data = get_vtk_array_data(vtk_obj, array_name, array_type="P")
+    num_comps = array_data.GetNumberOfComponents()
     minr, maxr = vrange
     uv_layer = bm.loops.layers.uv.verify()
     for face in bm.faces:
         for loop in face.loops:
-            v = (scalars.GetValue(vimap[loop.vert.index]) - minr) / (maxr - minr)
+            tup = array_data.GetTuple(vimap[loop.vert.index])
+            v = 0.0
+            # Get Euclidean norm (magnitude) of the data vector.
+            # This should leave scalars unchanged
+            for i in range(num_comps):
+                v += tup[i] ** 2
+            v = v ** 0.5
+            v = (v - minr) / (maxr - minr)
             v = min(0.999, max(0.001, v))  # Force value inside range
             loop[uv_layer].uv = (v, 0.5)
     return bm, None
