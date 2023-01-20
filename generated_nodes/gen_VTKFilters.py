@@ -1,5 +1,5 @@
 # Generated definitions for VTK class group: Filter
-# VTK version: 9.1.0
+# VTK version: 9.2.2
 
 from ..core import *    
 TYPENAMES = []
@@ -10,11 +10,12 @@ class VTKAnnotationLink(Node, BVTK_Node):
     bl_idname = 'VTKAnnotationLinkType'
     bl_label  = 'vtkAnnotationLink'
     
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return []
+        return ['m_ObjectName',]
     def m_connections( self ):
         return (['input 0', 'input 1'], ['output 0', 'output 1', 'output 2'], ['AnnotationLayers', 'CurrentSelection'], []) 
     
@@ -31,13 +32,14 @@ class VTKAutoCorrelativeStatistics(Node, BVTK_Node):
     m_DeriveOption: bpy.props.BoolProperty(name='DeriveOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_LearnOption: bpy.props.BoolProperty(name='LearnOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_TestOption: bpy.props.BoolProperty(name='TestOption', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_NumberOfPrimaryTables: bpy.props.IntProperty(name='NumberOfPrimaryTables', default=1, update=BVTK_Node.outdate_vtk_status)
     m_SliceCardinality: bpy.props.IntProperty(name='SliceCardinality', default=0, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_TestOption','m_NumberOfPrimaryTables','m_SliceCardinality',]
+        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_TestOption','m_ObjectName','m_NumberOfPrimaryTables','m_SliceCardinality',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output 0', 'output 1', 'output 2'], [], []) 
     
@@ -53,15 +55,16 @@ class VTKBandedPolyDataContourFilter(Node, BVTK_Node):
     
     m_Clipping: bpy.props.BoolProperty(name='Clipping', default=True, update=BVTK_Node.outdate_vtk_status)
     m_GenerateContourEdges: bpy.props.BoolProperty(name='GenerateContourEdges', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_Component: bpy.props.IntProperty(name='Component', default=0, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfContours: bpy.props.IntProperty(name='NumberOfContours', default=1, update=BVTK_Node.outdate_vtk_status)
     m_ClipTolerance: bpy.props.FloatProperty(name='ClipTolerance', default=1.1920928955078125e-07, update=BVTK_Node.outdate_vtk_status)
     e_ScalarMode: bpy.props.EnumProperty(name='ScalarMode', default="Index", items=e_ScalarMode_items, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_Clipping','m_GenerateContourEdges','m_Component','m_NumberOfContours','m_ClipTolerance','e_ScalarMode',]
+        return ['m_Clipping','m_GenerateContourEdges','m_ObjectName','m_Component','m_NumberOfContours','m_ClipTolerance','e_ScalarMode',]
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1'], [], []) 
     
@@ -76,15 +79,16 @@ class VTKBivariateLinearTableThreshold(Node, BVTK_Node):
     e_LinearThresholdType_items=[ (x,x,x) for x in ['Above', 'Below', 'Near', 'Between']]
     
     m_UseNormalizedDistance: bpy.props.BoolProperty(name='UseNormalizedDistance', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_Inclusive: bpy.props.IntProperty(name='Inclusive', default=0, update=BVTK_Node.outdate_vtk_status)
     m_DistanceThreshold: bpy.props.FloatProperty(name='DistanceThreshold', default=1.0, update=BVTK_Node.outdate_vtk_status)
     e_LinearThresholdType: bpy.props.EnumProperty(name='LinearThresholdType', default="Near", items=e_LinearThresholdType_items, update=BVTK_Node.outdate_vtk_status)
     m_ColumnRanges: bpy.props.FloatVectorProperty(name='ColumnRanges', default=[1.0, 1.0], size=2, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_UseNormalizedDistance','m_Inclusive','m_DistanceThreshold','e_LinearThresholdType','m_ColumnRanges',]
+        return ['m_UseNormalizedDistance','m_ObjectName','m_Inclusive','m_DistanceThreshold','e_LinearThresholdType','m_ColumnRanges',]
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1'], [], []) 
     
@@ -99,13 +103,14 @@ class VTKBooleanOperationPolyDataFilter(Node, BVTK_Node):
     e_Operation_items=[ (x,x,x) for x in ['Union', 'Intersection', 'Difference']]
     
     m_ReorientDifferenceCells: bpy.props.BoolProperty(name='ReorientDifferenceCells', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_Tolerance: bpy.props.FloatProperty(name='Tolerance', default=1e-06, update=BVTK_Node.outdate_vtk_status)
     e_Operation: bpy.props.EnumProperty(name='Operation', default="Union", items=e_Operation_items, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_ReorientDifferenceCells','m_Tolerance','e_Operation',]
+        return ['m_ReorientDifferenceCells','m_ObjectName','m_Tolerance','e_Operation',]
     def m_connections( self ):
         return (['input 0', 'input 1'], ['output 0', 'output 1'], [], []) 
     
@@ -120,12 +125,13 @@ class VTKBoxClipDataSet(Node, BVTK_Node):
     
     m_GenerateClipScalars: bpy.props.BoolProperty(name='GenerateClipScalars', default=True, update=BVTK_Node.outdate_vtk_status)
     m_GenerateClippedOutput: bpy.props.BoolProperty(name='GenerateClippedOutput', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_Orientation: bpy.props.IntProperty(name='Orientation', default=1, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_GenerateClipScalars','m_GenerateClippedOutput','m_Orientation',]
+        return ['m_GenerateClipScalars','m_GenerateClippedOutput','m_ObjectName','m_Orientation',]
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1'], [], []) 
     
@@ -142,13 +148,14 @@ class VTKClipDataSet(Node, BVTK_Node):
     m_GenerateClippedOutput: bpy.props.BoolProperty(name='GenerateClippedOutput', default=True, update=BVTK_Node.outdate_vtk_status)
     m_InsideOut: bpy.props.BoolProperty(name='InsideOut', default=True, update=BVTK_Node.outdate_vtk_status)
     m_UseValueAsOffset: bpy.props.BoolProperty(name='UseValueAsOffset', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_MergeTolerance: bpy.props.FloatProperty(name='MergeTolerance', default=0.01, update=BVTK_Node.outdate_vtk_status)
     m_Value: bpy.props.FloatProperty(name='Value', default=0.0, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_GenerateClipScalars','m_GenerateClippedOutput','m_InsideOut','m_UseValueAsOffset','m_MergeTolerance','m_Value',]
+        return ['m_GenerateClipScalars','m_GenerateClippedOutput','m_InsideOut','m_UseValueAsOffset','m_ObjectName','m_MergeTolerance','m_Value',]
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1'], ['ClipFunction'], []) 
     
@@ -164,12 +171,13 @@ class VTKClipPolyData(Node, BVTK_Node):
     m_GenerateClipScalars: bpy.props.BoolProperty(name='GenerateClipScalars', default=True, update=BVTK_Node.outdate_vtk_status)
     m_GenerateClippedOutput: bpy.props.BoolProperty(name='GenerateClippedOutput', default=True, update=BVTK_Node.outdate_vtk_status)
     m_InsideOut: bpy.props.BoolProperty(name='InsideOut', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_Value: bpy.props.FloatProperty(name='Value', default=0.0, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_GenerateClipScalars','m_GenerateClippedOutput','m_InsideOut','m_Value',]
+        return ['m_GenerateClipScalars','m_GenerateClippedOutput','m_InsideOut','m_ObjectName','m_Value',]
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1'], ['ClipFunction'], []) 
     
@@ -186,13 +194,14 @@ class VTKClipVolume(Node, BVTK_Node):
     m_GenerateClippedOutput: bpy.props.BoolProperty(name='GenerateClippedOutput', default=True, update=BVTK_Node.outdate_vtk_status)
     m_InsideOut: bpy.props.BoolProperty(name='InsideOut', default=True, update=BVTK_Node.outdate_vtk_status)
     m_Mixed3DCellGeneration: bpy.props.BoolProperty(name='Mixed3DCellGeneration', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_MergeTolerance: bpy.props.FloatProperty(name='MergeTolerance', default=0.01, update=BVTK_Node.outdate_vtk_status)
     m_Value: bpy.props.FloatProperty(name='Value', default=0.0, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_GenerateClipScalars','m_GenerateClippedOutput','m_InsideOut','m_Mixed3DCellGeneration','m_MergeTolerance','m_Value',]
+        return ['m_GenerateClipScalars','m_GenerateClippedOutput','m_InsideOut','m_Mixed3DCellGeneration','m_ObjectName','m_MergeTolerance','m_Value',]
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1'], ['ClipFunction'], []) 
     
@@ -207,16 +216,17 @@ class VTKCollisionDetectionFilter(Node, BVTK_Node):
     e_CollisionMode_items=[ (x,x,x) for x in ['AllContacts', 'FirstContact', 'HalfContacts']]
     
     m_GenerateScalars: bpy.props.BoolProperty(name='GenerateScalars', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_NumberOfCellsPerNode: bpy.props.IntProperty(name='NumberOfCellsPerNode', default=2, update=BVTK_Node.outdate_vtk_status)
     m_BoxTolerance: bpy.props.FloatProperty(name='BoxTolerance', default=0.0, update=BVTK_Node.outdate_vtk_status)
     m_CellTolerance: bpy.props.FloatProperty(name='CellTolerance', default=0.0, update=BVTK_Node.outdate_vtk_status)
     m_Opacity: bpy.props.FloatProperty(name='Opacity', default=1.0, update=BVTK_Node.outdate_vtk_status)
     e_CollisionMode: bpy.props.EnumProperty(name='CollisionMode', default="AllContacts", items=e_CollisionMode_items, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_GenerateScalars','m_NumberOfCellsPerNode','m_BoxTolerance','m_CellTolerance','m_Opacity','e_CollisionMode',]
+        return ['m_GenerateScalars','m_ObjectName','m_NumberOfCellsPerNode','m_BoxTolerance','m_CellTolerance','m_Opacity','e_CollisionMode',]
     def m_connections( self ):
         return (['input 0', 'input 1'], ['output 0', 'output 1', 'output 2'], [], []) 
     
@@ -229,12 +239,13 @@ class VTKComputeHistogram2DOutliers(Node, BVTK_Node):
     bl_idname = 'VTKComputeHistogram2DOutliersType'
     bl_label  = 'vtkComputeHistogram2DOutliers'
     
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_PreferredNumberOfOutliers: bpy.props.IntProperty(name='PreferredNumberOfOutliers', default=10, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_PreferredNumberOfOutliers',]
+        return ['m_ObjectName','m_PreferredNumberOfOutliers',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output 0', 'output 1'], [], []) 
     
@@ -251,12 +262,13 @@ class VTKContingencyStatistics(Node, BVTK_Node):
     m_DeriveOption: bpy.props.BoolProperty(name='DeriveOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_LearnOption: bpy.props.BoolProperty(name='LearnOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_TestOption: bpy.props.BoolProperty(name='TestOption', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_NumberOfPrimaryTables: bpy.props.IntProperty(name='NumberOfPrimaryTables', default=2, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_TestOption','m_NumberOfPrimaryTables',]
+        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_TestOption','m_ObjectName','m_NumberOfPrimaryTables',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output 0', 'output 1', 'output 2'], [], []) 
     
@@ -269,11 +281,12 @@ class VTKConvertSelectionDomain(Node, BVTK_Node):
     bl_idname = 'VTKConvertSelectionDomainType'
     bl_label  = 'vtkConvertSelectionDomain'
     
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return []
+        return ['m_ObjectName',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output 0', 'output 1'], [], []) 
     
@@ -290,12 +303,13 @@ class VTKCorrelativeStatistics(Node, BVTK_Node):
     m_DeriveOption: bpy.props.BoolProperty(name='DeriveOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_LearnOption: bpy.props.BoolProperty(name='LearnOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_TestOption: bpy.props.BoolProperty(name='TestOption', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_NumberOfPrimaryTables: bpy.props.IntProperty(name='NumberOfPrimaryTables', default=1, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_TestOption','m_NumberOfPrimaryTables',]
+        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_TestOption','m_ObjectName','m_NumberOfPrimaryTables',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output 0', 'output 1', 'output 2'], [], []) 
     
@@ -313,15 +327,18 @@ class VTKDescriptiveStatistics(Node, BVTK_Node):
     m_G1Skewness: bpy.props.BoolProperty(name='G1Skewness', default=True, update=BVTK_Node.outdate_vtk_status)
     m_G2Kurtosis: bpy.props.BoolProperty(name='G2Kurtosis', default=True, update=BVTK_Node.outdate_vtk_status)
     m_LearnOption: bpy.props.BoolProperty(name='LearnOption', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_SampleEstimate: bpy.props.BoolProperty(name='SampleEstimate', default=True, update=BVTK_Node.outdate_vtk_status)
     m_SignedDeviations: bpy.props.BoolProperty(name='SignedDeviations', default=True, update=BVTK_Node.outdate_vtk_status)
     m_TestOption: bpy.props.BoolProperty(name='TestOption', default=False, update=BVTK_Node.outdate_vtk_status)
     m_UnbiasedVariance: bpy.props.BoolProperty(name='UnbiasedVariance', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_GhostsToSkip: bpy.props.IntProperty(name='GhostsToSkip', default=255, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfPrimaryTables: bpy.props.IntProperty(name='NumberOfPrimaryTables', default=1, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=9, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=12, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AssessOption','m_DeriveOption','m_G1Skewness','m_G2Kurtosis','m_LearnOption','m_SignedDeviations','m_TestOption','m_UnbiasedVariance','m_NumberOfPrimaryTables',]
+        return ['m_AssessOption','m_DeriveOption','m_G1Skewness','m_G2Kurtosis','m_LearnOption','m_SampleEstimate','m_SignedDeviations','m_TestOption','m_UnbiasedVariance','m_ObjectName','m_GhostsToSkip','m_NumberOfPrimaryTables',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output 0', 'output 1', 'output 2'], [], []) 
     
@@ -338,11 +355,12 @@ class VTKDistancePolyDataFilter(Node, BVTK_Node):
     m_ComputeSecondDistance: bpy.props.BoolProperty(name='ComputeSecondDistance', default=True, update=BVTK_Node.outdate_vtk_status)
     m_NegateDistance: bpy.props.BoolProperty(name='NegateDistance', default=True, update=BVTK_Node.outdate_vtk_status)
     m_SignedDistance: bpy.props.BoolProperty(name='SignedDistance', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_ComputeCellCenterDistance','m_ComputeSecondDistance','m_NegateDistance','m_SignedDistance',]
+        return ['m_ComputeCellCenterDistance','m_ComputeSecondDistance','m_NegateDistance','m_SignedDistance','m_ObjectName',]
     def m_connections( self ):
         return (['input 0', 'input 1'], ['output 0', 'output 1'], [], []) 
     
@@ -357,14 +375,15 @@ class VTKEqualizerFilter(Node, BVTK_Node):
     
     m_AllColumns: bpy.props.BoolProperty(name='AllColumns', default=False, update=BVTK_Node.outdate_vtk_status)
     m_Array: bpy.props.StringProperty(name='Array', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_Points: bpy.props.StringProperty(name='Points', default="", update=BVTK_Node.outdate_vtk_status)
     m_SamplingFrequency: bpy.props.IntProperty(name='SamplingFrequency', default=1000, update=BVTK_Node.outdate_vtk_status)
     m_SpectrumGain: bpy.props.IntProperty(name='SpectrumGain', default=0, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AllColumns','m_Array','m_Points','m_SamplingFrequency','m_SpectrumGain',]
+        return ['m_AllColumns','m_Array','m_ObjectName','m_Points','m_SamplingFrequency','m_SpectrumGain',]
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1', 'output 2'], [], []) 
     
@@ -387,6 +406,7 @@ class VTKEquirectangularToCubeMapTexture(Node, BVTK_Node):
     m_Repeat: bpy.props.BoolProperty(name='Repeat', default=True, update=BVTK_Node.outdate_vtk_status)
     m_RestrictPowerOf2ImageSmaller: bpy.props.BoolProperty(name='RestrictPowerOf2ImageSmaller', default=True, update=BVTK_Node.outdate_vtk_status)
     m_UseSRGBColorSpace: bpy.props.BoolProperty(name='UseSRGBColorSpace', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_BlendingMode: bpy.props.IntProperty(name='BlendingMode', default=0, update=BVTK_Node.outdate_vtk_status)
     m_CubeMapSize: bpy.props.IntProperty(name='CubeMapSize', default=512, update=BVTK_Node.outdate_vtk_status)
     m_IsDepthTexture: bpy.props.IntProperty(name='IsDepthTexture', default=0, update=BVTK_Node.outdate_vtk_status)
@@ -397,10 +417,10 @@ class VTKEquirectangularToCubeMapTexture(Node, BVTK_Node):
     e_Quality: bpy.props.EnumProperty(name='Quality', default="Default", items=e_Quality_items, update=BVTK_Node.outdate_vtk_status)
     m_BorderColor: bpy.props.FloatVectorProperty(name='BorderColor', default=[0.0, 0.0, 0.0, 0.0], size=4, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=17, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=18, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_CubeMap','m_EdgeClamp','m_Interpolate','m_Mipmap','m_PremultipliedAlpha','m_Repeat','m_RestrictPowerOf2ImageSmaller','m_UseSRGBColorSpace','m_BlendingMode','m_CubeMapSize','m_IsDepthTexture','m_TextureType','m_Wrap','m_MaximumAnisotropicFiltering','e_ColorMode','e_Quality','m_BorderColor',]
+        return ['m_CubeMap','m_EdgeClamp','m_Interpolate','m_Mipmap','m_PremultipliedAlpha','m_Repeat','m_RestrictPowerOf2ImageSmaller','m_UseSRGBColorSpace','m_ObjectName','m_BlendingMode','m_CubeMapSize','m_IsDepthTexture','m_TextureType','m_Wrap','m_MaximumAnisotropicFiltering','e_ColorMode','e_Quality','m_BorderColor',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2', 'input 3', 'input 4', 'input 5'], [], ['InputTexture', 'LookupTable', 'TextureObject', 'Transform'], []) 
     
@@ -416,12 +436,13 @@ class VTKExtractEnclosedPoints(Node, BVTK_Node):
     m_CheckSurface: bpy.props.BoolProperty(name='CheckSurface', default=True, update=BVTK_Node.outdate_vtk_status)
     m_GenerateOutliers: bpy.props.BoolProperty(name='GenerateOutliers', default=False, update=BVTK_Node.outdate_vtk_status)
     m_GenerateVertices: bpy.props.BoolProperty(name='GenerateVertices', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_Tolerance: bpy.props.FloatProperty(name='Tolerance', default=0.001, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_CheckSurface','m_GenerateOutliers','m_GenerateVertices','m_Tolerance',]
+        return ['m_CheckSurface','m_GenerateOutliers','m_GenerateVertices','m_ObjectName','m_Tolerance',]
     def m_connections( self ):
         return (['input 0', 'input 1'], ['output 0', 'output 1'], [], []) 
     
@@ -436,13 +457,14 @@ class VTKExtractHierarchicalBins(Node, BVTK_Node):
     
     m_GenerateOutliers: bpy.props.BoolProperty(name='GenerateOutliers', default=False, update=BVTK_Node.outdate_vtk_status)
     m_GenerateVertices: bpy.props.BoolProperty(name='GenerateVertices', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_Bin: bpy.props.IntProperty(name='Bin', default=-1, update=BVTK_Node.outdate_vtk_status)
     m_Level: bpy.props.IntProperty(name='Level', default=0, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_GenerateOutliers','m_GenerateVertices','m_Bin','m_Level',]
+        return ['m_GenerateOutliers','m_GenerateVertices','m_ObjectName','m_Bin','m_Level',]
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1'], ['BinningFilter'], []) 
     
@@ -462,16 +484,17 @@ class VTKExtractHistogram2D(Node, BVTK_Node):
     m_SwapColumns: bpy.props.BoolProperty(name='SwapColumns', default=True, update=BVTK_Node.outdate_vtk_status)
     m_TestOption: bpy.props.BoolProperty(name='TestOption', default=False, update=BVTK_Node.outdate_vtk_status)
     m_UseCustomHistogramExtents: bpy.props.BoolProperty(name='UseCustomHistogramExtents', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_NumberOfPrimaryTables: bpy.props.IntProperty(name='NumberOfPrimaryTables', default=1, update=BVTK_Node.outdate_vtk_status)
     e_ScalarType: bpy.props.EnumProperty(name='ScalarType', default="UnsignedInt", items=e_ScalarType_items, update=BVTK_Node.outdate_vtk_status)
     m_ComponentsToProcess: bpy.props.IntVectorProperty(name='ComponentsToProcess', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfBins: bpy.props.IntVectorProperty(name='NumberOfBins', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     m_CustomHistogramExtents: bpy.props.FloatVectorProperty(name='CustomHistogramExtents', default=[0.0, 0.0, 0.0, 0.0], size=4, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=11, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=12, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_SwapColumns','m_TestOption','m_UseCustomHistogramExtents','m_NumberOfPrimaryTables','e_ScalarType','m_ComponentsToProcess','m_NumberOfBins','m_CustomHistogramExtents',]
+        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_SwapColumns','m_TestOption','m_UseCustomHistogramExtents','m_ObjectName','m_NumberOfPrimaryTables','e_ScalarType','m_ComponentsToProcess','m_NumberOfBins','m_CustomHistogramExtents',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output 0', 'output 1', 'output 2', 'output 3'], ['RowMask'], []) 
     
@@ -487,11 +510,12 @@ class VTKExtractPoints(Node, BVTK_Node):
     m_ExtractInside: bpy.props.BoolProperty(name='ExtractInside', default=True, update=BVTK_Node.outdate_vtk_status)
     m_GenerateOutliers: bpy.props.BoolProperty(name='GenerateOutliers', default=False, update=BVTK_Node.outdate_vtk_status)
     m_GenerateVertices: bpy.props.BoolProperty(name='GenerateVertices', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_ExtractInside','m_GenerateOutliers','m_GenerateVertices',]
+        return ['m_ExtractInside','m_GenerateOutliers','m_GenerateVertices','m_ObjectName',]
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1'], ['ImplicitFunction'], []) 
     
@@ -505,11 +529,12 @@ class VTKExtractSelectedRows(Node, BVTK_Node):
     bl_label  = 'vtkExtractSelectedRows'
     
     m_AddOriginalRowIdsArray: bpy.props.BoolProperty(name='AddOriginalRowIdsArray', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AddOriginalRowIdsArray',]
+        return ['m_AddOriginalRowIdsArray','m_ObjectName',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output'], [], []) 
     
@@ -523,11 +548,12 @@ class VTKExtractVectorComponents(Node, BVTK_Node):
     bl_label  = 'vtkExtractVectorComponents'
     
     m_ExtractToFieldData: bpy.props.BoolProperty(name='ExtractToFieldData', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_ExtractToFieldData',]
+        return ['m_ExtractToFieldData','m_ObjectName',]
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1', 'output 2'], [], []) 
     
@@ -542,12 +568,13 @@ class VTKFitImplicitFunction(Node, BVTK_Node):
     
     m_GenerateOutliers: bpy.props.BoolProperty(name='GenerateOutliers', default=False, update=BVTK_Node.outdate_vtk_status)
     m_GenerateVertices: bpy.props.BoolProperty(name='GenerateVertices', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_Threshold: bpy.props.FloatProperty(name='Threshold', default=0.01, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_GenerateOutliers','m_GenerateVertices','m_Threshold',]
+        return ['m_GenerateOutliers','m_GenerateVertices','m_ObjectName','m_Threshold',]
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1'], ['ImplicitFunction'], []) 
     
@@ -563,13 +590,14 @@ class VTKGenericClip(Node, BVTK_Node):
     m_GenerateClipScalars: bpy.props.BoolProperty(name='GenerateClipScalars', default=True, update=BVTK_Node.outdate_vtk_status)
     m_GenerateClippedOutput: bpy.props.BoolProperty(name='GenerateClippedOutput', default=True, update=BVTK_Node.outdate_vtk_status)
     m_InsideOut: bpy.props.BoolProperty(name='InsideOut', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_MergeTolerance: bpy.props.FloatProperty(name='MergeTolerance', default=0.01, update=BVTK_Node.outdate_vtk_status)
     m_Value: bpy.props.FloatProperty(name='Value', default=0.0, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_GenerateClipScalars','m_GenerateClippedOutput','m_InsideOut','m_MergeTolerance','m_Value',]
+        return ['m_GenerateClipScalars','m_GenerateClippedOutput','m_InsideOut','m_ObjectName','m_MergeTolerance','m_Value',]
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1'], ['ClipFunction'], []) 
     
@@ -582,11 +610,12 @@ class VTKGraphAnnotationLayersFilter(Node, BVTK_Node):
     bl_idname = 'VTKGraphAnnotationLayersFilterType'
     bl_label  = 'vtkGraphAnnotationLayersFilter'
     
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return []
+        return ['m_ObjectName',]
     def m_connections( self ):
         return (['input 0', 'input 1'], ['output 0', 'output 1'], [], []) 
     
@@ -600,12 +629,13 @@ class VTKGraphToPolyData(Node, BVTK_Node):
     bl_label  = 'vtkGraphToPolyData'
     
     m_EdgeGlyphOutput: bpy.props.BoolProperty(name='EdgeGlyphOutput', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_EdgeGlyphPosition: bpy.props.FloatProperty(name='EdgeGlyphPosition', default=1.0, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_EdgeGlyphOutput','m_EdgeGlyphPosition',]
+        return ['m_EdgeGlyphOutput','m_ObjectName','m_EdgeGlyphPosition',]
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1'], [], []) 
     
@@ -619,12 +649,13 @@ class VTKHausdorffDistancePointSetFilter(Node, BVTK_Node):
     bl_label  = 'vtkHausdorffDistancePointSetFilter'
     e_TargetDistanceMethod_items=[ (x,x,x) for x in ['PointToPoint', 'PointToCell']]
     
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     e_TargetDistanceMethod: bpy.props.EnumProperty(name='TargetDistanceMethod', default="PointToPoint", items=e_TargetDistanceMethod_items, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['e_TargetDistanceMethod',]
+        return ['m_ObjectName','e_TargetDistanceMethod',]
     def m_connections( self ):
         return (['input 0', 'input 1'], ['output 0', 'output 1'], [], []) 
     
@@ -641,12 +672,13 @@ class VTKHighestDensityRegionsStatistics(Node, BVTK_Node):
     m_DeriveOption: bpy.props.BoolProperty(name='DeriveOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_LearnOption: bpy.props.BoolProperty(name='LearnOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_TestOption: bpy.props.BoolProperty(name='TestOption', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_NumberOfPrimaryTables: bpy.props.IntProperty(name='NumberOfPrimaryTables', default=1, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_TestOption','m_NumberOfPrimaryTables',]
+        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_TestOption','m_ObjectName','m_NumberOfPrimaryTables',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output 0', 'output 1', 'output 2'], [], []) 
     
@@ -663,6 +695,7 @@ class VTKImageConnectivityFilter(Node, BVTK_Node):
     e_LabelScalarType_items=[ (x,x,x) for x in ['UnsignedChar', 'Short', 'UnsignedShort', 'Int']]
     
     m_GenerateRegionExtents: bpy.props.BoolProperty(name='GenerateRegionExtents', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_ActiveComponent: bpy.props.IntProperty(name='ActiveComponent', default=0, update=BVTK_Node.outdate_vtk_status)
     m_LabelConstantValue: bpy.props.IntProperty(name='LabelConstantValue', default=255, update=BVTK_Node.outdate_vtk_status)
     e_ExtractionMode: bpy.props.EnumProperty(name='ExtractionMode', default="SeededRegions", items=e_ExtractionMode_items, update=BVTK_Node.outdate_vtk_status)
@@ -671,10 +704,10 @@ class VTKImageConnectivityFilter(Node, BVTK_Node):
     m_SizeRange: bpy.props.IntVectorProperty(name='SizeRange', default=[1, 1000000000], size=2, update=BVTK_Node.outdate_vtk_status)
     m_ScalarRange: bpy.props.FloatVectorProperty(name='ScalarRange', default=[0.5, 1e+30], size=2, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=8, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=9, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_GenerateRegionExtents','m_ActiveComponent','m_LabelConstantValue','e_ExtractionMode','e_LabelMode','e_LabelScalarType','m_SizeRange','m_ScalarRange',]
+        return ['m_GenerateRegionExtents','m_ObjectName','m_ActiveComponent','m_LabelConstantValue','e_ExtractionMode','e_LabelMode','e_LabelScalarType','m_SizeRange','m_ScalarRange',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output'], ['SeedConnection', 'StencilConnection'], []) 
     
@@ -701,6 +734,7 @@ class VTKImagePermute(Node, BVTK_Node):
     m_SlabTrapezoidIntegration: bpy.props.BoolProperty(name='SlabTrapezoidIntegration', default=True, update=BVTK_Node.outdate_vtk_status)
     m_TransformInputSampling: bpy.props.BoolProperty(name='TransformInputSampling', default=True, update=BVTK_Node.outdate_vtk_status)
     m_Wrap: bpy.props.BoolProperty(name='Wrap', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_DesiredBytesPerPiece: bpy.props.IntProperty(name='DesiredBytesPerPiece', default=65536, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfThreads: bpy.props.IntProperty(name='NumberOfThreads', default=4, update=BVTK_Node.outdate_vtk_status)
     m_OutputDimensionality: bpy.props.IntProperty(name='OutputDimensionality', default=3, update=BVTK_Node.outdate_vtk_status)
@@ -721,10 +755,10 @@ class VTKImagePermute(Node, BVTK_Node):
     m_OutputOrigin: bpy.props.FloatVectorProperty(name='OutputOrigin', default=[0.0, 0.0, 0.0], size=3, update=BVTK_Node.outdate_vtk_status)
     m_OutputSpacing: bpy.props.FloatVectorProperty(name='OutputSpacing', default=[1.0, 1.0, 1.0], size=3, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=30, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=31, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AutoCropOutput','m_Border','m_EnableSMP','m_GenerateStencilOutput','m_GlobalDefaultEnableSMP','m_Interpolate','m_Mirror','m_Optimization','m_SlabTrapezoidIntegration','m_TransformInputSampling','m_Wrap','m_DesiredBytesPerPiece','m_NumberOfThreads','m_OutputDimensionality','m_OutputScalarType','m_SlabNumberOfSlices','m_BackgroundLevel','m_BorderThickness','m_ScalarScale','m_ScalarShift','m_SlabSliceSpacingFraction','e_InterpolationMode','e_SlabMode','e_SplitMode','m_FilteredAxes','m_MinimumPieceSize','m_OutputExtent','m_BackgroundColor','m_OutputOrigin','m_OutputSpacing',]
+        return ['m_AutoCropOutput','m_Border','m_EnableSMP','m_GenerateStencilOutput','m_GlobalDefaultEnableSMP','m_Interpolate','m_Mirror','m_Optimization','m_SlabTrapezoidIntegration','m_TransformInputSampling','m_Wrap','m_ObjectName','m_DesiredBytesPerPiece','m_NumberOfThreads','m_OutputDimensionality','m_OutputScalarType','m_SlabNumberOfSlices','m_BackgroundLevel','m_BorderThickness','m_ScalarScale','m_ScalarShift','m_SlabSliceSpacingFraction','e_InterpolationMode','e_SlabMode','e_SplitMode','m_FilteredAxes','m_MinimumPieceSize','m_OutputExtent','m_BackgroundColor','m_OutputOrigin','m_OutputSpacing',]
     def m_connections( self ):
         return (['input 0', 'input 1'], ['output 0', 'output 1'], ['Interpolator', 'StencilOutput', 'ResliceAxes', 'ResliceTransform'], []) 
     
@@ -751,6 +785,7 @@ class VTKImageResample(Node, BVTK_Node):
     m_SlabTrapezoidIntegration: bpy.props.BoolProperty(name='SlabTrapezoidIntegration', default=True, update=BVTK_Node.outdate_vtk_status)
     m_TransformInputSampling: bpy.props.BoolProperty(name='TransformInputSampling', default=True, update=BVTK_Node.outdate_vtk_status)
     m_Wrap: bpy.props.BoolProperty(name='Wrap', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_DesiredBytesPerPiece: bpy.props.IntProperty(name='DesiredBytesPerPiece', default=65536, update=BVTK_Node.outdate_vtk_status)
     m_Dimensionality: bpy.props.IntProperty(name='Dimensionality', default=3, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfThreads: bpy.props.IntProperty(name='NumberOfThreads', default=4, update=BVTK_Node.outdate_vtk_status)
@@ -772,10 +807,10 @@ class VTKImageResample(Node, BVTK_Node):
     m_OutputOrigin: bpy.props.FloatVectorProperty(name='OutputOrigin', default=[0.0, 0.0, 0.0], size=3, update=BVTK_Node.outdate_vtk_status)
     m_OutputSpacing: bpy.props.FloatVectorProperty(name='OutputSpacing', default=[0.0, 0.0, 0.0], size=3, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=31, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=32, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AutoCropOutput','m_Border','m_EnableSMP','m_GenerateStencilOutput','m_GlobalDefaultEnableSMP','m_Interpolate','m_Mirror','m_Optimization','m_SlabTrapezoidIntegration','m_TransformInputSampling','m_Wrap','m_DesiredBytesPerPiece','m_Dimensionality','m_NumberOfThreads','m_OutputDimensionality','m_OutputScalarType','m_SlabNumberOfSlices','m_BackgroundLevel','m_BorderThickness','m_ScalarScale','m_ScalarShift','m_SlabSliceSpacingFraction','e_InterpolationMode','e_SlabMode','e_SplitMode','m_MinimumPieceSize','m_OutputExtent','m_BackgroundColor','m_MagnificationFactors','m_OutputOrigin','m_OutputSpacing',]
+        return ['m_AutoCropOutput','m_Border','m_EnableSMP','m_GenerateStencilOutput','m_GlobalDefaultEnableSMP','m_Interpolate','m_Mirror','m_Optimization','m_SlabTrapezoidIntegration','m_TransformInputSampling','m_Wrap','m_ObjectName','m_DesiredBytesPerPiece','m_Dimensionality','m_NumberOfThreads','m_OutputDimensionality','m_OutputScalarType','m_SlabNumberOfSlices','m_BackgroundLevel','m_BorderThickness','m_ScalarScale','m_ScalarShift','m_SlabSliceSpacingFraction','e_InterpolationMode','e_SlabMode','e_SplitMode','m_MinimumPieceSize','m_OutputExtent','m_BackgroundColor','m_MagnificationFactors','m_OutputOrigin','m_OutputSpacing',]
     def m_connections( self ):
         return (['input 0', 'input 1'], ['output 0', 'output 1'], ['Interpolator', 'StencilOutput', 'ResliceAxes', 'ResliceTransform'], []) 
     
@@ -802,6 +837,7 @@ class VTKImageReslice(Node, BVTK_Node):
     m_SlabTrapezoidIntegration: bpy.props.BoolProperty(name='SlabTrapezoidIntegration', default=True, update=BVTK_Node.outdate_vtk_status)
     m_TransformInputSampling: bpy.props.BoolProperty(name='TransformInputSampling', default=True, update=BVTK_Node.outdate_vtk_status)
     m_Wrap: bpy.props.BoolProperty(name='Wrap', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_DesiredBytesPerPiece: bpy.props.IntProperty(name='DesiredBytesPerPiece', default=65536, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfThreads: bpy.props.IntProperty(name='NumberOfThreads', default=4, update=BVTK_Node.outdate_vtk_status)
     m_OutputDimensionality: bpy.props.IntProperty(name='OutputDimensionality', default=3, update=BVTK_Node.outdate_vtk_status)
@@ -821,10 +857,10 @@ class VTKImageReslice(Node, BVTK_Node):
     m_OutputOrigin: bpy.props.FloatVectorProperty(name='OutputOrigin', default=[0.0, 0.0, 0.0], size=3, update=BVTK_Node.outdate_vtk_status)
     m_OutputSpacing: bpy.props.FloatVectorProperty(name='OutputSpacing', default=[1.0, 1.0, 1.0], size=3, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=29, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=30, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AutoCropOutput','m_Border','m_EnableSMP','m_GenerateStencilOutput','m_GlobalDefaultEnableSMP','m_Interpolate','m_Mirror','m_Optimization','m_SlabTrapezoidIntegration','m_TransformInputSampling','m_Wrap','m_DesiredBytesPerPiece','m_NumberOfThreads','m_OutputDimensionality','m_OutputScalarType','m_SlabNumberOfSlices','m_BackgroundLevel','m_BorderThickness','m_ScalarScale','m_ScalarShift','m_SlabSliceSpacingFraction','e_InterpolationMode','e_SlabMode','e_SplitMode','m_MinimumPieceSize','m_OutputExtent','m_BackgroundColor','m_OutputOrigin','m_OutputSpacing',]
+        return ['m_AutoCropOutput','m_Border','m_EnableSMP','m_GenerateStencilOutput','m_GlobalDefaultEnableSMP','m_Interpolate','m_Mirror','m_Optimization','m_SlabTrapezoidIntegration','m_TransformInputSampling','m_Wrap','m_ObjectName','m_DesiredBytesPerPiece','m_NumberOfThreads','m_OutputDimensionality','m_OutputScalarType','m_SlabNumberOfSlices','m_BackgroundLevel','m_BorderThickness','m_ScalarScale','m_ScalarShift','m_SlabSliceSpacingFraction','e_InterpolationMode','e_SlabMode','e_SplitMode','m_MinimumPieceSize','m_OutputExtent','m_BackgroundColor','m_OutputOrigin','m_OutputSpacing',]
     def m_connections( self ):
         return (['input 0', 'input 1'], ['output 0', 'output 1'], ['Interpolator', 'StencilOutput', 'ResliceAxes', 'ResliceTransform'], []) 
     
@@ -853,6 +889,7 @@ class VTKImageResliceToColors(Node, BVTK_Node):
     m_SlabTrapezoidIntegration: bpy.props.BoolProperty(name='SlabTrapezoidIntegration', default=True, update=BVTK_Node.outdate_vtk_status)
     m_TransformInputSampling: bpy.props.BoolProperty(name='TransformInputSampling', default=True, update=BVTK_Node.outdate_vtk_status)
     m_Wrap: bpy.props.BoolProperty(name='Wrap', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_DesiredBytesPerPiece: bpy.props.IntProperty(name='DesiredBytesPerPiece', default=65536, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfThreads: bpy.props.IntProperty(name='NumberOfThreads', default=4, update=BVTK_Node.outdate_vtk_status)
     m_OutputDimensionality: bpy.props.IntProperty(name='OutputDimensionality', default=3, update=BVTK_Node.outdate_vtk_status)
@@ -873,68 +910,15 @@ class VTKImageResliceToColors(Node, BVTK_Node):
     m_OutputOrigin: bpy.props.FloatVectorProperty(name='OutputOrigin', default=[0.0, 0.0, 0.0], size=3, update=BVTK_Node.outdate_vtk_status)
     m_OutputSpacing: bpy.props.FloatVectorProperty(name='OutputSpacing', default=[1.0, 1.0, 1.0], size=3, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=31, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=32, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AutoCropOutput','m_Border','m_Bypass','m_EnableSMP','m_GenerateStencilOutput','m_GlobalDefaultEnableSMP','m_Interpolate','m_Mirror','m_Optimization','m_SlabTrapezoidIntegration','m_TransformInputSampling','m_Wrap','m_DesiredBytesPerPiece','m_NumberOfThreads','m_OutputDimensionality','m_OutputScalarType','m_SlabNumberOfSlices','m_BackgroundLevel','m_BorderThickness','m_ScalarScale','m_ScalarShift','m_SlabSliceSpacingFraction','e_InterpolationMode','e_OutputFormat','e_SlabMode','e_SplitMode','m_MinimumPieceSize','m_OutputExtent','m_BackgroundColor','m_OutputOrigin','m_OutputSpacing',]
+        return ['m_AutoCropOutput','m_Border','m_Bypass','m_EnableSMP','m_GenerateStencilOutput','m_GlobalDefaultEnableSMP','m_Interpolate','m_Mirror','m_Optimization','m_SlabTrapezoidIntegration','m_TransformInputSampling','m_Wrap','m_ObjectName','m_DesiredBytesPerPiece','m_NumberOfThreads','m_OutputDimensionality','m_OutputScalarType','m_SlabNumberOfSlices','m_BackgroundLevel','m_BorderThickness','m_ScalarScale','m_ScalarShift','m_SlabSliceSpacingFraction','e_InterpolationMode','e_OutputFormat','e_SlabMode','e_SplitMode','m_MinimumPieceSize','m_OutputExtent','m_BackgroundColor','m_OutputOrigin','m_OutputSpacing',]
     def m_connections( self ):
         return (['input 0', 'input 1'], ['output 0', 'output 1'], ['Interpolator', 'StencilOutput', 'LookupTable', 'ResliceAxes', 'ResliceTransform'], []) 
     
 add_class( VTKImageResliceToColors )        
 TYPENAMES.append('VTKImageResliceToColorsType' )
-
-#--------------------------------------------------------------
-class VTKImageSlabReslice(Node, BVTK_Node):
-
-    bl_idname = 'VTKImageSlabResliceType'
-    bl_label  = 'vtkImageSlabReslice'
-    e_BlendMode_items=[ (x,x,x) for x in ['Min', 'Max', 'Mean']]
-    e_InterpolationMode_items=[ (x,x,x) for x in ['NearestNeighbor', 'Linear', 'Cubic']]
-    e_SlabMode_items=[ (x,x,x) for x in ['Min', 'Max', 'Mean', 'Sum']]
-    e_SplitMode_items=[ (x,x,x) for x in ['Slab', 'Beam', 'Block']]
-    
-    m_AutoCropOutput: bpy.props.BoolProperty(name='AutoCropOutput', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_Border: bpy.props.BoolProperty(name='Border', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_EnableSMP: bpy.props.BoolProperty(name='EnableSMP', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_GenerateStencilOutput: bpy.props.BoolProperty(name='GenerateStencilOutput', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_GlobalDefaultEnableSMP: bpy.props.BoolProperty(name='GlobalDefaultEnableSMP', default=False, update=BVTK_Node.outdate_vtk_status)
-    m_Interpolate: bpy.props.BoolProperty(name='Interpolate', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_Mirror: bpy.props.BoolProperty(name='Mirror', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_Optimization: bpy.props.BoolProperty(name='Optimization', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_SlabTrapezoidIntegration: bpy.props.BoolProperty(name='SlabTrapezoidIntegration', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_TransformInputSampling: bpy.props.BoolProperty(name='TransformInputSampling', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_Wrap: bpy.props.BoolProperty(name='Wrap', default=True, update=BVTK_Node.outdate_vtk_status)
-    m_DesiredBytesPerPiece: bpy.props.IntProperty(name='DesiredBytesPerPiece', default=65536, update=BVTK_Node.outdate_vtk_status)
-    m_NumberOfThreads: bpy.props.IntProperty(name='NumberOfThreads', default=4, update=BVTK_Node.outdate_vtk_status)
-    m_OutputDimensionality: bpy.props.IntProperty(name='OutputDimensionality', default=2, update=BVTK_Node.outdate_vtk_status)
-    m_OutputScalarType: bpy.props.IntProperty(name='OutputScalarType', default=-1, update=BVTK_Node.outdate_vtk_status)
-    m_SlabNumberOfSlices: bpy.props.IntProperty(name='SlabNumberOfSlices', default=1, update=BVTK_Node.outdate_vtk_status)
-    m_BackgroundLevel: bpy.props.FloatProperty(name='BackgroundLevel', default=0.0, update=BVTK_Node.outdate_vtk_status)
-    m_BorderThickness: bpy.props.FloatProperty(name='BorderThickness', default=0.5, update=BVTK_Node.outdate_vtk_status)
-    m_ScalarScale: bpy.props.FloatProperty(name='ScalarScale', default=1.0, update=BVTK_Node.outdate_vtk_status)
-    m_ScalarShift: bpy.props.FloatProperty(name='ScalarShift', default=0.0, update=BVTK_Node.outdate_vtk_status)
-    m_SlabResolution: bpy.props.FloatProperty(name='SlabResolution', default=1.0, update=BVTK_Node.outdate_vtk_status)
-    m_SlabSliceSpacingFraction: bpy.props.FloatProperty(name='SlabSliceSpacingFraction', default=1.0, update=BVTK_Node.outdate_vtk_status)
-    m_SlabThickness: bpy.props.FloatProperty(name='SlabThickness', default=10.0, update=BVTK_Node.outdate_vtk_status)
-    e_BlendMode: bpy.props.EnumProperty(name='BlendMode', default="Max", items=e_BlendMode_items, update=BVTK_Node.outdate_vtk_status)
-    e_InterpolationMode: bpy.props.EnumProperty(name='InterpolationMode', default="NearestNeighbor", items=e_InterpolationMode_items, update=BVTK_Node.outdate_vtk_status)
-    e_SlabMode: bpy.props.EnumProperty(name='SlabMode', default="Mean", items=e_SlabMode_items, update=BVTK_Node.outdate_vtk_status)
-    e_SplitMode: bpy.props.EnumProperty(name='SplitMode', default="Slab", items=e_SplitMode_items, update=BVTK_Node.outdate_vtk_status)
-    m_MinimumPieceSize: bpy.props.IntVectorProperty(name='MinimumPieceSize', default=[16, 1, 1], size=3, update=BVTK_Node.outdate_vtk_status)
-    m_OutputExtent: bpy.props.IntVectorProperty(name='OutputExtent', default=[0, 0, 0, 0, 0, 0], size=6, update=BVTK_Node.outdate_vtk_status)
-    m_BackgroundColor: bpy.props.FloatVectorProperty(name='BackgroundColor', default=[0.0, 0.0, 0.0, 0.0], size=4, update=BVTK_Node.outdate_vtk_status)
-    m_OutputOrigin: bpy.props.FloatVectorProperty(name='OutputOrigin', default=[0.0, 0.0, 0.0], size=3, update=BVTK_Node.outdate_vtk_status)
-    m_OutputSpacing: bpy.props.FloatVectorProperty(name='OutputSpacing', default=[1.0, 1.0, 1.0], size=3, update=BVTK_Node.outdate_vtk_status)
-    
-    b_properties: bpy.props.BoolVectorProperty(name="", size=32, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
-
-    def m_properties( self ):
-        return ['m_AutoCropOutput','m_Border','m_EnableSMP','m_GenerateStencilOutput','m_GlobalDefaultEnableSMP','m_Interpolate','m_Mirror','m_Optimization','m_SlabTrapezoidIntegration','m_TransformInputSampling','m_Wrap','m_DesiredBytesPerPiece','m_NumberOfThreads','m_OutputDimensionality','m_OutputScalarType','m_SlabNumberOfSlices','m_BackgroundLevel','m_BorderThickness','m_ScalarScale','m_ScalarShift','m_SlabResolution','m_SlabSliceSpacingFraction','m_SlabThickness','e_BlendMode','e_InterpolationMode','e_SlabMode','e_SplitMode','m_MinimumPieceSize','m_OutputExtent','m_BackgroundColor','m_OutputOrigin','m_OutputSpacing',]
-    def m_connections( self ):
-        return (['input 0', 'input 1'], ['output 0', 'output 1'], ['Interpolator', 'StencilOutput', 'ResliceAxes', 'ResliceTransform'], []) 
-    
-add_class( VTKImageSlabReslice )        
-TYPENAMES.append('VTKImageSlabResliceType' )
 
 #--------------------------------------------------------------
 class VTKImageStencil(Node, BVTK_Node):
@@ -946,6 +930,7 @@ class VTKImageStencil(Node, BVTK_Node):
     m_EnableSMP: bpy.props.BoolProperty(name='EnableSMP', default=False, update=BVTK_Node.outdate_vtk_status)
     m_GlobalDefaultEnableSMP: bpy.props.BoolProperty(name='GlobalDefaultEnableSMP', default=False, update=BVTK_Node.outdate_vtk_status)
     m_ReverseStencil: bpy.props.BoolProperty(name='ReverseStencil', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_DesiredBytesPerPiece: bpy.props.IntProperty(name='DesiredBytesPerPiece', default=65536, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfThreads: bpy.props.IntProperty(name='NumberOfThreads', default=4, update=BVTK_Node.outdate_vtk_status)
     m_BackgroundValue: bpy.props.FloatProperty(name='BackgroundValue', default=1.0, update=BVTK_Node.outdate_vtk_status)
@@ -953,10 +938,10 @@ class VTKImageStencil(Node, BVTK_Node):
     m_MinimumPieceSize: bpy.props.IntVectorProperty(name='MinimumPieceSize', default=[16, 1, 1], size=3, update=BVTK_Node.outdate_vtk_status)
     m_BackgroundColor: bpy.props.FloatVectorProperty(name='BackgroundColor', default=[1.0, 1.0, 1.0, 1.0], size=4, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=9, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=10, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_EnableSMP','m_GlobalDefaultEnableSMP','m_ReverseStencil','m_DesiredBytesPerPiece','m_NumberOfThreads','m_BackgroundValue','e_SplitMode','m_MinimumPieceSize','m_BackgroundColor',]
+        return ['m_EnableSMP','m_GlobalDefaultEnableSMP','m_ReverseStencil','m_ObjectName','m_DesiredBytesPerPiece','m_NumberOfThreads','m_BackgroundValue','e_SplitMode','m_MinimumPieceSize','m_BackgroundColor',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output'], [], []) 
     
@@ -971,20 +956,25 @@ class VTKImprintFilter(Node, BVTK_Node):
     e_DebugOutputType_items=[ (x,x,x) for x in ['NoDebugOutput', 'TriangulationInput', 'TriangulationOutput']]
     e_MergeToleranceType_items=[ (x,x,x) for x in ['Absolute', 'RelativeToProjection', 'MinEdge']]
     e_OutputType_items=[ (x,x,x) for x in ['TargetCells', 'ImprintedCells', 'ProjectedImprint', 'ImprintedRegion', 'MergedImprint']]
+    e_PointInterpolation_items=[ (x,x,x) for x in ['TargetEdges', 'ImprintEdges']]
     
     m_BoundaryEdgeInsertion: bpy.props.BoolProperty(name='BoundaryEdgeInsertion', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_PassCellData: bpy.props.BoolProperty(name='PassCellData', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_PassPointData: bpy.props.BoolProperty(name='PassPointData', default=True, update=BVTK_Node.outdate_vtk_status)
     m_TriangulateOutput: bpy.props.BoolProperty(name='TriangulateOutput', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_DebugCellId: bpy.props.IntProperty(name='DebugCellId', default=-1, update=BVTK_Node.outdate_vtk_status)
     m_MergeTolerance: bpy.props.FloatProperty(name='MergeTolerance', default=0.025, update=BVTK_Node.outdate_vtk_status)
     m_Tolerance: bpy.props.FloatProperty(name='Tolerance', default=0.001, update=BVTK_Node.outdate_vtk_status)
     e_DebugOutputType: bpy.props.EnumProperty(name='DebugOutputType', default="NoDebugOutput", items=e_DebugOutputType_items, update=BVTK_Node.outdate_vtk_status)
     e_MergeToleranceType: bpy.props.EnumProperty(name='MergeToleranceType', default="MinEdge", items=e_MergeToleranceType_items, update=BVTK_Node.outdate_vtk_status)
     e_OutputType: bpy.props.EnumProperty(name='OutputType', default="MergedImprint", items=e_OutputType_items, update=BVTK_Node.outdate_vtk_status)
+    e_PointInterpolation: bpy.props.EnumProperty(name='PointInterpolation', default="TargetEdges", items=e_PointInterpolation_items, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=8, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=12, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_BoundaryEdgeInsertion','m_TriangulateOutput','m_DebugCellId','m_MergeTolerance','m_Tolerance','e_DebugOutputType','e_MergeToleranceType','e_OutputType',]
+        return ['m_BoundaryEdgeInsertion','m_PassCellData','m_PassPointData','m_TriangulateOutput','m_ObjectName','m_DebugCellId','m_MergeTolerance','m_Tolerance','e_DebugOutputType','e_MergeToleranceType','e_OutputType','e_PointInterpolation',]
     def m_connections( self ):
         return (['input 0', 'input 1'], ['output 0', 'output 1'], ['ImprintConnection', 'TargetConnection'], []) 
     
@@ -1002,13 +992,14 @@ class VTKIntersectionPolyDataFilter(Node, BVTK_Node):
     m_ComputeIntersectionPointArray: bpy.props.BoolProperty(name='ComputeIntersectionPointArray', default=True, update=BVTK_Node.outdate_vtk_status)
     m_SplitFirstOutput: bpy.props.BoolProperty(name='SplitFirstOutput', default=True, update=BVTK_Node.outdate_vtk_status)
     m_SplitSecondOutput: bpy.props.BoolProperty(name='SplitSecondOutput', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_RelativeSubtriangleArea: bpy.props.FloatProperty(name='RelativeSubtriangleArea', default=0.0001, update=BVTK_Node.outdate_vtk_status)
     m_Tolerance: bpy.props.FloatProperty(name='Tolerance', default=1e-06, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=8, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_CheckInput','m_CheckMesh','m_ComputeIntersectionPointArray','m_SplitFirstOutput','m_SplitSecondOutput','m_RelativeSubtriangleArea','m_Tolerance',]
+        return ['m_CheckInput','m_CheckMesh','m_ComputeIntersectionPointArray','m_SplitFirstOutput','m_SplitSecondOutput','m_ObjectName','m_RelativeSubtriangleArea','m_Tolerance',]
     def m_connections( self ):
         return (['input 0', 'input 1'], ['output 0', 'output 1', 'output 2'], [], []) 
     
@@ -1026,15 +1017,17 @@ class VTKKMeansStatistics(Node, BVTK_Node):
     m_LearnOption: bpy.props.BoolProperty(name='LearnOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_TestOption: bpy.props.BoolProperty(name='TestOption', default=False, update=BVTK_Node.outdate_vtk_status)
     m_KValuesArrayName: bpy.props.StringProperty(name='KValuesArrayName', default="K", update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_DefaultNumberOfClusters: bpy.props.IntProperty(name='DefaultNumberOfClusters', default=3, update=BVTK_Node.outdate_vtk_status)
+    m_GhostsToSkip: bpy.props.IntProperty(name='GhostsToSkip', default=255, update=BVTK_Node.outdate_vtk_status)
     m_MaxNumIterations: bpy.props.IntProperty(name='MaxNumIterations', default=50, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfPrimaryTables: bpy.props.IntProperty(name='NumberOfPrimaryTables', default=1, update=BVTK_Node.outdate_vtk_status)
     m_Tolerance: bpy.props.FloatProperty(name='Tolerance', default=0.01, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=9, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=11, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_TestOption','m_KValuesArrayName','m_DefaultNumberOfClusters','m_MaxNumIterations','m_NumberOfPrimaryTables','m_Tolerance',]
+        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_TestOption','m_KValuesArrayName','m_ObjectName','m_DefaultNumberOfClusters','m_GhostsToSkip','m_MaxNumIterations','m_NumberOfPrimaryTables','m_Tolerance',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output 0', 'output 1', 'output 2'], ['DistanceFunctor'], []) 
     
@@ -1050,6 +1043,7 @@ class VTKLagrangianParticleTracker(Node, BVTK_Node):
     m_AdaptiveStepReintegration: bpy.props.BoolProperty(name='AdaptiveStepReintegration', default=False, update=BVTK_Node.outdate_vtk_status)
     m_GenerateParticlePathsOutput: bpy.props.BoolProperty(name='GenerateParticlePathsOutput', default=True, update=BVTK_Node.outdate_vtk_status)
     m_GeneratePolyVertexInteractionOutput: bpy.props.BoolProperty(name='GeneratePolyVertexInteractionOutput', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_CellLengthComputationMode: bpy.props.IntProperty(name='CellLengthComputationMode', default=1, update=BVTK_Node.outdate_vtk_status)
     m_MaximumNumberOfSteps: bpy.props.IntProperty(name='MaximumNumberOfSteps', default=100, update=BVTK_Node.outdate_vtk_status)
     m_MaximumIntegrationTime: bpy.props.FloatProperty(name='MaximumIntegrationTime', default=-1.0, update=BVTK_Node.outdate_vtk_status)
@@ -1057,10 +1051,10 @@ class VTKLagrangianParticleTracker(Node, BVTK_Node):
     m_StepFactorMax: bpy.props.FloatProperty(name='StepFactorMax', default=1.5, update=BVTK_Node.outdate_vtk_status)
     m_StepFactorMin: bpy.props.FloatProperty(name='StepFactorMin', default=0.5, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=9, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=10, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AdaptiveStepReintegration','m_GenerateParticlePathsOutput','m_GeneratePolyVertexInteractionOutput','m_CellLengthComputationMode','m_MaximumNumberOfSteps','m_MaximumIntegrationTime','m_StepFactor','m_StepFactorMax','m_StepFactorMin',]
+        return ['m_AdaptiveStepReintegration','m_GenerateParticlePathsOutput','m_GeneratePolyVertexInteractionOutput','m_ObjectName','m_CellLengthComputationMode','m_MaximumNumberOfSteps','m_MaximumIntegrationTime','m_StepFactor','m_StepFactorMax','m_StepFactorMin',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output 0', 'output 1'], ['IntegrationModel', 'Integrator'], []) 
     
@@ -1075,13 +1069,14 @@ class VTKLoopBooleanPolyDataFilter(Node, BVTK_Node):
     e_Operation_items=[ (x,x,x) for x in ['Union', 'Intersection', 'Difference']]
     
     m_NoIntersectionOutput: bpy.props.BoolProperty(name='NoIntersectionOutput', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_Tolerance: bpy.props.FloatProperty(name='Tolerance', default=1e-06, update=BVTK_Node.outdate_vtk_status)
     e_Operation: bpy.props.EnumProperty(name='Operation', default="Union", items=e_Operation_items, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_NoIntersectionOutput','m_Tolerance','e_Operation',]
+        return ['m_NoIntersectionOutput','m_ObjectName','m_Tolerance','e_Operation',]
     def m_connections( self ):
         return (['input 0', 'input 1'], ['output 0', 'output 1'], [], []) 
     
@@ -1096,12 +1091,13 @@ class VTKMaskPointsFilter(Node, BVTK_Node):
     
     m_GenerateOutliers: bpy.props.BoolProperty(name='GenerateOutliers', default=False, update=BVTK_Node.outdate_vtk_status)
     m_GenerateVertices: bpy.props.BoolProperty(name='GenerateVertices', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_EmptyValue: bpy.props.IntProperty(name='EmptyValue', default=0, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_GenerateOutliers','m_GenerateVertices','m_EmptyValue',]
+        return ['m_GenerateOutliers','m_GenerateVertices','m_ObjectName','m_EmptyValue',]
     def m_connections( self ):
         return (['input 0', 'input 1'], ['output 0', 'output 1'], [], []) 
     
@@ -1114,11 +1110,12 @@ class VTKMergeFilter(Node, BVTK_Node):
     bl_idname = 'VTKMergeFilterType'
     bl_label  = 'vtkMergeFilter'
     
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return []
+        return ['m_ObjectName',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2', 'input 3', 'input 4', 'input 5'], ['output'], [], []) 
     
@@ -1136,12 +1133,14 @@ class VTKMultiCorrelativeStatistics(Node, BVTK_Node):
     m_LearnOption: bpy.props.BoolProperty(name='LearnOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_MedianAbsoluteDeviation: bpy.props.BoolProperty(name='MedianAbsoluteDeviation', default=False, update=BVTK_Node.outdate_vtk_status)
     m_TestOption: bpy.props.BoolProperty(name='TestOption', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_GhostsToSkip: bpy.props.IntProperty(name='GhostsToSkip', default=255, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfPrimaryTables: bpy.props.IntProperty(name='NumberOfPrimaryTables', default=1, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=8, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_MedianAbsoluteDeviation','m_TestOption','m_NumberOfPrimaryTables',]
+        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_MedianAbsoluteDeviation','m_TestOption','m_ObjectName','m_GhostsToSkip','m_NumberOfPrimaryTables',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output 0', 'output 1', 'output 2'], [], []) 
     
@@ -1159,14 +1158,16 @@ class VTKOrderStatistics(Node, BVTK_Node):
     m_LearnOption: bpy.props.BoolProperty(name='LearnOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_Quantize: bpy.props.BoolProperty(name='Quantize', default=False, update=BVTK_Node.outdate_vtk_status)
     m_TestOption: bpy.props.BoolProperty(name='TestOption', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_GhostsToSkip: bpy.props.IntProperty(name='GhostsToSkip', default=255, update=BVTK_Node.outdate_vtk_status)
     m_MaximumHistogramSize: bpy.props.IntProperty(name='MaximumHistogramSize', default=1000, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfIntervals: bpy.props.IntProperty(name='NumberOfIntervals', default=4, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfPrimaryTables: bpy.props.IntProperty(name='NumberOfPrimaryTables', default=-1, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=8, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=10, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_Quantize','m_TestOption','m_MaximumHistogramSize','m_NumberOfIntervals','m_NumberOfPrimaryTables',]
+        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_Quantize','m_TestOption','m_ObjectName','m_GhostsToSkip','m_MaximumHistogramSize','m_NumberOfIntervals','m_NumberOfPrimaryTables',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output 0', 'output 1', 'output 2'], [], []) 
     
@@ -1183,13 +1184,14 @@ class VTKPAutoCorrelativeStatistics(Node, BVTK_Node):
     m_DeriveOption: bpy.props.BoolProperty(name='DeriveOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_LearnOption: bpy.props.BoolProperty(name='LearnOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_TestOption: bpy.props.BoolProperty(name='TestOption', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_NumberOfPrimaryTables: bpy.props.IntProperty(name='NumberOfPrimaryTables', default=1, update=BVTK_Node.outdate_vtk_status)
     m_SliceCardinality: bpy.props.IntProperty(name='SliceCardinality', default=0, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_TestOption','m_NumberOfPrimaryTables','m_SliceCardinality',]
+        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_TestOption','m_ObjectName','m_NumberOfPrimaryTables','m_SliceCardinality',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output 0', 'output 1', 'output 2'], [], []) 
     
@@ -1204,15 +1206,16 @@ class VTKPBivariateLinearTableThreshold(Node, BVTK_Node):
     e_LinearThresholdType_items=[ (x,x,x) for x in ['Above', 'Below', 'Near', 'Between']]
     
     m_UseNormalizedDistance: bpy.props.BoolProperty(name='UseNormalizedDistance', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_Inclusive: bpy.props.IntProperty(name='Inclusive', default=0, update=BVTK_Node.outdate_vtk_status)
     m_DistanceThreshold: bpy.props.FloatProperty(name='DistanceThreshold', default=1.0, update=BVTK_Node.outdate_vtk_status)
     e_LinearThresholdType: bpy.props.EnumProperty(name='LinearThresholdType', default="Near", items=e_LinearThresholdType_items, update=BVTK_Node.outdate_vtk_status)
     m_ColumnRanges: bpy.props.FloatVectorProperty(name='ColumnRanges', default=[1.0, 1.0], size=2, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_UseNormalizedDistance','m_Inclusive','m_DistanceThreshold','e_LinearThresholdType','m_ColumnRanges',]
+        return ['m_UseNormalizedDistance','m_ObjectName','m_Inclusive','m_DistanceThreshold','e_LinearThresholdType','m_ColumnRanges',]
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1'], [], []) 
     
@@ -1230,16 +1233,18 @@ class VTKPCAStatistics(Node, BVTK_Node):
     m_LearnOption: bpy.props.BoolProperty(name='LearnOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_MedianAbsoluteDeviation: bpy.props.BoolProperty(name='MedianAbsoluteDeviation', default=False, update=BVTK_Node.outdate_vtk_status)
     m_TestOption: bpy.props.BoolProperty(name='TestOption', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_BasisScheme: bpy.props.IntProperty(name='BasisScheme', default=0, update=BVTK_Node.outdate_vtk_status)
     m_FixedBasisSize: bpy.props.IntProperty(name='FixedBasisSize', default=-1, update=BVTK_Node.outdate_vtk_status)
+    m_GhostsToSkip: bpy.props.IntProperty(name='GhostsToSkip', default=255, update=BVTK_Node.outdate_vtk_status)
     m_NormalizationScheme: bpy.props.IntProperty(name='NormalizationScheme', default=0, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfPrimaryTables: bpy.props.IntProperty(name='NumberOfPrimaryTables', default=1, update=BVTK_Node.outdate_vtk_status)
     m_FixedBasisEnergy: bpy.props.FloatProperty(name='FixedBasisEnergy', default=1.0, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=10, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=12, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_MedianAbsoluteDeviation','m_TestOption','m_BasisScheme','m_FixedBasisSize','m_NormalizationScheme','m_NumberOfPrimaryTables','m_FixedBasisEnergy',]
+        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_MedianAbsoluteDeviation','m_TestOption','m_ObjectName','m_BasisScheme','m_FixedBasisSize','m_GhostsToSkip','m_NormalizationScheme','m_NumberOfPrimaryTables','m_FixedBasisEnergy',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2', 'input 3'], ['output 0', 'output 1', 'output 2'], ['SpecifiedNormalization'], []) 
     
@@ -1252,12 +1257,13 @@ class VTKPComputeHistogram2DOutliers(Node, BVTK_Node):
     bl_idname = 'VTKPComputeHistogram2DOutliersType'
     bl_label  = 'vtkPComputeHistogram2DOutliers'
     
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_PreferredNumberOfOutliers: bpy.props.IntProperty(name='PreferredNumberOfOutliers', default=10, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_PreferredNumberOfOutliers',]
+        return ['m_ObjectName','m_PreferredNumberOfOutliers',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output 0', 'output 1'], [], []) 
     
@@ -1274,12 +1280,13 @@ class VTKPContingencyStatistics(Node, BVTK_Node):
     m_DeriveOption: bpy.props.BoolProperty(name='DeriveOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_LearnOption: bpy.props.BoolProperty(name='LearnOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_TestOption: bpy.props.BoolProperty(name='TestOption', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_NumberOfPrimaryTables: bpy.props.IntProperty(name='NumberOfPrimaryTables', default=2, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_TestOption','m_NumberOfPrimaryTables',]
+        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_TestOption','m_ObjectName','m_NumberOfPrimaryTables',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output 0', 'output 1', 'output 2'], [], []) 
     
@@ -1296,12 +1303,13 @@ class VTKPCorrelativeStatistics(Node, BVTK_Node):
     m_DeriveOption: bpy.props.BoolProperty(name='DeriveOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_LearnOption: bpy.props.BoolProperty(name='LearnOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_TestOption: bpy.props.BoolProperty(name='TestOption', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_NumberOfPrimaryTables: bpy.props.IntProperty(name='NumberOfPrimaryTables', default=1, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_TestOption','m_NumberOfPrimaryTables',]
+        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_TestOption','m_ObjectName','m_NumberOfPrimaryTables',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output 0', 'output 1', 'output 2'], [], []) 
     
@@ -1319,15 +1327,18 @@ class VTKPDescriptiveStatistics(Node, BVTK_Node):
     m_G1Skewness: bpy.props.BoolProperty(name='G1Skewness', default=True, update=BVTK_Node.outdate_vtk_status)
     m_G2Kurtosis: bpy.props.BoolProperty(name='G2Kurtosis', default=True, update=BVTK_Node.outdate_vtk_status)
     m_LearnOption: bpy.props.BoolProperty(name='LearnOption', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_SampleEstimate: bpy.props.BoolProperty(name='SampleEstimate', default=True, update=BVTK_Node.outdate_vtk_status)
     m_SignedDeviations: bpy.props.BoolProperty(name='SignedDeviations', default=True, update=BVTK_Node.outdate_vtk_status)
     m_TestOption: bpy.props.BoolProperty(name='TestOption', default=False, update=BVTK_Node.outdate_vtk_status)
     m_UnbiasedVariance: bpy.props.BoolProperty(name='UnbiasedVariance', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_GhostsToSkip: bpy.props.IntProperty(name='GhostsToSkip', default=255, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfPrimaryTables: bpy.props.IntProperty(name='NumberOfPrimaryTables', default=1, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=9, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=12, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AssessOption','m_DeriveOption','m_G1Skewness','m_G2Kurtosis','m_LearnOption','m_SignedDeviations','m_TestOption','m_UnbiasedVariance','m_NumberOfPrimaryTables',]
+        return ['m_AssessOption','m_DeriveOption','m_G1Skewness','m_G2Kurtosis','m_LearnOption','m_SampleEstimate','m_SignedDeviations','m_TestOption','m_UnbiasedVariance','m_ObjectName','m_GhostsToSkip','m_NumberOfPrimaryTables',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output 0', 'output 1', 'output 2'], [], []) 
     
@@ -1347,16 +1358,17 @@ class VTKPExtractHistogram2D(Node, BVTK_Node):
     m_SwapColumns: bpy.props.BoolProperty(name='SwapColumns', default=True, update=BVTK_Node.outdate_vtk_status)
     m_TestOption: bpy.props.BoolProperty(name='TestOption', default=False, update=BVTK_Node.outdate_vtk_status)
     m_UseCustomHistogramExtents: bpy.props.BoolProperty(name='UseCustomHistogramExtents', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_NumberOfPrimaryTables: bpy.props.IntProperty(name='NumberOfPrimaryTables', default=1, update=BVTK_Node.outdate_vtk_status)
     e_ScalarType: bpy.props.EnumProperty(name='ScalarType', default="UnsignedInt", items=e_ScalarType_items, update=BVTK_Node.outdate_vtk_status)
     m_ComponentsToProcess: bpy.props.IntVectorProperty(name='ComponentsToProcess', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfBins: bpy.props.IntVectorProperty(name='NumberOfBins', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     m_CustomHistogramExtents: bpy.props.FloatVectorProperty(name='CustomHistogramExtents', default=[0.0, 0.0, 0.0, 0.0], size=4, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=11, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=12, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_SwapColumns','m_TestOption','m_UseCustomHistogramExtents','m_NumberOfPrimaryTables','e_ScalarType','m_ComponentsToProcess','m_NumberOfBins','m_CustomHistogramExtents',]
+        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_SwapColumns','m_TestOption','m_UseCustomHistogramExtents','m_ObjectName','m_NumberOfPrimaryTables','e_ScalarType','m_ComponentsToProcess','m_NumberOfBins','m_CustomHistogramExtents',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output 0', 'output 1', 'output 2', 'output 3'], ['RowMask'], []) 
     
@@ -1374,15 +1386,17 @@ class VTKPKMeansStatistics(Node, BVTK_Node):
     m_LearnOption: bpy.props.BoolProperty(name='LearnOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_TestOption: bpy.props.BoolProperty(name='TestOption', default=False, update=BVTK_Node.outdate_vtk_status)
     m_KValuesArrayName: bpy.props.StringProperty(name='KValuesArrayName', default="K", update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_DefaultNumberOfClusters: bpy.props.IntProperty(name='DefaultNumberOfClusters', default=3, update=BVTK_Node.outdate_vtk_status)
+    m_GhostsToSkip: bpy.props.IntProperty(name='GhostsToSkip', default=255, update=BVTK_Node.outdate_vtk_status)
     m_MaxNumIterations: bpy.props.IntProperty(name='MaxNumIterations', default=50, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfPrimaryTables: bpy.props.IntProperty(name='NumberOfPrimaryTables', default=1, update=BVTK_Node.outdate_vtk_status)
     m_Tolerance: bpy.props.FloatProperty(name='Tolerance', default=0.01, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=9, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=11, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_TestOption','m_KValuesArrayName','m_DefaultNumberOfClusters','m_MaxNumIterations','m_NumberOfPrimaryTables','m_Tolerance',]
+        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_TestOption','m_KValuesArrayName','m_ObjectName','m_DefaultNumberOfClusters','m_GhostsToSkip','m_MaxNumIterations','m_NumberOfPrimaryTables','m_Tolerance',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output 0', 'output 1', 'output 2'], ['DistanceFunctor'], []) 
     
@@ -1400,12 +1414,14 @@ class VTKPMultiCorrelativeStatistics(Node, BVTK_Node):
     m_LearnOption: bpy.props.BoolProperty(name='LearnOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_MedianAbsoluteDeviation: bpy.props.BoolProperty(name='MedianAbsoluteDeviation', default=False, update=BVTK_Node.outdate_vtk_status)
     m_TestOption: bpy.props.BoolProperty(name='TestOption', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_GhostsToSkip: bpy.props.IntProperty(name='GhostsToSkip', default=255, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfPrimaryTables: bpy.props.IntProperty(name='NumberOfPrimaryTables', default=1, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=8, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_MedianAbsoluteDeviation','m_TestOption','m_NumberOfPrimaryTables',]
+        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_MedianAbsoluteDeviation','m_TestOption','m_ObjectName','m_GhostsToSkip','m_NumberOfPrimaryTables',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output 0', 'output 1', 'output 2'], [], []) 
     
@@ -1423,14 +1439,16 @@ class VTKPOrderStatistics(Node, BVTK_Node):
     m_LearnOption: bpy.props.BoolProperty(name='LearnOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_Quantize: bpy.props.BoolProperty(name='Quantize', default=False, update=BVTK_Node.outdate_vtk_status)
     m_TestOption: bpy.props.BoolProperty(name='TestOption', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
+    m_GhostsToSkip: bpy.props.IntProperty(name='GhostsToSkip', default=255, update=BVTK_Node.outdate_vtk_status)
     m_MaximumHistogramSize: bpy.props.IntProperty(name='MaximumHistogramSize', default=1000, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfIntervals: bpy.props.IntProperty(name='NumberOfIntervals', default=4, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfPrimaryTables: bpy.props.IntProperty(name='NumberOfPrimaryTables', default=-1, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=8, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=10, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_Quantize','m_TestOption','m_MaximumHistogramSize','m_NumberOfIntervals','m_NumberOfPrimaryTables',]
+        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_Quantize','m_TestOption','m_ObjectName','m_GhostsToSkip','m_MaximumHistogramSize','m_NumberOfIntervals','m_NumberOfPrimaryTables',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output 0', 'output 1', 'output 2'], [], []) 
     
@@ -1448,16 +1466,18 @@ class VTKPPCAStatistics(Node, BVTK_Node):
     m_LearnOption: bpy.props.BoolProperty(name='LearnOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_MedianAbsoluteDeviation: bpy.props.BoolProperty(name='MedianAbsoluteDeviation', default=False, update=BVTK_Node.outdate_vtk_status)
     m_TestOption: bpy.props.BoolProperty(name='TestOption', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_BasisScheme: bpy.props.IntProperty(name='BasisScheme', default=0, update=BVTK_Node.outdate_vtk_status)
     m_FixedBasisSize: bpy.props.IntProperty(name='FixedBasisSize', default=-1, update=BVTK_Node.outdate_vtk_status)
+    m_GhostsToSkip: bpy.props.IntProperty(name='GhostsToSkip', default=255, update=BVTK_Node.outdate_vtk_status)
     m_NormalizationScheme: bpy.props.IntProperty(name='NormalizationScheme', default=0, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfPrimaryTables: bpy.props.IntProperty(name='NumberOfPrimaryTables', default=1, update=BVTK_Node.outdate_vtk_status)
     m_FixedBasisEnergy: bpy.props.FloatProperty(name='FixedBasisEnergy', default=1.0, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=10, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=12, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_MedianAbsoluteDeviation','m_TestOption','m_BasisScheme','m_FixedBasisSize','m_NormalizationScheme','m_NumberOfPrimaryTables','m_FixedBasisEnergy',]
+        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_MedianAbsoluteDeviation','m_TestOption','m_ObjectName','m_BasisScheme','m_FixedBasisSize','m_GhostsToSkip','m_NormalizationScheme','m_NumberOfPrimaryTables','m_FixedBasisEnergy',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2', 'input 3'], ['output 0', 'output 1', 'output 2'], ['SpecifiedNormalization'], []) 
     
@@ -1475,14 +1495,15 @@ class VTKPPairwiseExtractHistogram2D(Node, BVTK_Node):
     m_DeriveOption: bpy.props.BoolProperty(name='DeriveOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_LearnOption: bpy.props.BoolProperty(name='LearnOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_TestOption: bpy.props.BoolProperty(name='TestOption', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_NumberOfPrimaryTables: bpy.props.IntProperty(name='NumberOfPrimaryTables', default=1, update=BVTK_Node.outdate_vtk_status)
     e_ScalarType: bpy.props.EnumProperty(name='ScalarType', default="UnsignedInt", items=e_ScalarType_items, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfBins: bpy.props.IntVectorProperty(name='NumberOfBins', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=8, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_TestOption','m_NumberOfPrimaryTables','e_ScalarType','m_NumberOfBins',]
+        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_TestOption','m_ObjectName','m_NumberOfPrimaryTables','e_ScalarType','m_NumberOfBins',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output 0', 'output 1', 'output 2', 'output 3'], [], []) 
     
@@ -1500,14 +1521,15 @@ class VTKPairwiseExtractHistogram2D(Node, BVTK_Node):
     m_DeriveOption: bpy.props.BoolProperty(name='DeriveOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_LearnOption: bpy.props.BoolProperty(name='LearnOption', default=True, update=BVTK_Node.outdate_vtk_status)
     m_TestOption: bpy.props.BoolProperty(name='TestOption', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_NumberOfPrimaryTables: bpy.props.IntProperty(name='NumberOfPrimaryTables', default=1, update=BVTK_Node.outdate_vtk_status)
     e_ScalarType: bpy.props.EnumProperty(name='ScalarType', default="UnsignedInt", items=e_ScalarType_items, update=BVTK_Node.outdate_vtk_status)
     m_NumberOfBins: bpy.props.IntVectorProperty(name='NumberOfBins', default=[0, 0], size=2, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=8, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_TestOption','m_NumberOfPrimaryTables','e_ScalarType','m_NumberOfBins',]
+        return ['m_AssessOption','m_DeriveOption','m_LearnOption','m_TestOption','m_ObjectName','m_NumberOfPrimaryTables','e_ScalarType','m_NumberOfBins',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output 0', 'output 1', 'output 2', 'output 3'], [], []) 
     
@@ -1522,12 +1544,14 @@ class VTKPolyDataPlaneClipper(Node, BVTK_Node):
     
     m_Capping: bpy.props.BoolProperty(name='Capping', default=True, update=BVTK_Node.outdate_vtk_status)
     m_ClippingLoops: bpy.props.BoolProperty(name='ClippingLoops', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_PassCapPointData: bpy.props.BoolProperty(name='PassCapPointData', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_BatchSize: bpy.props.IntProperty(name='BatchSize', default=10000, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_Capping','m_ClippingLoops','m_BatchSize',]
+        return ['m_Capping','m_ClippingLoops','m_PassCapPointData','m_ObjectName','m_BatchSize',]
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1'], ['Plane'], []) 
     
@@ -1540,11 +1564,12 @@ class VTKProgrammableSource(Node, BVTK_Node):
     bl_idname = 'VTKProgrammableSourceType'
     bl_label  = 'vtkProgrammableSource'
     
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return []
+        return ['m_ObjectName',]
     def m_connections( self ):
         return ([], ['output 0', 'output 1', 'output 2', 'output 3', 'output 4', 'output 5', 'output 6', 'output 7'], [], []) 
     
@@ -1559,13 +1584,14 @@ class VTKRadiusOutlierRemoval(Node, BVTK_Node):
     
     m_GenerateOutliers: bpy.props.BoolProperty(name='GenerateOutliers', default=False, update=BVTK_Node.outdate_vtk_status)
     m_GenerateVertices: bpy.props.BoolProperty(name='GenerateVertices', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_NumberOfNeighbors: bpy.props.IntProperty(name='NumberOfNeighbors', default=2, update=BVTK_Node.outdate_vtk_status)
     m_Radius: bpy.props.FloatProperty(name='Radius', default=1.0, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_GenerateOutliers','m_GenerateVertices','m_NumberOfNeighbors','m_Radius',]
+        return ['m_GenerateOutliers','m_GenerateVertices','m_ObjectName','m_NumberOfNeighbors','m_Radius',]
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1'], [], []) 
     
@@ -1579,13 +1605,14 @@ class VTKResliceCursorPolyDataAlgorithm(Node, BVTK_Node):
     bl_label  = 'vtkResliceCursorPolyDataAlgorithm'
     e_ReslicePlaneNormal_items=[ (x,x,x) for x in ['XAxis', 'YAxis', 'ZAxis']]
     
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     e_ReslicePlaneNormal: bpy.props.EnumProperty(name='ReslicePlaneNormal', default="XAxis", items=e_ReslicePlaneNormal_items, update=BVTK_Node.outdate_vtk_status)
     m_SliceBounds: bpy.props.FloatVectorProperty(name='SliceBounds', default=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0], size=6, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['e_ReslicePlaneNormal','m_SliceBounds',]
+        return ['m_ObjectName','e_ReslicePlaneNormal','m_SliceBounds',]
     def m_connections( self ):
         return ([], ['output 0', 'output 1', 'output 2', 'output 3'], ['ResliceCursor'], []) 
     
@@ -1599,12 +1626,13 @@ class VTKScalarsToTextureFilter(Node, BVTK_Node):
     bl_label  = 'vtkScalarsToTextureFilter'
     
     m_UseTransferFunction: bpy.props.BoolProperty(name='UseTransferFunction', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_TextureDimensions: bpy.props.IntVectorProperty(name='TextureDimensions', default=[128, 128], size=2, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=2, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_UseTransferFunction','m_TextureDimensions',]
+        return ['m_UseTransferFunction','m_ObjectName','m_TextureDimensions',]
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1'], ['TransferFunction'], []) 
     
@@ -1616,18 +1644,21 @@ class VTKSelectPolyData(Node, BVTK_Node):
 
     bl_idname = 'VTKSelectPolyDataType'
     bl_label  = 'vtkSelectPolyData'
+    e_EdgeSearchMode_items=[ (x,x,x) for x in ['Greedy', 'Dijkstra']]
     e_SelectionMode_items=[ (x,x,x) for x in ['SmallestRegion', 'LargestRegion', 'ClosestPointRegion']]
     
     m_GenerateSelectionScalars: bpy.props.BoolProperty(name='GenerateSelectionScalars', default=True, update=BVTK_Node.outdate_vtk_status)
     m_GenerateUnselectedOutput: bpy.props.BoolProperty(name='GenerateUnselectedOutput', default=True, update=BVTK_Node.outdate_vtk_status)
     m_InsideOut: bpy.props.BoolProperty(name='InsideOut', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
+    e_EdgeSearchMode: bpy.props.EnumProperty(name='EdgeSearchMode', default="Greedy", items=e_EdgeSearchMode_items, update=BVTK_Node.outdate_vtk_status)
     e_SelectionMode: bpy.props.EnumProperty(name='SelectionMode', default="SmallestRegion", items=e_SelectionMode_items, update=BVTK_Node.outdate_vtk_status)
     m_ClosestPoint: bpy.props.FloatVectorProperty(name='ClosestPoint', default=[0.0, 0.0, 0.0], size=3, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=5, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_GenerateSelectionScalars','m_GenerateUnselectedOutput','m_InsideOut','e_SelectionMode','m_ClosestPoint',]
+        return ['m_GenerateSelectionScalars','m_GenerateUnselectedOutput','m_InsideOut','m_ObjectName','e_EdgeSearchMode','e_SelectionMode','m_ClosestPoint',]
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1', 'output 2'], ['Loop'], []) 
     
@@ -1642,15 +1673,16 @@ class VTKStatisticalOutlierRemoval(Node, BVTK_Node):
     
     m_GenerateOutliers: bpy.props.BoolProperty(name='GenerateOutliers', default=False, update=BVTK_Node.outdate_vtk_status)
     m_GenerateVertices: bpy.props.BoolProperty(name='GenerateVertices', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_SampleSize: bpy.props.IntProperty(name='SampleSize', default=25, update=BVTK_Node.outdate_vtk_status)
     m_ComputedMean: bpy.props.FloatProperty(name='ComputedMean', default=0.0, update=BVTK_Node.outdate_vtk_status)
     m_ComputedStandardDeviation: bpy.props.FloatProperty(name='ComputedStandardDeviation', default=0.0, update=BVTK_Node.outdate_vtk_status)
     m_StandardDeviationFactor: bpy.props.FloatProperty(name='StandardDeviationFactor', default=1.0, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_GenerateOutliers','m_GenerateVertices','m_SampleSize','m_ComputedMean','m_ComputedStandardDeviation','m_StandardDeviationFactor',]
+        return ['m_GenerateOutliers','m_GenerateVertices','m_ObjectName','m_SampleSize','m_ComputedMean','m_ComputedStandardDeviation','m_StandardDeviationFactor',]
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1'], [], []) 
     
@@ -1663,11 +1695,12 @@ class VTKStreamingStatistics(Node, BVTK_Node):
     bl_idname = 'VTKStreamingStatisticsType'
     bl_label  = 'vtkStreamingStatistics'
     
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     
     b_properties: bpy.props.BoolVectorProperty(name="", size=1, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return []
+        return ['m_ObjectName',]
     def m_connections( self ):
         return (['input 0', 'input 1', 'input 2'], ['output 0', 'output 1', 'output 2'], [], []) 
     
@@ -1680,14 +1713,15 @@ class VTKStructuredGridLIC2D(Node, BVTK_Node):
     bl_idname = 'VTKStructuredGridLIC2DType'
     bl_label  = 'vtkStructuredGridLIC2D'
     
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_Magnification: bpy.props.IntProperty(name='Magnification', default=1, update=BVTK_Node.outdate_vtk_status)
     m_Steps: bpy.props.IntProperty(name='Steps', default=1, update=BVTK_Node.outdate_vtk_status)
     m_StepSize: bpy.props.FloatProperty(name='StepSize', default=1.0, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=3, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=4, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_Magnification','m_Steps','m_StepSize',]
+        return ['m_ObjectName','m_Magnification','m_Steps','m_StepSize',]
     def m_connections( self ):
         return (['input 0', 'input 1'], ['output 0', 'output 1'], ['Context'], []) 
     
@@ -1704,13 +1738,14 @@ class VTKTableBasedClipDataSet(Node, BVTK_Node):
     m_GenerateClippedOutput: bpy.props.BoolProperty(name='GenerateClippedOutput', default=True, update=BVTK_Node.outdate_vtk_status)
     m_InsideOut: bpy.props.BoolProperty(name='InsideOut', default=True, update=BVTK_Node.outdate_vtk_status)
     m_UseValueAsOffset: bpy.props.BoolProperty(name='UseValueAsOffset', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_MergeTolerance: bpy.props.FloatProperty(name='MergeTolerance', default=0.01, update=BVTK_Node.outdate_vtk_status)
     m_Value: bpy.props.FloatProperty(name='Value', default=0.0, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_GenerateClipScalars','m_GenerateClippedOutput','m_InsideOut','m_UseValueAsOffset','m_MergeTolerance','m_Value',]
+        return ['m_GenerateClipScalars','m_GenerateClippedOutput','m_InsideOut','m_UseValueAsOffset','m_ObjectName','m_MergeTolerance','m_Value',]
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1'], ['ClipFunction'], []) 
     
@@ -1726,14 +1761,15 @@ class VTKTemporalPathLineFilter(Node, BVTK_Node):
     m_BackwardTime: bpy.props.BoolProperty(name='BackwardTime', default=False, update=BVTK_Node.outdate_vtk_status)
     m_KeepDeadTrails: bpy.props.BoolProperty(name='KeepDeadTrails', default=False, update=BVTK_Node.outdate_vtk_status)
     m_IdChannelArray: bpy.props.StringProperty(name='IdChannelArray', default="", update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_MaskPoints: bpy.props.IntProperty(name='MaskPoints', default=200, update=BVTK_Node.outdate_vtk_status)
     m_MaxTrackLength: bpy.props.IntProperty(name='MaxTrackLength', default=10, update=BVTK_Node.outdate_vtk_status)
     m_MaxStepDistance: bpy.props.FloatVectorProperty(name='MaxStepDistance', default=[1.0, 1.0, 1.0], size=3, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_BackwardTime','m_KeepDeadTrails','m_IdChannelArray','m_MaskPoints','m_MaxTrackLength','m_MaxStepDistance',]
+        return ['m_BackwardTime','m_KeepDeadTrails','m_IdChannelArray','m_ObjectName','m_MaskPoints','m_MaxTrackLength','m_MaxStepDistance',]
     def m_connections( self ):
         return (['input 0', 'input 1'], ['output 0', 'output 1'], [], []) 
     
@@ -1750,17 +1786,19 @@ class VTKVectorFieldTopology(Node, BVTK_Node):
     m_ExcludeBoundary: bpy.props.BoolProperty(name='ExcludeBoundary', default=False, update=BVTK_Node.outdate_vtk_status)
     m_UseBoundarySwitchPoints: bpy.props.BoolProperty(name='UseBoundarySwitchPoints', default=False, update=BVTK_Node.outdate_vtk_status)
     m_UseIterativeSeeding: bpy.props.BoolProperty(name='UseIterativeSeeding', default=False, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_IntegrationStepUnit: bpy.props.IntProperty(name='IntegrationStepUnit', default=2, update=BVTK_Node.outdate_vtk_status)
     m_MaxNumSteps: bpy.props.IntProperty(name='MaxNumSteps', default=100, update=BVTK_Node.outdate_vtk_status)
+    m_EpsilonCriticalPoint: bpy.props.FloatProperty(name='EpsilonCriticalPoint', default=1e-10, update=BVTK_Node.outdate_vtk_status)
     m_IntegrationStepSize: bpy.props.FloatProperty(name='IntegrationStepSize', default=1.0, update=BVTK_Node.outdate_vtk_status)
     m_OffsetAwayFromBoundary: bpy.props.FloatProperty(name='OffsetAwayFromBoundary', default=0.001, update=BVTK_Node.outdate_vtk_status)
     m_SeparatrixDistance: bpy.props.FloatProperty(name='SeparatrixDistance', default=1.0, update=BVTK_Node.outdate_vtk_status)
     m_VectorAngleThreshold: bpy.props.FloatProperty(name='VectorAngleThreshold', default=1.0, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=10, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=12, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_ComputeSurfaces','m_ExcludeBoundary','m_UseBoundarySwitchPoints','m_UseIterativeSeeding','m_IntegrationStepUnit','m_MaxNumSteps','m_IntegrationStepSize','m_OffsetAwayFromBoundary','m_SeparatrixDistance','m_VectorAngleThreshold',]
+        return ['m_ComputeSurfaces','m_ExcludeBoundary','m_UseBoundarySwitchPoints','m_UseIterativeSeeding','m_ObjectName','m_IntegrationStepUnit','m_MaxNumSteps','m_EpsilonCriticalPoint','m_IntegrationStepSize','m_OffsetAwayFromBoundary','m_SeparatrixDistance','m_VectorAngleThreshold',]
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1', 'output 2', 'output 3', 'output 4'], [], []) 
     
@@ -1776,16 +1814,17 @@ class VTKVoronoi2D(Node, BVTK_Node):
     e_ProjectionPlaneMode_items=[ (x,x,x) for x in ['XYPlane', 'SpecifiedTransformPlane', 'BestFittingPlane']]
     
     m_GenerateVoronoiFlower: bpy.props.BoolProperty(name='GenerateVoronoiFlower', default=True, update=BVTK_Node.outdate_vtk_status)
+    m_ObjectName: bpy.props.StringProperty(name='ObjectName', default="", update=BVTK_Node.outdate_vtk_status)
     m_MaximumNumberOfTileClips: bpy.props.IntProperty(name='MaximumNumberOfTileClips', default=1000000000, update=BVTK_Node.outdate_vtk_status)
     m_PointOfInterest: bpy.props.IntProperty(name='PointOfInterest', default=-1, update=BVTK_Node.outdate_vtk_status)
     m_Padding: bpy.props.FloatProperty(name='Padding', default=0.01, update=BVTK_Node.outdate_vtk_status)
     e_GenerateScalars: bpy.props.EnumProperty(name='GenerateScalars', default="None", items=e_GenerateScalars_items, update=BVTK_Node.outdate_vtk_status)
     e_ProjectionPlaneMode: bpy.props.EnumProperty(name='ProjectionPlaneMode', default="XYPlane", items=e_ProjectionPlaneMode_items, update=BVTK_Node.outdate_vtk_status)
     
-    b_properties: bpy.props.BoolVectorProperty(name="", size=6, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
+    b_properties: bpy.props.BoolVectorProperty(name="", size=7, get=BVTK_Node.get_b, set=BVTK_Node.set_b)
 
     def m_properties( self ):
-        return ['m_GenerateVoronoiFlower','m_MaximumNumberOfTileClips','m_PointOfInterest','m_Padding','e_GenerateScalars','e_ProjectionPlaneMode',]
+        return ['m_GenerateVoronoiFlower','m_ObjectName','m_MaximumNumberOfTileClips','m_PointOfInterest','m_Padding','e_GenerateScalars','e_ProjectionPlaneMode',]
     def m_connections( self ):
         return (['input'], ['output 0', 'output 1', 'output 2'], ['Transform'], []) 
     
