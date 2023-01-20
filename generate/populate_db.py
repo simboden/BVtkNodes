@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
 # populate_db.py - Populate VTK aclass definition database
 # Run example: python3 generate/populate_db.py 2>&1 | tee populate_db.log
-# Tested and run with Python 3.9
+# Tested and run with blender-3.3/3.3/python/bin/python3.10
 # ------------------------------------------------------------------------------
 
 # import vtk
