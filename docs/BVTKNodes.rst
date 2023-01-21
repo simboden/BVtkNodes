@@ -97,8 +97,8 @@ This version was demonstrated in the
 2. `tkeskita/bvtknodes <https://github.com/tkeskita/BVtkNodes>`_
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Upgraded and developed version for Blender 2.93 LTS series using VTK
-9.1.0. Uses a new update system and a new mesh generator node
+Upgraded and developed version for Blender 3.3 LTS series using VTK
+9.2.2. Uses a new update system and a new mesh generator node
 *VTK To Blender Mesh* instead of the legacy *VKT To Blender* node.
 
 .. note::

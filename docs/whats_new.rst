@@ -6,6 +6,13 @@ What's New
 This information applies to the
 `tkeskita/bvtknodes <https://github.com/tkeskita/BVtkNodes>`_ version.
 
+Version 0.10
+------------
+
+- 2023-01-21: Upgrade to Blender LTS version 3.3 (Python 3.10) and VTK 9.2.2.
+  The previous Blender LTS version 2.93 (Python 3.9) still works as well
+  with VTK 9.2.2.
+
 Version 0.9
 -----------
 

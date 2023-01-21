@@ -1,4 +1,4 @@
-# Installation of VTK in Blender 2.93 Python via Pip 
+# Installation of VTK in Blender 3.3 Python via Pip 
 
 Note: These instructions also likely work for other Blender and VTK
 versions, but the versions applied below are the ones tested for
@@ -8,9 +8,9 @@ BVTKNodes.
 
 Run CMD.EXE as administrator and run commands
 ```
-cd C:\Program Files\Blender Foundation\Blender\2.93\python\bin
+cd C:\Program Files\Blender Foundation\Blender\3.3\python\bin
 python.exe -m ensurepip
-python.exe -m pip install vtk==9.1.0
+python.exe -m pip install vtk==9.2.2
 ```
 or if you need to install newest (possibly unsupported) version of vtk, replace last command with
 ```
@@ -21,13 +21,13 @@ python.exe -m pip install vtk
 
 Run on normal terminal commands
 ```
-cd /path/to/blender-2.93/2.93/python/bin
-./python3.7m -m ensurepip
-./python3.7m -m pip install vtk==9.1.0
+cd /path/to/blender-3.3/3.3/python/bin
+./python3.10 -m ensurepip
+./python3.10 -m pip install vtk==9.2.2
 ```
 or if you need to install newest (possibly unsupported) version of vtk, replace last command with
 ```
-./python3.7m -m pip install vtk
+./python3.10 -m pip install vtk
 ```
 
 # Testing
@@ -51,11 +51,11 @@ which should return VTK version number that was installed.
 Blender 2.93 and newer has an issue on Linux, where running `import vtk` command in Blender Python Console raises error
 
 ```
-ImportError: /path/to/blender/2.93/python/lib/python3.9/site-packages/vtkmodules/libvtkPythonInterpreter-9.0.so: undefined symbol: Py_Main
+ImportError: /path/to/blender/X.Y/python/lib/python3.Z/site-packages/vtkmodules/libvtkPythonInterpreter-9.0.so: undefined symbol: Py_Main
 ```
 
 Workaround for this issue is to edit file
-`/path/to/blender/2.93/python/lib/python3.9/site-packages/vtkmodules/all.py`
+`/path/to/blender/X.Y/python/lib/pythonZ/site-packages/vtkmodules/all.py`
 and disable import of `vtkRenderingMatplotlib` by commenting out the line like so:
 
 ```
