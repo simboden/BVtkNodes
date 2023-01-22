@@ -296,14 +296,14 @@ class BVTK_Node:
         def status_to_color(vtk_status="none"):
             """Return color for argument VTK status"""
             colors = {
-                "none": (0.3, 0.3, 0.3),
-                "initialized": (0.7, 0.7, 0.7),
-                "error": (0.8, 0.2, 0.2),
-                "upstream-changed": (0.8, 0.6, 0.2),
-                "out-of-date": (0.6, 0.8, 0.2),
-                "waiting-for-upstream": (0.2, 0.8, 0.8),
-                "updating": (0.2, 0.2, 0.8),
-                "up-to-date": (0.5, 0.5, 0.5),
+                "none": (0.1, 0.1, 0.1),
+                "initialized": (0.5, 0.5, 0.5),
+                "error": (0.6, 0.1, 0.1),
+                "upstream-changed": (0.6, 0.5, 0),
+                "out-of-date": (0.3, 0.5, 0.1),
+                "waiting-for-upstream": (0.1, 0.6, 0.6),
+                "updating": (0.1, 0.1, 0.6),
+                "up-to-date": (0.3, 0.3, 0.3),
             }
             return colors[vtk_status]
 
