@@ -1,0 +1,424 @@
+{
+    "links": [
+        {
+            "from_node_name": "vtkOpenFOAMReader",
+            "from_socket_identifier": "output",
+            "to_node_name": "Time Selector",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "Time Selector",
+            "from_socket_identifier": "output",
+            "to_node_name": "Custom Filter",
+            "to_socket_identifier": "aux_in1"
+        },
+        {
+            "from_node_name": "Custom Filter",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkAssignAttribute",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "Custom Filter",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkThreshold",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkAssignAttribute",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkProbeFilter",
+            "to_socket_identifier": "input 1"
+        },
+        {
+            "from_node_name": "vtkMarchingCubes",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkAppendFilter",
+            "to_socket_identifier": "input1"
+        },
+        {
+            "from_node_name": "VTKImageData Object Source",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkProbeFilter",
+            "to_socket_identifier": "input 0"
+        },
+        {
+            "from_node_name": "vtkProbeFilter",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkMarchingCubes",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkThreshold",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkBoxClipDataSet",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkTransformFilter",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkAppendFilter",
+            "to_socket_identifier": "input2"
+        },
+        {
+            "from_node_name": "vtkAppendFilter",
+            "from_socket_identifier": "output",
+            "to_node_name": "VTK To Blender Mesh",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkBoxClipDataSet",
+            "from_socket_identifier": "output 0",
+            "to_node_name": "vtkTransformFilter",
+            "to_socket_identifier": "input"
+        }
+    ],
+    "nodes": [
+        {
+            "bl_idname": "VTKOpenFOAMReaderType",
+            "color": [
+                0.30000001192092896,
+                0.5,
+                0.10000000149011612
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -550.0,
+                250.0
+            ],
+            "m_AddDimensionsToArrayNames": false,
+            "m_CacheMesh": true,
+            "m_CopyDataToCellZones": false,
+            "m_CreateCellToPoint": true,
+            "m_DecomposePolyhedra": false,
+            "m_FileName": "$/cubeflow/case.foam",
+            "m_ListTimeStepsByControlDict": false,
+            "m_ObjectName": "",
+            "m_PositionsIsIn13Format": false,
+            "m_ReadZones": false,
+            "m_SkipZeroTime": false,
+            "m_TimeValue": 0.0,
+            "m_Use64BitFloats": true,
+            "m_Use64BitLabels": false,
+            "mute": false,
+            "name": "vtkOpenFOAMReader",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "BVTK_Node_TimeSelectorType",
+            "color": [
+                0.30000001192092896,
+                0.5,
+                0.10000000149011612
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -300.0,
+                250.0
+            ],
+            "mute": false,
+            "name": "Time Selector",
+            "show_options": true,
+            "show_preview": false,
+            "time_index": 1,
+            "use_scene_time": true,
+            "width": 200.0
+        },
+        {
+            "additional_properties": {
+                "text_as_string": "# Write VTK code for custom filter here\ndef custom_func(input_obj):\n  return input_obj.GetBlock(0)",
+                "text_name": "custom_filter"
+            },
+            "bl_idname": "BVTK_Node_CustomFilterType",
+            "color": [
+                0.30000001192092896,
+                0.5,
+                0.10000000149011612
+            ],
+            "custom_code": "",
+            "func": "custom_func",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -30,
+                250
+            ],
+            "mute": false,
+            "name": "Custom Filter",
+            "show_options": true,
+            "show_preview": false,
+            "text": "custom_filter",
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTKAssignAttributeType",
+            "color": [
+                0.30000001192092896,
+                0.5,
+                0.10000000149011612
+            ],
+            "custom_code": "Assign(\"p\", vtk.vtkDataSetAttributes.SCALARS, vtk.vtkAssignAttribute.CELL_DATA)",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                250,
+                250
+            ],
+            "m_ObjectName": "",
+            "mute": false,
+            "name": "vtkAssignAttribute",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "additional_values": "",
+            "bl_idname": "VTKMarchingCubesType",
+            "color": [
+                0.30000001192092896,
+                0.5,
+                0.10000000149011612
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                775,
+                500
+            ],
+            "m_ComputeGradients": true,
+            "m_ComputeNormals": true,
+            "m_ComputeScalars": true,
+            "m_NumberOfContours": 1,
+            "mute": false,
+            "name": "vtkMarchingCubes",
+            "show_options": true,
+            "show_preview": false,
+            "single_value": 0.029999999329447746,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "BVTK_Node_ImageDataObjectSourceType",
+            "color": [
+                0.30000001192092896,
+                0.5,
+                0.10000000149011612
+            ],
+            "custom_code": "",
+            "dimensions": [
+                21,
+                21,
+                21
+            ],
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                250,
+                500
+            ],
+            "multiplier": 1.0,
+            "mute": false,
+            "name": "VTKImageData Object Source",
+            "origin": [
+                -1.0,
+                -1.0,
+                0.0
+            ],
+            "show_options": true,
+            "show_preview": false,
+            "spacing": [
+                0.10000000149011612,
+                0.10000000149011612,
+                0.10000000149011612
+            ],
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTKProbeFilterType",
+            "color": [
+                0.30000001192092896,
+                0.5,
+                0.10000000149011612
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                500,
+                500
+            ],
+            "m_CategoricalData": true,
+            "m_ComputeTolerance": true,
+            "m_ObjectName": "",
+            "m_PassCellArrays": true,
+            "m_PassFieldArrays": true,
+            "m_PassPointArrays": true,
+            "m_SpatialMatch": true,
+            "m_Tolerance": 1.0,
+            "m_ValidPointMaskArrayName": "vtkValidPointMask",
+            "mute": false,
+            "name": "vtkProbeFilter",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTKThresholdType",
+            "color": [
+                0.30000001192092896,
+                0.5,
+                0.10000000149011612
+            ],
+            "custom_code": "",
+            "e_AttrType": "CellData",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                250,
+                20
+            ],
+            "m_AttrName": "p",
+            "m_Value1": 0.019999999552965164,
+            "m_Value2": 0.029999999329447746,
+            "mute": false,
+            "name": "vtkThreshold",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTKTransformFilterType",
+            "color": [
+                0.30000001192092896,
+                0.5,
+                0.10000000149011612
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                950,
+                20
+            ],
+            "m_Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "m_Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "m_Translation": [
+                -4.0,
+                0.0,
+                0.0
+            ],
+            "mute": false,
+            "name": "vtkTransformFilter",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTKAppendFilterType",
+            "color": [
+                0.30000001192092896,
+                0.5,
+                0.10000000149011612
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                1050,
+                500
+            ],
+            "m_MergePoints": true,
+            "m_Tolerance": 0.0,
+            "m_ToleranceIsAbsolute": true,
+            "mute": false,
+            "name": "vtkAppendFilter",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "BVTK_Node_VTKToBlenderMeshType",
+            "color": [
+                0.30000001192092896,
+                0.5,
+                0.10000000149011612
+            ],
+            "create_all_verts": false,
+            "create_edges": true,
+            "create_faces": true,
+            "custom_code": "",
+            "generate_material": false,
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                1300,
+                500
+            ],
+            "m_Name": "mesh",
+            "mute": false,
+            "name": "VTK To Blender Mesh",
+            "recalc_norms": false,
+            "show_options": true,
+            "show_preview": false,
+            "smooth": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTKBoxClipDataSetType",
+            "color": [
+                0.30000001192092896,
+                0.5,
+                0.10000000149011612
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                500,
+                20
+            ],
+            "m_BoxClip": [
+                -0.5,
+                0.5,
+                -0.5,
+                0.5,
+                0.0,
+                2.0
+            ],
+            "m_GenerateClipScalars": true,
+            "m_GenerateClippedOutput": true,
+            "m_Orientation": 0,
+            "mute": false,
+            "name": "vtkBoxClipDataSet",
+            "show_options": true,
+            "show_preview": false,
+            "width": 400.0
+        }
+    ]
+}
