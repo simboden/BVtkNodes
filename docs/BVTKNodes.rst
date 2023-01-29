@@ -825,6 +825,75 @@ VTK. Please refer to
 for class specific information.
 
 
+Scripting in Blender
+--------------------
+
+You can create a Python script to create nodes, change node values,
+link the nodes and run updates. Copy-paste the following code to a
+Text Block in Blender Scripting Workspace and Run Script to create
+`image.png` render of a cone. You can enable *Python Tooltips* in
+Blender *Preferences* *Interface* section to see variable name when
+hovering over a node setting in node tree.
+
+.. code:: python
+
+  # BVTKNodes Blender Python Scripting Example
+  import bpy
+
+  node_tree = bpy.data.node_groups.new("BVTKNodeTree", type="BVTK_NodeTreeType")
+  nodes = bpy.data.node_groups["BVTKNodeTree"].nodes
+  links = bpy.data.node_groups["BVTKNodeTree"].links
+
+  # Create nodes
+  cone = nodes.new(type="VTKConeSourceType")
+  cone.m_Height = 3.0
+  cone.m_Radius = 1.5
+  elevation = nodes.new(type="VTKElevationFilterType")
+  mapper = nodes.new(type="BVTK_Node_ColorMapperType")
+  mapper.color_by = "P_Elevation"
+  ramp = nodes.new(type="BVTK_Node_ColorRampType")
+  vtk_to_blender = nodes.new(type="BVTK_Node_VTKToBlenderMeshType")
+  vtk_to_blender.m_Name = "cone"
+  vtk_to_blender.generate_material = True
+
+  # Link nodes
+  links.new(cone.outputs["output"], elevation.inputs["input"])
+  links.new(elevation.outputs["output"], mapper.inputs["input"])
+  links.new(ramp.outputs["lookupTable"], mapper.inputs["lookuptable"])
+  links.new(mapper.outputs["output"], vtk_to_blender.inputs["input"])
+
+  # Update from the final node
+  vtk_to_blender.update_vtk()
+
+  # Print out information
+  ob = bpy.data.objects["cone"]
+  print ("Mesh has %d vertices" % len(ob.data.vertices))
+  print ("Mesh has %d faces" % len(ob.data.polygons))
+
+  # Add camera
+  camera_data = bpy.data.cameras.new("Camera 1")
+  camera_object = bpy.data.objects.new("Camera 1", camera_data)
+  camera_object.location = (10, -10, 10)
+  camera_object.rotation_euler = (1.0, 0, 0.8)  # radians
+  bpy.context.scene.collection.objects.link(camera_object)
+  bpy.context.scene.camera = camera_object
+
+  # Add light
+  light_data = bpy.data.lights.new(name="Light 1", type="POINT")
+  light_data.energy = 5000
+  light_object = bpy.data.objects.new(name="Light 1", object_data=light_data)
+  light_object.location = (10, 5, 10)
+  bpy.context.collection.objects.link(light_object)
+
+  # Update scene, if needed
+  dg = bpy.context.evaluated_depsgraph_get()
+  dg.update()
+
+  # Render an image
+  bpy.context.scene.render.filepath = "image.png"
+  bpy.ops.render.render(write_still = True)
+
+
 Customization of Node Python Code
 ---------------------------------
 
