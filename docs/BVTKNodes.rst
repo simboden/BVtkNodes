@@ -990,6 +990,12 @@ Please check this list first though:
 * If possible, please provide a small example data file.
 
 
+Feedback
+--------
+
+If you use this add-on, please star this project in GitHub!
+
+
 Special Use Cases
 -----------------
 
