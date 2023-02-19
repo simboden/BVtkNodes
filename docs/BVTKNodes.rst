@@ -988,6 +988,13 @@ Please check this list first though:
   after a Time Selector node, a Multi Block Leaf node (if you use
   one), or directly after a data reader node.
 * If possible, please provide a small example data file.
+* This warning indicates that the add-on is not enabled in Blender Preferences:
+
+  .. code::
+
+    WARN (bpy.rna): source/blender/python/intern/bpy_rna.c:1334 pyrna_enum_to_py:
+    current value '-1' matches no enum in 'SpaceNodeEditor', '(null)', 'tree_type'
+
 
 
 Feedback
