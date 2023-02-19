@@ -417,9 +417,10 @@ def register():
     bpy.types.Scene.bvtknodes_settings = bpy.props.PointerProperty(
         type=BVTKNodes_Settings
     )
-
+    bpy.types.CONSOLE_HT_header.append(b_inspect.draw_console_header)
 
 def unregister():
+    bpy.types.CONSOLE_HT_header.remove(b_inspect.draw_console_header)
     nodeitems_utils.unregister_node_categories("VTK_NODES")
     for c in reversed(sorted(core.CLASSES.keys())):
         bpy.utils.unregister_class(core.CLASSES[c])

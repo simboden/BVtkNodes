@@ -59,36 +59,31 @@ class BVTK_PT_Inspect(bpy.types.Panel):
 
 
 # -----------------------------------------------------------------------------
-# Add button to console header
+# Function to add buttons to Python Console header
 # -----------------------------------------------------------------------------
-class BVTK_HT_Console(bpy.types.Header):
-    """BVTK Header Buttons in Python Console"""
+def draw_console_header(self, context):
+    node_tree = None
+    for area in context.screen.areas:
+        if area.type == "NODE_EDITOR":
+            for space in area.spaces:
+                if space.type == "NODE_EDITOR":
+                    node_tree = space.node_tree.name
 
-    bl_space_type = "CONSOLE"
-
-    def draw(self, context):
-        node_tree = None
-        for area in context.screen.areas:
-            if area.type == "NODE_EDITOR":
-                for space in area.spaces:
-                    if space.type == "NODE_EDITOR":
-                        node_tree = space.node_tree.name
-
-        if node_tree:
-            self.layout.separator()
-            row = self.layout.row(align=True)
-            o = row.operator("console.insert", text="Get Node")
-            o.text = "x=bpy.data.node_groups['" + node_tree + "'].nodes.active"
-            o = row.operator("console.insert", text="Get VTK Object")
-            o.text = (
-                "x=bpy.data.node_groups['" + node_tree + "'].nodes.active.get_vtk_obj()"
-            )
-            o = row.operator("console.insert", text="Get Node Output")
-            o.text = (
-                "x=bpy.data.node_groups['"
-                + node_tree
-                + "'].nodes.active.get_vtk_obj().GetOutput()"
-            )
+    if node_tree:
+        self.layout.separator()
+        row = self.layout.row(align=True)
+        o = row.operator("console.insert", text="Get Node")
+        o.text = "x=bpy.data.node_groups['" + node_tree + "'].nodes.active"
+        o = row.operator("console.insert", text="Get VTK Object")
+        o.text = (
+            "x=bpy.data.node_groups['" + node_tree + "'].nodes.active.get_vtk_obj()"
+        )
+        o = row.operator("console.insert", text="Get Node Output")
+        o.text = (
+            "x=bpy.data.node_groups['"
+            + node_tree
+            + "'].nodes.active.get_vtk_obj().GetOutput()"
+        )
 
 
 # -----------------------------------------------------------------------------
@@ -165,6 +160,5 @@ class BVTK_OT_OpenWebsite(bpy.types.Operator):
 
 # Register classes
 add_ui_class(BVTK_PT_Inspect)
-add_ui_class(BVTK_HT_Console)
 add_ui_class(BVTK_OT_SetTextEditor)
 add_ui_class(BVTK_OT_OpenWebsite)
