@@ -133,9 +133,9 @@ class BVTKCache:
         treeIdMap[node.node_id] = tree
 
         if node.node_id == nodeMaxId:
-            l.debug("Mapped new node: %s, id %d" % (node.name, node.node_id))
+            l.debug("Mapped new node: %s, id #%d" % (node.name, node.node_id))
         else:
-            l.debug("Remapped old node: %s, id %d" % (node.name, node.node_id))
+            l.debug("Remapped old node: %s, id #%d" % (node.name, node.node_id))
 
     @classmethod
     def unmap_node(cls, node):
@@ -150,7 +150,7 @@ class BVTKCache:
             del treeIdMap[node.node_id]
         if node.node_id in vtkCache:
             del vtkCache[node.node_id]
-        l.debug("Unmapped node: %s, id %d" % (node.name, node.node_id))
+        l.debug("Unmapped node: %s, id #%d" % (node.name, node.node_id))
 
     @classmethod
     def get_node(cls, node_id: int):

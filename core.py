@@ -642,14 +642,15 @@ class BVTK_Node:
         """Set node VTK status to out-of-date and notify downstream when a
         property value is changed in UI.
         """
-        l.debug(self.name + ": Triggered outdate_vtk_status")
         update_mode = bpy.context.scene.bvtknodes_settings.update_mode
         if update_mode == "update-current":
+            l.debug(self.name + ": Setting VTK status out-of-date")
             self.set_vtk_status("out-of-date")
             self.update_vtk()
         else:
             self.notify_downstream(vtk_status="out-of-date")
         if update_mode == "update-all":
+            l.debug(self.name + ": Calling update for all nodes")
             BVTKCache.update_all()
 
     def update(self):

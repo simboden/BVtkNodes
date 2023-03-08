@@ -222,6 +222,7 @@ def node_from_dict(nodes, node_dict):
     # if not hasattr(bpy.types, idname):
     #    l.error('Node type not found ' + idname)
     # else:
+    l.debug("Inserting node: %r" % idname)
     new_node = nodes.new(type=idname)
     additional_property_values = None
     for prop in node_dict:
@@ -252,6 +253,7 @@ def link_from_dict(nodes, links, new_link_dict):
         from_socket = gosbi(from_node, new_link_dict["from_socket_identifier"])
         to_socket = gisbi(to_node, new_link_dict["to_socket_identifier"])
         if to_socket and from_socket:
+            l.debug("Inserting link from %r to %r" % (from_node.name, to_node.name))
             links.new(to_socket, from_socket)
 
 
