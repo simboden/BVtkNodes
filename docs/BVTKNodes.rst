@@ -509,8 +509,7 @@ options:
   used for the image.
 
 **Tip:** You may use e.g. *vtkResampleToImage* to convert planar data into
-VTK image data, see `VTK To Blender Image example
-<https://github.com/tkeskita/BVtkNodes/issues/85#issuecomment-1140251002>`_.
+VTK image data, see example node tree *cubeflow_cut_plane_to_image*.
 
 
 VTK To Blender Particles

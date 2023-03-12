@@ -1,0 +1,384 @@
+{
+    "links": [
+        {
+            "from_node_name": "vtkOpenFOAMReader",
+            "from_socket_identifier": "output",
+            "to_node_name": "Time Selector",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "Time Selector",
+            "from_socket_identifier": "output",
+            "to_node_name": "Multi Block Leaf",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "Multi Block Leaf",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkArrayCalculator",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkPlane",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkCutter",
+            "to_socket_identifier": "CutFunction"
+        },
+        {
+            "from_node_name": "vtkCutter",
+            "from_socket_identifier": "output",
+            "to_node_name": "Color Mapper",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkCutter",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkResampleToImage",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "Color Ramp",
+            "from_socket_identifier": "lookupTable",
+            "to_node_name": "Color Mapper",
+            "to_socket_identifier": "lookuptable"
+        },
+        {
+            "from_node_name": "Color Mapper",
+            "from_socket_identifier": "output",
+            "to_node_name": "VTK To Blender Mesh",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkResampleToImage",
+            "from_socket_identifier": "output",
+            "to_node_name": "VTK To Blender Image",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkArrayCalculator",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkCutter",
+            "to_socket_identifier": "input"
+        }
+    ],
+    "nodes": [
+        {
+            "bl_idname": "VTKOpenFOAMReaderType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -850.0,
+                250.0
+            ],
+            "m_AddDimensionsToArrayNames": false,
+            "m_CacheMesh": true,
+            "m_CopyDataToCellZones": false,
+            "m_CreateCellToPoint": true,
+            "m_DecomposePolyhedra": false,
+            "m_FileName": "$/cubeflow/case.foam",
+            "m_ListTimeStepsByControlDict": false,
+            "m_PositionsIsIn13Format": false,
+            "m_ReadZones": false,
+            "m_SkipZeroTime": false,
+            "m_TimeValue": 0.0,
+            "m_Use64BitFloats": true,
+            "m_Use64BitLabels": false,
+            "mute": false,
+            "name": "vtkOpenFOAMReader",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "BVTK_Node_TimeSelectorType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -600.0,
+                250.0
+            ],
+            "mute": false,
+            "name": "Time Selector",
+            "show_options": true,
+            "show_preview": false,
+            "time_index": 1,
+            "use_scene_time": true,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "BVTK_Node_MultiBlockLeafType",
+            "block": "internalMesh",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -330.0,
+                250.0
+            ],
+            "mute": false,
+            "name": "Multi Block Leaf",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTKPlaneType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -60,
+                -230
+            ],
+            "m_Normal": [
+                1.0,
+                0.0,
+                0.0
+            ],
+            "m_Origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "mute": false,
+            "name": "vtkPlane",
+            "orientation_object": "",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTKCutterType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "e_SortBy": "SortByValue",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                220,
+                250
+            ],
+            "m_GenerateCutScalars": false,
+            "m_GenerateTriangles": false,
+            "m_NumberOfContours": 1,
+            "mute": false,
+            "name": "vtkCutter",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "additional_properties": {
+                "elements": [
+                    [
+                        [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        0.0
+                    ],
+                    [
+                        [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        1.0
+                    ]
+                ]
+            },
+            "bl_idname": "BVTK_Node_ColorRampType",
+            "cm_nr_values": 2,
+            "cm_preset": "Greys",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                220,
+                -80
+            ],
+            "mute": false,
+            "name": "Color Ramp",
+            "show_options": true,
+            "show_preview": false,
+            "texture_name": "texture1",
+            "width": 200.0
+        },
+        {
+            "auto_range": true,
+            "bl_idname": "BVTK_Node_ColorMapperType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "color_by": "C_p_scaled",
+            "custom_code": "",
+            "height": 5.5,
+            "hide": false,
+            "label": "",
+            "location": [
+                480.0,
+                250.0
+            ],
+            "lut": false,
+            "max": 1.02593195438385,
+            "min": 0.002027996815741062,
+            "mute": false,
+            "name": "Color Mapper",
+            "show_options": true,
+            "show_preview": false,
+            "texture_name": "",
+            "width": 251.1839599609375
+        },
+        {
+            "bl_idname": "BVTK_Node_VTKToBlenderMeshType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "create_all_verts": true,
+            "create_edges": true,
+            "create_faces": true,
+            "custom_code": "",
+            "generate_material": true,
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                810.0,
+                250.0
+            ],
+            "m_Name": "mesh",
+            "mute": false,
+            "name": "VTK To Blender Mesh",
+            "recalc_norms": false,
+            "show_options": true,
+            "show_preview": false,
+            "smooth": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "BVTK_Node_VTKToBlenderImageType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "field_name": "p_scaled",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                810,
+                -80
+            ],
+            "m_Name": "vtk_image",
+            "mute": false,
+            "name": "VTK To Blender Image",
+            "show_options": true,
+            "show_preview": false,
+            "width": 266.46478271484375
+        },
+        {
+            "bl_idname": "VTKResampleToImageType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                490,
+                -80
+            ],
+            "m_SamplingDimensions": [
+                1,
+                5,
+                5
+            ],
+            "m_UseInputBounds": true,
+            "mute": false,
+            "name": "vtkResampleToImage",
+            "show_options": true,
+            "show_preview": false,
+            "width": 241.7337646484375
+        },
+        {
+            "bl_idname": "VTKArrayCalculatorType",
+            "color": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "custom_code": "AddScalarArrayName(\"p\")",
+            "e_AttributeType": "CellData",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -60,
+                250
+            ],
+            "m_CoordinateResults": false,
+            "m_Function": "(p-0.0172)*40",
+            "m_IgnoreMissingArrays": false,
+            "m_ReplaceInvalidValues": true,
+            "m_ReplacementValue": 0.0,
+            "m_ResultArrayName": "p_scaled",
+            "m_ResultArrayType": 11,
+            "m_ResultNormals": false,
+            "m_ResultTCoords": false,
+            "mute": false,
+            "name": "vtkArrayCalculator",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        }
+    ]
+}
