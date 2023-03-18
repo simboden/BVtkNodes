@@ -551,21 +551,31 @@ memory, a large number of points can be visualized efficiently.
 - **Initialize** operator will initialize the Blender Particle System
   with the number of particles specified in *Particle Count*. This
   operator must be run before node pipeline is updated.
-- **Update** executes the node pipeline connected to this node.
+- **Update Node** updates the node pipeline connected to this node.
 
 **Usage**: First, create a glyph object. Then input the data in node
-fields, and run **Initialize**. After that, every change of frame
-number in Blender Timeline updates the particle data. Note:
+fields, and run **Initialize**. After that, every run of Update Node
+updates the particle data. Note:
 
-- Change of frame number in Blender Timeline is required to update
-  particle data correctly.
+- Running Update Node after changing frame number in Blender Timeline
+  is required to update particle data correctly.
 - Particles may not show up updated in the 3D Viewport after
   frame change, but they should be still rendered correctly.
+  Left-clicking on 3D viewport should update the view.
 - Particle colors show up correctly only in Rendered Viewport Shading
   mode, and only using Cycles Render Engine.
 - It is not possible to modify particles in Blender. You need to do
   all modifications on VTK side prior to using this node.
 
+The example tree *cubeflow_particle_instancing* illustrates the usage
+of this node:
+
+- Run **Update Node** on *VTK To Blender Mesh* node.
+- Run **Initialize** on *VTK To Blender Particles* node.
+- Run **Update Node** on *VTK To Blender Particles* node.
+- Left-click on 3D viewport to force update of the view.
+- Change the Render Engine to Cycles.
+- Render Image to see results (with correct colors).
 
 .. _VTKToBlenderVolume:
 

@@ -1,0 +1,299 @@
+{
+    "links": [
+        {
+            "from_node_name": "vtkArrowSource",
+            "from_socket_identifier": "output",
+            "to_node_name": "VTK To Blender Mesh",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkOpenFOAMReader",
+            "from_socket_identifier": "output",
+            "to_node_name": "Time Selector",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "Time Selector",
+            "from_socket_identifier": "output",
+            "to_node_name": "Multi Block Leaf",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "Multi Block Leaf",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkCellCenters",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkCellCenters",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkMaskPoints",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkMaskPoints",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkArrayCalculator",
+            "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkArrayCalculator",
+            "from_socket_identifier": "output",
+            "to_node_name": "VTK To Blender Particles",
+            "to_socket_identifier": "input"
+        }
+    ],
+    "nodes": [
+        {
+            "bl_idname": "VTKArrowSourceType",
+            "color": [
+                0.30000001192092896,
+                0.30000001192092896,
+                0.30000001192092896
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                830,
+                630
+            ],
+            "m_Invert": false,
+            "m_ObjectName": "",
+            "m_ShaftRadius": 0.029999999329447746,
+            "m_ShaftResolution": 6,
+            "m_TipLength": 0.3499999940395355,
+            "m_TipRadius": 0.10000000149011612,
+            "m_TipResolution": 6,
+            "mute": false,
+            "name": "vtkArrowSource",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "BVTK_Node_VTKToBlenderMeshType",
+            "color": [
+                0.30000001192092896,
+                0.30000001192092896,
+                0.30000001192092896
+            ],
+            "create_all_verts": true,
+            "create_edges": true,
+            "create_faces": true,
+            "custom_code": "",
+            "generate_material": true,
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                1100,
+                630
+            ],
+            "m_Name": "glyph",
+            "mute": false,
+            "name": "VTK To Blender Mesh",
+            "recalc_norms": false,
+            "show_options": true,
+            "show_preview": false,
+            "smooth": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTKOpenFOAMReaderType",
+            "color": [
+                0.30000001192092896,
+                0.30000001192092896,
+                0.30000001192092896
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -550.0,
+                250.0
+            ],
+            "m_AddDimensionsToArrayNames": false,
+            "m_CacheMesh": true,
+            "m_CopyDataToCellZones": false,
+            "m_CreateCellToPoint": true,
+            "m_DecomposePolyhedra": false,
+            "m_FileName": "$/cubeflow/case.foam",
+            "m_ListTimeStepsByControlDict": false,
+            "m_ObjectName": "",
+            "m_PositionsIsIn13Format": false,
+            "m_ReadZones": false,
+            "m_SkipZeroTime": false,
+            "m_TimeValue": 0.0,
+            "m_Use64BitFloats": true,
+            "m_Use64BitLabels": false,
+            "mute": false,
+            "name": "vtkOpenFOAMReader",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "BVTK_Node_TimeSelectorType",
+            "color": [
+                0.30000001192092896,
+                0.30000001192092896,
+                0.30000001192092896
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -300.0,
+                250.0
+            ],
+            "mute": false,
+            "name": "Time Selector",
+            "show_options": true,
+            "show_preview": false,
+            "time_index": 1,
+            "use_scene_time": true,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "BVTK_Node_MultiBlockLeafType",
+            "block": "internalMesh",
+            "color": [
+                0.30000001192092896,
+                0.30000001192092896,
+                0.30000001192092896
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                -30.0,
+                250.0
+            ],
+            "mute": false,
+            "name": "Multi Block Leaf",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTKCellCentersType",
+            "color": [
+                0.30000001192092896,
+                0.30000001192092896,
+                0.30000001192092896
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                260.0,
+                250.0
+            ],
+            "m_CopyArrays": true,
+            "m_ObjectName": "",
+            "m_VertexCells": false,
+            "mute": false,
+            "name": "vtkCellCenters",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "VTKMaskPointsType",
+            "color": [
+                0.30000001192092896,
+                0.30000001192092896,
+                0.30000001192092896
+            ],
+            "custom_code": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                530.0,
+                250.0
+            ],
+            "m_GenerateVertices": true,
+            "m_MaximumNumberOfPoints": 1000000000,
+            "m_ObjectName": "",
+            "m_Offset": 0,
+            "m_OnRatio": 1,
+            "m_ProportionalMaximumNumberOfPoints": true,
+            "m_RandomMode": true,
+            "m_RandomModeType": 0,
+            "m_RandomSeed": 1,
+            "m_SingleVertexPerCell": true,
+            "mute": false,
+            "name": "vtkMaskPoints",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        },
+        {
+            "bl_idname": "BVTK_Node_VTKToBlenderParticlesType",
+            "color": [
+                0.30000001192092896,
+                0.30000001192092896,
+                0.30000001192092896
+            ],
+            "color_name": "magU",
+            "custom_code": "",
+            "generate_material": true,
+            "glyph_name": "glyph",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                1087.6016845703125,
+                255.06045532226562
+            ],
+            "mute": false,
+            "name": "VTK To Blender Particles",
+            "np": 1000,
+            "ob_name": "particles",
+            "scale_name": "",
+            "show_options": true,
+            "show_preview": false,
+            "vec_name": "U",
+            "width": 305.80010986328125
+        },
+        {
+            "bl_idname": "VTKArrayCalculatorType",
+            "color": [
+                0.30000001192092896,
+                0.30000001192092896,
+                0.30000001192092896
+            ],
+            "custom_code": "AddVectorArrayName(\"U\")",
+            "e_AttributeType": "PointData",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                810,
+                260
+            ],
+            "m_CoordinateResults": false,
+            "m_Function": "mag(U)",
+            "m_IgnoreMissingArrays": false,
+            "m_ObjectName": "",
+            "m_ReplaceInvalidValues": true,
+            "m_ReplacementValue": 0.0,
+            "m_ResultArrayName": "magU",
+            "m_ResultArrayType": 11,
+            "m_ResultNormals": false,
+            "m_ResultTCoords": false,
+            "mute": false,
+            "name": "vtkArrayCalculator",
+            "show_options": true,
+            "show_preview": false,
+            "width": 200.0
+        }
+    ]
+}
