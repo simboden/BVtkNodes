@@ -1619,10 +1619,13 @@ def face_unwrap(bm, vtk_obj, array_name, vrange):
             tup = array_data.GetTuple(face.index)
             v = 0.0
             # Get Euclidean norm (magnitude) of the data vector.
-            # This should leave scalars unchanged
-            for i in range(num_comps):
-                v += tup[i] ** 2
-            v = v ** 0.5
+            # Leave scalars unchanged.
+            if num_comps == 1:
+                v = tup[0]
+            else:
+                for i in range(num_comps):
+                    v += tup[i] ** 2
+                v = v ** 0.5
             v = (v - minr) / (maxr - minr)
             v = min(0.999, max(0.001, v))  # Force value inside range
             loop[uv_layer].uv = (v, 0.5)
@@ -1641,10 +1644,13 @@ def point_unwrap(bm, vtk_obj, array_name, vrange, vimap):
             tup = array_data.GetTuple(vimap[loop.vert.index])
             v = 0.0
             # Get Euclidean norm (magnitude) of the data vector.
-            # This should leave scalars unchanged
-            for i in range(num_comps):
-                v += tup[i] ** 2
-            v = v ** 0.5
+            # Leave scalars unchanged.
+            if num_comps == 1:
+                v = tup[0]
+            else:
+                for i in range(num_comps):
+                    v += tup[i] ** 2
+                v = v ** 0.5
             v = (v - minr) / (maxr - minr)
             v = min(0.999, max(0.001, v))  # Force value inside range
             loop[uv_layer].uv = (v, 0.5)

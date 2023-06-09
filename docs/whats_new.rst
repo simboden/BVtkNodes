@@ -9,6 +9,9 @@ This information applies to the
 Version 0.10
 ------------
 
+- 2023-06-09: Fixed a bug where negative scalar values were colored incorrectly
+  with Color Mapper node (absolute values of data was shown).
+
 - 2023-01-21: Upgrade to Blender LTS version 3.3 (Python 3.10) and VTK 9.2.2.
   The previous Blender LTS version 2.93 (Python 3.9) still works as well
   with VTK 9.2.2.

@@ -184,10 +184,13 @@ class BVTK_Node_ColorMapper(Node, BVTK_Node):
                 tup = d.GetTuple(i)
                 v = 0.0
                 # Get Euclidean norm (magnitude) of the data vector.
-                # This should leave scalars unchanged
-                for j in range(num_comps):
-                    v += tup[j] ** 2
-                v = v ** 0.5
+                # Leave scalars unchanged.
+                if num_comps == 1:
+                    v = tup[0]
+                else:
+                    for j in range(num_comps):
+                        v += tup[j] ** 2
+                    v = v ** 0.5
 
                 if v < self.min:
                     self.min = v
