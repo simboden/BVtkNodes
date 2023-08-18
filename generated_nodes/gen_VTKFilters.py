@@ -1,5 +1,5 @@
 # Generated definitions for VTK class group: Filter
-# VTK version: 9.2.2
+# VTK version: 9.2.6
 
 from ..core import *    
 TYPENAMES = []

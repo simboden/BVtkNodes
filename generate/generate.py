@@ -2,7 +2,7 @@
 # generate.py - Generate gen_VTK*.py files from vtkdb.sqlite database
 # Install jinja2: pip3 install jinja2 --user
 # Run example: python3 generate/generate.py
-# Tested and run with blender-3.3/3.3/python/bin/python3.10
+# Tested and run with blender-3.6/3.6/python/bin/python3.10
 # ------------------------------------------------------------------------------
 import sqlite3
 import os

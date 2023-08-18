@@ -1,4 +1,4 @@
-# Installation of VTK in Blender 3.3 Python via Pip 
+# Installation of VTK in Blender 3.6 Python via Pip
 
 Note: These instructions also likely work for other Blender and VTK
 versions, but the versions applied below are the ones tested for
@@ -8,9 +8,9 @@ BVTKNodes.
 
 Run CMD.EXE as administrator and run commands
 ```
-cd C:\Program Files\Blender Foundation\Blender\3.3\python\bin
+cd C:\Program Files\Blender Foundation\Blender\3.6\python\bin
 python.exe -m ensurepip
-python.exe -m pip install vtk==9.2.2
+python.exe -m pip install vtk==9.2.6
 ```
 or if you need to install newest (possibly unsupported) version of vtk, replace last command with
 ```
@@ -21,9 +21,9 @@ python.exe -m pip install vtk
 
 Run on normal terminal commands
 ```
-cd /path/to/blender-3.3/3.3/python/bin
+cd /path/to/blender-3.6/3.6/python/bin
 ./python3.10 -m ensurepip
-./python3.10 -m pip install vtk==9.2.2
+./python3.10 -m pip install vtk==9.2.6
 ```
 or if you need to install newest (possibly unsupported) version of vtk, replace last command with
 ```

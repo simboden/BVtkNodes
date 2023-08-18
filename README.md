@@ -14,8 +14,8 @@ This fork builds on the [original repository](https://github.com/simboden/BVtkNo
 [**Docs**](https://bvtknodes.readthedocs.io/en/latest/) | [**Install Guide**](https://bvtknodes.readthedocs.io/en/latest/BVTKNodes.html#installation-of-vtk-for-blender) | [**Examples**](https://bvtknodes.readthedocs.io/en/latest/BVTKNodes.html#simple-example-human-head-visualization) | [**Gallery**](https://blenderartists.org/t/bvtknodes-gallery/1161079)
 
 ### Dependencies
-- [Blender LTS version 3.3](https://www.blender.org/download/lts/)
-- [VTK library version 9.2.2](https://pypi.org/project/vtk/9.2.2/)
+- [Blender LTS version 3.6](https://www.blender.org/download/lts/)
+- [VTK library version 9.2.6](https://pypi.org/project/vtk/9.2.6/)
 
 ### Quick Start
 - Download the BVTKNode repository add-on as a .zip file. 
