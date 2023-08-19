@@ -582,14 +582,13 @@ of this node:
 VTK To Blender Volume
 ^^^^^^^^^^^^^^^^^^^^^
 
-This node is currently obsoleted, since it requires
-`custom build of Blender dependency libraries
-<https://devtalk.blender.org/t/build-pyopenvdb-as-part-of-make-deps/14148>`_
-to enable `pyopenvdb` in Blender, in order to convert 3D VTK image
-data (*vtkImageData*) into OpenVDB grids. Instead, please use the *VTK
-To OpenVDB Exporter* node described next. If `pyopenvdb` becomes
-a standard part of Blender one day, this node can be resurrected.
+This node converts 3D VTK image data (*vtkImageData*) into OpenVDB
+grids. The VDB data is then automatically imported into Blender as a
+Volume Object, ready to be used in volumetric rendering using the
+*Principled Volume Shader*.  This node requires `pyopenvdb` in
+Blender, now available in Blender version 3.6.
 
+Please see VTK To OpenVDB Exporter below for description of field names.
 
 .. _VTKToOpenVDBExporter:
 

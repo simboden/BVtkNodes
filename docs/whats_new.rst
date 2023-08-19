@@ -9,6 +9,9 @@ This information applies to the
 Version 0.10
 ------------
 
+- 2023-08-19: Resurrected VTK To Blender Volume Node. This was possible since
+  pyopenvdb is now included in Blender 3.6 by default.
+
 - 2023-08-18: Upgrade to Blender LTS version 3.6 (Python 3.10) and VTK 9.2.6.
   The previous Blender LTS version 3.3 (Python 3.10) still works as well
   with VTK 9.2.6. This upgrade required no class changes.

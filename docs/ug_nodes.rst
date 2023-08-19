@@ -264,11 +264,18 @@ OpenVDB Export and Volumetric Rendering
 
 Conversion of 3D *vtkImageData* into OpenVDB (.vdb format) and
 subsequent volumetric rendering of the OpenVDB files is possible by
-using the *VTK To OpenVDB Exporter* node. This example node tree name
+using the *VTK To Blender Volume* or *VTK To OpenVDB Exporter* node.
+This example node tree name
 is *cubeflow_openvdb_export*. A *VTKImageData Object Source* node is
 used in conjunction with *vtkProbeFilter* to convert the unstructured
 grid data into *vtkImageData* (voxel data) required by the OpenVDB
 format.
+
+.. note::
+
+   With Blender 3.6 it is possible to skip the JSON export with *VTK
+   To OpenVDB Exporter* node, and directly use the *VTK To Blender
+   Volume* Node instead!
 
 **Note:** Make sure that sampling points in *VTKImageData Object
 Source* fall inside the domain at voxel center points.

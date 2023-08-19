@@ -1,6 +1,12 @@
 {
     "links": [
         {
+            "from_node_name": "VTKImageData Object Source",
+            "from_socket_identifier": "output",
+            "to_node_name": "vtkProbeFilter",
+            "to_socket_identifier": "input 0"
+        },
+        {
             "from_node_name": "vtkOpenFOAMReader",
             "from_socket_identifier": "output",
             "to_node_name": "Time Selector",
@@ -19,12 +25,6 @@
             "to_socket_identifier": "input"
         },
         {
-            "from_node_name": "VTKImageData Object Source",
-            "from_socket_identifier": "output",
-            "to_node_name": "vtkProbeFilter",
-            "to_socket_identifier": "input 0"
-        },
-        {
             "from_node_name": "vtkArrayCalculator",
             "from_socket_identifier": "output",
             "to_node_name": "vtkArrayCalculator.001",
@@ -41,23 +41,92 @@
             "from_socket_identifier": "output",
             "to_node_name": "VTK To OpenVDB Exporter",
             "to_socket_identifier": "input"
+        },
+        {
+            "from_node_name": "vtkProbeFilter",
+            "from_socket_identifier": "output",
+            "to_node_name": "VTK To Blender Volume",
+            "to_socket_identifier": "input"
         }
     ],
     "nodes": [
         {
+            "bl_idname": "BVTK_Node_ImageDataObjectSourceType",
+            "color": [
+                0.30000001192092896,
+                0.30000001192092896,
+                0.30000001192092896
+            ],
+            "custom_code": "",
+            "dimensions": [
+                5,
+                5,
+                5
+            ],
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                520.0,
+                470.0
+            ],
+            "multiplier": 1.0,
+            "mute": false,
+            "name": "VTKImageData Object Source",
+            "origin": [
+                -0.800000011920929,
+                -0.800000011920929,
+                0.20000000298023224
+            ],
+            "show_options": true,
+            "show_preview": false,
+            "spacing": [
+                0.4000000059604645,
+                0.4000000059604645,
+                0.4000000059604645
+            ],
+            "width": 200.0
+        },
+        {
+            "bl_idname": "BVTK_Node_VTKToOpenVDBExporterType",
+            "color": [
+                0.30000001192092896,
+                0.5,
+                0.10000000149011612
+            ],
+            "color_name": "color",
+            "custom_code": "",
+            "density_name": "density",
+            "flame_name": "",
+            "height": 100.0,
+            "hide": false,
+            "label": "",
+            "location": [
+                1055,
+                755
+            ],
+            "mute": false,
+            "name": "VTK To OpenVDB Exporter",
+            "ob_name": "volume",
+            "show_options": true,
+            "show_preview": false,
+            "temperature_name": "",
+            "width": 256.0589599609375
+        },
+        {
             "bl_idname": "VTKOpenFOAMReaderType",
             "color": [
-                0.5,
-                0.5,
-                0.5
+                0.30000001192092896,
+                0.30000001192092896,
+                0.30000001192092896
             ],
             "custom_code": "",
             "height": 100.0,
             "hide": false,
             "label": "",
             "location": [
-                -520,
-                220
+                -520.0,
+                220.0
             ],
             "m_AddDimensionsToArrayNames": false,
             "m_CacheMesh": true,
@@ -66,9 +135,11 @@
             "m_DecomposePolyhedra": false,
             "m_FileName": "$/cubeflow/case.foam",
             "m_ListTimeStepsByControlDict": false,
+            "m_ObjectName": "",
             "m_PositionsIsIn13Format": false,
             "m_ReadZones": false,
             "m_SkipZeroTime": false,
+            "m_TimeValue": 0.0,
             "m_Use64BitFloats": true,
             "m_Use64BitLabels": false,
             "mute": false,
@@ -80,17 +151,17 @@
         {
             "bl_idname": "BVTK_Node_TimeSelectorType",
             "color": [
-                0.5,
-                0.5,
-                0.5
+                0.30000001192092896,
+                0.30000001192092896,
+                0.30000001192092896
             ],
             "custom_code": "",
             "height": 100.0,
             "hide": false,
             "label": "",
             "location": [
-                -260,
-                220
+                -260.0,
+                220.0
             ],
             "mute": false,
             "name": "Time Selector",
@@ -104,17 +175,17 @@
             "bl_idname": "BVTK_Node_MultiBlockLeafType",
             "block": "internalMesh",
             "color": [
-                0.5,
-                0.5,
-                0.5
+                0.30000001192092896,
+                0.30000001192092896,
+                0.30000001192092896
             ],
             "custom_code": "",
             "height": 100.0,
             "hide": false,
             "label": "",
             "location": [
-                0,
-                220
+                0.0,
+                220.0
             ],
             "mute": false,
             "name": "Multi Block Leaf",
@@ -123,62 +194,25 @@
             "width": 200.0
         },
         {
-            "bl_idname": "BVTK_Node_ImageDataObjectSourceType",
-            "color": [
-                0.5,
-                0.5,
-                0.5
-            ],
-            "custom_code": "",
-            "dimensions": [
-                5,
-                5,
-                5
-            ],
-            "height": 100.0,
-            "hide": false,
-            "label": "",
-            "location": [
-                520,
-                470
-            ],
-            "multiplier": 1.0,
-            "mute": false,
-            "name": "VTKImageData Object Source",
-            "origin": [
-                -0.8,
-                -0.8,
-                0.2
-            ],
-            "show_options": true,
-            "show_preview": false,
-            "spacing": [
-                0.4,
-                0.4,
-                0.4
-            ],
-            "width": 200.0
-        },
-        {
             "bl_idname": "VTKArrayCalculatorType",
             "color": [
-                0.5,
-                0.5,
-                0.5
+                0.30000001192092896,
+                0.30000001192092896,
+                0.30000001192092896
             ],
             "custom_code": "AddVectorArrayName('U')",
-            "e_AttributeMode": "Default",
             "e_AttributeType": "PointData",
             "height": 100.0,
             "hide": false,
             "label": "",
             "location": [
-                250,
-                220
+                250.0,
+                220.0
             ],
             "m_CoordinateResults": false,
             "m_Function": "mag(U)",
             "m_IgnoreMissingArrays": false,
+            "m_ObjectName": "",
             "m_ReplaceInvalidValues": true,
             "m_ReplacementValue": 0.0,
             "m_ResultArrayName": "density",
@@ -194,23 +228,23 @@
         {
             "bl_idname": "VTKArrayCalculatorType",
             "color": [
-                0.5,
-                0.5,
-                0.5
+                0.30000001192092896,
+                0.30000001192092896,
+                0.30000001192092896
             ],
             "custom_code": "AddVectorArrayName('U')",
-            "e_AttributeMode": "Default",
             "e_AttributeType": "PointData",
             "height": 100.0,
             "hide": false,
             "label": "",
             "location": [
-                520,
-                220
+                520.0,
+                220.0
             ],
             "m_CoordinateResults": false,
             "m_Function": "U*10",
             "m_IgnoreMissingArrays": false,
+            "m_ObjectName": "",
             "m_ReplaceInvalidValues": true,
             "m_ReplacementValue": 0.0,
             "m_ResultArrayName": "color",
@@ -226,20 +260,21 @@
         {
             "bl_idname": "VTKProbeFilterType",
             "color": [
-                0.5,
-                0.5,
-                0.5
+                0.30000001192092896,
+                0.30000001192092896,
+                0.30000001192092896
             ],
             "custom_code": "",
             "height": 100.0,
             "hide": false,
             "label": "",
             "location": [
-                800,
-                470
+                800.0,
+                470.0
             ],
             "m_CategoricalData": true,
             "m_ComputeTolerance": true,
+            "m_ObjectName": "",
             "m_PassCellArrays": true,
             "m_PassFieldArrays": true,
             "m_PassPointArrays": true,
@@ -253,30 +288,33 @@
             "width": 200.0
         },
         {
-            "bl_idname": "BVTK_Node_VTKToOpenVDBExporterType",
+            "bl_idname": "BVTK_Node_VTKToBlenderVolumeType",
             "color": [
-                0.5,
-                0.5,
-                0.5
+                0.30000001192092896,
+                0.30000001192092896,
+                0.30000001192092896
             ],
             "color_name": "color",
             "custom_code": "",
             "density_name": "density",
+            "export_file_sequence": false,
             "flame_name": "",
+            "generate_material": true,
             "height": 100.0,
             "hide": false,
             "label": "",
             "location": [
-                1060,
+                1055,
                 470
             ],
             "mute": false,
-            "name": "VTK To OpenVDB Exporter",
+            "name": "VTK To Blender Volume",
             "ob_name": "volume",
             "show_options": true,
             "show_preview": false,
             "temperature_name": "",
-            "width": 256.0589599609375
+            "use_copy_from_array": false,
+            "width": 200.0
         }
     ]
 }
