@@ -61,3 +61,10 @@ and disable import of `vtkRenderingMatplotlib` by commenting out the line like s
 ```
 # from .vtkRenderingMatplotlib import *
 ```
+
+**Note!** Blender 3.3 and newer need the same modification of file
+`/path/to/blender/X.Y/python/lib/pythonZ/site-packages/vtk.py`:
+
+```
+# from .vtkRenderingMatplotlib import *
+```
