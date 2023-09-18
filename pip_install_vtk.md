@@ -9,12 +9,12 @@ BVTKNodes.
 Run CMD.EXE as administrator and run commands
 ```
 cd C:\Program Files\Blender Foundation\Blender\3.6\python\bin
-python.exe -m ensurepip
-python.exe -m pip install vtk==9.2.6
+.\python.exe -m ensurepip
+.\python.exe -m pip install vtk==9.2.6
 ```
 or if you need to install newest (possibly unsupported) version of vtk, replace last command with
 ```
-python.exe -m pip install vtk
+.\python.exe -m pip install vtk
 ```
 
 # On Linux
