@@ -203,6 +203,11 @@ shown in `Introduction`_. For other examples, see `Tree`_ tab below.
 - Create node setup as shown in the image in `Introduction`_. You can
   add nodes from Add menu or by shortcut key shift + A. Link nodes by
   dragging from a connector to another connector.
+
+  .. note:: Search bar at top of the Add Menu does not find the VTK
+     Nodes in Blender 3.6. Please use the Menu Search (shortcut key
+     F3) instead.
+
 - Set **FileName** in *vtkXMLImageDataReader* node by clicking on the
   folder icon and select *head.vti* file.
 - In *vtkContourFilter* node click plus icon to add a contour value,
