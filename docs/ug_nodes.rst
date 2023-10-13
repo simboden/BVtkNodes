@@ -102,7 +102,8 @@ fields.
 
 * See `the list of operators in vtkArrayCalculator docs <https://vtk.org/doc/nightly/html/classvtkArrayCalculator.html#details>`_. Some examples for **Function** field:
 
-  * First *U* vector component can be extracted by expression like ``U.iHat``
+  * First *U* vector component can be extracted by expression like
+    ``dot(U,iHat)`` (old syntax ``U.iHat`` does not work any more)
 
   * *U* vector magnitude can be calculated with ``mag(U)``
 
