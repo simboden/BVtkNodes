@@ -11,7 +11,7 @@ The high-level features of this add-on include:
 BVTKNodes can be used with Blender's powerful 3D modeling and rendering tools to make figures that are both informative as well as visually stunning. 
 This fork builds on the [original repository](https://github.com/simboden/BVtkNodes). Aim is to provide continued updates to newer Blender/VTK versions, new features, bug fixes and community involvement.
 
-[**Docs**](https://bvtknodes.readthedocs.io/en/latest/) | [**Install Guide**](https://bvtknodes.readthedocs.io/en/latest/BVTKNodes.html#installation-of-vtk-for-blender) | [**Examples**](https://bvtknodes.readthedocs.io/en/latest/BVTKNodes.html#simple-example-human-head-visualization) | [**Gallery**](https://blenderartists.org/t/bvtknodes-gallery/1161079)
+[**Docs**](https://bvtknodes.readthedocs.io/en/latest/) | [**Install Guide**](https://bvtknodes.readthedocs.io/en/latest/BVTKNodes.html#installation-of-vtk-for-blender) | [**Examples**](https://bvtknodes.readthedocs.io/en/latest/BVTKNodes.html#simple-example-human-head-visualization) | [**Gallery**](https://blenderartists.org/t/bvtknodes-gallery/1161079) | [**What's New**](https://bvtknodes.readthedocs.io/en/latest/whats_new.html)
 
 ### Dependencies
 - [Blender LTS version 3.6](https://www.blender.org/download/lts/)
