@@ -6,6 +6,13 @@ What's New
 This information applies to the
 `tkeskita/bvtknodes <https://github.com/tkeskita/BVtkNodes>`_ version.
 
+Version 0.11
+------------
+
+- 2023-12-31: Motion Blur is available in VTK To Blender Mesh
+  Node. Mesh motion blur is implemented using Blender Shape
+  Keys, based on mesh point transformation by a vector point field.
+
 Version 0.10
 ------------
 

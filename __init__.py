@@ -7,7 +7,7 @@
 bl_info = {
     "name": "BVTKNodes, Blender VTK Nodes",
     "author": "BVTKNodes Developers",
-    "version": (0, 10),
+    "version": (0, 11),
     "blender": (3, 3, 0),
     "location": "BVTK Node Tree Editor > New",
     "description": "Create and execute VTK pipelines in Blender Node Editor",

@@ -497,6 +497,21 @@ following additions:
   upstream nodes and this node. This was added for special cases where
   the update system does not detect a possible need for running an
   update.
+- **Motion Blur**: Boolean option to enable mesh motion blur. If
+  enabled, the following options become available:
+- **Motion Blur By** specifies name of a point vector field (3 value
+  components) which is to be used for creating pointwise motion
+  for the mesh. The naming convention is the same used in *Color
+  Mapper* Node. E.g. value "P_velocity" means that the point vector
+  field name to be applied is "velocity".
+- **Time Step for Motion Blur** specifies the time difference between
+  two frames. It is used for calculating the length scale of motion blur.
+
+Blender's Motion Blur settings are located in the Render Properties
+Panel. The *Position* is set to *Start on Frame* to get correct
+blur for rendering an animation. A still example of motion blur is
+available in the example node tree *cubeflow_vector_glyphs*. You need
+to enable *Motion Blur* in the *Blender To VTK Mesh* Node.
 
 .. image:: images/vtk_to_blender_mesh_node.png
 

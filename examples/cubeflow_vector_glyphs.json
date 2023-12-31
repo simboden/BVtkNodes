@@ -368,6 +368,9 @@
                 250.0
             ],
             "m_Name": "mesh",
+            "motion_blur": false,
+            "motion_blur_by": "P_GlyphVector",
+            "motion_blur_time_step": 2.0,
             "mute": false,
             "name": "VTK To Blender Mesh",
             "recalc_norms": false,

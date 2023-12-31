@@ -2,6 +2,7 @@ from .core import l  # Import logging
 from .core import *
 from .cache import BVTKCache
 import bmesh
+from vtk.util import numpy_support
 
 try:
     import pyopenvdb
@@ -215,6 +216,57 @@ class BVTK_Node_VTKToBlenderMesh(Node, BVTK_Node):
     generate_material: bpy.props.BoolProperty(
         name="Generate Material", default=False, update=BVTK_Node.outdate_vtk_status
     )
+    motion_blur: bpy.props.BoolProperty(
+        name="Motion Blur", default=False, update=BVTK_Node.outdate_vtk_status
+    )
+    motion_blur_by: bpy.props.StringProperty(
+        default="", name="Motion Blur By", update=BVTK_Node.outdate_vtk_status
+    )
+    motion_blur_time_step: bpy.props.FloatProperty(
+        default=1.0,name="Time Step for Motion Blur",update=BVTK_Node.outdate_vtk_status
+    )
+
+    def motion_blur_by_enum_generator(self, context=None):
+        """Enum list generator for motion_blur property.
+        Generate array items available for coloring.
+        """
+
+        items = [("None", "Empty (clear value)", "Empty (clear value)", ENUM_ICON, 0)]
+
+        (
+            input_node,
+            vtk_output_obj,
+            vtk_connection,
+        ) = self.get_input_node_and_output_vtk_objects()
+        if vtk_output_obj:
+            if hasattr(vtk_output_obj, "GetPointData"):
+                p_data = vtk_output_obj.GetPointData()
+                p_descr = "Color by point data using "
+                for i in range(p_data.GetNumberOfArrays()):
+                    arr_name = str(p_data.GetArrayName(i))
+                    if p_data.GetArray(i).GetNumberOfComponents() != 3:
+                        continue
+                    items.append(
+                        (
+                            "P_" + arr_name,
+                            arr_name,
+                            p_descr + arr_name + " array",
+                            "VERTEXSEL",
+                            len(items),
+                        )
+                    )
+        return items
+
+    def motion_blur_set_value(self, context=None):
+        """Set value of motion_blur_set_value using value from EnumProperty"""
+        if self.motion_blur_property_list == "None":
+            self.motion_blur_by = ""
+        else:
+            self.motion_blur_by = str(self.motion_blur_property_list)
+
+    motion_blur_property_list: bpy.props.EnumProperty(
+        items=motion_blur_by_enum_generator, update=motion_blur_set_value, name="Choices"
+    )
 
     def m_properties(self):
         return [
@@ -225,6 +277,9 @@ class BVTK_Node_VTKToBlenderMesh(Node, BVTK_Node):
             "smooth",
             "recalc_norms",
             "generate_material",
+            "motion_blur",
+            "motion_blur_by",
+            "motion_blur_time_step",
         ]
 
     def m_connections(self):
@@ -245,6 +300,12 @@ class BVTK_Node_VTKToBlenderMesh(Node, BVTK_Node):
         layout.prop(self, "smooth")
         layout.prop(self, "recalc_norms")
         layout.prop(self, "generate_material")
+        layout.prop(self, "motion_blur")
+        if self.motion_blur:
+            row = layout.row(align=True)
+            row.prop(self, "motion_blur_by")
+            row.prop(self, "motion_blur_property_list", icon_only=True)
+            layout.prop(self,"motion_blur_time_step")
         layout.operator("node.bvtk_node_force_update_upstream").node_path = node_path(
             self
         )
@@ -269,6 +330,9 @@ class BVTK_Node_VTKToBlenderMesh(Node, BVTK_Node):
             recalc_norms=self.recalc_norms,
             generate_material=self.generate_material,
             color_mapper=color_mapper,
+            motion_blur=self.motion_blur,
+            motion_blur_array_name = self.motion_blur_by,
+            motion_blur_time_step = self.motion_blur_time_step,
         )
         if val:
             self.ui_message = val
@@ -561,18 +625,28 @@ def vtkdata_to_blender_mesh(
     smooth=False,
     recalc_norms=False,
     generate_material=False,
+    motion_blur=False,
+    motion_blur_array_name=None,
+    motion_blur_time_step=1.0,
 ):
     """Convert linear and polyhedron VTK cells into a boundary Blender
     surface mesh object.
     """
+
+    from mathutils import Vector
     if not vtk_obj:
         return "No VTK object on input"
     if issubclass(vtk_obj.__class__, vtk.vtkImageData):
         imgdata_to_blender(vtk_obj, name)
         return
     me, ob = mesh_and_object(name)
+
     if me.is_editmode:
         bpy.ops.object.mode_set(mode="OBJECT", toggle=False)
+
+    # Initialize the Basis shape key for mesh motion blur
+    if motion_blur and not ob.data.shape_keys:
+        ob.shape_key_add(name="Basis", from_mix=False)
 
     # Get all VTK vertex coordinates
     data_p = vtk_obj.GetPoints()
@@ -628,7 +702,45 @@ def vtkdata_to_blender_mesh(
     val = unwrap_and_color_the_mesh(
         ob, vtk_obj, name, color_mapper, bm, generate_material, vimap
     )
+
+    # Mesh motion blur
+    if motion_blur:
+        nFrame = bpy.context.scene.frame_current
+        l.debug("Set up motion blur for frame %d" % nFrame)
+        if ((not bm.verts.layers.shape.keys()) or \
+            (not "key_blur" in bm.verts.layers.shape.keys())):
+               key_shape = bm.verts.layers.shape.new("key_blur")
+        else:
+            key_shape = bm.verts.layers.shape["key_blur"]
+
+        if len(motion_blur_array_name) < 3:
+            return "Motion blur array name is wrong (minimum 3 letters)"
+        array_data = get_vtk_array_data(vtk_obj, motion_blur_array_name[2:], array_type=motion_blur_array_name[0])
+        if not array_data:
+            return "Did not find point array %r" % motion_blur_array_name[2:]
+        array_data = numpy_support.vtk_to_numpy(array_data)
+
+        # Calculate shape key coordinates
+        for i, bv in enumerate(bm.verts):
+            bv[key_shape] = bv.co + 2.0 * motion_blur_time_step * Vector(array_data[i])
+
     bm.to_mesh(me)
+
+    # Add keyframes to shape key Value parameter to animate motion blur
+    if motion_blur:
+        ob.data.shape_keys.animation_data_clear()
+        kb = ob.data.shape_keys.key_blocks["key_blur"]
+        kb.value = 1.0
+        kb.keyframe_insert("value",frame=nFrame+1)
+        kb.value = 0.0
+        kb.keyframe_insert("value",frame=nFrame-1)
+        bpy.context.scene.cycles.use_motion_blur = True
+        bpy.context.scene.eevee.use_motion_blur = True
+        # Must use "Start on Frame" Position for motion blur to avoid frame changes
+        bpy.context.scene.cycles.motion_blur_position = "START"
+        bpy.context.scene.eevee.motion_blur_position = "START"
+        bpy.context.scene.view_layers.update()
+
     if val:
         start_info = "Coloring failed,"
     else:

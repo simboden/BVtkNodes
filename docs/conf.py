@@ -29,7 +29,7 @@ author = u'BVTKNodes Developers'
 # The short X.Y version
 version = u''
 # The full version, including alpha/beta/rc tags
-release = u'0.10'
+release = u'0.11'
 
 
 # -- General configuration ---------------------------------------------------
