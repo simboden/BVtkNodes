@@ -722,7 +722,7 @@ def vtkdata_to_blender_mesh(
 
         # Calculate shape key coordinates
         for i, bv in enumerate(bm.verts):
-            bv[key_shape] = bv.co + 2.0 * motion_blur_time_step * Vector(array_data[i])
+            bv[key_shape] = bv.co + motion_blur_time_step * Vector(array_data[i])
 
     bm.to_mesh(me)
 
@@ -731,9 +731,13 @@ def vtkdata_to_blender_mesh(
         ob.data.shape_keys.animation_data_clear()
         kb = ob.data.shape_keys.key_blocks["key_blur"]
         kb.value = 1.0
-        kb.keyframe_insert("value",frame=nFrame+1)
+        kb.keyframe_insert("value", frame=nFrame+1)
         kb.value = 0.0
-        kb.keyframe_insert("value",frame=nFrame-1)
+        kb.keyframe_insert("value", frame=nFrame)
+        # Set FCurve interpolation to linear (default is bezier).
+        # Setting kb.interpolation="KEY_LINEAR" does not produce linear interpolation.
+        ob.data.shape_keys.animation_data.action.fcurves[0].keyframe_points[0].interpolation='LINEAR'
+        ob.data.shape_keys.animation_data.action.fcurves[0].keyframe_points[1].interpolation='LINEAR'
         bpy.context.scene.cycles.use_motion_blur = True
         bpy.context.scene.eevee.use_motion_blur = True
         # Must use "Start on Frame" Position for motion blur to avoid frame changes
